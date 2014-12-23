@@ -1,0 +1,177 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../inherit");
+
+var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
+var MessageSetType = require("domain/data/MessageSetType");
+var ClientEnrollment = require("domain/data/profile/info/signup/ClientEnrollment");
+var OtherEnrollment = require("domain/data/profile/info/signup/OtherEnrollment");
+var WebEnrollment = require("domain/data/profile/info/signup/WebEnrollment");
+var Aggregate = require("meta/Aggregate");
+var ChildAggregate = require("meta/ChildAggregate");
+var Element = require("meta/Element");
+
+/**
+ * Servers use the Signup Message Set Profile Information to define how enrollment should proceed.
+ *
+ * This aggregate should contain 1 Enrollment option among <CLIENTENROLL>, <WEBENROLL>, or <OTHERENROLL>.
+ * todo: review how best to enforce this constraint
+ *
+ * @author Scott Priddy
+ * @author Ryan Heaton
+ * @see "Section 8.8 OFX Spec"
+ */
+function SignupV1MessageSetInfo () {
+
+  /**
+   * @name SignupV1MessageSetInfo#clientEnrollment
+   * @type ClientEnrollment
+   * @access private
+   */
+  this.clientEnrollment = null;
+
+  /**
+   * @name SignupV1MessageSetInfo#webEnrollment
+   * @type WebEnrollment
+   * @access private
+   */
+  this.webEnrollment = null;
+
+  /**
+   * @name SignupV1MessageSetInfo#otherEnrollment
+   * @type OtherEnrollment
+   * @access private
+   */
+  this.otherEnrollment = null;
+
+  /**
+   * @name SignupV1MessageSetInfo#supportsClientUserInfoChanges
+   * @type Boolean
+   * @access private
+   */
+  this.supportsClientUserInfoChanges = null;
+
+  /**
+   * @name SignupV1MessageSetInfo#supportsAvailableAccounts
+   * @type Boolean
+   * @access private
+   */
+  this.supportsAvailableAccounts = null;
+
+  /**
+   * @name SignupV1MessageSetInfo#supportsClientServiceActivationRequests
+   * @type Boolean
+   * @access private
+   */
+  this.supportsClientServiceActivationRequests = null;
+}
+
+inherit(SignupV1MessageSetInfo, "extends", VersionSpecificMessageSetInfo);
+
+
+Aggregate.add("SIGNUPMSGSETV1", SignupV1MessageSetInfo);
+
+
+SignupV1MessageSetInfo.prototype.getMessageSetType = function() {
+  return MessageSetType.signup;
+};
+
+
+SignupV1MessageSetInfo.prototype.getClientEnrollment = function() {
+  return clientEnrollment;
+};
+ChildAggregate.add({name: "CLIENTENROLL", order: 10, owner: SignupV1MessageSetInfo, /*type: ClientEnrollment,*/ fcn: "getClientEnrollment"});
+
+
+SignupV1MessageSetInfo.prototype.setClientEnrollment = function(/*ClientEnrollment*/ clientEnrollment) {
+  this.clientEnrollment = clientEnrollment;
+};
+
+
+SignupV1MessageSetInfo.prototype.getWebEnrollment = function() {
+  return webEnrollment;
+};
+ChildAggregate.add({name: "WEBENROLL", order: 20, owner: SignupV1MessageSetInfo, /*type: WebEnrollment,*/ fcn: "getWebEnrollment"});
+
+
+SignupV1MessageSetInfo.prototype.setWebEnrollment = function(/*WebEnrollment*/ webEnrollment) {
+  this.webEnrollment = webEnrollment;
+};
+
+
+SignupV1MessageSetInfo.prototype.getOtherEnrollment = function() {
+  return otherEnrollment;
+};
+ChildAggregate.add({name: "OTHERENROLL", order: 30, owner: SignupV1MessageSetInfo, /*type: OtherEnrollment,*/ fcn: "getOtherEnrollment"});
+
+
+SignupV1MessageSetInfo.prototype.setOtherEnrollment = function(/*OtherEnrollment*/ otherEnrollment) {
+  this.otherEnrollment = otherEnrollment;
+};
+
+
+/**
+ * Y if server supports client-based user information changes,
+ * @return {Boolean} Boolean
+ */
+SignupV1MessageSetInfo.prototype.getSupportsClientUserInfoChanges = function() {
+  return supportsClientUserInfoChanges;
+};
+Element.add({name: "CHGUSERINFO", required: true, order: 40, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClientUserInfoChanges"});
+
+
+SignupV1MessageSetInfo.prototype.setSupportsClientUserInfoChanges = function(/*Boolean*/ supportsClientUserInfoChanges) {
+  this.supportsClientUserInfoChanges = supportsClientUserInfoChanges;
+};
+
+
+/**
+ * Y if server can provide information on accounts with SVCSTATUS available,
+ * N means client should expect to ask user for specific account information
+ * @return {Boolean} Boolean
+ */
+SignupV1MessageSetInfo.prototype.getSupportsAvailableAccounts = function() {
+  return supportsAvailableAccounts;
+};
+Element.add({name: "AVAILACCTS", required: true, order: 50, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsAvailableAccounts"});
+
+
+SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts = function(/*Boolean*/ supportsAvailableAccounts) {
+  this.supportsAvailableAccounts = supportsAvailableAccounts;
+};
+
+
+/**
+ * Y if server allows clients to make service activation requests (<ACCTRQ>),
+ * N if server will only advise clients via synchronization of service additions,
+ * changes, or deletions.
+ * @return {Boolean} Boolean
+ */
+SignupV1MessageSetInfo.prototype.getSupportsClientServiceActivationRequests = function() {
+  return supportsClientServiceActivationRequests;
+};
+Element.add({name: "CLIENTACTREQ", required: true, order: 60, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClientServiceActivationRequests"});
+
+
+SignupV1MessageSetInfo.prototype.setSupportsClientServiceActivationRequests = function(/*Boolean*/ supportsClientServiceActivationRequests) {
+  this.supportsClientServiceActivationRequests = supportsClientServiceActivationRequests;
+};
+
+
+
+
+module.exports = SignupV1MessageSetInfo;

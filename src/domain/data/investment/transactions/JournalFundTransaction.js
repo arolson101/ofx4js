@@ -1,0 +1,156 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../inherit");
+
+var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
+var Aggregate = require("meta/Aggregate");
+var Element = require("meta/Element");
+
+/**
+ * Transaction for journal fund transactions between sub-accounts within the same investment
+ * account.
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @author Jon Perlow
+ */
+function JournalFundTransaction () {
+
+  /**
+   * @name JournalFundTransaction#subAccountFrom
+   * @type String
+   * @access private
+   */
+  this.subAccountFrom = null;
+
+  /**
+   * @name JournalFundTransaction#subAccountTo
+   * @type String
+   * @access private
+   */
+  this.subAccountTo = null;
+
+  /**
+   * @name JournalFundTransaction#total
+   * @type Double
+   * @access private
+   */
+  this.total = null;
+}
+
+inherit(JournalFundTransaction, "extends", BaseOtherInvestmentTransaction);
+
+
+Aggregate.add("JRNLFUND", JournalFundTransaction);
+
+
+JournalFundTransaction.prototype.JournalFundTransaction = function() {
+  super(TransactionType.JOURNAL_FUND);
+};
+
+
+/**
+ * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @return {String} the sub account type
+ */
+JournalFundTransaction.prototype.getFromSubAccountFund = function() {
+  return subAccountFrom;
+};
+Element.add({name: "SUBACCTFROM", order: 20, owner: JournalFundTransaction, /*type: String,*/ fcn: "getFromSubAccountFund"});
+
+
+/**
+ * Sets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @param {String} subAccountFrom the sub account type
+ */
+JournalFundTransaction.prototype.setFromSubAccountFund = function(subAccountFrom) {
+  this.subAccountFrom = subAccountFrom;
+};
+
+
+/**
+ * Gets the result of getFromSubAccountFund as one of the well-known types.
+ *
+ * @return {SubAccountType} the type of null if it wasn't one of the well known types.
+ */
+JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
+  return SubAccountType.fromOfx(getFromSubAccountFund());
+};
+
+
+/**
+ * Gets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @return {String} the sub account fund
+ */
+JournalFundTransaction.prototype.getToSubAccountFund = function() {
+  return subAccountTo;
+};
+Element.add({name: "SUBACCTTO", order: 30, owner: JournalFundTransaction, /*type: String,*/ fcn: "getToSubAccountFund"});
+
+
+/**
+ * Sets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @param {String} subAccountTo the sub account fund
+ */
+JournalFundTransaction.prototype.setToSubAccountFund = function(subAccountTo) {
+  this.subAccountTo = subAccountTo;
+};
+
+
+/**
+ * Gets the result of getToSubAccountFund as one of the well-known types.
+ *
+ * @return {SubAccountType} the type of null if it wasn't one of the well known types.
+ */
+JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
+  return SubAccountType.fromOfx(getToSubAccountFund());
+};
+
+
+/**
+ * Gets the total for the transaction.
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @return {Double} the total
+ */
+JournalFundTransaction.prototype.getTotal = function() {
+  return total;
+};
+Element.add({name: "TOTAL", order: 40, owner: JournalFundTransaction, /*type: Double,*/ fcn: "getTotal"});
+
+
+/**
+ * Sets the total for the transaction.
+ * @see "Section 13.9.2.4.4, OFX Spec"
+ *
+ * @param {Double} total the total
+ */
+JournalFundTransaction.prototype.setTotal = function(total) {
+  this.total = total;
+};
+
+
+
+
+module.exports = JournalFundTransaction;

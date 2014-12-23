@@ -1,0 +1,495 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../inherit");
+
+var Aggregate = require("meta/Aggregate");
+var Element = require("meta/Element");
+
+//import java.util.Date;
+
+/**
+ * Info about a debt security.
+ * @see "Section 13.8.5.2, OFX Spec"
+ *
+ * @author Jon Perlow
+ */
+function DebtSecurityInfo () {
+
+  /**
+   * @name DebtSecurityInfo#parValue
+   * @type Double
+   * @access private
+   */
+  this.parValue = null;
+
+  /**
+   * @name DebtSecurityInfo#debtType
+   * @type String
+   * @access private
+   */
+  this.debtType = null;
+
+  /**
+   * @name DebtSecurityInfo#debtClass
+   * @type String
+   * @access private
+   */
+  this.debtClass = null;
+
+  /**
+   * @name DebtSecurityInfo#couponRate
+   * @type Double
+   * @access private
+   */
+  this.couponRate = null;
+
+  /**
+   * @name DebtSecurityInfo#nextMaturityDate
+   * @type Date
+   * @access private
+   */
+  this.nextMaturityDate = null;
+
+  /**
+   * @name DebtSecurityInfo#couponFrequency
+   * @type String
+   * @access private
+   */
+  this.couponFrequency = null;
+
+  /**
+   * @name DebtSecurityInfo#callPrice
+   * @type Double
+   * @access private
+   */
+  this.callPrice = null;
+
+  /**
+   * @name DebtSecurityInfo#yieldToCall
+   * @type Double
+   * @access private
+   */
+  this.yieldToCall = null;
+
+  /**
+   * @name DebtSecurityInfo#nextCallDate
+   * @type Date
+   * @access private
+   */
+  this.nextCallDate = null;
+
+  /**
+   * @name DebtSecurityInfo#callType
+   * @type String
+   * @access private
+   */
+  this.callType = null;
+
+  /**
+   * @name DebtSecurityInfo#yieldToMaturity
+   * @type Double
+   * @access private
+   */
+  this.yieldToMaturity = null;
+
+  /**
+   * @name DebtSecurityInfo#debtMaturityDate
+   * @type Date
+   * @access private
+   */
+  this.debtMaturityDate = null;
+
+  /**
+   * @name DebtSecurityInfo#assetClass
+   * @type String
+   * @access private
+   */
+  this.assetClass = null;
+
+  /**
+   * @name DebtSecurityInfo#fiAssetClass
+   * @type String
+   * @access private
+   */
+  this.fiAssetClass = null;
+}
+
+inherit(DebtSecurityInfo, "extends", BaseSecurityInfo);
+
+
+Aggregate.add("DEBTINFO", DebtSecurityInfo);
+
+
+/**
+ * Gets the par value of the debt. This is a required field according to the OFX spec.
+ *
+ * @return {Double} the par value of the debt
+ */
+DebtSecurityInfo.prototype.getParValue = function() {
+  return parValue;
+};
+Element.add({name: "PARVALUE", required:true, order: 20, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getParValue"});
+
+
+/**
+ * Sets the par value of the debt. This is a required field according to the OFX spec.
+ *
+ * @param {Double} parValue the par value of the debt
+ */
+DebtSecurityInfo.prototype.setParValue = function(parValue) {
+  this.parValue = parValue;
+};
+
+
+/**
+ * Gets the type of debt. One of "COUPON" or "ZERO". This is a required field according to the
+ * OFX spec.
+ *
+ * @return {String} the type of debt
+ */
+DebtSecurityInfo.prototype.getDebtType = function() {
+  return debtType;
+};
+Element.add({name: "DEBTTYPE", required:true, order: 30, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtType"});
+
+
+/**
+ * Sets the type of debt. One of "COUPON" or "ZERO". This is a required field according to the
+ * OFX spec.
+ *
+ * @param {String} debtType the type of debt
+ */
+DebtSecurityInfo.prototype.setDebtType = function(debtType) {
+  this.debtType = debtType;
+};
+
+
+/**
+ * Gets the type of debt as one of the well-known types.
+ *
+ * @return {DebtType} the type of debt or null if it's not one of the well-known types
+ */
+DebtSecurityInfo.prototype.getDebtTypeEnum = function() {
+  return DebtType.fromOfx(getDebtType());
+};
+
+
+/**
+ * Gets the class of debt. One of "TREASURY", "MUNICIPAL", "CORPORATE", or "OTHER".
+ * This is an optional field according to the OFX spec.
+ *
+ * @return {String} the class of debt
+ */
+DebtSecurityInfo.prototype.getDebtClass = function() {
+  return debtClass;
+};
+Element.add({name: "DEBTCLASS", order: 40, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtClass"});
+
+
+/**
+ * Sets the class of debt. One of "TREASURY", "MUNICIPAL", "CORPORATE", or "OTHER".
+ * This is an optional field according to the OFX spec.
+ *
+ * @param {String} debtClass the class of debt
+ */
+DebtSecurityInfo.prototype.setDebtClass = function(debtClass) {
+  this.debtClass = debtClass;
+};
+
+
+/**
+ * Gets the class of debt as one of the well-known types.
+ *
+ * @return {DebtClass} the class of debt or null if it's not one of the well-known types
+ */
+DebtSecurityInfo.prototype.getDebtClassEnum = function() {
+  return DebtClass.fromOfx(debtClass);
+};
+
+
+/**
+ * Gets the coupon rate of the debt for the next closest call date.
+ * This is an optional field according to the OFX spec.
+ *
+ * @return {Double} the coupon rate
+ */
+DebtSecurityInfo.prototype.getCouponRate = function() {
+  return couponRate;
+};
+Element.add({name: "COUPONRT", order: 50, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCouponRate"});
+
+
+/**
+ * Sets the coupon rate of the debt for the next closest call date.
+ * This is an optional field according to the OFX spec.
+ *
+ * @param {Double} couponRate the coupon rate
+ */
+DebtSecurityInfo.prototype.setCouponRate = function(couponRate) {
+  this.couponRate = couponRate;
+};
+
+
+/**
+ * Gets the next maturity date for the next coupon.
+ * This is an optional field according to the OFX spec.
+ *
+ * @return {Date} the maturity date for the next coupon
+ */
+DebtSecurityInfo.prototype.getNextMaturityDate = function() {
+  return nextMaturityDate;
+};
+Element.add({name: "DTCOUPON", order: 60, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextMaturityDate"});
+
+
+/**
+ * Sets the next maturity date for the next coupon.
+ * This is an optional field according to the OFX spec.
+ *
+ * @param {Date} nextMaturityDate the maturity date for the next coupon.
+ */
+DebtSecurityInfo.prototype.setNextMaturityDate = function(nextMaturityDate) {
+  this.nextMaturityDate = nextMaturityDate;
+};
+
+
+/**
+ * Gets the coupon frequency. One of "MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL", or "OTHER".
+ * This is an optional field according to the OFX spec.
+ *
+ * @return {String} the coupon frequency
+ */
+DebtSecurityInfo.prototype.getCouponFrequency = function() {
+  return couponFrequency;
+};
+Element.add({name: "COUPONFREQ", order: 70, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCouponFrequency"});
+
+
+/**
+ * Sets the coupon frequency. One of "MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL", or "OTHER".
+ * This is an optional field according to the OFX spec.
+ *
+ * @param {String} couponFrequency the coupon frequency
+ */
+DebtSecurityInfo.prototype.setCouponFrequency = function(couponFrequency) {
+  this.couponFrequency = couponFrequency;
+};
+
+
+/**
+ * Gets the coupon frequency as one of the well-known types.
+ *
+ * @return {CouponFrequency} the coupon frequency or null if it's not one of the well-known types
+ */
+DebtSecurityInfo.prototype.getCouponFrequencyEnum = function() {
+  return CouponFrequency.fromOfx(getCouponFrequency());
+};
+
+
+/**
+ * Gets the bond price. This is an optional field according to the OFX spec.
+ *
+ * @return {Double} the bond price
+ */
+DebtSecurityInfo.prototype.getCallPrice = function() {
+  return callPrice;
+};
+Element.add({name: "CALLPRICE", order: 80, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCallPrice"});
+
+
+/**
+ * Sets the bond price. This is an optional field according to the OFX spec.
+ *
+ * @param {Double} callPrice the bond price
+ */
+DebtSecurityInfo.prototype.setCallPrice = function(callPrice) {
+  this.callPrice = callPrice;
+};
+
+
+/**
+ * Gets the yield to call as a rate. This is an optional field according to the OFX spec.
+ *
+ * @return {Double} the yield to call rate
+ */
+DebtSecurityInfo.prototype.getYieldToCall = function() {
+  return yieldToCall;
+};
+Element.add({name: "YIELDTOCALL", order: 90, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToCall"});
+
+
+/**
+ * Sets the yield to call as a rate. This is an optional field according to the OFX spec.
+ *
+ * @param {Double} yieldToCall the yield to call rate
+ */
+DebtSecurityInfo.prototype.setYieldToCall = function(yieldToCall) {
+  this.yieldToCall = yieldToCall;
+};
+
+
+/**
+ * Gets the next call date. This is an optional field according to the OFX spec.
+ *
+ * @return {Date} the next call date.
+ */
+DebtSecurityInfo.prototype.getNextCallDate = function() {
+  return nextCallDate;
+};
+Element.add({name: "DTCALL", order: 100, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextCallDate"});
+
+
+/**
+ * Sets the next call date. This is an optional field according to the OFX spec.
+ *
+ * @param {Date} nextCallDate the next call date.
+ */
+DebtSecurityInfo.prototype.setNextCallDate = function(nextCallDate) {
+  this.nextCallDate = nextCallDate;
+};
+
+
+/**
+ * Gets the type of call.
+ *
+ * @return {String} the type of call
+ */
+DebtSecurityInfo.prototype.getCallType = function() {
+  return callType;
+};
+Element.add({name: "CALLTYPE", order: 110, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCallType"});
+
+
+/**
+ * Sets the type of call.
+ *
+ * @param {String} callType the type of call
+ */
+DebtSecurityInfo.prototype.setCallType = function(callType) {
+  this.callType = callType;
+};
+
+
+/**
+ * Gets the type of call as one of the well-known types.
+ *
+ * @return {CallType} the type of call or null if it's not one of the well-known types
+ */
+DebtSecurityInfo.prototype.getCallTypeEnum = function() {
+  return CallType.fromOfx(getCallType());
+};
+
+
+/**
+ * Gets the yield to maturity as a rate. This is an optional field according to the OFX spec.
+ *
+ * @return {Double} the yield to call rate
+ */
+DebtSecurityInfo.prototype.getYieldToMaturity = function() {
+  return yieldToMaturity;
+};
+Element.add({name: "YIELDTOMAT", order: 120, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToMaturity"});
+
+
+/**
+ * Sets the yield to maturity as a rate. This is an optional field according to the OFX spec.
+ *
+ * @param {Double} yieldToMaturity the yield to call rate
+ */
+DebtSecurityInfo.prototype.setYieldToMaturity = function(yieldToMaturity) {
+  this.yieldToMaturity = yieldToMaturity;
+};
+
+
+/**
+ * Gets the date when the debt matures. This is an optional field according to the OFX spec.
+ *
+ * @return {Date} the date when the debt matures
+ */
+DebtSecurityInfo.prototype.getDebtMaturityDate = function() {
+  return debtMaturityDate;
+};
+Element.add({name: "DTMAT", order: 130, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getDebtMaturityDate"});
+
+
+/**
+ * Sets the date when the debt matures. This is an optional field according to the OFX spec.
+ *
+ * @param {Date} debtMaturityDate the date when the debt matures
+ */
+DebtSecurityInfo.prototype.setDebtMaturityDate = function(debtMaturityDate) {
+  this.debtMaturityDate = debtMaturityDate;
+};
+
+
+/**
+ * Gets the asset class of the debt. This is an optional field according to the OFX spec.
+ *
+ * @return {String} the asset class of the debt
+ */
+DebtSecurityInfo.prototype.getAssetClass = function() {
+  return assetClass;
+};
+Element.add({name: "ASSETCLASS", order: 140, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+
+
+/**
+ * Sets the asset class of the debt. This is an optional field according to the OFX spec.
+ *
+ * @param {String} assetClass the asset class of the debt
+ */
+DebtSecurityInfo.prototype.setAssetClass = function(assetClass) {
+  this.assetClass = assetClass;
+};
+
+
+/**
+ * Gets the assert class as one of the well-known types.
+ *
+ * @return {AssetClass} the asset class or null if it's not one of the well-known types
+ */
+DebtSecurityInfo.prototype.getAssetClassEnum = function() {
+  return AssetClass.fromOfx(getAssetClass());
+};
+
+
+/**
+ * Gets the FI-defined asset class of the debt. This is an optional field according to the OFX
+ * spec.
+ *
+ * @return {String} the FI-defined asset class of the debt
+ */
+DebtSecurityInfo.prototype.getFiAssetClass = function() {
+  return fiAssetClass;
+};
+Element.add({name: "FIASSETCLASS", order: 150, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+
+
+/**
+ * Sets the FI-defined asset class of the debt. This is an optional field according to the OFX
+ * spec.
+ *
+ * @param {String} fiAssetClass the FI-defined asset class of the debt
+ */
+DebtSecurityInfo.prototype.setFiAssetClass = function(fiAssetClass) {
+  this.fiAssetClass = fiAssetClass;
+};
+
+
+
+
+module.exports = DebtSecurityInfo;

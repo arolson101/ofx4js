@@ -1,0 +1,95 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../inherit");
+
+var Aggregate = require("meta/Aggregate");
+var Element = require("meta/Element");
+
+//import java.util.Locale;
+
+/**
+ * @author Ryan Heaton
+ * @see "Section 5.2, OFX Spec"
+ */
+function Currency () {
+
+  /**
+   * @name Currency#code
+   * @type String
+   * @access private
+   */
+  this.code = java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
+
+  /**
+   * @name Currency#exchangeRate
+   * @type Float
+   * @access private
+   */
+  this.exchangeRate = null;
+}
+
+
+
+Aggregate.add("CURRENCY", Currency);
+
+
+/**
+ * The currency code.
+ *
+ * @return {String} The currency code.
+ * @see java.util.Currency#getCurrencyCode()
+ */
+Currency.prototype.getCode = function() {
+  return code;
+};
+Element.add({name: "CURSYM", required: true, order: 0, owner: Currency, /*type: String,*/ fcn: "getCode"});
+
+
+/**
+ * The currency code
+ *
+ * @param {String} code The currency code
+ */
+Currency.prototype.setCode = function(code) {
+  this.code = code;
+};
+
+
+/**
+ * The exchange rate.
+ *
+ * @return {Float} The exchange rate.
+ */
+Currency.prototype.getExchangeRate = function() {
+  return exchangeRate;
+};
+Element.add({name: "CURRATE", required: true, order: 10, owner: Currency, /*type: Float,*/ fcn: "getExchangeRate"});
+
+
+/**
+ * The exchange rate.
+ *
+ * @param {Float} exchangeRate The exchange rate.
+ */
+Currency.prototype.setExchangeRate = function(exchangeRate) {
+  this.exchangeRate = exchangeRate;
+};
+
+
+
+
+module.exports = Currency;

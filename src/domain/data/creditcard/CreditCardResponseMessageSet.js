@@ -1,0 +1,107 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../inherit");
+
+//import java.util.ArrayList;
+//import java.util.Collections;
+//import java.util.List;
+
+var MessageSetType = require("domain/data/MessageSetType");
+var ResponseMessage = require("domain/data/ResponseMessage");
+var ResponseMessageSet = require("domain/data/ResponseMessageSet");
+var Aggregate = require("meta/Aggregate");
+var ChildAggregate = require("meta/ChildAggregate");
+
+/**
+ * @author Ryan Heaton
+ */
+function CreditCardResponseMessageSet () {
+
+  /**
+   * @name CreditCardResponseMessageSet#statementResponses
+   * @type List<CreditCardStatementResponseTransaction>
+   * @access private
+   */
+  this.statementResponses = null;
+}
+
+inherit(CreditCardResponseMessageSet, "extends", ResponseMessageSet);
+
+
+Aggregate.add("CREDITCARDMSGSRSV1", CreditCardResponseMessageSet);
+
+
+CreditCardResponseMessageSet.prototype.getType = function() {
+  return MessageSetType.creditcard;
+};
+
+
+/**
+ * The statement response list.
+ *
+ * Most OFX files have a single statement response, except MT2OFX
+ * which outputs OFX with multiple statement responses
+ * in a single banking response message set.
+ *
+ * @return {CreditCardStatementResponseTransaction[]} The statement response list.
+ */
+CreditCardResponseMessageSet.prototype.getStatementResponses = function() {
+  return statementResponses;
+};
+ChildAggregate.add({order: 0, owner: CreditCardResponseMessageSet, /*type: CreditCardStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
+
+
+/**
+ * The statement reponse list.
+ *
+ * @param {CreditCardStatementResponseTransaction[]} statementResponses The statement response list.
+ */
+CreditCardResponseMessageSet.prototype.setStatementResponses = function(statementResponses) {
+  this.statementResponses = statementResponses;
+};
+
+
+/**
+ * The first statement response.
+ *
+ * @return {CreditCardStatementResponseTransaction} the first bank statement response.
+ * @deprecated Use getStatementResponses() because sometimes there are multiple responses
+ */
+CreditCardResponseMessageSet.prototype.getStatementResponse = function() {
+  return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+};
+
+
+/**
+ * The statement response.
+ *
+ * @param {CreditCardStatementResponseTransaction} statementResponse The statement response.
+ */
+CreditCardResponseMessageSet.prototype.setStatementResponse = function(statementResponse) {
+  this.statementResponses = Collections.singletonList(statementResponse);
+};
+
+
+// Inherited.
+CreditCardResponseMessageSet.prototype.getResponseMessages = function() {
+  return new ArrayList<ResponseMessage>(statementResponses);
+};
+
+
+
+
+module.exports = CreditCardResponseMessageSet;

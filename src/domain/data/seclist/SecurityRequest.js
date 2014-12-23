@@ -1,0 +1,98 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../inherit");
+
+var Aggregate = require("meta/Aggregate");
+var Element = require("meta/Element");
+
+/**
+ * Security request aggregate.
+ * @see "Section 13.8.2.2, OFX Spec"
+ *
+ * @author Jon Perlow
+ */
+function SecurityRequest () {
+
+  /**
+   * @name SecurityRequest#securityId
+   * @type SecurityId
+   * @access private
+   */
+  this.securityId = null;
+
+  /**
+   * @name SecurityRequest#tickerSymbol
+   * @type String
+   * @access private
+   */
+  this.tickerSymbol = null;
+
+  /**
+   * @name SecurityRequest#fiId
+   * @type String
+   * @access private
+   */
+  this.fiId = null;
+}
+
+
+
+Aggregate.add("SECRQ", SecurityRequest);
+
+
+SecurityRequest.prototype.getSecurityId = function() {
+  return securityId;
+};
+Element.add({name: "SECID", order: 10, owner: SecurityRequest, /*type: SecurityId,*/ fcn: "getSecurityId"});
+
+
+SecurityRequest.prototype.setSecurityId = function(/*SecurityId*/ securityId) {
+  this.securityId = securityId;
+  this.tickerSymbol = null;
+  this.fiId = null;
+};
+
+
+SecurityRequest.prototype.getTickerSymbol = function() {
+  return tickerSymbol;
+};
+Element.add({name: "TICKER", order: 20, owner: SecurityRequest, /*type: String,*/ fcn: "getTickerSymbol"});
+
+
+SecurityRequest.prototype.setTickerSymbol = function(/*String*/ tickerSymbol) {
+  this.tickerSymbol = tickerSymbol;
+  this.securityId = null;
+  this.fiId = null;
+};
+
+
+SecurityRequest.prototype.getFiId = function() {
+  return fiId;
+};
+Element.add({name: "FIID", order: 30, owner: SecurityRequest, /*type: String,*/ fcn: "getFiId"});
+
+
+SecurityRequest.prototype.setFiId = function(/*String*/ fiId) {
+  this.fiId = fiId;
+  this.securityId = null;
+  this.tickerSymbol = null;
+};
+
+
+
+
+module.exports = SecurityRequest;
