@@ -17,15 +17,10 @@
 var inherit = require("../inherit");
 
 var ResponseMessage = require("domain/data/ResponseMessage");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
-var AccountStatement = require("client/AccountStatement");
-
-//import java.util.Locale;
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
+ * @augments ResponseMessage
  */
 function T1099Response () {
 }

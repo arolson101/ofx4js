@@ -14,13 +14,9 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-//import java.util.HashMap;
-//import java.util.Map;
 
 /**
- * @author Jon Perlow
+ * @enum
  * @see "OFX Spec, Section 13.6.2.1"
  */
 var UnitedStatesAccountType = {
@@ -56,25 +52,36 @@ var UnitedStatesAccountType = {
   TRUST: 19,
 
   /** Custodial: 20 account */
-  UGMA: 21;
-
-  static: 22 Map<String, UnitedStatesAccountType> ofxMapping =
-      new: 23 HashMap<String, UnitedStatesAccountType>();
-  static: 24 {
-    ofxMapping: 25.put("401K", R401K);
-    ofxMapping: 26.put("403B", R403B);
-    ofxMapping: 27.put("IRA", IRA);
-    ofxMapping: 28.put("KEOUGH", KEOUGH);
-    ofxMapping: 29.put("OTHER", OTHER);
-    ofxMapping: 30.put("SARSEP", SARSEP);
-    ofxMapping: 31.put("SIMPLE", SIMPLE);
-    ofxMapping: 32.put("NORMAL", NORMAL);
-    ofxMapping: 33.put("TDA", TDA);
-    ofxMapping: 34.put("TRUST", TRUST);
-    ofxMapping: 35.put("UGMA", UGMA);
-  };
+  UGMA: 21,
+  
+  fromOfx: function(/*String*/ ofxVal) {
+    if ("401K".equals(ofxVal)) {
+      return UnitedStatesAccountType.R401K;
+    } else if ("403B".equals(ofxVal)) {
+      return UnitedStatesAccountType.R403B;
+    } else if ("IRA".equals(ofxVal)) {
+      return UnitedStatesAccountType.IRA;
+    } else if ("KEOUGH".equals(ofxVal)) {
+      return UnitedStatesAccountType.KEOUGH;
+    } else if ("OTHER".equals(ofxVal)) {
+      return UnitedStatesAccountType.OTHER;
+    } else if ("SARSEP".equals(ofxVal)) {
+      return UnitedStatesAccountType.SARSEP;
+    } else if ("SIMPLE".equals(ofxVal)) {
+      return UnitedStatesAccountType.SIMPLE;
+    } else if ("NORMAL".equals(ofxVal)) {
+      return UnitedStatesAccountType.NORMAL;
+    } else if ("TDA".equals(ofxVal)) {
+      return UnitedStatesAccountType.TDA;
+    } else if ("TRUST".equals(ofxVal)) {
+      return UnitedStatesAccountType.TRUST;
+    } else if ("UGMA".equals(ofxVal)) {
+      return UnitedStatesAccountType.UGMA;
+    } else {
+      return null;
+    }
+  }
+};
 
 
 module.exports = UnitedStatesAccountType;
-
-  public static UnitedStatesAccountType fromOfx(String ofxVal) {

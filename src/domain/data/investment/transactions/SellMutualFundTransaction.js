@@ -18,14 +18,19 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var SellType = require("./SellType");
 
 /**
  * Transaction for selling mutual fund.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSellInvestmentTransaction
  */
 function SellMutualFundTransaction () {
+  BaseSellInvestmentTransaction.call(this, TransactionType.SELL_MUTUAL_FUND);
 
   /**
    * @name SellMutualFundTransaction#sellType
@@ -55,11 +60,6 @@ inherit(SellMutualFundTransaction, "extends", BaseSellInvestmentTransaction);
 Aggregate.add("SELLMF", SellMutualFundTransaction);
 
 
-SellMutualFundTransaction.prototype.SellMutualFundTransaction = function() {
-  super(TransactionType.SELL_MUTUAL_FUND);
-};
-
-
 /**
  * Gets the type of sale. One of "SELL" or "SELLSHORT".
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -67,7 +67,7 @@ SellMutualFundTransaction.prototype.SellMutualFundTransaction = function() {
  * @return {String} The type of sale
  */
 SellMutualFundTransaction.prototype.getSellType = function() {
-  return sellType;
+  return this.sellType;
 };
 Element.add({name: "SELLTYPE", order: 20, owner: SellMutualFundTransaction, /*type: String,*/ fcn: "getSellType"});
 
@@ -89,7 +89,7 @@ SellMutualFundTransaction.prototype.setSellType = function(sellType) {
  * @return {SellType} the type of sale or null if it's not known.
  */
 SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
-  return SellType.fromOfx(sellType);
+  return SellType.fromOfx(this.sellType);
 };
 
 
@@ -100,7 +100,7 @@ SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
  * @return {Double} The average cost basis of the sale
  */
 SellMutualFundTransaction.prototype.getAverageCostBasis = function() {
-  return averageCostBasis;
+  return this.averageCostBasis;
 };
 Element.add({name: "AVGCOSTBASIS", order: 30, owner: SellMutualFundTransaction, /*type: Double,*/ fcn: "getAverageCostBasis"});
 
@@ -124,7 +124,7 @@ SellMutualFundTransaction.prototype.setAverageCostBasis = function(averageCostBa
  * @return {String} the related transaction id
  */
 SellMutualFundTransaction.prototype.getRelatedTransactionId = function() {
-  return relatedTransactionId;
+  return this.relatedTransactionId;
 };
 Element.add({name: "RELFITID", order: 40, owner: SellMutualFundTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
 

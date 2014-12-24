@@ -14,20 +14,15 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Header = require("meta/Header");
-var SignonResponseMessageSet = require("domain/data/signon/SignonResponseMessageSet");
-var SignonResponse = require("domain/data/signon/SignonResponse");
-
-//import java.util.SortedSet;
+var MessageSetType = require("./MessageSetType");
 
 /**
  * Envelope for enclosing an OFX response.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 2.4.3, OFX Spec"
  */
 function ResponseEnvelope () {
@@ -66,7 +61,7 @@ Aggregate.add("OFX", ResponseEnvelope);
  * @see "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.getSecurity = function() {
-  return security;
+  return this.security;
 };
 Header.add({name: "SECURITY", owner: ResponseEnvelope, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
 
@@ -89,7 +84,7 @@ ResponseEnvelope.prototype.setSecurity = function(security) {
  * @see "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.getUID = function() {
-  return UID;
+  return this.UID;
 };
 Header.add({name: "NEWFILEUID", owner: ResponseEnvelope, /*type: String,*/ fcn: "getUID"});
 
@@ -112,7 +107,7 @@ ResponseEnvelope.prototype.setUID = function(UID) {
  * @see "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.getMessageSets = function() {
-  return messageSets;
+  return this.messageSets;
 };
 ChildAggregate.add({order: 1, owner: ResponseEnvelope, /*type: SortedSet<ResponseMessageSet>,*/ fcn: "getMessageSets"});
 
@@ -134,11 +129,11 @@ ResponseEnvelope.prototype.setMessageSets = function(messageSets) {
  * @return {SignonResponse} The signon response, or null if none found.
  */
 ResponseEnvelope.prototype.getSignonResponse = function() {
-  MessageSetType type = MessageSetType.signon;
-  ResponseMessageSet message = getMessageSet(type);
+  var type = MessageSetType.signon;
+  var message = this.getMessageSet(type);
 
-  if (message != null) {
-    return ((SignonResponseMessageSet) message).getSignonResponse();
+  if (message !== null) {
+    return message.getSignonResponse();
   }
   else {
     return null;
@@ -153,9 +148,9 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
  * @return {ResponseMessageSet} The message set, or null.
  */
 ResponseEnvelope.prototype.getMessageSet = function(type) {
-  ResponseMessageSet message = null;
-  if (this.messageSets != null) {
-    for (ResponseMessageSet messageSet : this.messageSets) {
+  var message = null;
+  if (this.messageSets !== null) {
+    for (var messageSet in this.messageSets) {
       if (messageSet.getType() == type) {
         message = messageSet;
         break;

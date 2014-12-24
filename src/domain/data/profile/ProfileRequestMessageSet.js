@@ -18,15 +18,12 @@ var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
 var RequestMessageSet = require("domain/data/RequestMessageSet");
-var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.List;
-//import java.util.ArrayList;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments RequestMessageSet
  * @see "Section 7 OFX Spec"
  */
 function ProfileRequestMessageSet () {
@@ -56,7 +53,7 @@ ProfileRequestMessageSet.prototype.getType = function() {
  * @return {ProfileRequestTransaction} The profile request.
  */
 ProfileRequestMessageSet.prototype.getProfileRequest = function() {
-  return profileRequest;
+  return this.profileRequest;
 };
 ChildAggregate.add({required: true, order: 0, owner: ProfileRequestMessageSet, /*type: ProfileRequestTransaction,*/ fcn: "getProfileRequest"});
 
@@ -73,9 +70,9 @@ ProfileRequestMessageSet.prototype.setProfileRequest = function(profileRequest) 
 
 // Inherited.
 ProfileRequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-  if (getProfileRequest() != null) {
-    requestMessages.add(getProfileRequest());
+  var requestMessages = [];
+  if (this.getProfileRequest() !== null) {
+    requestMessages.push(this.getProfileRequest());
   }
   return requestMessages;
 };

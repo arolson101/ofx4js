@@ -13,17 +13,12 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
  */
-
-
 function ProcDet () {
 
   /**
@@ -95,157 +90,157 @@ function ProcDet () {
 Aggregate.add("PROCDET_V100", ProcDet);
 
 
-	/**
-	 * @return {String} the dtAqd
-	 */
+/**
+ * @return {String} the dtAqd
+ */
 ProcDet.prototype.getDtAqd = function() {
-		return dtAqd;
-	};
+  return this.dtAqd;
+};
 Element.add({name: "DTAQD", required: false, order: 0, owner: ProcDet, /*type: String,*/ fcn: "getDtAqd"});
 
 
-	/**
-	 * @param {String} dtAqd the dtAqd to set
-	 */
+/**
+ * @param {String} dtAqd the dtAqd to set
+ */
 ProcDet.prototype.setDtAqd = function(dtAqd) {
-		this.dtAqd = dtAqd;
-	};
+  this.dtAqd = dtAqd;
+};
 
 
-	/**
-	 * @return {String} the dtSale
-	 */
+/**
+ * @return {String} the dtSale
+ */
 ProcDet.prototype.getDtSale = function() {
-		return dtSale;
-	};
+  return this.dtSale;
+};
 Element.add({name: "DTSALE", required: false, order: 2, owner: ProcDet, /*type: String,*/ fcn: "getDtSale"});
 
 
-	/**
-	 * @param {String} dtSale the dtSale to set
-	 */
+/**
+ * @param {String} dtSale the dtSale to set
+ */
 ProcDet.prototype.setDtSale = function(dtSale) {
-		this.dtSale = dtSale;
-	};
+  this.dtSale = dtSale;
+};
 
 
-	/**
-	 * @return {String} the secName
-	 */
+/**
+ * @return {String} the secName
+ */
 ProcDet.prototype.getSecName = function() {
-		return secName;
-	};
+  return this.secName;
+};
 Element.add({name: "SECNAME", required: false, order: 3, owner: ProcDet, /*type: String,*/ fcn: "getSecName"});
 
 
-	/**
-	 * @param {String} secName the secName to set
-	 */
+/**
+ * @param {String} secName the secName to set
+ */
 ProcDet.prototype.setSecName = function(secName) {
-		this.secName = secName;
-	};
+  this.secName = secName;
+};
 
 
-	/**
-	 * @return {String} the costBasis
-	 */
+/**
+ * @return {String} the costBasis
+ */
 ProcDet.prototype.getCostBasis = function() {
-		return costBasis;
-	};
+  return this.costBasis;
+};
 Element.add({name: "COSTBASIS", required: false, order: 4, owner: ProcDet, /*type: String,*/ fcn: "getCostBasis"});
 
 
-	/**
-	 * @param {String} costBasis the costBasis to set
-	 */
+/**
+ * @param {String} costBasis the costBasis to set
+ */
 ProcDet.prototype.setCostBasis = function(costBasis) {
-		this.costBasis = costBasis;
-	};
+  this.costBasis = costBasis;
+};
 
 
-	/**
-	 * @return {String} the saleSpr
-	 */
+/**
+ * @return {String} the saleSpr
+ */
 ProcDet.prototype.getSaleSpr = function() {
-		return saleSpr;
-	};
+  return this.saleSpr;
+};
 Element.add({name: "SALESPR", required: false, order: 5, owner: ProcDet, /*type: String,*/ fcn: "getSaleSpr"});
 
 
-	/**
-	 * @param {String} saleSpr the saleSpr to set
-	 */
+/**
+ * @param {String} saleSpr the saleSpr to set
+ */
 ProcDet.prototype.setSaleSpr = function(saleSpr) {
-		this.saleSpr = saleSpr;
-	};
+  this.saleSpr = saleSpr;
+};
 
 
-	/**
-	 * @return {String} the longShort
-	 */
+/**
+ * @return {String} the longShort
+ */
 ProcDet.prototype.getLongShort = function() {
-		return longShort;
-	};
+  return this.longShort;
+};
 Element.add({name: "LONGSHORT", required: false, order: 6, owner: ProcDet, /*type: String,*/ fcn: "getLongShort"});
 
 
-	/**
-	 * @param {String} longShort the longShort to set
-	 */
+/**
+ * @param {String} longShort the longShort to set
+ */
 ProcDet.prototype.setLongShort = function(longShort) {
-		this.longShort = longShort;
-	};
+  this.longShort = longShort;
+};
 
 
-	/**
-	 * @return {String} the wasDisAllowed
-	 */
+/**
+ * @return {String} the wasDisAllowed
+ */
 ProcDet.prototype.getWasDisAllowed = function() {
-		return wasDisAllowed;
-	};
+  return this.wasDisAllowed;
+};
 Element.add({name: "WASHSALELOSSDISALLOWED", required: false, order: 7, owner: ProcDet, /*type: String,*/ fcn: "getWasDisAllowed"});
 
 
-	/**
-	 * @param {String} wasDisAllowed the wasDisAllowed to set
-	 */
+/**
+ * @param {String} wasDisAllowed the wasDisAllowed to set
+ */
 ProcDet.prototype.setWasDisAllowed = function(wasDisAllowed) {
-		this.wasDisAllowed = wasDisAllowed;
-	};
+  this.wasDisAllowed = wasDisAllowed;
+};
 
 
-	/**
-	 * @return {String} the noncoveredSec
-	 */
+/**
+ * @return {String} the noncoveredSec
+ */
 ProcDet.prototype.getNoncoveredSec = function() {
-		return noncoveredSec;
-	};
+  return this.noncoveredSec;
+};
 Element.add({name: "NONCOVEREDSECURITY", required: false, order: 8, owner: ProcDet, /*type: String,*/ fcn: "getNoncoveredSec"});
 
 
-	/**
-	 * @param {String} noncoveredSec the noncoveredSec to set
-	 */
+/**
+ * @param {String} noncoveredSec the noncoveredSec to set
+ */
 ProcDet.prototype.setNoncoveredSec = function(noncoveredSec) {
-		this.noncoveredSec = noncoveredSec;
-	};
+  this.noncoveredSec = noncoveredSec;
+};
 
 
-	/**
-	 * @return {String} the basisNotshown
-	 */
+/**
+ * @return {String} the basisNotshown
+ */
 ProcDet.prototype.getBasisNotshown = function() {
-		return basisNotshown;
-	};
+  return this.basisNotshown;
+};
 Element.add({name: "BASISNOTSHOWN", required: false, order: 9, owner: ProcDet, /*type: String,*/ fcn: "getBasisNotshown"});
 
 
-	/**
-	 * @param {String} basisNotshown the basisNotshown to set
-	 */
+/**
+ * @param {String} basisNotshown the basisNotshown to set
+ */
 ProcDet.prototype.setBasisNotshown = function(basisNotshown) {
-		this.basisNotshown = basisNotshown;
-	};
+  this.basisNotshown = basisNotshown;
+};
 
 
 

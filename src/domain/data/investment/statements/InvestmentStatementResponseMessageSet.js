@@ -17,20 +17,16 @@
 var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
 
 /**
  * Investment statement response message set.
  * @see "Section 13.7.1.2.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments ResponseMessageSet
  */
 function InvestmentStatementResponseMessageSet () {
 
@@ -59,7 +55,7 @@ InvestmentStatementResponseMessageSet.prototype.getType = function() {
  * @return {InvestmentStatementResponseTransaction[]} the statement response list
  */
 InvestmentStatementResponseMessageSet.prototype.getStatementResponses = function() {
-  return statementResponses;
+  return this.statementResponses;
 };
 ChildAggregate.add({order: 0, owner: InvestmentStatementResponseMessageSet, /*type: InvestmentStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
 
@@ -81,7 +77,7 @@ InvestmentStatementResponseMessageSet.prototype.setStatementResponses = function
  * @return {InvestmentStatementResponseTransaction} the first investment statement response.
  */
 InvestmentStatementResponseMessageSet.prototype.getStatementResponse = function() {
-  return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 
@@ -91,13 +87,13 @@ InvestmentStatementResponseMessageSet.prototype.getStatementResponse = function(
  * @param {InvestmentStatementResponseTransaction} statementResponse The statement response.
  */
 InvestmentStatementResponseMessageSet.prototype.setStatementResponse = function(statementResponse) {
-  this.statementResponses = Collections.singletonList(statementResponse);
+  this.statementResponses = [statementResponse];
 };
 
 
 // Inherited.
 InvestmentStatementResponseMessageSet.prototype.getResponseMessages = function() {
-  return new ArrayList<ResponseMessage>(statementResponses);
+  return this.statementResponses;
 };
 
 

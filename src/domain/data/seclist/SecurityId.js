@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
@@ -23,7 +21,7 @@ var Element = require("meta/Element");
  * Identifier for a security.
  * @see "Section 13.8.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function SecurityId () {
 
@@ -53,7 +51,7 @@ Aggregate.add("SECID", SecurityId);
  * @return {String} the unique id
  */
 SecurityId.prototype.getUniqueId = function() {
-  return uniqueId;
+  return this.uniqueId;
 };
 Element.add({name: "UNIQUEID", required: true, order: 10, owner: SecurityId, /*type: String,*/ fcn: "getUniqueId"});
 
@@ -74,7 +72,7 @@ SecurityId.prototype.setUniqueId = function(uniqueId) {
  * @return {String} the type of unique id
  */
 SecurityId.prototype.getUniqueIdType = function() {
-  return uniqueIdType;
+  return this.uniqueIdType;
 };
 Element.add({name: "UNIQUEIDTYPE", required: true, order: 20, owner: SecurityId, /*type: String,*/ fcn: "getUniqueIdType"});
 

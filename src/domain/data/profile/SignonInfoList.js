@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
@@ -24,7 +22,7 @@ var ChildAggregate = require("meta/ChildAggregate");
 /**
  * List of signon information.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.2.2, OFX Spec"
  */
 function SignonInfoList () {
@@ -48,7 +46,7 @@ Aggregate.add("SIGNONINFOLIST", SignonInfoList);
  * @return {SignonInfo[]} List of sign-on information.
  */
 SignonInfoList.prototype.getInfoList = function() {
-  return infoList;
+  return this.infoList;
 };
 ChildAggregate.add({order: 0, owner: SignonInfoList, /*type: SignonInfo[],*/ fcn: "getInfoList"});
 

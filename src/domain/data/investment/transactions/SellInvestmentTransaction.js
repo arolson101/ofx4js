@@ -14,11 +14,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
@@ -27,7 +24,7 @@ var Element = require("meta/Element");
  * Sell investment transaction aggregate ("INVSELL").
  * @see "Section 13.9.2.4.3, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function SellInvestmentTransaction () {
 
@@ -190,7 +187,7 @@ Aggregate.add("INVSELL", SellInvestmentTransaction);
  * @return {InvestmentTransaction} the investment transaction child aggregate
  */
 SellInvestmentTransaction.prototype.getInvestmentTransaction = function() {
-  return investmentTransaction;
+  return this.investmentTransaction;
 };
 ChildAggregate.add({order: 10, owner: SellInvestmentTransaction, /*type: InvestmentTransaction,*/ fcn: "getInvestmentTransaction"});
 
@@ -213,7 +210,7 @@ SellInvestmentTransaction.prototype.setInvestmentTransaction = function(investme
  * @return {SecurityId} the security id of the security that was sold
  */
 SellInvestmentTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: SellInvestmentTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -240,7 +237,7 @@ SellInvestmentTransaction.prototype.setSecurityId = function(securityId) {
  * @return {Double} the number of units sold
  */
 SellInvestmentTransaction.prototype.getUnits = function() {
-  return units;
+  return this.units;
 };
 Element.add({name: "UNITS", required: true, order: 30, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getUnits"});
 
@@ -268,7 +265,7 @@ SellInvestmentTransaction.prototype.setUnits = function(units) {
  * @return {Double} the per unit price
  */
 SellInvestmentTransaction.prototype.getUnitPrice = function() {
-  return unitPrice;
+  return this.unitPrice;
 };
 Element.add({name: "UNITPRICE", required: true, order: 40, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
 
@@ -294,7 +291,7 @@ SellInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
  * @return {Double} the per unit markedown price
  */
 SellInvestmentTransaction.prototype.getMarkdown = function() {
-  return markdown;
+  return this.markdown;
 };
 Element.add({name: "MARKDOWN", order: 50, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getMarkdown"});
 
@@ -319,7 +316,7 @@ SellInvestmentTransaction.prototype.setMarkdown = function(markdown) {
  * @return {Double} the transaction commision
  */
 SellInvestmentTransaction.prototype.getCommission = function() {
-  return commission;
+  return this.commission;
 };
 Element.add({name: "COMMISSION", order: 60, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getCommission"});
 
@@ -343,7 +340,7 @@ SellInvestmentTransaction.prototype.setCommission = function(commission) {
  * @return {Double} the transaction taxes
  */
 SellInvestmentTransaction.prototype.getTaxes = function() {
-  return taxes;
+  return this.taxes;
 };
 Element.add({name: "TAXES", order: 70, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getTaxes"});
 
@@ -366,7 +363,7 @@ SellInvestmentTransaction.prototype.setTaxes = function(taxes) {
  * @return {Double} the transaction fees
  */
 SellInvestmentTransaction.prototype.getFees = function() {
-  return fees;
+  return this.fees;
 };
 Element.add({name: "FEES", order: 80, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getFees"});
 
@@ -389,7 +386,7 @@ SellInvestmentTransaction.prototype.setFees = function(fees) {
  * @return {Double} the load
  */
 SellInvestmentTransaction.prototype.getLoad = function() {
-  return load;
+  return this.load;
 };
 Element.add({name: "LOAD", order: 90, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getLoad"});
 
@@ -412,7 +409,7 @@ SellInvestmentTransaction.prototype.setLoad = function(load) {
  * @return {Double} the withholding
  */
 SellInvestmentTransaction.prototype.getWithholding = function() {
-  return withholding;
+  return this.withholding;
 };
 Element.add({name: "WITHHOLDING", order: 93, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getWithholding"});
 
@@ -435,7 +432,7 @@ SellInvestmentTransaction.prototype.setWithholding = function(withholding) {
  * @return {Boolean} whether the transaction was tax exempt
  */
 SellInvestmentTransaction.prototype.getTaxExempt = function() {
-  return taxExempt;
+  return this.taxExempt;
 };
 Element.add({name: "TAXEXEMPT", order: 97, owner: SellInvestmentTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
 
@@ -461,7 +458,7 @@ SellInvestmentTransaction.prototype.setTaxExempt = function(taxExempt) {
  * @return {Double} the total
  */
 SellInvestmentTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", required: true, order: 100, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -487,7 +484,7 @@ SellInvestmentTransaction.prototype.setTotal = function(total) {
  * @return {Double} the gain for the sale
  */
 SellInvestmentTransaction.prototype.getGain = function() {
-  return gain;
+  return this.gain;
 };
 Element.add({name: "GAIN", order: 105, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getGain"});
 
@@ -511,7 +508,7 @@ SellInvestmentTransaction.prototype.setGain = function(gain) {
  * @return {String} the currency code for the transaction
  */
 SellInvestmentTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 110, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -536,7 +533,7 @@ SellInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
  * @return {OriginalCurrency} the original currency info for the transaction
  */
 SellInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 Element.add({name: "ORIGCURRENCY", order: 120, owner: SellInvestmentTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -560,7 +557,7 @@ SellInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalC
  * @return {String} the sub account type
  */
 SellInvestmentTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 130, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -582,7 +579,7 @@ SellInvestmentTransaction.prototype.setSubAccountSecurity = function(subAccountS
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 SellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -594,7 +591,7 @@ SellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund
  */
 SellInvestmentTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 140, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -617,7 +614,7 @@ SellInvestmentTransaction.prototype.setSubAccountFund = function(subAccountFund)
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 SellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 
@@ -629,7 +626,7 @@ SellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {String} the loan id
  */
 SellInvestmentTransaction.prototype.getLoanId = function() {
-  return loanId;
+  return this.loanId;
 };
 Element.add({name: "LOANID", order: 150, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getLoanId"});
 
@@ -653,7 +650,7 @@ SellInvestmentTransaction.prototype.setLoanId = function(loanId) {
  * @return {Double} the state withholding
  */
 SellInvestmentTransaction.prototype.getStateWithholding = function() {
-  return stateWithholding;
+  return this.stateWithholding;
 };
 Element.add({name: "STATEWITHHOLDING", order: 160, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getStateWithholding"});
 
@@ -676,7 +673,7 @@ SellInvestmentTransaction.prototype.setStateWithholding = function(stateWithhold
  * @return {Double} the state withholding
  */
 SellInvestmentTransaction.prototype.getPenalty = function() {
-  return penalty;
+  return this.penalty;
 };
 Element.add({name: "PENALTY", order: 170, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getPenalty"});
 
@@ -701,7 +698,7 @@ SellInvestmentTransaction.prototype.setPenalty = function(penalty) {
  * @return {String} the 401k source
  */
 SellInvestmentTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 180, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -725,7 +722,7 @@ SellInvestmentTransaction.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the 401k source or null if its not one of the well-known types
  */
 SellInvestmentTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

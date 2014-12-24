@@ -16,14 +16,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
  * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
- * @author Scott Priddy
+ * @class
  * @see "Section 8.8 OFX Spec"
  */
 
@@ -47,7 +45,7 @@ Aggregate.add("OTHERENROLL", OtherEnrollment);
  * @return {String} String
  */
 OtherEnrollment.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 Element.add({name: "MESSAGE", required: true, order: 0, owner: OtherEnrollment, /*type: String,*/ fcn: "getMessage"});
 

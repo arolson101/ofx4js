@@ -14,10 +14,9 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * @see "OFX Spec, Section 11.3.1.1"
+ * @enum
  */
 var AccountType = {
 

@@ -19,7 +19,7 @@ var inherit = require("../inherit");
 /**
  * A message applicable to a request message set.
  *
- * @author Ryan Heaton
+ * @class
  */
 function RequestMessage () {
 }

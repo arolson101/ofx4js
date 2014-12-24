@@ -14,38 +14,35 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of income.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var IncomeType = {
   LONG_TERM_CAP_GAINS: 0,
   SHORT_TERM_CAP_GAINS: 1,
   DIVIDEND: 2,
   INTEREST: 3,
-  MISC: 4;
+  MISC: 4,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CGLONG".equals(ofxVal)) {
-      return LONG_TERM_CAP_GAINS;
+      return IncomeType.LONG_TERM_CAP_GAINS;
     } else if ("CGSHORT".equals(ofxVal)) {
-      return SHORT_TERM_CAP_GAINS;
+      return IncomeType.SHORT_TERM_CAP_GAINS;
     } else if ("DIV".equals(ofxVal)) {
-      return DIVIDEND;
+      return IncomeType.DIVIDEND;
     } else if ("INTEREST".equals(ofxVal)) {
-      return INTEREST;
+      return IncomeType.INTEREST;
     } else if ("MISC".equals(ofxVal)) {
-      return MISC;
+      return IncomeType.MISC;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = IncomeType;

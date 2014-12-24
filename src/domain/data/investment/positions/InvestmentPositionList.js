@@ -14,19 +14,14 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var BasePosition = require("domain/data/investment/positions/BasePosition");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.List;
 
 /**
  * Aggregate for a list of invesment positions.
  * @see "Section 13.9.2.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function InvestmentPositionList () {
 
@@ -49,7 +44,7 @@ Aggregate.add("INVPOSLIST", InvestmentPositionList);
  * @return {BasePosition[]} the list of positions
  */
 InvestmentPositionList.prototype.getPositions = function() {
-  return positions;
+  return this.positions;
 };
 ChildAggregate.add({order: 10, owner: InvestmentPositionList, /*type: BasePosition[],*/ fcn: "getPositions"});
 

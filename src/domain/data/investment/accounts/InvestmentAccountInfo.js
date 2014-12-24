@@ -16,16 +16,19 @@
 
 var inherit = require("../inherit");
 
-var AccountDetails = require("domain/data/common/AccountDetails");
 var AccountInfo = require("domain/data/common/AccountInfo");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var UnitedStatesAccountType = require("./UnitedStatesAccountType");
+var ActivationStatus = require("./ActivationStatus");
+var AccountType = require("./AccountType");
 
 /**
  * Aggregate for the info about a brokerage account.
  *
- * @author Jon Perlow
+ * @class
+ * @augments AccountInfo
  * @see "OFX Spec, Section 13.6.2"
  */
 function InvestmentAccountInfo () {
@@ -85,7 +88,7 @@ Aggregate.add("INVACCTINFO", InvestmentAccountInfo);
  * @return {InvestmentAccountDetails} the investment account this information is referencing
  */
 InvestmentAccountInfo.prototype.getInvestmentAccount = function() {
-  return investmentAccount;
+  return this.investmentAccount;
 };
 ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentAccountInfo, /*type: InvestmentAccountDetails,*/ fcn: "getInvestmentAccount"});
 
@@ -103,7 +106,7 @@ InvestmentAccountInfo.prototype.setInvestmentAccount = function(investmentAccoun
 
 // Inherited.
 InvestmentAccountInfo.prototype.getAccountDetails = function() {
-  return getInvestmentAccount();
+  return this.getInvestmentAccount();
 };
 
 
@@ -114,7 +117,7 @@ InvestmentAccountInfo.prototype.getAccountDetails = function() {
  * @return {String} the United States account type
  */
 InvestmentAccountInfo.prototype.getUnitedStatesAccountType = function() {
-  return unitedStatesAccountType;
+  return this.unitedStatesAccountType;
 };
 Element.add({name: "USPRODUCTTYPE", required: true, order: 10, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getUnitedStatesAccountType"});
 
@@ -136,7 +139,7 @@ InvestmentAccountInfo.prototype.setUnitedStatesAccountType = function(unitedStat
  * @return {UnitedStatesAccountType} the account type or null if it's not one of the well-known types
  */
 InvestmentAccountInfo.prototype.getUnitedStatesAccountTypeEnum = function() {
-  return UnitedStatesAccountType.fromOfx(unitedStatesAccountType);
+  return UnitedStatesAccountType.fromOfx(this.unitedStatesAccountType);
 };
 
 
@@ -147,7 +150,7 @@ InvestmentAccountInfo.prototype.getUnitedStatesAccountTypeEnum = function() {
  * @return {Boolean} whether the account supports checking
  */
 InvestmentAccountInfo.prototype.getSupportsChecking = function() {
-  return supportsChecking;
+  return this.supportsChecking;
 };
 Element.add({name: "CHECKING", required: true, order: 20, owner: InvestmentAccountInfo, /*type: Boolean,*/ fcn: "getSupportsChecking"});
 
@@ -170,7 +173,7 @@ InvestmentAccountInfo.prototype.setSupportsChecking = function(supportsChecking)
  * @return {String} the activation status
  */
 InvestmentAccountInfo.prototype.getActivationStatus = function() {
-  return activationStatus;
+  return this.activationStatus;
 };
 Element.add({name: "SVCSTATUS", required: true, order: 30, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getActivationStatus"});
 
@@ -192,7 +195,7 @@ InvestmentAccountInfo.prototype.setActivationStatus = function(activationStatus)
  * @return {ActivationStatus} the activation status or null if it wasn't one of the well known types
  */
 InvestmentAccountInfo.prototype.getActivationStatusEnum = function() {
-  return ActivationStatus.fromOfx(getActivationStatus());
+  return ActivationStatus.fromOfx(this.getActivationStatus());
 };
 
 
@@ -203,7 +206,7 @@ InvestmentAccountInfo.prototype.getActivationStatusEnum = function() {
  * @return {String} the type of account
  */
 InvestmentAccountInfo.prototype.getInvestmentAccountType = function() {
-  return investmentAccountType;
+  return this.investmentAccountType;
 };
 Element.add({name: "INVACCTTYPE", order: 40, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getInvestmentAccountType"});
 
@@ -225,7 +228,7 @@ InvestmentAccountInfo.prototype.setInvestmentAccountType = function(investmentAc
  * @return {AccountType} the type of investment account or null if it's not one of the well-known types
  */
 InvestmentAccountInfo.prototype.getInvestmentAccountTypeEnum = function() {
-  return  AccountType.fromOfx(getInvestmentAccountType());
+  return AccountType.fromOfx(this.getInvestmentAccountType());
 };
 
 
@@ -236,7 +239,7 @@ InvestmentAccountInfo.prototype.getInvestmentAccountTypeEnum = function() {
  * @return {String} the description of option trading privileges.
  */
 InvestmentAccountInfo.prototype.getOptionLevel = function() {
-  return optionLevel;
+  return this.optionLevel;
 };
 Element.add({name: "OPTIONLEVEL", order: 50, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getOptionLevel"});
 

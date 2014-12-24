@@ -1,6 +1,6 @@
 {
     "node": true,
-    "camelcase": true,
+    "camelcase": false,
     "curly": true,
     "immed": true,
     "latedef": true,

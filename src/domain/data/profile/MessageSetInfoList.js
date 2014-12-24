@@ -14,15 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.List;
-
 /**
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.2, OFX Spec"
  */
 function MessageSetInfoList () {
@@ -46,7 +42,7 @@ Aggregate.add("MSGSETLIST", MessageSetInfoList);
  * @return {AbstractMessageSetInfo[]} The list of information for each message set.
  */
 MessageSetInfoList.prototype.getInformationList = function() {
-  return informationList;
+  return this.informationList;
 };
 ChildAggregate.add({order: 0, owner: MessageSetInfoList, /*type: AbstractMessageSetInfo[],*/ fcn: "getInformationList"});
 

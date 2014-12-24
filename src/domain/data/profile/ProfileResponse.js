@@ -16,22 +16,16 @@
 
 var inherit = require("../inherit");
 
-var MessageSetProfile = require("domain/data/MessageSetProfile");
-var MessageSetType = require("domain/data/MessageSetType");
 var ResponseMessage = require("domain/data/ResponseMessage");
-var SignonProfile = require("domain/data/SignonProfile");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 var FinancialInstitutionProfile = require("client/FinancialInstitutionProfile");
 
-//import java.net.URL;
-//import java.util.Date;
-//import java.util.Collection;
-//import java.util.ArrayList;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
+ * @augments FinancialInstitutionProfile
  * @see "Section 7.2 OFX Spec"
  */
 function ProfileResponse () {
@@ -161,7 +155,7 @@ Aggregate.add("PROFRS", ProfileResponse);
  * @return {MessageSetInfoList} List of message set information.
  */
 ProfileResponse.prototype.getMessageSetList = function() {
-  return messageSetList;
+  return this.messageSetList;
 };
 ChildAggregate.add({order: 0, owner: ProfileResponse, /*type: MessageSetInfoList,*/ fcn: "getMessageSetList"});
 
@@ -182,7 +176,7 @@ ProfileResponse.prototype.setMessageSetList = function(messageSetList) {
  * @return {SignonInfoList} List of signon information.
  */
 ProfileResponse.prototype.getSignonInfoList = function() {
-  return signonInfoList;
+  return this.signonInfoList;
 };
 ChildAggregate.add({order: 10, owner: ProfileResponse, /*type: SignonInfoList,*/ fcn: "getSignonInfoList"});
 
@@ -205,7 +199,7 @@ ProfileResponse.prototype.getResponseMessageName = function() {
 
 // Inherited.
 ProfileResponse.prototype.getLastUpdated = function() {
-  return getTimestamp();
+  return this.getTimestamp();
 };
 
 
@@ -215,7 +209,7 @@ ProfileResponse.prototype.getLastUpdated = function() {
  * @return {Date} The timestamp of this profile update.
  */
 ProfileResponse.prototype.getTimestamp = function() {
-  return timestamp;
+  return this.timestamp;
 };
 Element.add({name: "DTPROFUP", order: 20, owner: ProfileResponse, /*type: Date,*/ fcn: "getTimestamp"});
 
@@ -236,7 +230,7 @@ ProfileResponse.prototype.setTimestamp = function(timestamp) {
  * @return {String} The name of the financial institution.
  */
 ProfileResponse.prototype.getFinancialInstitutionName = function() {
-  return financialInstitutionName;
+  return this.financialInstitutionName;
 };
 Element.add({name: "FINAME", order: 30, owner: ProfileResponse, /*type: String,*/ fcn: "getFinancialInstitutionName"});
 
@@ -257,7 +251,7 @@ ProfileResponse.prototype.setFinancialInstitutionName = function(financialInstit
  * @return {String} The address of the financial institution.
  */
 ProfileResponse.prototype.getAddress1 = function() {
-  return address1;
+  return this.address1;
 };
 Element.add({name: "ADDR1", required: true, order: 40, owner: ProfileResponse, /*type: String,*/ fcn: "getAddress1"});
 
@@ -278,7 +272,7 @@ ProfileResponse.prototype.setAddress1 = function(address1) {
  * @return {String} The address of the financial institution.
  */
 ProfileResponse.prototype.getAddress2 = function() {
-  return address2;
+  return this.address2;
 };
 Element.add({name: "ADDR2", order: 50, owner: ProfileResponse, /*type: String,*/ fcn: "getAddress2"});
 
@@ -299,7 +293,7 @@ ProfileResponse.prototype.setAddress2 = function(address2) {
  * @return {String} The address of the financial institution.
  */
 ProfileResponse.prototype.getAddress3 = function() {
-  return address3;
+  return this.address3;
 };
 Element.add({name: "ADDR3", order: 60, owner: ProfileResponse, /*type: String,*/ fcn: "getAddress3"});
 
@@ -320,7 +314,7 @@ ProfileResponse.prototype.setAddress3 = function(address3) {
  * @return {String} The city of the financial institution.
  */
 ProfileResponse.prototype.getCity = function() {
-  return city;
+  return this.city;
 };
 Element.add({name: "CITY", required: true, order: 70, owner: ProfileResponse, /*type: String,*/ fcn: "getCity"});
 
@@ -341,7 +335,7 @@ ProfileResponse.prototype.setCity = function(city) {
  * @return {String} The state of this financial institution.
  */
 ProfileResponse.prototype.getState = function() {
-  return state;
+  return this.state;
 };
 Element.add({name: "STATE", required: true, order: 80, owner: ProfileResponse, /*type: String,*/ fcn: "getState"});
 
@@ -362,7 +356,7 @@ ProfileResponse.prototype.setState = function(state) {
  * @return {String} The postal code of this financial institution.
  */
 ProfileResponse.prototype.getZip = function() {
-  return zip;
+  return this.zip;
 };
 Element.add({name: "POSTALCODE", required: true, order: 90, owner: ProfileResponse, /*type: String,*/ fcn: "getZip"});
 
@@ -384,7 +378,7 @@ ProfileResponse.prototype.setZip = function(zip) {
  * @see java.util.Locale#getISO3Country()
  */
 ProfileResponse.prototype.getCountry = function() {
-  return country;
+  return this.country;
 };
 Element.add({name: "COUNTRY", required: true, order: 100, owner: ProfileResponse, /*type: String,*/ fcn: "getCountry"});
 
@@ -405,7 +399,7 @@ ProfileResponse.prototype.setCountry = function(country) {
  * @return {String} The phone number to customer service.
  */
 ProfileResponse.prototype.getCustomerServicePhone = function() {
-  return customerServicePhone;
+  return this.customerServicePhone;
 };
 Element.add({name: "CSPHONE", order: 110, owner: ProfileResponse, /*type: String,*/ fcn: "getCustomerServicePhone"});
 
@@ -426,7 +420,7 @@ ProfileResponse.prototype.setCustomerServicePhone = function(customerServicePhon
  * @return {String} The phone number to tech support.
  */
 ProfileResponse.prototype.getTechnicalSupportPhone = function() {
-  return technicalSupportPhone;
+  return this.technicalSupportPhone;
 };
 Element.add({name: "TSPHONE", order: 120, owner: ProfileResponse, /*type: String,*/ fcn: "getTechnicalSupportPhone"});
 
@@ -447,7 +441,7 @@ ProfileResponse.prototype.setTechnicalSupportPhone = function(technicalSupportPh
  * @return {String} The fax number.
  */
 ProfileResponse.prototype.getFax = function() {
-  return fax;
+  return this.fax;
 };
 Element.add({name: "FAXPHONE", order: 130, owner: ProfileResponse, /*type: String,*/ fcn: "getFax"});
 
@@ -468,7 +462,7 @@ ProfileResponse.prototype.setFax = function(fax) {
  * @return {String} URL for the financial institution.
  */
 ProfileResponse.prototype.getSiteURL = function() {
-  return siteURL;
+  return this.siteURL;
 };
 Element.add({name: "URL", order: 140, owner: ProfileResponse, /*type: String,*/ fcn: "getSiteURL"});
 
@@ -489,7 +483,7 @@ ProfileResponse.prototype.setSiteURL = function(siteURL) {
  * @return {String} The email for this FI
  */
 ProfileResponse.prototype.getEmail = function() {
-  return email;
+  return this.email;
 };
 Element.add({name: "EMAIL", order: 150, owner: ProfileResponse, /*type: String,*/ fcn: "getEmail"});
 
@@ -505,15 +499,15 @@ ProfileResponse.prototype.setEmail = function(email) {
 
 
 ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type) {
-  Collection<MessageSetProfile> profiles = getProfiles(type);
-  if (profiles.size() > 1) {
-    throw new IllegalStateException("More than one profile of type " + type);
+  var profiles = this.getProfiles(type);
+  if (profiles.length > 1) {
+    throw new Error("More than one profile of type " + type);
   }
   else if (profiles.isEmpty()) {
     return null;
   }
   else {
-    return profiles.iterator().next();
+    return profiles[0];
   }
 };
 
@@ -525,11 +519,11 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
  * @return {Collection<MessageSetProfile>} The profiles.
  */
 ProfileResponse.prototype.getProfiles = function(type) {
-  Collection<MessageSetProfile> profiles = new ArrayList<MessageSetProfile>();
-  if (getMessageSetList() != null && getMessageSetList().getInformationList() != null) {
-    for (AbstractMessageSetInfo info : getMessageSetList().getInformationList()) {
-      if (info.getVersionSpecificInformationList() != null) {
-        for (VersionSpecificMessageSetInfo versionSpecificInfo : info.getVersionSpecificInformationList()) {
+  var profiles = [];
+  if (this.getMessageSetList() !== null && this.getMessageSetList().getInformationList() !== null) {
+    for (var info in this.getMessageSetList().getInformationList()) {
+      if (info.getVersionSpecificInformationList() !== null) {
+        for (var versionSpecificInfo in info.getVersionSpecificInformationList()) {
           if (versionSpecificInfo.getMessageSetType() == type) {
             profiles.add(versionSpecificInfo);
           }
@@ -542,9 +536,9 @@ ProfileResponse.prototype.getProfiles = function(type) {
 
 
 ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type, /*String*/ version) {
-  for (MessageSetProfile profile : getProfiles(type)) {
-    if (version == null) {
-      if (profile.getVersion() == null) {
+  for (var profile in this.getProfiles(type)) {
+    if (version === null) {
+      if (profile.getVersion() === null) {
         return profile;
       }
     }
@@ -558,10 +552,10 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 
 
 ProfileResponse.prototype.getSignonProfile = function(/*MessageSetProfile*/ messageSet) {
-  if (getSignonInfoList() != null && getSignonInfoList().getInfoList() != null) {
-    for (SignonInfo signonInfo : getSignonInfoList().getInfoList()) {
-      if (messageSet.getRealm() == null) {
-        if (signonInfo.getRealm() == null) {
+  if (this.getSignonInfoList() !== null && this.getSignonInfoList().getInfoList() !== null) {
+    for (var signonInfo in this.getSignonInfoList().getInfoList()) {
+      if (messageSet.getRealm() === null) {
+        if (signonInfo.getRealm() === null) {
           return signonInfo;
         }
       }

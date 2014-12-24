@@ -17,26 +17,24 @@
 var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
+var BaseBuyInvestmentTransaction = require("./BaseBuyInvestmentTransaction");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying other types of securities.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseBuyInvestmentTransaction
  */
 function BuyOtherTransaction () {
+  BaseBuyInvestmentTransaction.call(this, TransactionType.BUY_OTHER);
 }
 
 inherit(BuyOtherTransaction, "extends", BaseBuyInvestmentTransaction);
 
 
 Aggregate.add("BUYOTHER", BuyOtherTransaction);
-
-
-BuyOtherTransaction.prototype.BuyOtherTransaction = function() {
-  super(TransactionType.BUY_OTHER);
-};
-
 
 
 

@@ -20,10 +20,9 @@ var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.Date;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments RequestMessage
  */
 function AccountInfoRequest () {
 
@@ -47,7 +46,7 @@ Aggregate.add("ACCTINFORQ", AccountInfoRequest);
  * @return {Date} When the account info was last updated.
  */
 AccountInfoRequest.prototype.getLastUpdated = function() {
-  return lastUpdated;
+  return this.lastUpdated;
 };
 Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoRequest, /*type: Date,*/ fcn: "getLastUpdated"});
 

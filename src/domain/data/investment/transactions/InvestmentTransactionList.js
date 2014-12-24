@@ -14,20 +14,15 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
-//import java.util.List;
 
 /**
  * The transaction list aggregate.
  * @see "Section 13.9.1.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function InvestmentTransactionList () {
 
@@ -71,7 +66,7 @@ Aggregate.add("INVTRANLIST", InvestmentTransactionList);
  * @return {Date} The start date
  */
 InvestmentTransactionList.prototype.getStart = function() {
-  return start;
+  return this.start;
 };
 Element.add({name: "DTSTART", required: true, order: 0, owner: InvestmentTransactionList, /*type: Date,*/ fcn: "getStart"});
 
@@ -92,7 +87,7 @@ InvestmentTransactionList.prototype.setStart = function(start) {
  * @return {Date} he end date
  */
 InvestmentTransactionList.prototype.getEnd = function() {
-  return end;
+  return this.end;
 };
 Element.add({name: "DTEND", required: true, order: 10, owner: InvestmentTransactionList, /*type: Date,*/ fcn: "getEnd"});
 
@@ -114,7 +109,7 @@ InvestmentTransactionList.prototype.setEnd = function(end) {
  * @return {BaseInvestmentTransaction[]} the investment transaction list
  */
 InvestmentTransactionList.prototype.getInvestmentTransactions = function() {
-  return transactions;
+  return this.transactions;
 };
 ChildAggregate.add({order: 20, owner: InvestmentTransactionList, /*type: BaseInvestmentTransaction[],*/ fcn: "getInvestmentTransactions"});
 
@@ -136,7 +131,7 @@ InvestmentTransactionList.prototype.setInvestmentTransactions = function(transac
  * @return {InvestmentBankTransaction[]} the bank transaction list
  */
 InvestmentTransactionList.prototype.getBankTransactions = function() {
-  return bankTransactions;
+  return this.bankTransactions;
 };
 ChildAggregate.add({order: 30, owner: InvestmentTransactionList, /*type: InvestmentBankTransaction[],*/ fcn: "getBankTransactions"});
 

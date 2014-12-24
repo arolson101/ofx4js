@@ -21,7 +21,8 @@ var ChildAggregate = require("meta/ChildAggregate");
 var Aggregate = require("meta/Aggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments StatementRequest
  */
 function BankStatementRequest () {
 
@@ -45,7 +46,7 @@ Aggregate.add("STMTRQ", BankStatementRequest);
  * @return {BankAccountDetails} The account details.
  */
 BankStatementRequest.prototype.getAccount = function() {
-  return account;
+  return this.account;
 };
 ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankStatementRequest, /*type: BankAccountDetails,*/ fcn: "getAccount"});
 

@@ -18,15 +18,12 @@ var inherit = require("../inherit");
 
 var RequestMessageSet = require("domain/data/RequestMessageSet");
 var MessageSetType = require("domain/data/MessageSetType");
-var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.List;
-//import java.util.ArrayList;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments RequestMessageSet
  */
 function SignupRequestMessageSet () {
 
@@ -55,7 +52,7 @@ SignupRequestMessageSet.prototype.getType = function() {
  * @return {AccountInfoRequestTransaction} The account info request.
  */
 SignupRequestMessageSet.prototype.getAccountInfoRequest = function() {
-  return accountInfoRequest;
+  return this.accountInfoRequest;
 };
 ChildAggregate.add({order: 0, owner: SignupRequestMessageSet, /*type: AccountInfoRequestTransaction,*/ fcn: "getAccountInfoRequest"});
 
@@ -76,10 +73,10 @@ SignupRequestMessageSet.prototype.setAccountInfoRequest = function(accountInfoRe
  * @return {RequestMessage[]} The request messages.
  */
 SignupRequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> messages = new ArrayList<RequestMessage>();
+  var messages = [];
 
-  if (getAccountInfoRequest() != null) {
-    messages.add(getAccountInfoRequest());
+  if (this.getAccountInfoRequest() !== null) {
+    messages.push(this.getAccountInfoRequest());
   }
   
   return messages;

@@ -14,17 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.Date;
-//import java.util.List;
-
 /**
- * @author Ryan Heaton
+ * @class
  */
 function TransactionList () {
 
@@ -61,7 +56,7 @@ Aggregate.add("BANKTRANLIST", TransactionList);
  * @return {Date} The start date.
  */
 TransactionList.prototype.getStart = function() {
-  return start;
+  return this.start;
 };
 Element.add({name: "DTSTART", required: true, order: 0, owner: TransactionList, /*type: Date,*/ fcn: "getStart"});
 
@@ -82,7 +77,7 @@ TransactionList.prototype.setStart = function(start) {
  * @return {Date} The end date.
  */
 TransactionList.prototype.getEnd = function() {
-  return end;
+  return this.end;
 };
 Element.add({name: "DTEND", required: true, order: 10, owner: TransactionList, /*type: Date,*/ fcn: "getEnd"});
 
@@ -103,7 +98,7 @@ TransactionList.prototype.setEnd = function(end) {
  * @return {Transaction[]} The transaction list.
  */
 TransactionList.prototype.getTransactions = function() {
-  return transactions;
+  return this.transactions;
 };
 ChildAggregate.add({order: 20, owner: TransactionList, /*type: Transaction[],*/ fcn: "getTransactions"});
 

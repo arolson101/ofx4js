@@ -18,11 +18,10 @@ var inherit = require("../inherit");
 
 var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
+ * @augments ResponseMessage
  */
 function T1099Request () {
 }

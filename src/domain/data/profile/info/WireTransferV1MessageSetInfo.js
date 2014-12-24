@@ -16,18 +16,15 @@
 
 var inherit = require("../inherit");
 
-var ProcessorDayOff = require("domain/data/common/ProcessorDayOff");
 var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
 var MessageSetType = require("domain/data/MessageSetType");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.List;
-
 /**
  * Wire Transfer Message Set Profile
- * @author Scott Priddy
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  * @see "Section 11.13.5 OFX Spec"
  */
 function WireTransferV1MessageSetInfo () {
@@ -80,7 +77,7 @@ WireTransferV1MessageSetInfo.prototype.getMessageSetType = function() {
 
 
 WireTransferV1MessageSetInfo.prototype.getProcessorDaysOff = function() {
-  return processorDaysOff;
+  return this.processorDaysOff;
 };
 Element.add({name: "PROCDAYSOFF", order: 10, owner: WireTransferV1MessageSetInfo, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
 
@@ -91,7 +88,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*Processo
 
 
 WireTransferV1MessageSetInfo.prototype.getProcessEndTime = function() {
-  return processEndTime;
+  return this.processEndTime;
 };
 Element.add({name: "PROCENDTM", required: true, order: 20, owner: WireTransferV1MessageSetInfo, /*type: String,*/ fcn: "getProcessEndTime"});
 
@@ -102,7 +99,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessEndTime = function(/*String*/ p
 
 
 WireTransferV1MessageSetInfo.prototype.getSupportsScheduledTransfers = function() {
-  return supportsScheduledTransfers;
+  return this.supportsScheduledTransfers;
 };
 Element.add({name: "CANSCHED", required: true, order: 30, owner: WireTransferV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsScheduledTransfers"});
 
@@ -113,7 +110,7 @@ WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(
 
 
 WireTransferV1MessageSetInfo.prototype.getDomesticWireTransferFee = function() {
-  return domesticWireTransferFee;
+  return this.domesticWireTransferFee;
 };
 Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getDomesticWireTransferFee"});
 
@@ -124,7 +121,7 @@ WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*D
 
 
 WireTransferV1MessageSetInfo.prototype.getInternationalWireTransferFee = function() {
-  return internationalWireTransferFee;
+  return this.internationalWireTransferFee;
 };
 Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getInternationalWireTransferFee"});
 

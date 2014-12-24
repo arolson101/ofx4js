@@ -17,12 +17,14 @@
 var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
+var BasePosition = require("./BasePosition");
 
 /**
  * Represents other types of positions.
  * @see "Section 13.9.2.6.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BasePosition
  */
 function OtherPosition () {
 }

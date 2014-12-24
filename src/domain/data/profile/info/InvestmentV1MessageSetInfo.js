@@ -91,7 +91,7 @@ InvestmentV1MessageSetInfo.prototype.getMessageSetType = function() {
 
 
 InvestmentV1MessageSetInfo.prototype.getSupportsStatementsDownload = function() {
-  return supportsStatementsDownload;
+  return this.supportsStatementsDownload;
 };
 Element.add({name: "TRANDNLD", required:true, order: 10, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsStatementsDownload"});
 
@@ -102,7 +102,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsStatementsDownload = function(/*
 
 
 InvestmentV1MessageSetInfo.prototype.getSupportsOpenOrdersDownload = function() {
-  return supportsOpenOrdersDownload;
+  return this.supportsOpenOrdersDownload;
 };
 Element.add({name: "OODNLD", required:true, order: 20, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsOpenOrdersDownload"});
 
@@ -113,7 +113,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsOpenOrdersDownload = function(/*
 
 
 InvestmentV1MessageSetInfo.prototype.getSupportsPositionsDownload = function() {
-  return supportsPositionsDownload;
+  return this.supportsPositionsDownload;
 };
 Element.add({name: "POSDNLD", required:true, order: 30, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPositionsDownload"});
 
@@ -124,7 +124,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsPositionsDownload = function(/*B
 
 
 InvestmentV1MessageSetInfo.prototype.getSupportsBalanceDownload = function() {
-  return supportsBalanceDownload;
+  return this.supportsBalanceDownload;
 };
 Element.add({name: "BALDNLD", required:true, order: 40, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsBalanceDownload"});
 
@@ -135,7 +135,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsBalanceDownload = function(/*Boo
 
 
 InvestmentV1MessageSetInfo.prototype.getSupportsEmail = function() {
-  return supportsEmail;
+  return this.supportsEmail;
 };
 Element.add({name: "CANEMAIL", required:true, order: 50, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsEmail"});
 
@@ -146,7 +146,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsEmail = function(/*Boolean*/ sup
 
 
 InvestmentV1MessageSetInfo.prototype.getSupports401kInformation = function() {
-  return supports401kInformation;
+  return this.supports401kInformation;
 };
 Element.add({name: "INV401KDNLD", order: 60, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupports401kInformation"});
 
@@ -157,7 +157,7 @@ InvestmentV1MessageSetInfo.prototype.setSupports401kInformation = function(/*Boo
 
 
 InvestmentV1MessageSetInfo.prototype.getSupportsClosingStatements = function() {
-  return supportsClosingStatements;
+  return this.supportsClosingStatements;
 };
 Element.add({name: "CLOSINGAVAIL", order: 70, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClosingStatements"});
 

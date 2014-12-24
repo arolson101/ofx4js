@@ -18,18 +18,24 @@ var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
+var IncomeType = require("./IncomeType");
 
 /**
  * Transaction for reinvestment transactions.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
 function ReinvestIncomeTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.REINVEST_INCOME);
 
   /**
    * @name ReinvestIncomeTransaction#securityId
@@ -137,11 +143,6 @@ inherit(ReinvestIncomeTransaction, "implements", TransactionWithSecurity);
 Aggregate.add("REINVEST", ReinvestIncomeTransaction);
 
 
-ReinvestIncomeTransaction.prototype.ReinvestIncomeTransaction = function() {
-  super(TransactionType.REINVEST_INCOME);
-};
-
-
 /**
  * Gets the id of the security that was reinvested in. This is a required field according to the
  * OFX spec.
@@ -150,7 +151,7 @@ ReinvestIncomeTransaction.prototype.ReinvestIncomeTransaction = function() {
  * @return {SecurityId} the security id of the security that was reinvested in
  */
 ReinvestIncomeTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: ReinvestIncomeTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -176,7 +177,7 @@ ReinvestIncomeTransaction.prototype.setSecurityId = function(securityId) {
  * @return {String} the type of income
  */
 ReinvestIncomeTransaction.prototype.getIncomeType = function() {
-  return incomeType;
+  return this.incomeType;
 };
 Element.add({name: "INCOMETYPE", required: true, order: 30, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getIncomeType"});
 
@@ -200,7 +201,7 @@ ReinvestIncomeTransaction.prototype.setIncomeType = function(incomeType) {
  * @return {IncomeType} the income type or null if it's not one of the well-known types
  */
 ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
-  return IncomeType.fromOfx(getIncomeType());
+  return IncomeType.fromOfx(this.getIncomeType());
 };
 
 
@@ -211,7 +212,7 @@ ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
  * @return {Double} the total
  */
 ReinvestIncomeTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", required: true, order: 40, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -235,7 +236,7 @@ ReinvestIncomeTransaction.prototype.setTotal = function(total) {
  * @return {String} the sub account type
  */
 ReinvestIncomeTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 50, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -258,7 +259,7 @@ ReinvestIncomeTransaction.prototype.setSubAccountSecurity = function(subAccountS
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -270,7 +271,7 @@ ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {Double} the number of units purchased
  */
 ReinvestIncomeTransaction.prototype.getUnits = function() {
-  return units;
+  return this.units;
 };
 Element.add({name: "UNITS", required: true, order: 60, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getUnits"});
 
@@ -294,7 +295,7 @@ ReinvestIncomeTransaction.prototype.setUnits = function(units) {
  * @return {Double} the per unit price
  */
 ReinvestIncomeTransaction.prototype.getUnitPrice = function() {
-  return unitPrice;
+  return this.unitPrice;
 };
 Element.add({name: "UNITPRICE", required: true, order: 70, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
 
@@ -318,7 +319,7 @@ ReinvestIncomeTransaction.prototype.setUnitPrice = function(unitPrice) {
  * @return {Double} the transaction commision
  */
 ReinvestIncomeTransaction.prototype.getCommission = function() {
-  return commission;
+  return this.commission;
 };
 Element.add({name: "COMMISSION", order: 80, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getCommission"});
 
@@ -342,7 +343,7 @@ ReinvestIncomeTransaction.prototype.setCommission = function(commission) {
  * @return {Double} the transaction taxes
  */
 ReinvestIncomeTransaction.prototype.getTaxes = function() {
-  return taxes;
+  return this.taxes;
 };
 Element.add({name: "TAXES", order: 90, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getTaxes"});
 
@@ -365,7 +366,7 @@ ReinvestIncomeTransaction.prototype.setTaxes = function(taxes) {
  * @return {Double} the transaction fees
  */
 ReinvestIncomeTransaction.prototype.getFees = function() {
-  return fees;
+  return this.fees;
 };
 Element.add({name: "FEES", order: 100, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getFees"});
 
@@ -388,7 +389,7 @@ ReinvestIncomeTransaction.prototype.setFees = function(fees) {
  * @return {Double} the load
  */
 ReinvestIncomeTransaction.prototype.getLoad = function() {
-  return load;
+  return this.load;
 };
 Element.add({name: "LOAD", order: 110, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getLoad"});
 
@@ -411,7 +412,7 @@ ReinvestIncomeTransaction.prototype.setLoad = function(load) {
  * @return {Boolean} whether the transaction was tax exempt
  */
 ReinvestIncomeTransaction.prototype.getTaxExempt = function() {
-  return taxExempt;
+  return this.taxExempt;
 };
 Element.add({name: "TAXEXEMPT", order: 120, owner: ReinvestIncomeTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
 
@@ -435,7 +436,7 @@ ReinvestIncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
  * @return {String} the currency code for the transaction
  */
 ReinvestIncomeTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 130, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -460,7 +461,7 @@ ReinvestIncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
  * @return {OriginalCurrency} the original currency info for the transaction.
  */
 ReinvestIncomeTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 Element.add({name: "ORIGCURRENCY", order: 140, owner: ReinvestIncomeTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -486,7 +487,7 @@ ReinvestIncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalC
  * @return {String} the state withholding
  */
 ReinvestIncomeTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 150, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -510,7 +511,7 @@ ReinvestIncomeTransaction.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the type of close or null if it's not well known
  */
 ReinvestIncomeTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

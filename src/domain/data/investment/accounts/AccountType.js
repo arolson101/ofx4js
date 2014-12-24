@@ -14,35 +14,32 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of investment account.
  *
- * @author Jon Perlow
+ * @enum
  * @see "OFX Spec, Section 13.6.2"
  */
 var AccountType = {
   INDIVIDUAL: 0,
   JOINT: 1,
   TRUST: 2,
-  CORPORATE: 3;
+  CORPORATE: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("INDIVIDUAL".equals(ofxVal)) {
-      return INDIVIDUAL;
+      return AccountType.INDIVIDUAL;
     } else if ("JOINT".equals(ofxVal)) {
-      return JOINT;
+      return AccountType.JOINT;
     } else if ("CORPORATE".equals(ofxVal)) {
-      return CORPORATE;
+      return AccountType.CORPORATE;
     } else if ("CORPORATE".equals(ofxVal)) {
-      return CORPORATE;
+      return AccountType.CORPORATE;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = AccountType;

@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
@@ -23,7 +21,7 @@ var Element = require("meta/Element");
  * Security request aggregate.
  * @see "Section 13.8.2.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function SecurityRequest () {
 
@@ -55,7 +53,7 @@ Aggregate.add("SECRQ", SecurityRequest);
 
 
 SecurityRequest.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 Element.add({name: "SECID", order: 10, owner: SecurityRequest, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -68,7 +66,7 @@ SecurityRequest.prototype.setSecurityId = function(/*SecurityId*/ securityId) {
 
 
 SecurityRequest.prototype.getTickerSymbol = function() {
-  return tickerSymbol;
+  return this.tickerSymbol;
 };
 Element.add({name: "TICKER", order: 20, owner: SecurityRequest, /*type: String,*/ fcn: "getTickerSymbol"});
 
@@ -81,7 +79,7 @@ SecurityRequest.prototype.setTickerSymbol = function(/*String*/ tickerSymbol) {
 
 
 SecurityRequest.prototype.getFiId = function() {
-  return fiId;
+  return this.fiId;
 };
 Element.add({name: "FIID", order: 30, owner: SecurityRequest, /*type: String,*/ fcn: "getFiId"});
 

@@ -23,7 +23,8 @@ var SignonProfile = require("domain/data/SignonProfile");
 /**
  * Sign-on information
  *
- * @author Ryan Heaton
+ * @class
+ * @augments SignonProfile
  * @see "Section 7.2.2, OFX Spec"
  */
 function SignonInfo () {
@@ -160,7 +161,7 @@ Aggregate.add("SIGNONINFO", SignonInfo);
  * @return {String} The name of the sign-on realm.
  */
 SignonInfo.prototype.getRealm = function() {
-  return realm;
+  return this.realm;
 };
 Element.add({name: "SIGNONREALM", required: true, order: 0, owner: SignonInfo, /*type: String,*/ fcn: "getRealm"});
 
@@ -181,7 +182,7 @@ SignonInfo.prototype.setRealm = function(realm) {
  * @return {Integer} The minimum number of password characters.
  */
 SignonInfo.prototype.getMinPasswordCharacters = function() {
-  return minPasswordCharacters;
+  return this.minPasswordCharacters;
 };
 Element.add({name: "MIN", required: true, order: 10, owner: SignonInfo, /*type: Integer,*/ fcn: "getMinPasswordCharacters"});
 
@@ -202,7 +203,7 @@ SignonInfo.prototype.setMinPasswordCharacters = function(minPasswordCharacters) 
  * @return {Integer} The maximum number of password characters.
  */
 SignonInfo.prototype.getMaxPasswordCharacters = function() {
-  return maxPasswordCharacters;
+  return this.maxPasswordCharacters;
 };
 Element.add({name: "MAX", required: true, order: 20, owner: SignonInfo, /*type: Integer,*/ fcn: "getMaxPasswordCharacters"});
 
@@ -223,7 +224,7 @@ SignonInfo.prototype.setMaxPasswordCharacters = function(maxPasswordCharacters) 
  * @return {CharacterType} The type of password characters supported.
  */
 SignonInfo.prototype.getPasswordCharacterType = function() {
-  return passwordCharacterType;
+  return this.passwordCharacterType;
 };
 Element.add({name: "CHARTYPE", required: true, order: 30, owner: SignonInfo, /*type: CharacterType,*/ fcn: "getPasswordCharacterType"});
 
@@ -244,7 +245,7 @@ SignonInfo.prototype.setPasswordCharacterType = function(passwordCharacterType) 
  * @return {Boolean} Whether the password is case-sensitive.
  */
 SignonInfo.prototype.getPasswordCaseSensitive = function() {
-  return passwordCaseSensitive;
+  return this.passwordCaseSensitive;
 };
 Element.add({name: "CASESEN", required: true, order: 40, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordCaseSensitive"});
 
@@ -265,7 +266,7 @@ SignonInfo.prototype.setPasswordCaseSensitive = function(passwordCaseSensitive) 
  * @return {Boolean} Whether special characters are allowed in the password.
  */
 SignonInfo.prototype.getPasswordSpecialCharsAllowed = function() {
-  return passwordSpecialCharsAllowed;
+  return this.passwordSpecialCharsAllowed;
 };
 Element.add({name: "SPECIAL", required: true, order: 50, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordSpecialCharsAllowed"});
 
@@ -286,7 +287,7 @@ SignonInfo.prototype.setPasswordSpecialCharsAllowed = function(passwordSpecialCh
  * @return {Boolean} Whether spaces are allowed in the password.
  */
 SignonInfo.prototype.getPasswordSpacesAllowed = function() {
-  return passwordSpacesAllowed;
+  return this.passwordSpacesAllowed;
 };
 Element.add({name: "SPACES", required: true, order: 60, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordSpacesAllowed"});
 
@@ -307,7 +308,7 @@ SignonInfo.prototype.setPasswordSpacesAllowed = function(passwordSpacesAllowed) 
  * @return {Boolean} Whether the server can process a password change request for this realm.
  */
 SignonInfo.prototype.getChangePasswordSupported = function() {
-  return changePasswordSupported;
+  return this.changePasswordSupported;
 };
 Element.add({name: "PINCH", required: true, order: 70, owner: SignonInfo, /*type: Boolean,*/ fcn: "getChangePasswordSupported"});
 
@@ -328,7 +329,7 @@ SignonInfo.prototype.setChangePasswordSupported = function(changePasswordSupport
  * @return {Boolean} Whether the server requires the user to change their password as part of their first signon.
  */
 SignonInfo.prototype.getChangePasswordFirstRequired = function() {
-  return changePasswordFirstRequired;
+  return this.changePasswordFirstRequired;
 };
 Element.add({name: "CHGPINFIRST", required: true, order: 80, owner: SignonInfo, /*type: Boolean,*/ fcn: "getChangePasswordFirstRequired"});
 
@@ -349,7 +350,7 @@ SignonInfo.prototype.setChangePasswordFirstRequired = function(changePasswordFir
  * @return {String} Label for a set of additional credentials that the user must supply.
  */
 SignonInfo.prototype.getAdditionalCredientialsLabel1 = function() {
-  return additionalCredientialsLabel1;
+  return this.additionalCredientialsLabel1;
 };
 Element.add({name: "USERCRED1LABEL", order: 90, owner: SignonInfo, /*type: String,*/ fcn: "getAdditionalCredientialsLabel1"});
 
@@ -370,7 +371,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel1 = function(additionalCredie
  * @return {String} Label for a set of additional credentials that the user must supply.
  */
 SignonInfo.prototype.getAdditionalCredientialsLabel2 = function() {
-  return additionalCredientialsLabel2;
+  return this.additionalCredientialsLabel2;
 };
 Element.add({name: "USERCRED2LABEL", order: 100, owner: SignonInfo, /*type: String,*/ fcn: "getAdditionalCredientialsLabel2"});
 
@@ -391,7 +392,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel2 = function(additionalCredie
  * @return {Boolean} Whether a client UID is required for teh sign-on.
  */
 SignonInfo.prototype.getClientUIDRequired = function() {
-  return clientUIDRequired;
+  return this.clientUIDRequired;
 };
 Element.add({name: "CLIENTUIDREQ", order: 110, owner: SignonInfo, /*type: Boolean,*/ fcn: "getClientUIDRequired"});
 
@@ -412,7 +413,7 @@ SignonInfo.prototype.setClientUIDRequired = function(clientUIDRequired) {
  * @return {Boolean} Whether an auth token is required for the sign-on.
  */
 SignonInfo.prototype.getAuthTokenRequiredForFirstSignon = function() {
-  return authTokenRequiredForFirstSignon;
+  return this.authTokenRequiredForFirstSignon;
 };
 Element.add({name: "AUTHTOKENFIRST", order: 120, owner: SignonInfo, /*type: Boolean,*/ fcn: "getAuthTokenRequiredForFirstSignon"});
 
@@ -434,7 +435,7 @@ SignonInfo.prototype.setAuthTokenRequiredForFirstSignon = function(authTokenRequ
  * @return {String} The label of the auth token.
  */
 SignonInfo.prototype.getAuthTokenLabel = function() {
-  return authTokenLabel;
+  return this.authTokenLabel;
 };
 Element.add({name: "AUTHTOKENLABEL", order: 130, owner: SignonInfo, /*type: String,*/ fcn: "getAuthTokenLabel"});
 
@@ -455,7 +456,7 @@ SignonInfo.prototype.setAuthTokenLabel = function(authTokenLabel) {
  * @return {String} The URL for the auth token information.
  */
 SignonInfo.prototype.getAuthTokenInfoURL = function() {
-  return authTokenInfoURL;
+  return this.authTokenInfoURL;
 };
 Element.add({name: "AUTHTOKENINFOURL", order: 140, owner: SignonInfo, /*type: String,*/ fcn: "getAuthTokenInfoURL"});
 
@@ -476,7 +477,7 @@ SignonInfo.prototype.setAuthTokenInfoURL = function(authTokenInfoURL) {
  * @return {Boolean} Whether MFA is supported.
  */
 SignonInfo.prototype.getMfaSupported = function() {
-  return mfaSupported;
+  return this.mfaSupported;
 };
 Element.add({name: "MFACHALLENGESUPT", order: 150, owner: SignonInfo, /*type: Boolean,*/ fcn: "getMfaSupported"});
 
@@ -497,7 +498,7 @@ SignonInfo.prototype.setMfaSupported = function(mfaSupported) {
  * @return {Boolean} Whether an MFA challenge request is required for the first sign-on into this realm.
  */
 SignonInfo.prototype.getMfaChallengeRequiredForFirstSignon = function() {
-  return mfaChallengeRequiredForFirstSignon;
+  return this.mfaChallengeRequiredForFirstSignon;
 };
 Element.add({name: "MFACHALLENGEFIRST", order: 160, owner: SignonInfo, /*type: Boolean,*/ fcn: "getMfaChallengeRequiredForFirstSignon"});
 

@@ -17,9 +17,10 @@
 var inherit = require("../inherit");
 
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var ChildAggregate = require("meta/ChildAggregate");
+var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
 
 /**
  * Base class for all investment transactions for selling securities.
@@ -28,9 +29,12 @@ var ChildAggregate = require("meta/ChildAggregate");
  * common to all sell investment transactions as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
-function BaseSellInvestmentTransaction () {
+function BaseSellInvestmentTransaction (/*TransactionType*/ transactionType) {
+  BaseInvestmentTransaction.call(this, transactionType);
 
   /**
    * @name BaseSellInvestmentTransaction#sellInvestment
@@ -58,7 +62,7 @@ BaseSellInvestmentTransaction.prototype.BaseSellInvestmentTransaction = function
  */
 // @Override
 BaseSellInvestmentTransaction.prototype.getSellInvestment = function() {
-  return sellInvestment;
+  return this.sellInvestment;
 };
 ChildAggregate.add({order: 10, owner: BaseSellInvestmentTransaction, /*type: SellInvestmentTransaction,*/ fcn: "getSellInvestment"});
 
@@ -80,7 +84,7 @@ BaseSellInvestmentTransaction.prototype.setSellInvestment = function(sellInvestm
  */
 // @Overridden
 BaseSellInvestmentTransaction.prototype.getInvestmentTransaction = function() {
-  return getSellInvestment().getInvestmentTransaction();
+  return this.getSellInvestment().getInvestmentTransaction();
 };
 
 
@@ -92,7 +96,7 @@ BaseSellInvestmentTransaction.prototype.getInvestmentTransaction = function() {
  * @return {SecurityId} the security id of the security that was bought
  */
 BaseSellInvestmentTransaction.prototype.getSecurityId = function() {
-  return getSellInvestment().getSecurityId();
+  return this.getSellInvestment().getSecurityId();
 };
 
 
@@ -106,7 +110,7 @@ BaseSellInvestmentTransaction.prototype.getSecurityId = function() {
  * @return {Double} the number of units purchased.
  */
 BaseSellInvestmentTransaction.prototype.getUnits = function() {
-  return getSellInvestment().getUnits();
+  return this.getSellInvestment().getUnits();
 };
 
 
@@ -119,7 +123,7 @@ BaseSellInvestmentTransaction.prototype.getUnits = function() {
  * @return {Double} the per unit price
  */
 BaseSellInvestmentTransaction.prototype.getUnitPrice = function() {
-  return getSellInvestment().getUnitPrice();
+  return this.getSellInvestment().getUnitPrice();
 };
 
 
@@ -131,7 +135,7 @@ BaseSellInvestmentTransaction.prototype.getUnitPrice = function() {
  * @return {Double} the per unit markedown price
  */
 BaseSellInvestmentTransaction.prototype.getMarkdown = function() {
-  return getSellInvestment().getMarkdown();
+  return this.getSellInvestment().getMarkdown();
 };
 
 
@@ -143,7 +147,7 @@ BaseSellInvestmentTransaction.prototype.getMarkdown = function() {
  * @return {Double} the transaction commision
  */
 BaseSellInvestmentTransaction.prototype.getCommission = function() {
-  return getSellInvestment().getCommission();
+  return this.getSellInvestment().getCommission();
 };
 
 
@@ -154,7 +158,7 @@ BaseSellInvestmentTransaction.prototype.getCommission = function() {
  * @return {Double} the transaction taxes
  */
 BaseSellInvestmentTransaction.prototype.getTaxes = function() {
-  return getSellInvestment().getTaxes();
+  return this.getSellInvestment().getTaxes();
 };
 
 
@@ -165,7 +169,7 @@ BaseSellInvestmentTransaction.prototype.getTaxes = function() {
  * @return {Double} the transaction fees
  */
 BaseSellInvestmentTransaction.prototype.getFees = function() {
-  return getSellInvestment().getFees();
+  return this.getSellInvestment().getFees();
 };
 
 
@@ -176,7 +180,7 @@ BaseSellInvestmentTransaction.prototype.getFees = function() {
  * @return {Double} the load
  */
 BaseSellInvestmentTransaction.prototype.getLoad = function() {
-  return getSellInvestment().getLoad();
+  return this.getSellInvestment().getLoad();
 };
 
 
@@ -187,7 +191,7 @@ BaseSellInvestmentTransaction.prototype.getLoad = function() {
  * @return {Double} the withholding
  */
 BaseSellInvestmentTransaction.prototype.getWithholding = function() {
-  return getSellInvestment().getWithholding();
+  return this.getSellInvestment().getWithholding();
 };
 
 
@@ -198,7 +202,7 @@ BaseSellInvestmentTransaction.prototype.getWithholding = function() {
  * @return {Boolean} whether the transaction was tax exempt
  */
 BaseSellInvestmentTransaction.prototype.getTaxExempt = function() {
-  return getSellInvestment().getTaxExempt();
+  return this.getSellInvestment().getTaxExempt();
 };
 
 
@@ -212,7 +216,7 @@ BaseSellInvestmentTransaction.prototype.getTaxExempt = function() {
  * @return {Double} the total
  */
 BaseSellInvestmentTransaction.prototype.getTotal = function() {
-  return getSellInvestment().getTotal();
+  return this.getSellInvestment().getTotal();
 };
 
 
@@ -223,7 +227,7 @@ BaseSellInvestmentTransaction.prototype.getTotal = function() {
  * @return {Double} the gain for the sale
  */
 BaseSellInvestmentTransaction.prototype.getGain = function() {
-  return getSellInvestment().getGain();
+  return this.getSellInvestment().getGain();
 };
 
 
@@ -235,7 +239,7 @@ BaseSellInvestmentTransaction.prototype.getGain = function() {
  * @return {String} the currency code for the transaction.
  */
 BaseSellInvestmentTransaction.prototype.getCurrencyCode = function() {
-  return getSellInvestment().getCurrencyCode();
+  return this.getSellInvestment().getCurrencyCode();
 };
 
 
@@ -246,7 +250,7 @@ BaseSellInvestmentTransaction.prototype.getCurrencyCode = function() {
  * @return {OriginalCurrency} the currency info for the transaction.
  */
 BaseSellInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return getSellInvestment().getOriginalCurrencyInfo();
+  return this.getSellInvestment().getOriginalCurrencyInfo();
 };
 
 
@@ -257,7 +261,7 @@ BaseSellInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
  * @return {String} the sub account type
  */
 BaseSellInvestmentTransaction.prototype.getSubAccountSecurity = function() {
-  return getSellInvestment().getSubAccountSecurity();
+  return this.getSellInvestment().getSubAccountSecurity();
 };
 
 
@@ -267,7 +271,7 @@ BaseSellInvestmentTransaction.prototype.getSubAccountSecurity = function() {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 BaseSellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -278,7 +282,7 @@ BaseSellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund
  */
 BaseSellInvestmentTransaction.prototype.getSubAccountFund = function() {
-  return getSellInvestment().getSubAccountFund();
+  return this.getSellInvestment().getSubAccountFund();
 };
 
 
@@ -288,7 +292,7 @@ BaseSellInvestmentTransaction.prototype.getSubAccountFund = function() {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 BaseSellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 
@@ -300,7 +304,7 @@ BaseSellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {String} the loan id
  */
 BaseSellInvestmentTransaction.prototype.getLoadId = function() {
-  return getSellInvestment().getLoanId();
+  return this.getSellInvestment().getLoanId();
 };
 
 
@@ -311,7 +315,7 @@ BaseSellInvestmentTransaction.prototype.getLoadId = function() {
  * @return {Double} the state withholding
  */
 BaseSellInvestmentTransaction.prototype.getStateWithholding = function() {
-  return getSellInvestment().getStateWithholding();
+  return this.getSellInvestment().getStateWithholding();
 };
 
 
@@ -322,7 +326,7 @@ BaseSellInvestmentTransaction.prototype.getStateWithholding = function() {
  * @return {Double} the state withholding
  */
 BaseSellInvestmentTransaction.prototype.getPenalty = function() {
-  return getSellInvestment().getPenalty();
+  return this.getSellInvestment().getPenalty();
 };
 
 
@@ -335,7 +339,7 @@ BaseSellInvestmentTransaction.prototype.getPenalty = function() {
  * @return {String} the 401k source
  */
 BaseSellInvestmentTransaction.prototype.get401kSource = function() {
-  return getSellInvestment().get401kSource();
+  return this.getSellInvestment().get401kSource();
 };
 
 
@@ -345,7 +349,7 @@ BaseSellInvestmentTransaction.prototype.get401kSource = function() {
  * @return {Inv401KSource} the 401k source or null if its not one of the well-known types
  */
 BaseSellInvestmentTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

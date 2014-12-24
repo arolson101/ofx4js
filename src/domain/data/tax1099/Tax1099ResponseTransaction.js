@@ -18,10 +18,11 @@ var inherit = require("../inherit");
 var TransactionWrappedResponseMessage = require("domain/data/TransactionWrappedResponseMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
+var Tax1099Response = require("./Tax1099Response");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
+ * @augments TransactionWrappedResponseMessage
  */
 function Tax1099ResponseTransaction () {
 
@@ -45,7 +46,7 @@ Aggregate.add("TAX1099TRNRS", Tax1099ResponseTransaction);
  * @return {Tax1099Response} The tax1099Response.
  */
 Tax1099ResponseTransaction.prototype.getTax1099Response = function() {
-  return tax1099Response;
+  return this.tax1099Response;
 };
 ChildAggregate.add({required:false, order: 2, owner: Tax1099ResponseTransaction, /*type: Tax1099Response,*/ fcn: "getTax1099Response"});
 
@@ -62,7 +63,7 @@ Tax1099ResponseTransaction.prototype.setTax1099Response = function(tax1099Respon
 
 // Inherited.
 Tax1099ResponseTransaction.prototype.getWrappedMessage = function() {
-  return getTax1099Response();
+  return this.getTax1099Response();
 };
 
 

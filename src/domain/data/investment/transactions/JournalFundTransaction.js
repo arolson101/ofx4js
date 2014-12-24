@@ -19,15 +19,19 @@ var inherit = require("../inherit");
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for journal fund transactions between sub-accounts within the same investment
  * account.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
  */
 function JournalFundTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.JOURNAL_FUND);
 
   /**
    * @name JournalFundTransaction#subAccountFrom
@@ -69,7 +73,7 @@ JournalFundTransaction.prototype.JournalFundTransaction = function() {
  * @return {String} the sub account type
  */
 JournalFundTransaction.prototype.getFromSubAccountFund = function() {
-  return subAccountFrom;
+  return this.subAccountFrom;
 };
 Element.add({name: "SUBACCTFROM", order: 20, owner: JournalFundTransaction, /*type: String,*/ fcn: "getFromSubAccountFund"});
 
@@ -91,7 +95,7 @@ JournalFundTransaction.prototype.setFromSubAccountFund = function(subAccountFrom
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getFromSubAccountFund());
+  return SubAccountType.fromOfx(this.getFromSubAccountFund());
 };
 
 
@@ -102,7 +106,7 @@ JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
  * @return {String} the sub account fund
  */
 JournalFundTransaction.prototype.getToSubAccountFund = function() {
-  return subAccountTo;
+  return this.subAccountTo;
 };
 Element.add({name: "SUBACCTTO", order: 30, owner: JournalFundTransaction, /*type: String,*/ fcn: "getToSubAccountFund"});
 
@@ -124,7 +128,7 @@ JournalFundTransaction.prototype.setToSubAccountFund = function(subAccountTo) {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getToSubAccountFund());
+  return SubAccountType.fromOfx(this.getToSubAccountFund());
 };
 
 
@@ -135,7 +139,7 @@ JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
  * @return {Double} the total
  */
 JournalFundTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", order: 40, owner: JournalFundTransaction, /*type: Double,*/ fcn: "getTotal"});
 

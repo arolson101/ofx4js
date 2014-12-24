@@ -17,7 +17,6 @@
 var inherit = require("../inherit");
 
 var StatementRequest = require("domain/data/common/StatementRequest");
-var InvestmentAccountDetails = require("domain/data/investment/accounts/InvestmentAccountDetails");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
@@ -26,7 +25,8 @@ var Element = require("meta/Element");
  * Aggregate for the investment statement download request.
  * @see "Section 13.9.1.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments StatementRequest
  */
 function InvestmentStatementRequest () {
 
@@ -71,7 +71,7 @@ Aggregate.add("INVSTMTRQ", InvestmentStatementRequest);
  * @return {InvestmentAccountDetails} The account details.
  */
 InvestmentStatementRequest.prototype.getAccount = function() {
-  return account;
+  return this.account;
 };
 ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentStatementRequest, /*type: InvestmentAccountDetails,*/ fcn: "getAccount"});
 
@@ -94,7 +94,7 @@ InvestmentStatementRequest.prototype.setAccount = function(account) {
  * @return {Boolean} whether to include open orders
  */
 InvestmentStatementRequest.prototype.getIncludeOpenOrders = function() {
-  return includeOpenOrders;
+  return this.includeOpenOrders;
 };
 Element.add({name: "INCOO", order: 20, owner: InvestmentStatementRequest, /*type: Boolean,*/ fcn: "getIncludeOpenOrders"});
 
@@ -117,7 +117,7 @@ InvestmentStatementRequest.prototype.setIncludeOpenOrders = function(includeOpen
  * @return {IncludePosition} the include position child aggregate
  */
 InvestmentStatementRequest.prototype.getIncludePosition = function() {
-  return includePosition;
+  return this.includePosition;
 };
 ChildAggregate.add({name: "INCPOS", required: true, order: 30, owner: InvestmentStatementRequest, /*type: IncludePosition,*/ fcn: "getIncludePosition"});
 
@@ -139,7 +139,7 @@ InvestmentStatementRequest.prototype.setIncludePosition = function(includePositi
  * @return {Boolean} whether to include balance info in the response
  */
 InvestmentStatementRequest.prototype.getIncludeBalance = function() {
-  return includeBalance;
+  return this.includeBalance;
 };
 Element.add({name: "INCBAL", required: true, order: 40, owner: InvestmentStatementRequest, /*type: Boolean,*/ fcn: "getIncludeBalance"});
 

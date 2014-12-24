@@ -18,14 +18,15 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var BaseSecurityInfo = require("./BaseSecurityInfo");
+var MutualFundType = require("./MutualFundType");
 
 /**
  * Info about a mutual fund security.
  * @see "Section 13.8.5.3, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSecurityInfo
  */
 function MutualFundSecurityInfo () {
 
@@ -64,7 +65,7 @@ Aggregate.add("MFINFO", MutualFundSecurityInfo);
  * @return {String} the mutual fund type
  */
 MutualFundSecurityInfo.prototype.getType = function() {
-  return mfType;
+  return this.mfType;
 };
 Element.add({name: "MFTYPE", order: 20, owner: MutualFundSecurityInfo, /*type: String,*/ fcn: "getType"});
 
@@ -86,7 +87,7 @@ MutualFundSecurityInfo.prototype.setType = function(mfType) {
  * @return {MutualFundType} the mutual fund type or null if it's not one of the well-known types
  */
 MutualFundSecurityInfo.prototype.getTypeEnum = function() {
-  return MutualFundType.fromOfx(getType());
+  return MutualFundType.fromOfx(this.getType());
 };
 
 
@@ -96,7 +97,7 @@ MutualFundSecurityInfo.prototype.getTypeEnum = function() {
  * @return {Double} the yield as a rate
  */
 MutualFundSecurityInfo.prototype.getYield = function() {
-  return yield;
+  return this.yield;
 };
 Element.add({name: "YIELD", order: 30, owner: MutualFundSecurityInfo, /*type: Double,*/ fcn: "getYield"});
 
@@ -106,8 +107,8 @@ Element.add({name: "YIELD", order: 30, owner: MutualFundSecurityInfo, /*type: Do
  *
  * @param {Double} yield the yield as a rate
  */
-MutualFundSecurityInfo.prototype.setYield = function(yield) {
-  this.yield = yield;
+MutualFundSecurityInfo.prototype.setYield = function(yield_) {
+  this.yield = yield_;
 };
 
 
@@ -117,7 +118,7 @@ MutualFundSecurityInfo.prototype.setYield = function(yield) {
  * @return {Date} the as-of date for the yield
  */
 MutualFundSecurityInfo.prototype.getDateYieldAsOf = function() {
-  return dateYieldAsOf;
+  return this.dateYieldAsOf;
 };
 Element.add({name: "DTYIELDASOF", order: 40, owner: MutualFundSecurityInfo, /*type: Date,*/ fcn: "getDateYieldAsOf"});
 

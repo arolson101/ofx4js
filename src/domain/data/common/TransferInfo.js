@@ -14,18 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
-var BankAccountDetails = require("domain/data/banking/BankAccountDetails");
-var CreditCardAccountDetails = require("domain/data/creditcard/CreditCardAccountDetails");
-
-//import java.util.Date;
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function TransferInfo () {
 
@@ -83,7 +77,7 @@ Aggregate.add("XFERINFO", TransferInfo);
  * @return {BankAccountDetails} The bank account to transfer from.
  */
 TransferInfo.prototype.getBankAccountFrom = function() {
-  return bankAccountFrom;
+  return this.bankAccountFrom;
 };
 ChildAggregate.add({name: "BANKACCTFROM", order: 0, owner: TransferInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccountFrom"});
 
@@ -105,7 +99,7 @@ TransferInfo.prototype.setBankAccountFrom = function(bankAccountFrom) {
  * @param {BankAccountDetails} bankAccountFrom The account to transfer from.
  */
 TransferInfo.prototype.setAccountFrom = function(bankAccountFrom) {
-  setBankAccountFrom(bankAccountFrom);
+  this.setBankAccountFrom(bankAccountFrom);
 };
 
 
@@ -115,7 +109,7 @@ TransferInfo.prototype.setAccountFrom = function(bankAccountFrom) {
  * @return {CreditCardAccountDetails} The credit card to transfer from.
  */
 TransferInfo.prototype.getCreditCardAccountFrom = function() {
-  return creditCardAccountFrom;
+  return this.creditCardAccountFrom;
 };
 ChildAggregate.add({name: "CCACCTFROM", order: 10, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountFrom"});
 
@@ -137,7 +131,7 @@ TransferInfo.prototype.setCreditCardAccountFrom = function(creditCardAccountFrom
  * @param {CreditCardAccountDetails} creditCardAccountFrom The credit card to transfer from.
  */
 TransferInfo.prototype.setAccountFrom = function(creditCardAccountFrom) {
-  setCreditCardAccountFrom(creditCardAccountFrom);
+  this.setCreditCardAccountFrom(creditCardAccountFrom);
 };
 
 
@@ -147,7 +141,7 @@ TransferInfo.prototype.setAccountFrom = function(creditCardAccountFrom) {
  * @return {BankAccountDetails} The bank account to transfer to.
  */
 TransferInfo.prototype.getBankAccountTo = function() {
-  return bankAccountTo;
+  return this.bankAccountTo;
 };
 ChildAggregate.add({name: "BANKACCTTO", order: 20, owner: TransferInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccountTo"});
 
@@ -169,7 +163,7 @@ TransferInfo.prototype.setBankAccountTo = function(bankAccountTo) {
  * @param {BankAccountDetails} bankAccountTo The bank account to transfer to.
  */
 TransferInfo.prototype.setAccountTo = function(bankAccountTo) {
-  setBankAccountTo(bankAccountTo);
+  this.setBankAccountTo(bankAccountTo);
 };
 
 
@@ -179,7 +173,7 @@ TransferInfo.prototype.setAccountTo = function(bankAccountTo) {
  * @return {CreditCardAccountDetails} The credit card account to transfer to.
  */
 TransferInfo.prototype.getCreditCardAccountTo = function() {
-  return creditCardAccountTo;
+  return this.creditCardAccountTo;
 };
 ChildAggregate.add({name: "CCACCTTO", order: 30, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountTo"});
 
@@ -201,7 +195,7 @@ TransferInfo.prototype.setCreditCardAccountTo = function(creditCardAccountTo) {
  * @param {CreditCardAccountDetails} creditCardAccountTo The credit card account to transfer to.
  */
 TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
-  setCreditCardAccountTo(creditCardAccountTo);
+  this.setCreditCardAccountTo(creditCardAccountTo);
 };
 
 
@@ -211,7 +205,7 @@ TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
  * @return {Double} The amount.
  */
 TransferInfo.prototype.getAmount = function() {
-  return amount;
+  return this.amount;
 };
 Element.add({name: "TRNAMT", required: true, order: 40, owner: TransferInfo, /*type: Double,*/ fcn: "getAmount"});
 
@@ -232,7 +226,7 @@ TransferInfo.prototype.setAmount = function(amount) {
  * @return {Date} The due date.
  */
 TransferInfo.prototype.getDue = function() {
-  return due;
+  return this.due;
 };
 Element.add({name: "DTDUE", order: 50, owner: TransferInfo, /*type: Date,*/ fcn: "getDue"});
 

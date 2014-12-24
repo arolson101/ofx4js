@@ -17,19 +17,26 @@
 var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
+var TransactionType = require("./TransactionType");
+var CloseOptionAction = require("./CloseOptionAction");
+
 
 /**
  * Transaction for closing an option position due to expiration, exercise, or assignment.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
 function CloseOptionTransaction () {
-
+  BaseOtherInvestmentTransaction.call(this, TransactionType.CLOSE_OPTION);
+  
   /**
    * @name CloseOptionTransaction#securityId
    * @type SecurityId
@@ -87,9 +94,6 @@ inherit(CloseOptionTransaction, "implements", TransactionWithSecurity);
 Aggregate.add("CLOSUREOPT", CloseOptionTransaction);
 
 
-CloseOptionTransaction.prototype.CloseOptionTransaction = function() {
-  super(TransactionType.CLOSE_OPTION);
-};
 
 
 /**
@@ -99,7 +103,7 @@ CloseOptionTransaction.prototype.CloseOptionTransaction = function() {
  * @return {SecurityId} the security id of the option
  */
 CloseOptionTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({order: 20, owner: CloseOptionTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -123,7 +127,7 @@ CloseOptionTransaction.prototype.setSecurityId = function(securityId) {
  * @return {String} the option action
  */
 CloseOptionTransaction.prototype.getOptionAction = function() {
-  return optionAction;
+  return this.optionAction;
 };
 Element.add({name: "OPTACTION", required: true, order: 30, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getOptionAction"});
 
@@ -146,7 +150,7 @@ CloseOptionTransaction.prototype.setOptionAction = function(optionAction) {
  * @return {CloseOptionAction} the type of close or null if it's not a well-known type
  */
 CloseOptionTransaction.prototype.getOptionActionEnum = function() {
-  return  CloseOptionAction.fromOfx(getOptionAction());
+  return CloseOptionAction.fromOfx(this.getOptionAction());
 };
 
 
@@ -158,7 +162,7 @@ CloseOptionTransaction.prototype.getOptionActionEnum = function() {
  * @return {Double} the number of units closed
  */
 CloseOptionTransaction.prototype.getUnits = function() {
-  return units;
+  return this.units;
 };
 Element.add({name: "UNITS", required: true, order: 40, owner: CloseOptionTransaction, /*type: Double,*/ fcn: "getUnits"});
 
@@ -182,7 +186,7 @@ CloseOptionTransaction.prototype.setUnits = function(units) {
  * @return {Integer} the number of shares per contact
  */
 CloseOptionTransaction.prototype.getSharesPerContact = function() {
-  return sharesPerContact;
+  return this.sharesPerContact;
 };
 Element.add({name: "SHPERCTRCT", required: true, order: 50, owner: CloseOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContact"});
 
@@ -205,7 +209,7 @@ CloseOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact
  * @return {String} the sub account type
  */
 CloseOptionTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", required: true, order: 60, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -227,7 +231,7 @@ CloseOptionTransaction.prototype.setSubAccountSecurity = function(subAccountSecu
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 CloseOptionTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -240,7 +244,7 @@ CloseOptionTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the related transaction id
  */
 CloseOptionTransaction.prototype.getRelatedTransactionId = function() {
-  return relatedTransactionId;
+  return this.relatedTransactionId;
 };
 Element.add({name: "RELFITID", order: 70, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
 
@@ -265,7 +269,7 @@ CloseOptionTransaction.prototype.setRelatedTransactionId = function(relatedTrans
  * @return {Double} the gain related to the transaction
  */
 CloseOptionTransaction.prototype.getGain = function() {
-  return gain;
+  return this.gain;
 };
 Element.add({name: "GAIN", order: 80, owner: CloseOptionTransaction, /*type: Double,*/ fcn: "getGain"});
 

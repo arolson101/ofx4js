@@ -14,38 +14,35 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Coupon freqency for debt.
  * @see "Section 13.8.5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var CouponFrequency = {
   MONTHLY: 0,
   QUARTERLY: 1,
   SEMIANNUAL: 2,
   ANNUAL: 3,
-  OTHER: 4;
+  OTHER: 4,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("MONTHLY".equals(ofxVal)) {
-      return MONTHLY;
+      return CouponFrequency.MONTHLY;
     } else if ("QUARTERLY".equals(ofxVal)) {
-      return QUARTERLY;
+      return CouponFrequency.QUARTERLY;
     } else if ("SEMIANNUAL".equals(ofxVal)) {
-      return SEMIANNUAL;
+      return CouponFrequency.SEMIANNUAL;
     } else if ("ANNUAL".equals(ofxVal)) {
-      return ANNUAL;
+      return CouponFrequency.ANNUAL;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return CouponFrequency.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = CouponFrequency;

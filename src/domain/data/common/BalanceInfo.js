@@ -14,15 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.Date;
-
 /**
- * @author Ryan Heaton
+ * @class
  */
 function BalanceInfo () {
 
@@ -52,7 +48,7 @@ Aggregate.add("BalanceInfo", BalanceInfo);
  * @return {double} The amount.
  */
 BalanceInfo.prototype.getAmount = function() {
-  return amount;
+  return this.amount;
 };
 Element.add({name: "BALAMT", required: true, order: 0, owner: BalanceInfo, /*type: double,*/ fcn: "getAmount"});
 
@@ -73,7 +69,7 @@ BalanceInfo.prototype.setAmount = function(amount) {
  * @return {Date} The as-of date.
  */
 BalanceInfo.prototype.getAsOfDate = function() {
-  return asOfDate;
+  return this.asOfDate;
 };
 Element.add({name: "DTASOF", required: true, order: 10, owner: BalanceInfo, /*type: Date,*/ fcn: "getAsOfDate"});
 

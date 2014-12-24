@@ -18,9 +18,6 @@ var inherit = require("../inherit");
 
 var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
 var MessageSetType = require("domain/data/MessageSetType");
-var ClientEnrollment = require("domain/data/profile/info/signup/ClientEnrollment");
-var OtherEnrollment = require("domain/data/profile/info/signup/OtherEnrollment");
-var WebEnrollment = require("domain/data/profile/info/signup/WebEnrollment");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
@@ -31,8 +28,8 @@ var Element = require("meta/Element");
  * This aggregate should contain 1 Enrollment option among <CLIENTENROLL>, <WEBENROLL>, or <OTHERENROLL>.
  * todo: review how best to enforce this constraint
  *
- * @author Scott Priddy
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  * @see "Section 8.8 OFX Spec"
  */
 function SignupV1MessageSetInfo () {
@@ -92,7 +89,7 @@ SignupV1MessageSetInfo.prototype.getMessageSetType = function() {
 
 
 SignupV1MessageSetInfo.prototype.getClientEnrollment = function() {
-  return clientEnrollment;
+  return this.clientEnrollment;
 };
 ChildAggregate.add({name: "CLIENTENROLL", order: 10, owner: SignupV1MessageSetInfo, /*type: ClientEnrollment,*/ fcn: "getClientEnrollment"});
 
@@ -103,7 +100,7 @@ SignupV1MessageSetInfo.prototype.setClientEnrollment = function(/*ClientEnrollme
 
 
 SignupV1MessageSetInfo.prototype.getWebEnrollment = function() {
-  return webEnrollment;
+  return this.webEnrollment;
 };
 ChildAggregate.add({name: "WEBENROLL", order: 20, owner: SignupV1MessageSetInfo, /*type: WebEnrollment,*/ fcn: "getWebEnrollment"});
 
@@ -114,7 +111,7 @@ SignupV1MessageSetInfo.prototype.setWebEnrollment = function(/*WebEnrollment*/ w
 
 
 SignupV1MessageSetInfo.prototype.getOtherEnrollment = function() {
-  return otherEnrollment;
+  return this.otherEnrollment;
 };
 ChildAggregate.add({name: "OTHERENROLL", order: 30, owner: SignupV1MessageSetInfo, /*type: OtherEnrollment,*/ fcn: "getOtherEnrollment"});
 
@@ -129,7 +126,7 @@ SignupV1MessageSetInfo.prototype.setOtherEnrollment = function(/*OtherEnrollment
  * @return {Boolean} Boolean
  */
 SignupV1MessageSetInfo.prototype.getSupportsClientUserInfoChanges = function() {
-  return supportsClientUserInfoChanges;
+  return this.supportsClientUserInfoChanges;
 };
 Element.add({name: "CHGUSERINFO", required: true, order: 40, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClientUserInfoChanges"});
 
@@ -145,7 +142,7 @@ SignupV1MessageSetInfo.prototype.setSupportsClientUserInfoChanges = function(/*B
  * @return {Boolean} Boolean
  */
 SignupV1MessageSetInfo.prototype.getSupportsAvailableAccounts = function() {
-  return supportsAvailableAccounts;
+  return this.supportsAvailableAccounts;
 };
 Element.add({name: "AVAILACCTS", required: true, order: 50, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsAvailableAccounts"});
 
@@ -162,7 +159,7 @@ SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts = function(/*Boole
  * @return {Boolean} Boolean
  */
 SignupV1MessageSetInfo.prototype.getSupportsClientServiceActivationRequests = function() {
-  return supportsClientServiceActivationRequests;
+  return this.supportsClientServiceActivationRequests;
 };
 Element.add({name: "CLIENTACTREQ", required: true, order: 60, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClientServiceActivationRequests"});
 

@@ -14,14 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-//import java.util.List;
-
 /**
  * A message set enclosed in a response envelope.
  *
- * @author Ryan Heaton
+ * @class
  */
 function ResponseMessageSet () {
 
@@ -33,43 +29,37 @@ function ResponseMessageSet () {
   this.version = "1";
 }
 
-inherit(ResponseMessageSet, "implements", Comparable<ResponseMessageSet>);
 
-
-
-
-ResponseMessageSet.prototype.getType = function() {
+ResponseMessageSet.prototype.getType = function() { throw new Error("not implemented"); };
 
 /**
  * The version of this message set.
  *
- * @return The version of this message set.
+ * @return {String} The version of this message set.
  */
-public String getVersion() {
-  return version;
-}
+ResponseMessageSet.prototype.getVersion = function() {
+  return this.version;
+};
 
 /**
  * The version of this message set.
  *
- * @param version The version of this message set.
+ * @param {String} version The version of this message set.
  */
-public void setVersion(String version) {
+ResponseMessageSet.prototype.setVersion = function(version) {
   this.version = version;
-}
+};
 
 /**
  * The list of response messages.
  *
- * @return The list of response messages.
+ * @return {ResponseMessage[]} The list of response messages.
  */
-public abstract List<ResponseMessage> getResponseMessages();
+ResponseMessageSet.prototype.getResponseMessages = function() { throw new Error("not implemented"); };
 
 // Inherited.
-public int compareTo(ResponseMessageSet o) {
-  return getType().compareTo(o.getType());
-}
-
+ResponseMessageSet.prototype.compareTo = function(/*ResponseMessageSet*/ o) {
+  return this.getType().compareTo(o.getType());
 };
 
 

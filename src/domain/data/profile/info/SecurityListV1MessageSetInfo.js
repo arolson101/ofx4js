@@ -24,8 +24,8 @@ var Element = require("meta/Element");
 /**
  * @see "Section 13.7.2.1, OFX Spec"
  *
- * @author Jon Perlow
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  */
 function SecurityListV1MessageSetInfo () {
 
@@ -49,7 +49,7 @@ SecurityListV1MessageSetInfo.prototype.getMessageSetType = function() {
 
 
 SecurityListV1MessageSetInfo.prototype.getSupportsSecurityListDownload = function() {
-  return supportsSecurityListDownload;
+  return this.supportsSecurityListDownload;
 };
 Element.add({name: "SECLISTRQDNLD", required:true, order: 10, owner: SecurityListV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsSecurityListDownload"});
 

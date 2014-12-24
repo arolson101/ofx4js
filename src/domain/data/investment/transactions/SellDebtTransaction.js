@@ -17,16 +17,20 @@
 var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var SellDebtReason = require("./SellDebtReason");
 
 /**
  * Transaction for selling debt (i.e. bonds, CDs, etc.,).
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSellInvestmentTransaction
  */
 function SellDebtTransaction () {
+  BaseSellInvestmentTransaction.call(this, TransactionType.SELL_DEBT);
 
   /**
    * @name SellDebtTransaction#sellReason
@@ -49,11 +53,6 @@ inherit(SellDebtTransaction, "extends", BaseSellInvestmentTransaction);
 Aggregate.add("SELLDEBT", SellDebtTransaction);
 
 
-SellDebtTransaction.prototype.SellDebtTransaction = function() {
-  super(TransactionType.SELL_DEBT);
-};
-
-
 /**
  * Gets the reason for the sale. One of "CALL" (the debt was called), "SELL" (the debt was sold),
  * "MATURITY" (the debt reached maturity).
@@ -62,7 +61,7 @@ SellDebtTransaction.prototype.SellDebtTransaction = function() {
  * @return {String} The reason for the sale
  */
 SellDebtTransaction.prototype.getSellReason = function() {
-  return sellReason;
+  return this.sellReason;
 };
 Element.add({name: "SELLREASON", order: 30, owner: SellDebtTransaction, /*type: String,*/ fcn: "getSellReason"});
 
@@ -85,7 +84,7 @@ SellDebtTransaction.prototype.setSellReason = function(sellReason) {
  * @return {SellDebtReason} the sell reason or null if it's not well known
  */
 SellDebtTransaction.prototype.getSellReasonEnum = function() {
-  return SellDebtReason.fromOfx(getSellReason());
+  return SellDebtReason.fromOfx(this.getSellReason());
 };
 
 
@@ -97,7 +96,7 @@ SellDebtTransaction.prototype.getSellReasonEnum = function() {
  * @return {Double} the amount of accrued interest
  */
 SellDebtTransaction.prototype.getAccruedInterest = function() {
-  return accruedInterest;
+  return this.accruedInterest;
 };
 Element.add({name: "ACCRDINT", order: 40, owner: SellDebtTransaction, /*type: Double,*/ fcn: "getAccruedInterest"});
 

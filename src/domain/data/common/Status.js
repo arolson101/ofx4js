@@ -18,11 +18,12 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var StatusCode = require("./StatusCode");
 
 /**
  * Transaction status element.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 3.1.4, OFX Spec"
  */
 function Status () {
@@ -32,7 +33,7 @@ function Status () {
    * @type StatusCode
    * @access private
    */
-  this.code = KnownCode.SUCCESS;
+  this.code = Status.KnownCode.SUCCESS;
 
   /**
    * @name Status#severity
@@ -116,42 +117,42 @@ Status.KnownCode.NO_TAXSUPPORT = new Status.KnownCode(14703,"This Tax Year is no
  * @returns int
  */
 Status.KnownCode.prototype.getCode = function() {
-  return code;
-}
+  return this.code;
+};
 
 /**
  * @returns String
  */
 Status.KnownCode.prototype.getMessage = function() {
-  return message;
-}
+  return this.message;
+};
 
 /**
  * @returns Severity
  */
 Status.KnownCode.prototype.getDefaultSeverity = function() {
-  return defaultSeverity;
-}
+  return this.defaultSeverity;
+};
 
 /**
  * @param {int} code
  * @returns KnownCode
  */
 Status.KnownCode.fromCode = function(code) {
-  for (KnownCode value : values()) {
-    if (value.getCode() == code) {
+  for (var value in Status.KnownCode) {
+    if (value instanceof Status.KnownCode && value.getCode() == code) {
       return value;
     }
   }
   return null;
-}
+};
 
 /**
  * @returns String
  */
 Status.KnownCode.prototype.toString = function() {
-  return String.valueOf(code);
-}
+  return this.code.toString();
+};
 
 /**
  * Status code.
@@ -159,7 +160,7 @@ Status.KnownCode.prototype.toString = function() {
  * @return {StatusCode} The status code.
  */
 Status.prototype.getCode = function() {
-  return code;
+  return this.code;
 };
 Element.add({name: "CODE", required: true, order: 0, owner: Status, /*type: StatusCode,*/ fcn: "getCode"});
 
@@ -171,7 +172,7 @@ Element.add({name: "CODE", required: true, order: 0, owner: Status, /*type: Stat
  */
 Status.prototype.setCode = function(code) {
   this.code = code;
-  if (this.severity == null) {
+  if (this.severity === null) {
     this.severity = code.getDefaultSeverity();
   }
 };
@@ -183,7 +184,7 @@ Status.prototype.setCode = function(code) {
  * @return {Severity} The severity.
  */
 Status.prototype.getSeverity = function() {
-  return severity;
+  return this.severity;
 };
 Element.add({name: "SEVERITY", required: true, order: 10, owner: Status, /*type: Severity,*/ fcn: "getSeverity"});
 
@@ -204,7 +205,7 @@ Status.prototype.setSeverity = function(severity) {
  * @return {String} Server-supplied message.
  */
 Status.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 Element.add({name: "MESSAGE", order: 20, owner: Status, /*type: String,*/ fcn: "getMessage"});
 

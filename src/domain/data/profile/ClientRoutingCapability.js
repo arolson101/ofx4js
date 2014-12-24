@@ -14,10 +14,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
- * @author Ryan Heaton
+ * @enum
  * @see "Section 7.1.5, OFX Spec"
  */
 var ClientRoutingCapability = {

@@ -23,8 +23,8 @@ var Element = require("meta/Element");
 
 /**
  * Email Message Set Profile Information
- * @author Scott Priddy
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  * @see "Section 9.4.2 OFX Spec"
  */
 function EmailV1MessageSetInfo () {
@@ -61,7 +61,7 @@ EmailV1MessageSetInfo.prototype.getMessageSetType = function() {
  * @return {Boolean} Boolean
  */
 EmailV1MessageSetInfo.prototype.getSupportsMail = function() {
-  return supportsMail;
+  return this.supportsMail;
 };
 Element.add({name: "MAILSUP", required: true, order: 10, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsMail"});
 
@@ -76,7 +76,7 @@ EmailV1MessageSetInfo.prototype.setSupportsMail = function(/*Boolean*/ supportsM
  * @return {Boolean} Boolean
  */
 EmailV1MessageSetInfo.prototype.getSupportsMimeType = function() {
-  return supportsMimeType;
+  return this.supportsMimeType;
 };
 Element.add({name: "GETMIMESUP", required: true, order: 20, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsMimeType"});
 

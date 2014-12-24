@@ -19,12 +19,11 @@ var inherit = require("../inherit");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 var Aggregate = require("meta/Aggregate");
-var AccountStatus = require("domain/data/common/AccountStatus");
 var AccountInfo = require("domain/data/common/AccountInfo");
-var AccountDetails = require("domain/data/common/AccountDetails");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments AccountInfo
  */
 function BankAccountInfo () {
 
@@ -76,7 +75,7 @@ Aggregate.add("BANKACCTINFO", BankAccountInfo);
  * @return {BankAccountDetails} The bank account this information is referencing.
  */
 BankAccountInfo.prototype.getBankAccount = function() {
-  return bankAccount;
+  return this.bankAccount;
 };
 ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankAccountInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccount"});
 
@@ -93,7 +92,7 @@ BankAccountInfo.prototype.setBankAccount = function(bankAccount) {
 
 // Inherited.
 BankAccountInfo.prototype.getAccountDetails = function() {
-  return getBankAccount();
+  return this.getBankAccount();
 };
 
 
@@ -103,7 +102,7 @@ BankAccountInfo.prototype.getAccountDetails = function() {
  * @return {Boolean} Whether this account supports download of transaction details.
  */
 BankAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
-  return supportsTransactionDetailOperations;
+  return this.supportsTransactionDetailOperations;
 };
 Element.add({name: "SUPTXDL", required: true, order: 10, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransactionDetailOperations"});
 
@@ -124,7 +123,7 @@ BankAccountInfo.prototype.setSupportsTransactionDetailOperations = function(supp
  * @return {Boolean} Whether this account supports transfer operations to other accounts.
  */
 BankAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
-  return supportsTransferToOtherAccountOperations;
+  return this.supportsTransferToOtherAccountOperations;
 };
 Element.add({name: "XFERSRC", required: true, order: 20, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferToOtherAccountOperations"});
 
@@ -145,7 +144,7 @@ BankAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = function
  * @return {Boolean} Whether this account supports transfer operations from other accounts.
  */
 BankAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
-  return supportsTransferFromOtherAccountOperations;
+  return this.supportsTransferFromOtherAccountOperations;
 };
 Element.add({name: "XFERDEST", required: true, order: 30, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferFromOtherAccountOperations"});
 
@@ -166,7 +165,7 @@ BankAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations = functi
  * @return {AccountStatus} The account status.
  */
 BankAccountInfo.prototype.getStatus = function() {
-  return status;
+  return this.status;
 };
 Element.add({name: "SVCSTATUS", required: true, order: 40, owner: BankAccountInfo, /*type: AccountStatus,*/ fcn: "getStatus"});
 

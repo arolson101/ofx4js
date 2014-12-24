@@ -20,13 +20,11 @@ var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.List;
-
 /**
  * Request aggregate for the security list.
  * @see "Section 13.8.2.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function SecurityListRequest () {
 
@@ -45,7 +43,7 @@ Aggregate.add("SECLISTRQ", SecurityListRequest);
 
 
 SecurityListRequest.prototype.getSecurityRequests = function() {
-  return securityRequests;
+  return this.securityRequests;
 };
 ChildAggregate.add({required: true, order: 10, owner: SecurityListRequest, /*type: SecurityRequest[],*/ fcn: "getSecurityRequests"});
 

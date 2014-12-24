@@ -16,17 +16,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var ProcessorDayOff = require("domain/data/common/ProcessorDayOff");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.List;
-
 /**
  * Stop Check Profile
- * @author Scott Priddy
+ * @class
  * @see "Section 11.13.2.3 OFX Spec"
  */
 function StopCheckProfile () {
@@ -78,7 +73,7 @@ Aggregate.add("STPCHKPROF", StopCheckProfile);
  * @return {ProcessorDayOff[]} List of days during the week that no processing occurs.
  */
 StopCheckProfile.prototype.getProcessorDaysOff = function() {
-  return processorDaysOff;
+  return this.processorDaysOff;
 };
 Element.add({name: "PROCDAYSOFF", order: 0, owner: StopCheckProfile, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
 
@@ -97,7 +92,7 @@ StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ 
  * @return {String} Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 StopCheckProfile.prototype.getProcessEndTime = function() {
-  return processEndTime;
+  return this.processEndTime;
 };
 Element.add({name: "PROCENDTM", required: true, order: 10, owner: StopCheckProfile, /*type: String,*/ fcn: "getProcessEndTime"});
 
@@ -117,7 +112,7 @@ StopCheckProfile.prototype.setProcessEndTime = function(processEndTime) {
 
 
 StopCheckProfile.prototype.getCanUseRange = function() {
-  return canUseRange;
+  return this.canUseRange;
 };
 Element.add({name: "CANUSERANGE", required: true, order: 20, owner: StopCheckProfile, /*type: Boolean,*/ fcn: "getCanUseRange"});
 
@@ -128,7 +123,7 @@ StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
 
 
 StopCheckProfile.prototype.getCanUseDescription = function() {
-  return canUseDescription;
+  return this.canUseDescription;
 };
 Element.add({name: "CANUSEDESC", required: true, order: 30, owner: StopCheckProfile, /*type: Boolean,*/ fcn: "getCanUseDescription"});
 
@@ -139,7 +134,7 @@ StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDes
 
 
 StopCheckProfile.prototype.getStopCheckFee = function() {
-  return stopCheckFee;
+  return this.stopCheckFee;
 };
 Element.add({name: "STPCHKFEE", required: true, order: 40, owner: StopCheckProfile, /*type: Double,*/ fcn: "getStopCheckFee"});
 

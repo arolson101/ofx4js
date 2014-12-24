@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
@@ -24,7 +22,7 @@ var Element = require("meta/Element");
  * Aggregate for the investment balance.
  * @see "Section 13.9.2.7, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function InvestmentBalance () {
 
@@ -76,7 +74,7 @@ Aggregate.add("INVBAL", InvestmentBalance);
  * @return {Double} the available cash balance
  */
 InvestmentBalance.prototype.getAvailableCash = function() {
-  return availableCash;
+  return this.availableCash;
 };
 Element.add({name: "AVAILCASH", required: true, order: 10, owner: InvestmentBalance, /*type: Double,*/ fcn: "getAvailableCash"});
 
@@ -100,7 +98,7 @@ InvestmentBalance.prototype.setAvailableCash = function(availableCash) {
  * @return {Double} the margin account balance
  */
 InvestmentBalance.prototype.getMarginBalance = function() {
-  return marginBalance;
+  return this.marginBalance;
 };
 Element.add({name: "MARGINBALANCE", required: true, order: 20, owner: InvestmentBalance, /*type: Double,*/ fcn: "getMarginBalance"});
 
@@ -124,7 +122,7 @@ InvestmentBalance.prototype.setMarginBalance = function(marginBalance) {
  * @return {Double} the market value of all short positions
  */
 InvestmentBalance.prototype.getShortBalance = function() {
-  return shortBalance;
+  return this.shortBalance;
 };
 Element.add({name: "SHORTBALANCE", required: true, order: 30, owner: InvestmentBalance, /*type: Double,*/ fcn: "getShortBalance"});
 
@@ -146,7 +144,7 @@ InvestmentBalance.prototype.setShortBalance = function(shortBalance) {
  * @return {Double} the buying power
  */
 InvestmentBalance.prototype.getBuyingPower = function() {
-  return buyingPower;
+  return this.buyingPower;
 };
 Element.add({name: "BUYPOWER", order: 40, owner: InvestmentBalance, /*type: Double,*/ fcn: "getBuyingPower"});
 
@@ -167,7 +165,7 @@ InvestmentBalance.prototype.setBuyingPower = function(buyingPower) {
  * @return {BalanceList} the investment balance list
  */
 InvestmentBalance.prototype.getBalanceList = function() {
-  return balanceList;
+  return this.balanceList;
 };
 ChildAggregate.add({order: 50, owner: InvestmentBalance, /*type: BalanceList,*/ fcn: "getBalanceList"});
 

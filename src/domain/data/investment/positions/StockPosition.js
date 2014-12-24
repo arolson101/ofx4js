@@ -16,7 +16,7 @@
 
 var inherit = require("../inherit");
 
-var BasePosition = require("domain/data/investment/positions/BasePosition");
+var BasePosition = require("./BasePosition");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
@@ -24,7 +24,8 @@ var Element = require("meta/Element");
  * Represents a stock position.
  * @see "Section 13.9.2.6.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BasePosition
  */
 function StockPosition () {
 
@@ -62,7 +63,7 @@ Aggregate.add("POSSTOCK", StockPosition);
  * @return {Double} the number of units in the financial insititution's street name.
  */
 StockPosition.prototype.getUnitsStreet = function() {
-  return unitsStreet;
+  return this.unitsStreet;
 };
 Element.add({name: "UNITSSTREET", order: 20, owner: StockPosition, /*type: Double,*/ fcn: "getUnitsStreet"});
 
@@ -83,7 +84,7 @@ StockPosition.prototype.setUnitsStreet = function(unitsStreet) {
  * @return {Double} the number of units in the user's name.
  */
 StockPosition.prototype.getUnitsUser = function() {
-  return unitsUser;
+  return this.unitsUser;
 };
 Element.add({name: "UNITSUSER", order: 30, owner: StockPosition, /*type: Double,*/ fcn: "getUnitsUser"});
 
@@ -104,7 +105,7 @@ StockPosition.prototype.setUnitsUser = function(unitsUser) {
  * @return {Boolean} whether dividends are automatically reinvested
  */
 StockPosition.prototype.getReinvestDividends = function() {
-  return reinvestDividends;
+  return this.reinvestDividends;
 };
 Element.add({name: "REINVDIV", order: 40, owner: StockPosition, /*type: Boolean,*/ fcn: "getReinvestDividends"});
 

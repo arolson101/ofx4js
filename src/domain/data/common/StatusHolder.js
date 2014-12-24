@@ -19,7 +19,7 @@ var inherit = require("../inherit");
 /**
  * A status holder (usually applied to a response).
  *
- * @author Ryan Heaton
+ * @class
  */
 function StatusHolder() {
 }

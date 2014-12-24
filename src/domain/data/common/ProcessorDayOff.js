@@ -16,12 +16,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Day of week used in "PROCDAYSOFF" lists.
  *
- * @author Scott Priddy
+ * @enum
  * @see "OFX Spec, Section 13.6.2"
  */
 var ProcessorDayOff = {
@@ -31,29 +29,28 @@ var ProcessorDayOff = {
   THURSDAY: 3,
   FRIDAY: 4,
   SATURDAY: 5,
-  SUNDAY: 6;
+  SUNDAY: 6,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("MONDAY".equals(ofxVal)) {
-      return MONDAY;
+      return this.MONDAY;
     } else if ("TUESDAY".equals(ofxVal)) {
-      return TUESDAY;
+      return this.TUESDAY;
     } else if ("WEDNESDAY".equals(ofxVal)) {
-      return WEDNESDAY;
+      return this.WEDNESDAY;
     } else if ("THURSDAY".equals(ofxVal)) {
-      return THURSDAY;
+      return this.THURSDAY;
     } else if ("FRIDAY".equals(ofxVal)) {
-      return FRIDAY;
+      return this.FRIDAY;
     } else if ("SATURDAY".equals(ofxVal)) {
-      return SATURDAY;
+      return this.SATURDAY;
     } else if ("SUNDAY".equals(ofxVal)) {
-      return SUNDAY;
+      return this.SUNDAY;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = ProcessorDayOff;

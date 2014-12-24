@@ -13,29 +13,26 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * How a short option is secured.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var ShortOptionSecurity = {
   NAKED: 0,
-  COVERED: 1;
+  COVERED: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("NAKED".equals(ofxVal)) {
-      return NAKED;
+      return ShortOptionSecurity.NAKED;
     } else if ("COVERED".equals(ofxVal)) {
-      return COVERED;
+      return ShortOptionSecurity.COVERED;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = ShortOptionSecurity;

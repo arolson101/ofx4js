@@ -16,12 +16,14 @@
 
 var inherit = require("../inherit");
 
+var BankStatementRequest = require("./BankStatementRequest");
 var TransactionWrappedRequestMessage = require("domain/data/TransactionWrappedRequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments TransactionWrappedRequestMessage
  */
 function BankStatementRequestTransaction () {
 
@@ -45,7 +47,7 @@ Aggregate.add("STMTTRNRQ", BankStatementRequestTransaction);
  * @return {BankStatementRequest} The message.
  */
 BankStatementRequestTransaction.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 ChildAggregate.add({required: true, order: 30, owner: BankStatementRequestTransaction, /*type: BankStatementRequest,*/ fcn: "getMessage"});
 
@@ -63,7 +65,7 @@ BankStatementRequestTransaction.prototype.setMessage = function(message) {
 
 // Inherited.
 BankStatementRequestTransaction.prototype.setWrappedMessage = function(/*BankStatementRequest*/ message) {
-  setMessage(message);
+  this.setMessage(message);
 };
 
 

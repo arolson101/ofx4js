@@ -13,13 +13,11 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Asset class for debt.
  * @see "Section 13.8.5.7, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var AssetClass = {
   /**
@@ -56,29 +54,28 @@ var AssetClass = {
   /**
    * Investments: 13 which do not fit into any of the other types.
    */
-  OTHER: 14;
+  OTHER: 14,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("DOMESTICBOND".equals(ofxVal)) {
-      return DOMESTIC_BOND;
+      return AssetClass.DOMESTIC_BOND;
     } else if ("INTLBOND".equals(ofxVal)) {
-      return INTL_BOND;
+      return AssetClass.INTL_BOND;
     } else if ("LARGESTOCK".equals(ofxVal)) {
-      return LARGE_STOCK;
+      return AssetClass.LARGE_STOCK;
     } else if ("SMALLSTOCK".equals(ofxVal)) {
-      return SMALL_STOCK;
+      return AssetClass.SMALL_STOCK;
     } else if ("INTLSTOCK".equals(ofxVal)) {
-      return INTL_STOCK;
+      return AssetClass.INTL_STOCK;
     } else if ("MONEYMARKET".equals(ofxVal)) {
-      return MONEY_MARKET;
+      return AssetClass.MONEY_MARKET;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return AssetClass.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = AssetClass;

@@ -14,15 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.Date;
-
 /**
- * @author Ryan Heaton
+ * @class
  */
 function StatementRange () {
 
@@ -59,7 +55,7 @@ Aggregate.add("INCTRAN", StatementRange);
  * @return {Date} The start of the statement range.
  */
 StatementRange.prototype.getStart = function() {
-  return start;
+  return this.start;
 };
 Element.add({name: "DTSTART", order: 0, owner: StatementRange, /*type: Date,*/ fcn: "getStart"});
 
@@ -80,7 +76,7 @@ StatementRange.prototype.setStart = function(start) {
  * @return {Date} The end of the statement range.
  */
 StatementRange.prototype.getEnd = function() {
-  return end;
+  return this.end;
 };
 Element.add({name: "DTEND", order: 10, owner: StatementRange, /*type: Date,*/ fcn: "getEnd"});
 
@@ -101,7 +97,7 @@ StatementRange.prototype.setEnd = function(end) {
  * @return {Boolean} Whether to include transactions.
  */
 StatementRange.prototype.getIncludeTransactions = function() {
-  return includeTransactions;
+  return this.includeTransactions;
 };
 Element.add({name: "INCLUDE", required: true, order: 20, owner: StatementRange, /*type: Boolean,*/ fcn: "getIncludeTransactions"});
 

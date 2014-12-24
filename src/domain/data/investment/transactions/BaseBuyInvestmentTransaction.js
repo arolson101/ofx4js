@@ -17,8 +17,10 @@
 var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var ChildAggregate = require("meta/ChildAggregate");
+var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
+
 
 /**
  * Base class for all investment transactions for buying securities.
@@ -27,9 +29,12 @@ var ChildAggregate = require("meta/ChildAggregate");
  * common to all buy investment transactions as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
-function BaseBuyInvestmentTransaction () {
+function BaseBuyInvestmentTransaction (/*TransactionType*/ transactionType) {
+  BaseInvestmentTransaction.call(this, transactionType);
 
   /**
    * @name BaseBuyInvestmentTransaction#buyInvestment
@@ -44,19 +49,13 @@ inherit(BaseBuyInvestmentTransaction, "implements", TransactionWithSecurity);
 
 
 
-
-BaseBuyInvestmentTransaction.prototype.BaseBuyInvestmentTransaction = function(/*TransactionType*/ transactionType) {
-  super(transactionType);
-};
-
-
 /**
  * Gets the buy investment transaction child aggregate.
  *
  * @return {BuyInvestmentTransaction} the buy investment transaction child aggregate
  */
 BaseBuyInvestmentTransaction.prototype.getBuyInvestment = function() {
-  return buyInvestment;
+  return this.buyInvestment;
 };
 ChildAggregate.add({order: 10, owner: BaseBuyInvestmentTransaction, /*type: BuyInvestmentTransaction,*/ fcn: "getBuyInvestment"});
 
@@ -78,7 +77,7 @@ BaseBuyInvestmentTransaction.prototype.setBuyInvestment = function(buyInvestment
  */
 // @Overridden
 BaseBuyInvestmentTransaction.prototype.getInvestmentTransaction = function() {
-  return getBuyInvestment().getInvestmentTransaction();
+  return this.getBuyInvestment().getInvestmentTransaction();
 };
 
 
@@ -90,7 +89,7 @@ BaseBuyInvestmentTransaction.prototype.getInvestmentTransaction = function() {
  * @return {SecurityId} the security id of the security that was bought
  */
 BaseBuyInvestmentTransaction.prototype.getSecurityId = function() {
-  return getBuyInvestment().getSecurityId();
+  return this.getBuyInvestment().getSecurityId();
 };
 
 
@@ -104,7 +103,7 @@ BaseBuyInvestmentTransaction.prototype.getSecurityId = function() {
  * @return {Double} the number of units purchased.
  */
 BaseBuyInvestmentTransaction.prototype.getUnits = function() {
-  return getBuyInvestment().getUnits();
+  return this.getBuyInvestment().getUnits();
 };
 
 
@@ -117,7 +116,7 @@ BaseBuyInvestmentTransaction.prototype.getUnits = function() {
  * @return {Double} the per unit price
  */
 BaseBuyInvestmentTransaction.prototype.getUnitPrice = function() {
-  return getBuyInvestment().getUnitPrice();
+  return this.getBuyInvestment().getUnitPrice();
 };
 
 
@@ -129,7 +128,7 @@ BaseBuyInvestmentTransaction.prototype.getUnitPrice = function() {
  * @return {Double} the per unit markeup price
  */
 BaseBuyInvestmentTransaction.prototype.getMarkup = function() {
-  return getBuyInvestment().getMarkup();
+  return this.getBuyInvestment().getMarkup();
 };
 
 
@@ -141,7 +140,7 @@ BaseBuyInvestmentTransaction.prototype.getMarkup = function() {
  * @return {Double} the transaction commision
  */
 BaseBuyInvestmentTransaction.prototype.getCommission = function() {
-  return getBuyInvestment().getCommission();
+  return this.getBuyInvestment().getCommission();
 };
 
 
@@ -152,7 +151,7 @@ BaseBuyInvestmentTransaction.prototype.getCommission = function() {
  * @return {Double} the transaction taxes
  */
 BaseBuyInvestmentTransaction.prototype.getTaxes = function() {
-  return getBuyInvestment().getTaxes();
+  return this.getBuyInvestment().getTaxes();
 };
 
 
@@ -163,7 +162,7 @@ BaseBuyInvestmentTransaction.prototype.getTaxes = function() {
  * @return {Double} the transaction fees
  */
 BaseBuyInvestmentTransaction.prototype.getFees = function() {
-  return getBuyInvestment().getFees();
+  return this.getBuyInvestment().getFees();
 };
 
 
@@ -174,7 +173,7 @@ BaseBuyInvestmentTransaction.prototype.getFees = function() {
  * @return {Double} the load
  */
 BaseBuyInvestmentTransaction.prototype.getLoad = function() {
-  return getBuyInvestment().getLoad();
+  return this.getBuyInvestment().getLoad();
 };
 
 
@@ -187,7 +186,7 @@ BaseBuyInvestmentTransaction.prototype.getLoad = function() {
  * @return {Double} the total
  */
 BaseBuyInvestmentTransaction.prototype.getTotal = function() {
-  return getBuyInvestment().getTotal();
+  return this.getBuyInvestment().getTotal();
 };
 
 
@@ -199,7 +198,7 @@ BaseBuyInvestmentTransaction.prototype.getTotal = function() {
  * @return {String} the currency code for the transaction
  */
 BaseBuyInvestmentTransaction.prototype.getCurrencyCode = function() {
-  return getBuyInvestment().getCurrencyCode();
+  return this.getBuyInvestment().getCurrencyCode();
 };
 
 
@@ -210,7 +209,7 @@ BaseBuyInvestmentTransaction.prototype.getCurrencyCode = function() {
  * @return {OriginalCurrency} the original currency info for the transaction
  */
 BaseBuyInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return getBuyInvestment().getOriginalCurrencyInfo();
+  return this.getBuyInvestment().getOriginalCurrencyInfo();
 };
 
 
@@ -221,7 +220,7 @@ BaseBuyInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
  * @return {String} the sub account type
  */
 BaseBuyInvestmentTransaction.prototype.getSubAccountSecurity = function() {
-  return getBuyInvestment().getSubAccountSecurity();
+  return this.getBuyInvestment().getSubAccountSecurity();
 };
 
 
@@ -231,7 +230,7 @@ BaseBuyInvestmentTransaction.prototype.getSubAccountSecurity = function() {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 BaseBuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -242,7 +241,7 @@ BaseBuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund
  */
 BaseBuyInvestmentTransaction.prototype.getSubAccountFund = function() {
-  return getBuyInvestment().getSubAccountFund();
+  return this.getBuyInvestment().getSubAccountFund();
 };
 
 
@@ -252,7 +251,7 @@ BaseBuyInvestmentTransaction.prototype.getSubAccountFund = function() {
  * @return {SubAccountType} the type or null if it wasn't one of the well known types.
  */
 BaseBuyInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 

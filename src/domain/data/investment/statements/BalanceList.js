@@ -13,9 +13,6 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
-var BalanceRecord = require("domain/data/common/BalanceRecord");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
@@ -25,7 +22,7 @@ var ChildAggregate = require("meta/ChildAggregate");
  * Aggregate for the investment balance list.
  * @see "Section 13.9.2.7, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function BalanceList () {
 
@@ -48,7 +45,7 @@ Aggregate.add("BALLIST", BalanceList);
  * @return {BalanceRecord[]} the list of balance records.
  */
 BalanceList.prototype.getBalanceRecords = function() {
-  return balanceRecords;
+  return this.balanceRecords;
 };
 ChildAggregate.add({order: 10, owner: BalanceList, /*type: BalanceRecord[],*/ fcn: "getBalanceRecords"});
 

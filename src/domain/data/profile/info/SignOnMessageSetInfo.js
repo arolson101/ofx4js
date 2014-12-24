@@ -21,7 +21,8 @@ var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Jon Perlow
+ * @class
+ * @augments AbstractMessageSetInfo
  */
 function SignOnMessageSetInfo () {
 
@@ -40,7 +41,7 @@ Aggregate.add("SIGNONMSGSET", SignOnMessageSetInfo);
 
 
 SignOnMessageSetInfo.prototype.getVersion1Info = function() {
-  return version1Info;
+  return this.version1Info;
 };
 ChildAggregate.add({order: 0, owner: SignOnMessageSetInfo, /*type: SignOnV1MessageSetInfo,*/ fcn: "getVersion1Info"});
 

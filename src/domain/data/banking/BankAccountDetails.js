@@ -23,7 +23,8 @@ var AccountDetails = require("domain/data/common/AccountDetails");
 /**
  * Base bank account details.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments AccountDetails
  * @see "OFX Spec, Section 11.3.1"
  */
 function BankAccountDetails () {
@@ -76,7 +77,7 @@ Aggregate.add("BankAccountDetails", BankAccountDetails);
  * @return {String} The routing and transit number.
  */
 BankAccountDetails.prototype.getBankId = function() {
-  return bankId;
+  return this.bankId;
 };
 Element.add({name: "BANKID", required: true, order: 0, owner: BankAccountDetails, /*type: String,*/ fcn: "getBankId"});
 
@@ -97,7 +98,7 @@ BankAccountDetails.prototype.setBankId = function(bankId) {
  * @return {String} The routing and transit number.
  */
 BankAccountDetails.prototype.getRoutingNumber = function() {
-  return getBankId();
+  return this.getBankId();
 };
 
 
@@ -107,7 +108,7 @@ BankAccountDetails.prototype.getRoutingNumber = function() {
  * @param {String} routingNumber The routing and transit number.
  */
 BankAccountDetails.prototype.setRoutingNumber = function(routingNumber) {
-  setBankId(routingNumber);
+  this.setBankId(routingNumber);
 };
 
 
@@ -117,7 +118,7 @@ BankAccountDetails.prototype.setRoutingNumber = function(routingNumber) {
  * @return {String} The branch id.
  */
 BankAccountDetails.prototype.getBranchId = function() {
-  return branchId;
+  return this.branchId;
 };
 Element.add({name: "BRANCHID", order: 10, owner: BankAccountDetails, /*type: String,*/ fcn: "getBranchId"});
 
@@ -138,7 +139,7 @@ BankAccountDetails.prototype.setBranchId = function(branchId) {
  * @return {String} The account number.
  */
 BankAccountDetails.prototype.getAccountNumber = function() {
-  return accountNumber;
+  return this.accountNumber;
 };
 Element.add({name: "ACCTID", required: true, order: 20, owner: BankAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
 
@@ -159,7 +160,7 @@ BankAccountDetails.prototype.setAccountNumber = function(accountNumber) {
  * @return {AccountType} The account type.
  */
 BankAccountDetails.prototype.getAccountType = function() {
-  return accountType;
+  return this.accountType;
 };
 Element.add({name: "ACCTTYPE", required: true, order: 30, owner: BankAccountDetails, /*type: AccountType,*/ fcn: "getAccountType"});
 
@@ -180,7 +181,7 @@ BankAccountDetails.prototype.setAccountType = function(accountType) {
  * @return {String} The account key.
  */
 BankAccountDetails.prototype.getAccountKey = function() {
-  return accountKey;
+  return this.accountKey;
 };
 Element.add({name: "ACCTKEY", order: 40, owner: BankAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
 

@@ -14,13 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.Date;
+var PositionType = require("./PositionType");
+var Inv401KSource = require("./Inv401KSource");
 
 /**
  * Base class for the various types of positions.
@@ -29,7 +26,7 @@ var ChildAggregate = require("meta/ChildAggregate");
  * common to all positions as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
  */
 function BasePosition () {
 
@@ -51,7 +48,7 @@ function BasePosition () {
  * @return {InvestmentPosition} the investment position child aggregate
  */
 BasePosition.prototype.getInvestmentPosition = function() {
-  return investmentPosition;
+  return this.investmentPosition;
 };
 ChildAggregate.add({required: true, order: 10, owner: BasePosition, /*type: InvestmentPosition,*/ fcn: "getInvestmentPosition"});
 
@@ -73,7 +70,7 @@ BasePosition.prototype.setInvestmentPosition = function(investmentPosition) {
  * @return {SecurityId} the security id for the position
  */
 BasePosition.prototype.getSecurityId = function() {
-  return getInvestmentPosition().getSecurityId();
+  return this.getInvestmentPosition().getSecurityId();
 };
 
 
@@ -85,7 +82,7 @@ BasePosition.prototype.getSecurityId = function() {
  * @return {String} the sub-account type
  */
 BasePosition.prototype.getHeldInAccount = function() {
-  return getInvestmentPosition().getHeldInAccount();
+  return this.getInvestmentPosition().getHeldInAccount();
 };
 
 
@@ -96,7 +93,7 @@ BasePosition.prototype.getHeldInAccount = function() {
  * @return {SubAccountType} the sub-account type or null if it's not one of the well-known types
  */
 BasePosition.prototype.getHeldInAccountEnum = function() {
-  return SubAccountType.fromOfx(getHeldInAccount());
+  return SubAccountType.fromOfx(this.getHeldInAccount());
 };
 
 
@@ -108,7 +105,7 @@ BasePosition.prototype.getHeldInAccountEnum = function() {
  * @return {String} the position type
  */
 BasePosition.prototype.getPositionType = function() {
-  return getInvestmentPosition().getPositionType();
+  return this.getInvestmentPosition().getPositionType();
 };
 
 
@@ -119,7 +116,7 @@ BasePosition.prototype.getPositionType = function() {
  * @return {PositionType} the position type or null if it's not one of the well-known types
  */
 BasePosition.prototype.getPositionTypeEnum = function() {
-  return PositionType.fromOfx(getPositionType());
+  return PositionType.fromOfx(this.getPositionType());
 };
 
 
@@ -132,7 +129,7 @@ BasePosition.prototype.getPositionTypeEnum = function() {
  * @return {Double} the number of units in the position
  */
 BasePosition.prototype.getUnits = function() {
-  return getInvestmentPosition().getUnits();
+  return this.getInvestmentPosition().getUnits();
 };
 
 
@@ -145,7 +142,7 @@ BasePosition.prototype.getUnits = function() {
  * @return {Double} the per unit price
  */
 BasePosition.prototype.getUnitPrice = function() {
-  return getInvestmentPosition().getUnitPrice();
+  return this.getInvestmentPosition().getUnitPrice();
 };
 
 
@@ -156,7 +153,7 @@ BasePosition.prototype.getUnitPrice = function() {
  * @return {Double} the market value of the position
  */
 BasePosition.prototype.getMarketValue = function() {
-  return getInvestmentPosition().getMarketValue();
+  return this.getInvestmentPosition().getMarketValue();
 };
 
 
@@ -168,7 +165,7 @@ BasePosition.prototype.getMarketValue = function() {
  * @return {Date} the market value date
  */
 BasePosition.prototype.getMarketValueDate = function() {
-  return getInvestmentPosition().getMarketValueDate();
+  return this.getInvestmentPosition().getMarketValueDate();
 };
 
 
@@ -180,7 +177,7 @@ BasePosition.prototype.getMarketValueDate = function() {
  * @return {String} the currency code of the position or null for the default currency
  */
 BasePosition.prototype.getCurrencyCode = function() {
-  return getInvestmentPosition().getCurrencyCode();
+  return this.getInvestmentPosition().getCurrencyCode();
 };
 
 
@@ -192,7 +189,7 @@ BasePosition.prototype.getCurrencyCode = function() {
  * @return {String} the memo
  */
 BasePosition.prototype.getMemo = function() {
-  return getInvestmentPosition().getMemo();
+  return this.getInvestmentPosition().getMemo();
 };
 
 
@@ -205,7 +202,7 @@ BasePosition.prototype.getMemo = function() {
  * @return {String} the 401k source
  */
 BasePosition.prototype.get401kSource = function() {
-  return getInvestmentPosition().get401kSource();
+  return this.getInvestmentPosition().get401kSource();
 };
 
 
@@ -215,7 +212,7 @@ BasePosition.prototype.get401kSource = function() {
  * @return {Inv401KSource} the 401k source or null if it's not one of the well-known types
  */
 BasePosition.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

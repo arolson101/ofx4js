@@ -18,15 +18,14 @@ var inherit = require("../inherit");
 
 var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
 var MessageSetType = require("domain/data/MessageSetType");
-var TransferProfile = require("domain/data/profile/info/common/TransferProfile");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
 /**
  * Interbank Funds Transfer Message Set Profile
- * @author Scott Priddy
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  * @see "Section 11.13.4 OFX Spec"
  */
 function InterbankTransferV1MessageSetInfo () {
@@ -79,7 +78,7 @@ InterbankTransferV1MessageSetInfo.prototype.getMessageSetType = function() {
 
 
 InterbankTransferV1MessageSetInfo.prototype.getTransferProfile = function() {
-  return transferProfile;
+  return this.transferProfile;
 };
 ChildAggregate.add({name: "XFERPROF", required: true, order: 10, owner: InterbankTransferV1MessageSetInfo, /*type: TransferProfile,*/ fcn: "getTransferProfile"});
 
@@ -90,7 +89,7 @@ InterbankTransferV1MessageSetInfo.prototype.setTransferProfile = function(/*Tran
 
 
 InterbankTransferV1MessageSetInfo.prototype.getSupportsBillPay = function() {
-  return supportsBillPay;
+  return this.supportsBillPay;
 };
 Element.add({name: "CANBILLPAY", required: true, order: 20, owner: InterbankTransferV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsBillPay"});
 
@@ -101,7 +100,7 @@ InterbankTransferV1MessageSetInfo.prototype.setSupportsBillPay = function(/*Bool
 
 
 InterbankTransferV1MessageSetInfo.prototype.getCancelWindow = function() {
-  return cancelWindow;
+  return this.cancelWindow;
 };
 Element.add({name: "CANCELWND", required: true, order: 30, owner: InterbankTransferV1MessageSetInfo, /*type: Integer,*/ fcn: "getCancelWindow"});
 
@@ -112,7 +111,7 @@ InterbankTransferV1MessageSetInfo.prototype.setCancelWindow = function(/*Integer
 
 
 InterbankTransferV1MessageSetInfo.prototype.getDomesticInterbankTransferFee = function() {
-  return domesticInterbankTransferFee;
+  return this.domesticInterbankTransferFee;
 };
 Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: InterbankTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getDomesticInterbankTransferFee"});
 
@@ -123,7 +122,7 @@ InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee = fu
 
 
 InterbankTransferV1MessageSetInfo.prototype.getInternationalInterbankTransferFee = function() {
-  return internationalInterbankTransferFee;
+  return this.internationalInterbankTransferFee;
 };
 Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: InterbankTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getInternationalInterbankTransferFee"});
 

@@ -13,18 +13,13 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
-//import java.util.List;
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
  */
 
 
@@ -71,89 +66,89 @@ function ExtDBInfo () {
 Aggregate.add("EXTDBINFO_V100", ExtDBInfo);
 
 
-	/**
-	 * @return {ProcDet[]} the procDet
-	 */
+/**
+ * @return {ProcDet[]} the procDet
+ */
 ExtDBInfo.prototype.getProcDet = function() {
-		return procDet;
-	};
+  return this.procDet;
+};
 ChildAggregate.add({required:false, order: 0, owner: ExtDBInfo, /*type: ProcDet[],*/ fcn: "getProcDet"});
 
 
-	/**
-	 * @param {ProcDet[]} procDet the procDet to set
-	 */
+/**
+ * @param {ProcDet[]} procDet the procDet to set
+ */
 ExtDBInfo.prototype.setProcDet = function(procDet) {
-		this.procDet = procDet;
-	};
+  this.procDet = procDet;
+};
 
 
-	/**
-	 * @return {String} the teInterest
-	 */
+/**
+ * @return {String} the teInterest
+ */
 ExtDBInfo.prototype.getTeInterest = function() {
-		return teInterest;
-	};
+  return this.teInterest;
+};
 Element.add({name: "TEINTEREST",required: false , order: 1, owner: ExtDBInfo, /*type: String,*/ fcn: "getTeInterest"});
 
 
-	/**
-	 * @param {String} teInterest the teInterest to set
-	 */
+/**
+ * @param {String} teInterest the teInterest to set
+ */
 ExtDBInfo.prototype.setTeInterest = function(teInterest) {
-		this.teInterest = teInterest;
-	};
+  this.teInterest = teInterest;
+};
 
 
-	/**
-	 * @return {String} the pabInterest
-	 */
+/**
+ * @return {String} the pabInterest
+ */
 ExtDBInfo.prototype.getPabInterest = function() {
-		return pabInterest;
-	};
+  return this.pabInterest;
+};
 Element.add({name: "PABINTEREST",required: false , order: 2, owner: ExtDBInfo, /*type: String,*/ fcn: "getPabInterest"});
 
 
-	/**
-	 * @param {String} pabInterest the pabInterest to set
-	 */
+/**
+ * @param {String} pabInterest the pabInterest to set
+ */
 ExtDBInfo.prototype.setPabInterest = function(pabInterest) {
-		this.pabInterest = pabInterest;
-	};
+  this.pabInterest = pabInterest;
+};
 
 
-	/**
-	 * @return {String} the teIntDividend
-	 */
+/**
+ * @return {String} the teIntDividend
+ */
 ExtDBInfo.prototype.getTeIntDividend = function() {
-		return teIntDividend;
-	};
+  return this.teIntDividend;
+};
 Element.add({name: "TEINTDIVIDEND",required: false , order: 3, owner: ExtDBInfo, /*type: String,*/ fcn: "getTeIntDividend"});
 
 
-	/**
-	 * @param {String} teIntDividend the teIntDividend to set
-	 */
+/**
+ * @param {String} teIntDividend the teIntDividend to set
+ */
 ExtDBInfo.prototype.setTeIntDividend = function(teIntDividend) {
-		this.teIntDividend = teIntDividend;
-	};
+  this.teIntDividend = teIntDividend;
+};
 
 
-	/**
-	 * @return {String} the pabDividend
-	 */
+/**
+ * @return {String} the pabDividend
+ */
 ExtDBInfo.prototype.getPabDividend = function() {
-		return pabDividend;
-	};
+  return this.pabDividend;
+};
 Element.add({name: "PABDIVIDEND",required: false , order: 4, owner: ExtDBInfo, /*type: String,*/ fcn: "getPabDividend"});
 
 
-	/**
-	 * @param {String} pabDividend the pabDividend to set
-	 */
+/**
+ * @param {String} pabDividend the pabDividend to set
+ */
 ExtDBInfo.prototype.setPabDividend = function(pabDividend) {
-		this.pabDividend = pabDividend;
-	}	;
+  this.pabDividend = pabDividend;
+};
 
 
 

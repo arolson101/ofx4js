@@ -18,12 +18,15 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BasePosition = require("./BasePosition");
+var ShortOptionSecurity = require("./ShortOptionSecurity");
 
 /**
  * Represents an options position.
  * @see "Section 13.9.2.6.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BasePosition
  */
 function OptionsPosition () {
 
@@ -47,7 +50,7 @@ Aggregate.add("POSOPT", OptionsPosition);
  * @return {String} how the options position is secured
  */
 OptionsPosition.prototype.getSecured = function() {
-  return secured;
+  return this.secured;
 };
 Element.add({name: "SECURED", order: 20, owner: OptionsPosition, /*type: String,*/ fcn: "getSecured"});
 
@@ -68,7 +71,7 @@ OptionsPosition.prototype.setSecured = function(secured) {
  * @return {ShortOptionSecurity} how the option position is secured or null if it's not a well-known type
  */
 OptionsPosition.prototype.getSecuredEnum = function() {
-  return ShortOptionSecurity.fromOfx(getSecured());
+  return ShortOptionSecurity.fromOfx(this.getSecured());
 };
 
 

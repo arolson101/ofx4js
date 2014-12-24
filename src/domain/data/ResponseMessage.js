@@ -14,12 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * A message applicable to a response message set.
  *
- * @author Ryan Heaton
+ * @class
  */
 function ResponseMessage () {
 }
@@ -33,9 +31,7 @@ function ResponseMessage () {
  *
  * @return {String} The name of the response message.
  */
-ResponseMessage.prototype.getResponseMessageName = function() {
-
-};
+ResponseMessage.prototype.getResponseMessageName = function() { throw new Error("not implemented"); };
 
 
 

@@ -17,6 +17,7 @@
 var inherit = require("../inherit");
 
 var ChildAggregate = require("meta/ChildAggregate");
+var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
 
 /**
  * Base class for investment transactions that aren't buys or sales..
@@ -25,9 +26,11 @@ var ChildAggregate = require("meta/ChildAggregate");
  * common to all investment transactions as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseInvestmentTransaction
  */
-function BaseOtherInvestmentTransaction () {
+function BaseOtherInvestmentTransaction (/*TransactionType*/ transactionType) {
+  BaseInvestmentTransaction.call(this, transactionType);
 
   /**
    * @name BaseOtherInvestmentTransaction#investmentTransaction
@@ -42,11 +45,6 @@ inherit(BaseOtherInvestmentTransaction, "extends", BaseInvestmentTransaction);
 
 
 
-BaseOtherInvestmentTransaction.prototype.BaseOtherInvestmentTransaction = function(/*TransactionType*/ transactionType) {
-  super(transactionType);
-};
-
-
 /**
  * Gets the {@link InvestmentTransaction} aggregate.
  *
@@ -54,7 +52,7 @@ BaseOtherInvestmentTransaction.prototype.BaseOtherInvestmentTransaction = functi
  */
 // @Override
 BaseOtherInvestmentTransaction.prototype.getInvestmentTransaction = function() {
-  return investmentTransaction;
+  return this.investmentTransaction;
 };
 ChildAggregate.add({order: 10, owner: BaseOtherInvestmentTransaction, /*type: InvestmentTransaction,*/ fcn: "getInvestmentTransaction"});
 

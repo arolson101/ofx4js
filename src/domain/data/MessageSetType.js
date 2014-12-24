@@ -14,12 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * The message set type, used to define message set order in the envelope.
  *
- * @author Ryan Heaton
+ * @enum
  * @see "Section 2.4.5.2, OFX spec"
  */
 var MessageSetType = {

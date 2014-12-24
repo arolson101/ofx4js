@@ -14,19 +14,15 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
 
 
 /**
  * Aggreate to indicate whether position information is requested as part of the statement
  * @see "Section 13.9.1.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function IncludePosition () {
 
@@ -57,7 +53,7 @@ Aggregate.add("INCPOS", IncludePosition);
  * @return {Date} the date for the position
  */
 IncludePosition.prototype.getDateSentDown = function() {
-  return sentDownDate;
+  return this.sentDownDate;
 };
 Element.add({name: "DTASOF", order: 0, owner: IncludePosition, /*type: Date,*/ fcn: "getDateSentDown"});
 
@@ -79,7 +75,7 @@ IncludePosition.prototype.setDateSentDown = function(sentDownDate) {
  * @return {Boolean} whether to include positions in the statement download
  */
 IncludePosition.prototype.getIncludePositions = function() {
-  return includePositions;
+  return this.includePositions;
 };
 Element.add({name: "INCLUDE", order: 10, owner: IncludePosition, /*type: Boolean,*/ fcn: "getIncludePositions"});
 

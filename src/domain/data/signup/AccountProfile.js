@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var InvestmentAccountInfo = require("domain/data/investment/accounts/InvestmentAccountInfo");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
@@ -24,7 +22,7 @@ var BankAccountInfo = require("domain/data/banking/BankAccountInfo");
 var CreditCardAccountInfo = require("domain/data/creditcard/CreditCardAccountInfo");
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function AccountProfile () {
 
@@ -75,7 +73,7 @@ Aggregate.add("ACCTINFO", AccountProfile);
  * @return {String} The description of the account.
  */
 AccountProfile.prototype.getDescription = function() {
-  return description;
+  return this.description;
 };
 Element.add({name: "DESC", order: 0, owner: AccountProfile, /*type: String,*/ fcn: "getDescription"});
 
@@ -96,7 +94,7 @@ AccountProfile.prototype.setDescription = function(description) {
  * @return {String} Phone number for the account.
  */
 AccountProfile.prototype.getPhone = function() {
-  return phone;
+  return this.phone;
 };
 Element.add({name: "PHONE", order: 10, owner: AccountProfile, /*type: String,*/ fcn: "getPhone"});
 
@@ -117,102 +115,107 @@ AccountProfile.prototype.setPhone = function(phone) {
  * @return {net.sf.ofx4j.domain.data.common.AccountInfo} Account specifics.
  */
 AccountProfile.prototype.getSpecifics = function() {
-  if (getBankSpecifics() != null && getCreditCardSpecifics() != null) {
-    throw new IllegalStateException("Only one account specifics aggregate can be set at a time.");
+  if (this.getBankSpecifics() !== null && this.getCreditCardSpecifics() !== null) {
+    throw new Error("Only one account specifics aggregate can be set at a time.");
   }
-  else if (getBankSpecifics() != null) {
-    return getBankSpecifics();
-  } else if (getInvestmentSpecifics() != null) {
-    return getInvestmentSpecifics();
+  else if (this.getBankSpecifics() !== null) {
+    return this.getBankSpecifics();
+  } else if (this.getInvestmentSpecifics() !== null) {
+    return this.getInvestmentSpecifics();
   }
   else {
-    return getCreditCardSpecifics();
+    return this.getCreditCardSpecifics();
   }
-}
+};
+
 
 /**
  * Account specifics.
  *
- * @param specifics Account specifics.
+ * @param {net.sf.ofx4j.domain.data.common.AccountInfo} specifics Account specifics.
  */
-public void setSpecifics(net.sf.ofx4j.domain.data.common.AccountInfo specifics) {
+AccountProfile.prototype.setSpecifics = function(specifics) {
   if (specifics instanceof BankAccountInfo) {
-    setBankSpecifics((BankAccountInfo) specifics);
+    this.setBankSpecifics(specifics);
   }
   else if (specifics instanceof CreditCardAccountInfo) {
-    setCreditCardSpecifics((CreditCardAccountInfo) specifics);
+    this.setCreditCardSpecifics(specifics);
   } else if (specifics instanceof InvestmentAccountInfo) {
-    setInvestmentSpecifics((InvestmentAccountInfo) specifics);
+    this.setInvestmentSpecifics(specifics);
   }
   else {
-    throw new IllegalArgumentException("Unknown specifics type: " + specifics);
+    throw new Error("Unknown specifics type: " + specifics);
   }
-}
+};
+
 
 /**
  * Bank-specific info.
  *
- * @return Bank-specific info.
+ * @return {BankAccountInfo} Bank-specific info.
  */
-@ChildAggregate ( order = 20 )
-public BankAccountInfo getBankSpecifics() {
-  return bankSpecifics;
-}
+AccountProfile.prototype.getBankSpecifics = function() {
+  return this.bankSpecifics;
+};
+ChildAggregate.add({order: 20, owner: AccountProfile, /*type: BankAccountInfo,*/ fcn: "getBankSpecifics"});
+
 
 /**
  * Bank-specific info.
  *
- * @param bankSpecifics Bank-specific info.
+ * @param {BankAccountInfo} bankSpecifics Bank-specific info.
  */
-public void setBankSpecifics(BankAccountInfo bankSpecifics) {
+AccountProfile.prototype.setBankSpecifics = function(bankSpecifics) {
   this.creditCardSpecifics = null;
   this.investSpecifics = null;
   this.bankSpecifics = bankSpecifics;
-}
+};
+
 
 /**
  * Credit-card account info.
  *
- * @return Credit-card account info.
+ * @return {CreditCardAccountInfo} Credit-card account info.
  */
-@ChildAggregate ( order = 30 )
-public CreditCardAccountInfo getCreditCardSpecifics() {
-  return creditCardSpecifics;
-}
+AccountProfile.prototype.getCreditCardSpecifics = function() {
+  return this.creditCardSpecifics;
+};
+ChildAggregate.add({order: 30, owner: AccountProfile, /*type: CreditCardAccountInfo,*/ fcn: "getCreditCardSpecifics"});
+
 
 /**
  * Credit-card account info.
  *
- * @param creditCardSpecifics Credit-card account info.
+ * @param {CreditCardAccountInfo} creditCardSpecifics Credit-card account info.
  */
-public void setCreditCardSpecifics(CreditCardAccountInfo creditCardSpecifics) {
+AccountProfile.prototype.setCreditCardSpecifics = function(creditCardSpecifics) {
   this.bankSpecifics = null;
   this.investSpecifics = null;
   this.creditCardSpecifics = creditCardSpecifics;
-}
+};
+
 
 /**
  * Investment account info.
  *
- * @return Investment account info.
+ * @return {InvestmentAccountInfo} Investment account info.
  */
-@ChildAggregate ( order = 40 )
-public InvestmentAccountInfo getInvestmentSpecifics() {
-  return investSpecifics;
-}
+AccountProfile.prototype.getInvestmentSpecifics = function() {
+  return this.investSpecifics;
+};
+ChildAggregate.add({order: 40, owner: AccountProfile, /*type: InvestmentAccountInfo,*/ fcn: "getInvestmentSpecifics"});
+
 
 /**
  * Investment account info.
  *
- * @param investSpecifics Investment account info.
+ * @param {InvestmentAccountInfo} investSpecifics Investment account info.
  */
-public void setInvestmentSpecifics(InvestmentAccountInfo investSpecifics) {
+AccountProfile.prototype.setInvestmentSpecifics = function(investSpecifics) {
   this.bankSpecifics = null;
   this.creditCardSpecifics = null;
   this.investSpecifics = investSpecifics;
-}
-}
-;
+};
 
 
 

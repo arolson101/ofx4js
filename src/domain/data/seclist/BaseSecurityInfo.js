@@ -14,11 +14,7 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.Date;
 
 /**
  * Base class for info about the various types of securities.
@@ -50,7 +46,7 @@ function BaseSecurityInfo () {
  * @return {SecurityInfo} the security info aggregate.
  */
 BaseSecurityInfo.prototype.getSecurityInfo = function() {
-  return securityInfo;
+  return this.securityInfo;
 };
 ChildAggregate.add({required: true, order: 10, owner: BaseSecurityInfo, /*type: SecurityInfo,*/ fcn: "getSecurityInfo"});
 
@@ -72,7 +68,7 @@ BaseSecurityInfo.prototype.setSecurityInfo = function(securityInfo) {
  * @return {SecurityId} the security id
  */
 BaseSecurityInfo.prototype.getSecurityId = function() {
-  return getSecurityInfo().getSecurityId();
+  return this.getSecurityInfo().getSecurityId();
 };
 
 
@@ -82,7 +78,7 @@ BaseSecurityInfo.prototype.getSecurityId = function() {
  * @return {String} the full name of the security.
  */
 BaseSecurityInfo.prototype.getSecurityName = function() {
-  return getSecurityInfo().getSecurityName();
+  return this.getSecurityInfo().getSecurityName();
 };
 
 
@@ -92,7 +88,7 @@ BaseSecurityInfo.prototype.getSecurityName = function() {
  * @return {String} the ticket symbol or null if there's no ticker symbol
  */
 BaseSecurityInfo.prototype.getTickerSymbol = function() {
-  return getSecurityInfo().getTickerSymbol();
+  return this.getSecurityInfo().getTickerSymbol();
 };
 
 
@@ -102,7 +98,7 @@ BaseSecurityInfo.prototype.getTickerSymbol = function() {
  * @return {String} the FI ID number for the security
  */
 BaseSecurityInfo.prototype.getFiId = function() {
-  return getSecurityInfo().getFiId();
+  return this.getSecurityInfo().getFiId();
 };
 
 
@@ -112,7 +108,7 @@ BaseSecurityInfo.prototype.getFiId = function() {
  * @return {String} the rating
  */
 BaseSecurityInfo.prototype.getRating = function() {
-  return getSecurityInfo().getRating();
+  return this.getSecurityInfo().getRating();
 };
 
 
@@ -125,7 +121,7 @@ BaseSecurityInfo.prototype.getRating = function() {
  * @return {Double} the per unit price
  */
 BaseSecurityInfo.prototype.getUnitPrice = function() {
-  return getSecurityInfo().getUnitPrice();
+  return this.getSecurityInfo().getUnitPrice();
 };
 
 
@@ -135,7 +131,7 @@ BaseSecurityInfo.prototype.getUnitPrice = function() {
  * @return {Date} the date as-of for the unit price
  */
 BaseSecurityInfo.prototype.getUnitPriceAsOfDate = function() {
-  return getSecurityInfo().getUnitPriceAsOfDate();
+  return this.getSecurityInfo().getUnitPriceAsOfDate();
 };
 
 
@@ -146,7 +142,7 @@ BaseSecurityInfo.prototype.getUnitPriceAsOfDate = function() {
  * @return {String} the overriding currency code or null to mean the default currency
  */
 BaseSecurityInfo.prototype.getCurrencyCode = function() {
-  return getSecurityInfo().getCurrencyCode();
+  return this.getSecurityInfo().getCurrencyCode();
 };
 
 
@@ -157,7 +153,7 @@ BaseSecurityInfo.prototype.getCurrencyCode = function() {
  * @return {String} the memo
  */
 BaseSecurityInfo.prototype.getMemo = function() {
-  return getSecurityInfo().getMemo();
+  return this.getSecurityInfo().getMemo();
 };
 
 

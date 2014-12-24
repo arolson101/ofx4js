@@ -18,18 +18,21 @@ var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for an investment expense
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
  */
 function InvestmentExpenseTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.INVESTMENT_EXPENSE);
 
   /**
    * @name InvestmentExpenseTransaction#securityId
@@ -87,10 +90,6 @@ inherit(InvestmentExpenseTransaction, "extends", BaseOtherInvestmentTransaction)
 Aggregate.add("INVEXPENSE", InvestmentExpenseTransaction);
 
 
-InvestmentExpenseTransaction.prototype.InvestmentExpenseTransaction = function() {
-  super(TransactionType.INVESTMENT_EXPENSE);
-};
-
 
 /**
  * Gets the id of the security for the expense. This is a required field according to the OFX
@@ -100,7 +99,7 @@ InvestmentExpenseTransaction.prototype.InvestmentExpenseTransaction = function()
  * @return {SecurityId} the security id of the security for the expsense
  */
 InvestmentExpenseTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: InvestmentExpenseTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -124,7 +123,7 @@ InvestmentExpenseTransaction.prototype.setSecurityId = function(securityId) {
  * @return {Double} the total
  */
 InvestmentExpenseTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", required: true, order: 30, owner: InvestmentExpenseTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -147,7 +146,7 @@ InvestmentExpenseTransaction.prototype.setTotal = function(total) {
  * @return {String} the sub account type
  */
 InvestmentExpenseTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 40, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -169,7 +168,7 @@ InvestmentExpenseTransaction.prototype.setSubAccountSecurity = function(subAccou
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 InvestmentExpenseTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -180,7 +179,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund
  */
 InvestmentExpenseTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 50, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -202,7 +201,7 @@ InvestmentExpenseTransaction.prototype.setSubAccountFund = function(subAccountFu
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 InvestmentExpenseTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 
@@ -214,7 +213,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {String} the currency code for the transaction
  */
 InvestmentExpenseTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 60, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -239,7 +238,7 @@ InvestmentExpenseTransaction.prototype.setCurrencyCode = function(currencyCode) 
  * @return {OriginalCurrency} the original currency info for the transaction
  */
 InvestmentExpenseTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 Element.add({name: "ORIGCURRENCY", order: 70, owner: InvestmentExpenseTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -265,7 +264,7 @@ InvestmentExpenseTransaction.prototype.setOriginalCurrencyInfo = function(origin
  * @return {String} the 401k source
  */
 InvestmentExpenseTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 180, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -289,7 +288,7 @@ InvestmentExpenseTransaction.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the 401k source or null if its not one of the well-known types
  */
 InvestmentExpenseTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

@@ -21,11 +21,9 @@ var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.Date;
-//import java.util.Collection;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
  */
 function AccountInfoResponse () {
 
@@ -61,7 +59,7 @@ AccountInfoResponse.prototype.getResponseMessageName = function() {
  * @return {Date} When the account info was last updated.
  */
 AccountInfoResponse.prototype.getLastUpdated = function() {
-  return lastUpdated;
+  return this.lastUpdated;
 };
 Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoResponse, /*type: Date,*/ fcn: "getLastUpdated"});
 
@@ -82,7 +80,7 @@ AccountInfoResponse.prototype.setLastUpdated = function(lastUpdated) {
  * @return {Collection<AccountProfile>} The accounts.
  */
 AccountInfoResponse.prototype.getAccounts = function() {
-  return accounts;
+  return this.accounts;
 };
 ChildAggregate.add({order: 10, owner: AccountInfoResponse, /*type: Collection<AccountProfile>,*/ fcn: "getAccounts"});
 

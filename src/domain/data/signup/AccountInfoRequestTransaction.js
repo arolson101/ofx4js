@@ -19,9 +19,11 @@ var inherit = require("../inherit");
 var TransactionWrappedRequestMessage = require("domain/data/TransactionWrappedRequestMessage");
 var ChildAggregate = require("meta/ChildAggregate");
 var Aggregate = require("meta/Aggregate");
+var AccountInfoRequest = require("./AccountInfoRequest");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments TransactionWrappedRequestMessage
  */
 function AccountInfoRequestTransaction () {
 
@@ -45,7 +47,7 @@ Aggregate.add("ACCTINFOTRNRQ", AccountInfoRequestTransaction);
  * @return {AccountInfoRequest} The wrapped message.
  */
 AccountInfoRequestTransaction.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 ChildAggregate.add({required: true, order: 30, owner: AccountInfoRequestTransaction, /*type: AccountInfoRequest,*/ fcn: "getMessage"});
 
@@ -62,7 +64,7 @@ AccountInfoRequestTransaction.prototype.setMessage = function(message) {
 
 // Inherited.
 AccountInfoRequestTransaction.prototype.setWrappedMessage = function(/*AccountInfoRequest*/ message) {
-  setMessage(message);
+  this.setMessage(message);
 };
 
 

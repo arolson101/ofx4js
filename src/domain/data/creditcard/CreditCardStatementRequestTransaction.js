@@ -16,12 +16,14 @@
 
 var inherit = require("../inherit");
 
+var CreditCardStatementRequest = require("./CreditCardStatementRequest");
 var TransactionWrappedRequestMessage = require("domain/data/TransactionWrappedRequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments TransactionWrappedRequestMessage
  */
 function CreditCardStatementRequestTransaction () {
 
@@ -45,7 +47,7 @@ Aggregate.add("CCSTMTTRNRQ", CreditCardStatementRequestTransaction);
  * @return {CreditCardStatementRequest} The message.
  */
 CreditCardStatementRequestTransaction.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 ChildAggregate.add({required: true, order: 30, owner: CreditCardStatementRequestTransaction, /*type: CreditCardStatementRequest,*/ fcn: "getMessage"});
 
@@ -63,7 +65,7 @@ CreditCardStatementRequestTransaction.prototype.setMessage = function(message) {
 
 // Inherited.
 CreditCardStatementRequestTransaction.prototype.setWrappedMessage = function(/*CreditCardStatementRequest*/ message) {
-  setMessage(message);
+  this.setMessage(message);
 };
 
 

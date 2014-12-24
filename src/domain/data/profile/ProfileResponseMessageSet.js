@@ -18,15 +18,12 @@ var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ChildAggregate = require("meta/ChildAggregate");
 var Aggregate = require("meta/Aggregate");
 
-//import java.util.List;
-//import java.util.ArrayList;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessageSet
  * @see "Section 7 OFX Spec"
  */
 function ProfileResponseMessageSet () {
@@ -56,7 +53,7 @@ ProfileResponseMessageSet.prototype.getType = function() {
  * @return {ProfileResponseTransaction} The profile response.
  */
 ProfileResponseMessageSet.prototype.getProfileResponse = function() {
-  return profileResponse;
+  return this.profileResponse;
 };
 ChildAggregate.add({required: true, order: 0, owner: ProfileResponseMessageSet, /*type: ProfileResponseTransaction,*/ fcn: "getProfileResponse"});
 
@@ -73,10 +70,10 @@ ProfileResponseMessageSet.prototype.setProfileResponse = function(profileRespons
 
 // Inherited.
 ProfileResponseMessageSet.prototype.getResponseMessages = function() {
-  ArrayList<ResponseMessage> messages = new ArrayList<ResponseMessage>();
+  var messages = [];
 
-  if (getProfileResponse() != null) {
-    messages.add(getProfileResponse());
+  if (this.getProfileResponse() !== null) {
+    messages.add(this.getProfileResponse());
   }
 
   return messages;

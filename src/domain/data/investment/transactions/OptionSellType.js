@@ -14,29 +14,26 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of sale for options.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var OptionSellType = {
   SELL_TO_CLOSE: 0,
-  SELL_TO_OPEN: 1;
+  SELL_TO_OPEN: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SELLTOOPEN".equals(ofxVal)) {
-      return SELL_TO_OPEN;
+      return OptionSellType.SELL_TO_OPEN;
     } else if ("SELLTOCLOSE".equals(ofxVal)) {
-      return SELL_TO_CLOSE;
+      return OptionSellType.SELL_TO_CLOSE;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = OptionSellType;

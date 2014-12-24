@@ -16,18 +16,15 @@
 
 var inherit = require("../inherit");
 
-var ProcessorDayOff = require("domain/data/common/ProcessorDayOff");
 var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
 var MessageSetType = require("domain/data/MessageSetType");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.List;
-
 /**
  * BillPay Message Set Profile
- * @author Scott Priddy
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  * @see "Section 12.11.2 OFX Spec"
  */
 function BillpayV1MessageSetInfo () {
@@ -178,7 +175,7 @@ BillpayV1MessageSetInfo.prototype.getMessageSetType = function() {
 
 
 BillpayV1MessageSetInfo.prototype.getDaysWith = function() {
-  return daysWith;
+  return this.daysWith;
 };
 Element.add({name: "DAYSWITH", required: true, order: 10, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getDaysWith"});
 
@@ -189,7 +186,7 @@ BillpayV1MessageSetInfo.prototype.setDaysWith = function(/*Integer*/ daysWith) {
 
 
 BillpayV1MessageSetInfo.prototype.getDefaultDaysToPay = function() {
-  return defaultDaysToPay;
+  return this.defaultDaysToPay;
 };
 Element.add({name: "DFLTDAYSTOPAY", required: true, order: 20, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getDefaultDaysToPay"});
 
@@ -200,7 +197,7 @@ BillpayV1MessageSetInfo.prototype.setDefaultDaysToPay = function(/*Integer*/ def
 
 
 BillpayV1MessageSetInfo.prototype.getTransferDaysWith = function() {
-  return transferDaysWith;
+  return this.transferDaysWith;
 };
 Element.add({name: "XFERDAYSWITH", required: true, order: 30, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getTransferDaysWith"});
 
@@ -211,7 +208,7 @@ BillpayV1MessageSetInfo.prototype.setTransferDaysWith = function(/*Integer*/ tra
 
 
 BillpayV1MessageSetInfo.prototype.getTransferDefaultDaysToPay = function() {
-  return transferDefaultDaysToPay;
+  return this.transferDefaultDaysToPay;
 };
 Element.add({name: "XFERDFLTDAYSTOPAY", required: true, order: 40, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getTransferDefaultDaysToPay"});
 
@@ -222,7 +219,7 @@ BillpayV1MessageSetInfo.prototype.setTransferDefaultDaysToPay = function(/*Integ
 
 
 BillpayV1MessageSetInfo.prototype.getProcessorDaysOff = function() {
-  return processorDaysOff;
+  return this.processorDaysOff;
 };
 Element.add({name: "PROCDAYSOFF", order: 50, owner: BillpayV1MessageSetInfo, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
 
@@ -233,7 +230,7 @@ BillpayV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayO
 
 
 BillpayV1MessageSetInfo.prototype.getProcessorEndTime = function() {
-  return processorEndTime;
+  return this.processorEndTime;
 };
 Element.add({name: "PROCENDTM", required: true, order: 60, owner: BillpayV1MessageSetInfo, /*type: String,*/ fcn: "getProcessorEndTime"});
 
@@ -244,7 +241,7 @@ BillpayV1MessageSetInfo.prototype.setProcessorEndTime = function(/*String*/ proc
 
 
 BillpayV1MessageSetInfo.prototype.getModelWindow = function() {
-  return modelWindow;
+  return this.modelWindow;
 };
 Element.add({name: "MODELWND", required: true, order: 70, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getModelWindow"});
 
@@ -255,7 +252,7 @@ BillpayV1MessageSetInfo.prototype.setModelWindow = function(/*Integer*/ modelWin
 
 
 BillpayV1MessageSetInfo.prototype.getPostProcessorWindow = function() {
-  return postProcessorWindow;
+  return this.postProcessorWindow;
 };
 Element.add({name: "POSTPROCWND", required: true, order: 80, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getPostProcessorWindow"});
 
@@ -266,7 +263,7 @@ BillpayV1MessageSetInfo.prototype.setPostProcessorWindow = function(/*Integer*/ 
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsStatusUpdateViaPaymentModificationResponse = function() {
-  return supportsStatusUpdateViaPaymentModificationResponse;
+  return this.supportsStatusUpdateViaPaymentModificationResponse;
 };
 Element.add({name: "STSVIAMODS", required: true, order: 90, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsStatusUpdateViaPaymentModificationResponse"});
 
@@ -277,7 +274,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsStatusUpdateViaPaymentModificationR
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByAddress = function() {
-  return supportsPaymentByAddress;
+  return this.supportsPaymentByAddress;
 };
 Element.add({name: "PMTBYADDR", required: true, order: 100, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPaymentByAddress"});
 
@@ -288,7 +285,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByAddress = function(/*Boole
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByTransfer = function() {
-  return supportsPaymentByTransfer;
+  return this.supportsPaymentByTransfer;
 };
 Element.add({name: "PMTBYXFER", required: true, order: 110, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPaymentByTransfer"});
 
@@ -299,7 +296,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByTransfer = function(/*Bool
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByPayeeId = function() {
-  return supportsPaymentByPayeeId;
+  return this.supportsPaymentByPayeeId;
 };
 Element.add({name: "PMTBYPAYEEID", required: true, order: 120, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPaymentByPayeeId"});
 
@@ -310,7 +307,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByPayeeId = function(/*Boole
 
 
 BillpayV1MessageSetInfo.prototype.getUserCanAddPayee = function() {
-  return userCanAddPayee;
+  return this.userCanAddPayee;
 };
 Element.add({name: "CANADDPAYEE", required: true, order: 130, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getUserCanAddPayee"});
 
@@ -321,7 +318,7 @@ BillpayV1MessageSetInfo.prototype.setUserCanAddPayee = function(/*Boolean*/ user
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsExtendedPayment = function() {
-  return supportsExtendedPayment;
+  return this.supportsExtendedPayment;
 };
 Element.add({name: "HASEXTDPMT", required: true, order: 140, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsExtendedPayment"});
 
@@ -332,7 +329,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsExtendedPayment = function(/*Boolea
 
 
 BillpayV1MessageSetInfo.prototype.getCanModifyPayments = function() {
-  return canModifyPayments;
+  return this.canModifyPayments;
 };
 Element.add({name: "CANMODPMTS", required: true, order: 150, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getCanModifyPayments"});
 
@@ -343,7 +340,7 @@ BillpayV1MessageSetInfo.prototype.setCanModifyPayments = function(/*Boolean*/ ca
 
 
 BillpayV1MessageSetInfo.prototype.getCanModifyModels = function() {
-  return canModifyModels;
+  return this.canModifyModels;
 };
 Element.add({name: "CANMODMDLS", required: true, order: 160, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getCanModifyModels"});
 
@@ -354,7 +351,7 @@ BillpayV1MessageSetInfo.prototype.setCanModifyModels = function(/*Boolean*/ canM
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsDifferentFirstPayment = function() {
-  return supportsDifferentFirstPayment;
+  return this.supportsDifferentFirstPayment;
 };
 Element.add({name: "DIFFFIRSTPMT", required: true, order: 170, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsDifferentFirstPayment"});
 
@@ -365,7 +362,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsDifferentFirstPayment = function(/*
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsDifferentLastPayment = function() {
-  return supportsDifferentLastPayment;
+  return this.supportsDifferentLastPayment;
 };
 Element.add({name: "DIFFLASTPMT", required: true, order: 180, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsDifferentLastPayment"});
 
@@ -376,7 +373,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsDifferentLastPayment = function(/*B
 
 
 BillpayV1MessageSetInfo.prototype.getSupportsBillPresentmentContext = function() {
-  return supportsBillPresentmentContext;
+  return this.supportsBillPresentmentContext;
 };
 Element.add({name: "BILLPUBCONTEXT", order: 190, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsBillPresentmentContext"});
 

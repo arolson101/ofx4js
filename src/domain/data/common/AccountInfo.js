@@ -14,12 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Marker interface for account information.
  *
- * @author Ryan Heaton
+ * @class
  */
 function AccountInfo() {
 }

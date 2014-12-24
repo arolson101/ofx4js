@@ -14,35 +14,32 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * The type of debt.
  * @see "Section 13.8.5.6, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var StockType = {
   COMMON: 0,
   PREFERRED: 1,
   CONVERTIBLE: 2,
-  OTHER: 3;
+  OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("COMMON".equals(ofxVal)) {
-      return COMMON;
+      return StockType.COMMON;
     } else if ("PREFERRED".equals(ofxVal)) {
-      return PREFERRED;
+      return StockType.PREFERRED;
     } else if ("CONVERTIBLE".equals(ofxVal)) {
-      return CONVERTIBLE;
+      return StockType.CONVERTIBLE;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return StockType.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = StockType;

@@ -14,14 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var SecurityId = require("domain/data/seclist/SecurityId");
-
 /**
  * Interface for transactions that have a security associated with them.
  *
- * @author Jon Perlow
+ * @class
  */
 function TransactionWithSecurity() {
 }

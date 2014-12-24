@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * The type of debt.
  * @see "Section 13.8.5.2, OFX Spec"
@@ -24,19 +22,18 @@ var inherit = require("../inherit");
  */
 var DebtType = {
   COUPON: 0,
-  ZERO: 1;
+  ZERO: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("COUPON".equals(ofxVal)) {
-      return COUPON;
+      return DebtType.COUPON;
     } else if ("ZERO".equals(ofxVal)) {
-      return ZERO;
+      return DebtType.ZERO;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = DebtType;

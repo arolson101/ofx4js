@@ -14,35 +14,32 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * The class of debt.
  * @see "Section 13.8.5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var DebtClass = {
   TREASURY: 0,
   MUNICIPAL: 1,
   CORPORATE: 2,
-  OTHER: 3;
+  OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("TREASURY".equals(ofxVal)) {
-      return TREASURY;
+      return DebtClass.TREASURY;
     } else if ("MUNICIPAL".equals(ofxVal)) {
-      return MUNICIPAL;
+      return DebtClass.MUNICIPAL;
     } else if ("CORPORATE".equals(ofxVal)) {
-      return CORPORATE;
+      return DebtClass.CORPORATE;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return DebtClass.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = DebtClass;

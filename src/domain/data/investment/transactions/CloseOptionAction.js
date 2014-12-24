@@ -14,32 +14,29 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of action for closing a stock option.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var CloseOptionAction = {
   EXERCISE: 0,
   ASSIGN: 1,
-  EXPIRE: 2;
+  EXPIRE: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("EXERCISE".equals(ofxVal)) {
-      return EXERCISE;
+      return CloseOptionAction.EXERCISE;
     } else if ("ASSIGN".equals(ofxVal)) {
-      return ASSIGN;
+      return CloseOptionAction.ASSIGN;
     } else if ("EXPIRE".equals(ofxVal)) {
-      return EXPIRE;
+      return CloseOptionAction.EXPIRE;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = CloseOptionAction;

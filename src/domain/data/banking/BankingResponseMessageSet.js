@@ -16,18 +16,14 @@
 
 var inherit = require("../inherit");
 
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-
 var MessageSetType = require("domain/data/MessageSetType");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessageSet
  */
 function BankingResponseMessageSet () {
 
@@ -60,7 +56,7 @@ BankingResponseMessageSet.prototype.getType = function() {
  * @return {BankStatementResponseTransaction[]} The statement response list.
  */
 BankingResponseMessageSet.prototype.getStatementResponses = function() {
-  return statementResponses;
+  return this.statementResponses;
 };
 ChildAggregate.add({order: 0, owner: BankingResponseMessageSet, /*type: BankStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
 
@@ -77,7 +73,7 @@ BankingResponseMessageSet.prototype.setStatementResponses = function(statementRe
 
 // Inherited.
 BankingResponseMessageSet.prototype.getResponseMessages = function() {
-  return new ArrayList<ResponseMessage>(statementResponses);
+  return [this.statementResponses];
 };
 
 
@@ -88,12 +84,12 @@ BankingResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 BankingResponseMessageSet.prototype.getStatementResponse = function() {
-  return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 
 BankingResponseMessageSet.prototype.setStatementResponse = function(/*BankStatementResponseTransaction*/ statementResponse) {
-  this.statementResponses = Collections.singletonList(statementResponse);
+  this.statementResponses = [statementResponse];
 };
 
 

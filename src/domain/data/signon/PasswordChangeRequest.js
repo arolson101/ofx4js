@@ -23,7 +23,7 @@ var Element = require("meta/Element");
 /**
  * Request to change a user password.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 2.5.2.1, OFX Spec."
  */
 function PasswordChangeRequest () {
@@ -55,7 +55,7 @@ Aggregate.add("PINCHRQ", PasswordChangeRequest);
  * @return {String} The id of the user changing password.
  */
 PasswordChangeRequest.prototype.getUserId = function() {
-  return userId;
+  return this.userId;
 };
 Element.add({name: "USERID", required: true, order: 0, owner: PasswordChangeRequest, /*type: String,*/ fcn: "getUserId"});
 
@@ -76,7 +76,7 @@ PasswordChangeRequest.prototype.setUserId = function(userId) {
  * @return {String} The new password.
  */
 PasswordChangeRequest.prototype.getNewPassword = function() {
-  return newPassword;
+  return this.newPassword;
 };
 Element.add({name: "NEWUSERPASS", required: true, order: 10, owner: PasswordChangeRequest, /*type: String,*/ fcn: "getNewPassword"});
 

@@ -18,12 +18,15 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BaseSecurityInfo = require("./BaseSecurityInfo");
+var AssetClass = require("./AssetClass");
 
 /**
  * Info about any other type of security.
  * @see "Section 13.8.5.5, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSecurityInfo
  */
 function OtherSecurityInfo () {
 
@@ -62,7 +65,7 @@ Aggregate.add("OTHERINFO", OtherSecurityInfo);
  * @return {String} the description of the security
  */
 OtherSecurityInfo.prototype.getTypeDesc = function() {
-  return typeDesc;
+  return this.typeDesc;
 };
 Element.add({name: "TYPEDESC", order: 20, owner: OtherSecurityInfo, /*type: String,*/ fcn: "getTypeDesc"});
 
@@ -84,7 +87,7 @@ OtherSecurityInfo.prototype.setTypeDesc = function(typeDesc) {
  * @return {String} the asset class of the debt
  */
 OtherSecurityInfo.prototype.getAssetClass = function() {
-  return assetClass;
+  return this.assetClass;
 };
 Element.add({name: "ASSETCLASS", order: 30, owner: OtherSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
 
@@ -105,7 +108,7 @@ OtherSecurityInfo.prototype.setAssetClass = function(assetClass) {
  * @return {AssetClass} the asset class or null if it's not one of the well-known types
  */
 OtherSecurityInfo.prototype.getAssetClassEnum = function() {
-  return AssetClass.fromOfx(getAssetClass());
+  return AssetClass.fromOfx(this.getAssetClass());
 };
 
 
@@ -116,7 +119,7 @@ OtherSecurityInfo.prototype.getAssetClassEnum = function() {
  * @return {String} the FI-defined asset class of the debt
  */
 OtherSecurityInfo.prototype.getFiAssetClass = function() {
-  return fiAssetClass;
+  return this.fiAssetClass;
 };
 Element.add({name: "FIASSETCLASS", order: 40, owner: OtherSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
 

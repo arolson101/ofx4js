@@ -20,12 +20,11 @@ var ResponseMessage = require("domain/data/ResponseMessage");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.Date;
-
 /**
  * Response to a change a user password request.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
  * @see "Section 2.5.2.2, OFX Spec."
  */
 function PasswordChangeResponse () {
@@ -57,7 +56,7 @@ Aggregate.add("PINCHRQ", PasswordChangeResponse);
  * @return {String} The id of the user changing password.
  */
 PasswordChangeResponse.prototype.getUserId = function() {
-  return userId;
+  return this.userId;
 };
 Element.add({name: "USERID", required: true, order: 0, owner: PasswordChangeResponse, /*type: String,*/ fcn: "getUserId"});
 
@@ -84,7 +83,7 @@ PasswordChangeResponse.prototype.setUserId = function(userId) {
  * @return {Date} The timestamp of the password change.
  */
 PasswordChangeResponse.prototype.getChangeTimestamp = function() {
-  return changeTimestamp;
+  return this.changeTimestamp;
 };
 Element.add({name: "DTCHANGED", order: 10, owner: PasswordChangeResponse, /*type: Date,*/ fcn: "getChangeTimestamp"});
 

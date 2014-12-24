@@ -18,14 +18,19 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BaseBuyInvestmentTransaction = require("./BaseBuyInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var BuyType = require("./BuyType");
 
 /**
  * Transaction for buying mutual funds.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseBuyInvestmentTransaction
  */
 function BuyMutualFundTransaction () {
+  BaseBuyInvestmentTransaction.call(this, TransactionType.BUY_MUTUAL_FUND);
 
   /**
    * @name BuyMutualFundTransaction#buyType
@@ -48,10 +53,6 @@ inherit(BuyMutualFundTransaction, "extends", BaseBuyInvestmentTransaction);
 Aggregate.add("BUYMF", BuyMutualFundTransaction);
 
 
-BuyMutualFundTransaction.prototype.BuyMutualFundTransaction = function() {
-  super(TransactionType.BUY_MUTUAL_FUND);
-};
-
 
 /**
  * Gets the type of purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field according to
@@ -61,7 +62,7 @@ BuyMutualFundTransaction.prototype.BuyMutualFundTransaction = function() {
  * @return {String} the buy type
  */
 BuyMutualFundTransaction.prototype.getBuyType = function() {
-  return buyType;
+  return this.buyType;
 };
 Element.add({name: "BUYTYPE", required: true, order: 20, owner: BuyMutualFundTransaction, /*type: String,*/ fcn: "getBuyType"});
 
@@ -84,7 +85,7 @@ BuyMutualFundTransaction.prototype.setBuyType = function(buyType) {
  * @return {BuyType} the type of purchase or null if it's not known
  */
 BuyMutualFundTransaction.prototype.getBuyTypeEnum = function() {
-  return BuyType.fromOfx(buyType);
+  return BuyType.fromOfx(this.buyType);
 };
 
 
@@ -96,7 +97,7 @@ BuyMutualFundTransaction.prototype.getBuyTypeEnum = function() {
  * @return {String} the related transaction id
  */
 BuyMutualFundTransaction.prototype.getRelatedTransactionId = function() {
-  return relatedTransactionId;
+  return this.relatedTransactionId;
 };
 Element.add({name: "RELFITID", order: 30, owner: BuyMutualFundTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
 

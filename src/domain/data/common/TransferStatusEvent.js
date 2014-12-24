@@ -14,10 +14,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
- * @author Ryan Heaton
+ * @enum
  */
 var TransferStatusEvent = {
 

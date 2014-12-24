@@ -16,14 +16,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var ProcessorDayOff = require("domain/data/common/ProcessorDayOff");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
-//import java.util.List;
 
 /**
  * Funds Transfer Profile
@@ -128,7 +122,7 @@ Aggregate.add("XFERPROF", TransferProfile);
  * @return {ProcessorDayOff[]} List of days during the week that no processing occurs.
  */
 TransferProfile.prototype.getProcessorDaysOff = function() {
-  return processorDaysOff;
+  return this.processorDaysOff;
 };
 Element.add({name: "PROCDAYSOFF", order: 0, owner: TransferProfile, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
 
@@ -147,7 +141,7 @@ TransferProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ p
  * @return {String} Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 TransferProfile.prototype.getProcessEndTime = function() {
-  return processEndTime;
+  return this.processEndTime;
 };
 Element.add({name: "PROCENDTM", required: true, order: 10, owner: TransferProfile, /*type: String,*/ fcn: "getProcessEndTime"});
 
@@ -167,7 +161,7 @@ TransferProfile.prototype.setProcessEndTime = function(processEndTime) {
 
 
 TransferProfile.prototype.getSupportsScheduledTransfers = function() {
-  return supportsScheduledTransfers;
+  return this.supportsScheduledTransfers;
 };
 Element.add({name: "CANSCHED", required: true, order: 20, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsScheduledTransfers"});
 
@@ -182,7 +176,7 @@ TransferProfile.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ s
  * @return {Boolean} Boolean whether supports recurring transfers
  */
 TransferProfile.prototype.getSupportsRecurringTransfers = function() {
-  return supportsRecurringTransfers;
+  return this.supportsRecurringTransfers;
 };
 Element.add({name: "CANRECUR", required: true, order: 30, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsRecurringTransfers"});
 
@@ -197,7 +191,7 @@ TransferProfile.prototype.setSupportsRecurringTransfers = function(/*Boolean*/ s
  * @return {Boolean} Boolean whether supports loan transfers
  */
 TransferProfile.prototype.getSupportsLoanTransfers = function() {
-  return supportsLoanTransfers;
+  return this.supportsLoanTransfers;
 };
 Element.add({name: "CANLOAN", order: 40, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsLoanTransfers"});
 
@@ -208,7 +202,7 @@ TransferProfile.prototype.setSupportsLoanTransfers = function(/*Boolean*/ suppor
 
 
 TransferProfile.prototype.getSupportsScheduledLoanTransfers = function() {
-  return supportsScheduledLoanTransfers;
+  return this.supportsScheduledLoanTransfers;
 };
 Element.add({name: "CANSCHEDLOAN", order: 50, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsScheduledLoanTransfers"});
 
@@ -219,7 +213,7 @@ TransferProfile.prototype.setSupportsScheduledLoanTransfers = function(/*Boolean
 
 
 TransferProfile.prototype.getSupportsRecurringLoanTransfers = function() {
-  return supportsRecurringLoanTransfers;
+  return this.supportsRecurringLoanTransfers;
 };
 Element.add({name: "CANRECURLOAN", order: 60, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsRecurringLoanTransfers"});
 
@@ -230,7 +224,7 @@ TransferProfile.prototype.setSupportsRecurringLoanTransfers = function(/*Boolean
 
 
 TransferProfile.prototype.getSupportsTransferModification = function() {
-  return supportsTransferModification;
+  return this.supportsTransferModification;
 };
 Element.add({name: "CANMODXFERS", required: true, order: 70, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsTransferModification"});
 
@@ -241,7 +235,7 @@ TransferProfile.prototype.setSupportsTransferModification = function(/*Boolean*/
 
 
 TransferProfile.prototype.getSupportsModelModification = function() {
-  return supportsModelModification;
+  return this.supportsModelModification;
 };
 Element.add({name: "CANMODMDLS", required: true, order: 80, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsModelModification"});
 
@@ -258,7 +252,7 @@ TransferProfile.prototype.setSupportsModelModification = function(/*Boolean*/ su
  * @return {Integer} Integer number of days before a recurring transaction is scheduled to be processed that it is instantiated on the system
  */
 TransferProfile.prototype.getModelWindow = function() {
-  return modelWindow;
+  return this.modelWindow;
 };
 Element.add({name: "MODELWND", required: true, order: 90, owner: TransferProfile, /*type: Integer,*/ fcn: "getModelWindow"});
 
@@ -273,7 +267,7 @@ TransferProfile.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
  * @return {Integer} Integer number of days before processing date that funds are withdrawn
  */
 TransferProfile.prototype.getWithdrawnDays = function() {
-  return withdrawnDays;
+  return this.withdrawnDays;
 };
 Element.add({name: "DAYSWITH", required: true, order: 100, owner: TransferProfile, /*type: Integer,*/ fcn: "getWithdrawnDays"});
 
@@ -288,7 +282,7 @@ TransferProfile.prototype.setWithdrawnDays = function(/*Integer*/ withdrawnDays)
  * @return {Integer} Integer Default number of days to pay
  */
 TransferProfile.prototype.getDefaultDaysToPay = function() {
-  return defaultDaysToPay;
+  return this.defaultDaysToPay;
 };
 Element.add({name: "DFLTDAYSTOPAY", required: true, order: 110, owner: TransferProfile, /*type: Integer,*/ fcn: "getDefaultDaysToPay"});
 

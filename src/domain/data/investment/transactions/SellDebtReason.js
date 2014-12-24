@@ -14,32 +14,29 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Reason debt was sold.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var SellDebtReason = {
   CALL: 0,
   SELL: 1,
-  MATURITY: 2;
+  MATURITY: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CALL".equals(ofxVal)) {
-      return CALL;
+      return SellDebtReason.CALL;
     } else if ("SELL".equals(ofxVal)) {
-      return SELL;
+      return SellDebtReason.SELL;
     } else if ("MATURITY".equals(ofxVal)) {
-      return MATURITY;
+      return SellDebtReason.MATURITY;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = SellDebtReason;

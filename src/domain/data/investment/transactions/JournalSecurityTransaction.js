@@ -17,19 +17,24 @@
 var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
  * account.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
 function JournalSecurityTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.JOURNAL_SECURITY);
 
   /**
    * @name JournalSecurityTransaction#securityId
@@ -67,10 +72,6 @@ inherit(JournalSecurityTransaction, "implements", TransactionWithSecurity);
 Aggregate.add("JRNLSEC", JournalSecurityTransaction);
 
 
-JournalSecurityTransaction.prototype.JournalSecurityTransaction = function() {
-  super(TransactionType.JOURNAL_SECURITY);
-};
-
 
 /**
  * Gets the id of the security that was transferred. This is a required field according to the OFX
@@ -80,7 +81,7 @@ JournalSecurityTransaction.prototype.JournalSecurityTransaction = function() {
  * @return {SecurityId} the security id of the security that was bought
  */
 JournalSecurityTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: JournalSecurityTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -104,7 +105,7 @@ JournalSecurityTransaction.prototype.setSecurityId = function(securityId) {
  * @return {String} the sub account type
  */
 JournalSecurityTransaction.prototype.getFromSubAccountFund = function() {
-  return subAccountFrom;
+  return this.subAccountFrom;
 };
 Element.add({name: "SUBACCTFROM", order: 30, owner: JournalSecurityTransaction, /*type: String,*/ fcn: "getFromSubAccountFund"});
 
@@ -126,7 +127,7 @@ JournalSecurityTransaction.prototype.setFromSubAccountFund = function(subAccount
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 JournalSecurityTransaction.prototype.getFromSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getFromSubAccountFund());
+  return SubAccountType.fromOfx(this.getFromSubAccountFund());
 };
 
 
@@ -137,7 +138,7 @@ JournalSecurityTransaction.prototype.getFromSubAccountFundEnum = function() {
  * @return {String} the sub account fund
  */
 JournalSecurityTransaction.prototype.getToSubAccountFund = function() {
-  return subAccountTo;
+  return this.subAccountTo;
 };
 Element.add({name: "SUBACCTTO", order: 40, owner: JournalSecurityTransaction, /*type: String,*/ fcn: "getToSubAccountFund"});
 
@@ -159,7 +160,7 @@ JournalSecurityTransaction.prototype.setToSubAccountFund = function(subAccountTo
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getToSubAccountFund());
+  return SubAccountType.fromOfx(this.getToSubAccountFund());
 };
 
 
@@ -170,7 +171,7 @@ JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
  * @return {Double} the total
  */
 JournalSecurityTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", order: 50, owner: JournalSecurityTransaction, /*type: Double,*/ fcn: "getTotal"});
 

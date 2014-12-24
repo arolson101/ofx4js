@@ -21,9 +21,10 @@ var Aggregate = require("meta/Aggregate");
 var AccountDetails = require("domain/data/common/AccountDetails");
 
 /**
- * @author Ryan Heaton
+ * @class
  * 
  * @see "OFX Spec, Section 11.3.2"
+ * @augments AccountDetails
  */
 function CreditCardAccountDetails () {
 
@@ -54,7 +55,7 @@ Aggregate.add("CreditCardAccountDetails", CreditCardAccountDetails);
  * @return {String} The account number.
  */
 CreditCardAccountDetails.prototype.getAccountNumber = function() {
-  return accountNumber;
+  return this.accountNumber;
 };
 Element.add({name: "ACCTID", required: true, order: 0, owner: CreditCardAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
 
@@ -75,7 +76,7 @@ CreditCardAccountDetails.prototype.setAccountNumber = function(accountNumber) {
  * @return {String} The account key.
  */
 CreditCardAccountDetails.prototype.getAccountKey = function() {
-  return accountKey;
+  return this.accountKey;
 };
 Element.add({name: "ACCKEY", order: 10, owner: CreditCardAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
 

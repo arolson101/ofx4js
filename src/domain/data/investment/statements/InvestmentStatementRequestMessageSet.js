@@ -17,19 +17,16 @@
 var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
-var RequestMessage = require("domain/data/RequestMessage");
 var RequestMessageSet = require("domain/data/RequestMessageSet");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.ArrayList;
-//import java.util.List;
 
 /**
  * Investment statement request message set.
  * @see "Section 13.7.1.2.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments RequestMessageSet
  */
 function InvestmentStatementRequestMessageSet () {
 
@@ -58,7 +55,7 @@ InvestmentStatementRequestMessageSet.prototype.getType = function() {
  * @return {InvestmentStatementRequestTransaction} the request
  */
 InvestmentStatementRequestMessageSet.prototype.getStatementRequest = function() {
-  return statementRequest;
+  return this.statementRequest;
 };
 ChildAggregate.add({order: 0, owner: InvestmentStatementRequestMessageSet, /*type: InvestmentStatementRequestTransaction,*/ fcn: "getStatementRequest"});
 
@@ -75,9 +72,9 @@ InvestmentStatementRequestMessageSet.prototype.setStatementRequest = function(st
 
 // Inherited.
 InvestmentStatementRequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-  if (getStatementRequest() != null) {
-    requestMessages.add(getStatementRequest());
+  var requestMessages = [];
+  if (this.getStatementRequest() !== null) {
+    requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;
 };

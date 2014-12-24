@@ -23,7 +23,8 @@ var Element = require("meta/Element");
 /**
  * Aggregate for the details that identifity a brokerage account.
  *
- * @author Jon Perlow
+ * @class
+ * @augments AccountDetails
  * @see "OFX Spec, Section 13.6.1"
  */
 function InvestmentAccountDetails () {
@@ -62,7 +63,7 @@ Aggregate.add("InvestmentAccountDetails", InvestmentAccountDetails);
  * @return {String} the id of the broker
  */
 InvestmentAccountDetails.prototype.getBrokerId = function() {
-  return brokerId;
+  return this.brokerId;
 };
 Element.add({name: "BROKERID", required: true, order: 0, owner: InvestmentAccountDetails, /*type: String,*/ fcn: "getBrokerId"});
 
@@ -83,7 +84,7 @@ InvestmentAccountDetails.prototype.setBrokerId = function(brokerId) {
  * @return {String} the account number
  */
 InvestmentAccountDetails.prototype.getAccountNumber = function() {
-  return accountNumber;
+  return this.accountNumber;
 };
 Element.add({name: "ACCTID", required: true, order: 20, owner: InvestmentAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
 
@@ -104,7 +105,7 @@ InvestmentAccountDetails.prototype.setAccountNumber = function(accountNumber) {
  * @return {String} the account key
  */
 InvestmentAccountDetails.prototype.getAccountKey = function() {
-  return accountKey;
+  return this.accountKey;
 };
 Element.add({name: "ACCTKEY", order: 40, owner: InvestmentAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
 

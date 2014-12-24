@@ -14,30 +14,26 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of position.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var PositionType = {
   LONG: 0,
-  SHORT: 1;
+  SHORT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("LONG".equals(ofxVal)) {
-      return LONG;
+      return PositionType.LONG;
     } else if ("SHORT".equals(ofxVal)) {
-      return SHORT;
+      return PositionType.SHORT;
     } else {
       return null;
     }
   }
-}
-
-;
+};
 
 
 module.exports = PositionType;

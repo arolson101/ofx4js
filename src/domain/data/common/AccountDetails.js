@@ -14,12 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Common details about an account.
  *
- * @author Ryan Heaton
+ * @class
  */
 function AccountDetails() {
 }

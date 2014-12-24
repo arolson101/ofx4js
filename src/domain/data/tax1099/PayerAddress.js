@@ -13,14 +13,11 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
  */
 
 
@@ -88,140 +85,140 @@ function PayerAddress () {
 Aggregate.add("PAYERADDR", PayerAddress);
 
 
-	/**
-	 * @return {String} the payerName1
-	 */
+/**
+ * @return {String} the payerName1
+ */
 PayerAddress.prototype.getPayerName1 = function() {
-		return payerName1;
-	};
+  return this.payerName1;
+};
 Element.add({name: "PAYERNAME1",required: true , order: 0, owner: PayerAddress, /*type: String,*/ fcn: "getPayerName1"});
 
 
-	/**
-	 * @param {String} payerName1 the payerName1 to set
-	 */
+/**
+ * @param {String} payerName1 the payerName1 to set
+ */
 PayerAddress.prototype.setPayerName1 = function(payerName1) {
-		this.payerName1 = payerName1;
-	};
+  this.payerName1 = payerName1;
+};
 
 
-	/**
-	 * @return {String} the payerName2
-	 */
+/**
+ * @return {String} the payerName2
+ */
 PayerAddress.prototype.getPayerName2 = function() {
-		return payerName2;
-	};
+  return this.payerName2;
+};
 Element.add({name: "PAYERNAME2",required: false , order: 1, owner: PayerAddress, /*type: String,*/ fcn: "getPayerName2"});
 
 
-	/**
-	 * @param {String} payerName2 the payerName2 to set
-	 */
+/**
+ * @param {String} payerName2 the payerName2 to set
+ */
 PayerAddress.prototype.setPayerName2 = function(payerName2) {
-		this.payerName2 = payerName2;
-	};
+  this.payerName2 = payerName2;
+};
 
 
-	/**
-	 * @return {String} the address1
-	 */
+/**
+ * @return {String} the address1
+ */
 PayerAddress.prototype.getAddress1 = function() {
-		return address1;
-	};
+  return this.address1;
+};
 Element.add({name: "ADDR1",required: true , order: 2, owner: PayerAddress, /*type: String,*/ fcn: "getAddress1"});
 
 
-	/**
-	 * @param {String} address1 the address1 to set
-	 */
+/**
+ * @param {String} address1 the address1 to set
+ */
 PayerAddress.prototype.setAddress1 = function(address1) {
-		this.address1 = address1;
-	};
+  this.address1 = address1;
+};
 
 
-	/**
-	 * @return {String} the address2
-	 */
+/**
+ * @return {String} the address2
+ */
 PayerAddress.prototype.getAddress2 = function() {
-		return address2;
-	};
+  return this.address2;
+};
 Element.add({name: "ADDR2",required: true , order: 3, owner: PayerAddress, /*type: String,*/ fcn: "getAddress2"});
 
 
-	/**
-	 * @param {String} address2 the address2 to set
-	 */
+/**
+ * @param {String} address2 the address2 to set
+ */
 PayerAddress.prototype.setAddress2 = function(address2) {
-		this.address2 = address2;
-	};
+  this.address2 = address2;
+};
 
 
-	/**
-	 * @return {String} the city
-	 */
+/**
+ * @return {String} the city
+ */
 PayerAddress.prototype.getCity = function() {
-		return city;
-	};
+  return this.city;
+};
 Element.add({name: "CITY",required: true , order: 4, owner: PayerAddress, /*type: String,*/ fcn: "getCity"});
 
 
-	/**
-	 * @param {String} city the city to set
-	 */
+/**
+ * @param {String} city the city to set
+ */
 PayerAddress.prototype.setCity = function(city) {
-		this.city = city;
-	};
+  this.city = city;
+};
 
 
-	/**
-	 * @return {String} the state
-	 */
+/**
+ * @return {String} the state
+ */
 PayerAddress.prototype.getState = function() {
-		return state;
-	};
+  return this.state;
+};
 Element.add({name: "STATE",required: true , order: 5, owner: PayerAddress, /*type: String,*/ fcn: "getState"});
 
 
-	/**
-	 * @param {String} state the state to set
-	 */
+/**
+ * @param {String} state the state to set
+ */
 PayerAddress.prototype.setState = function(state) {
-		this.state = state;
-	};
+  this.state = state;
+};
 
 
-	/**
-	 * @return {String} the postalCode
-	 */
+/**
+ * @return {String} the postalCode
+ */
 PayerAddress.prototype.getPostalCode = function() {
-		return postalCode;
-	};
+  return this.postalCode;
+};
 Element.add({name: "POSTALCODE",required: true , order: 6, owner: PayerAddress, /*type: String,*/ fcn: "getPostalCode"});
 
 
-	/**
-	 * @param {String} postalCode the postalCode to set
-	 */
+/**
+ * @param {String} postalCode the postalCode to set
+ */
 PayerAddress.prototype.setPostalCode = function(postalCode) {
-		this.postalCode = postalCode;
-	};
+  this.postalCode = postalCode;
+};
 
 
-	/**
-	 * @return {String} the phone
-	 */
+/**
+ * @return {String} the phone
+ */
 PayerAddress.prototype.getPhone = function() {
-		return phone;
-	};
+  return this.phone;
+};
 Element.add({name: "PHONE",required: false , order: 7, owner: PayerAddress, /*type: String,*/ fcn: "getPhone"});
 
 
-	/**
-	 * @param {String} phone the phone to set
-	 */
+/**
+ * @param {String} phone the phone to set
+ */
 PayerAddress.prototype.setPhone = function(phone) {
-		this.phone = phone;
-	};
+  this.phone = phone;
+};
 
 
 

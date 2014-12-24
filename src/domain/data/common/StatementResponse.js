@@ -21,10 +21,10 @@ var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 var AccountStatement = require("client/AccountStatement");
 
-//import java.util.Locale;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
+ * @augments AccountStatement
  */
 function StatementResponse () {
 
@@ -33,7 +33,7 @@ function StatementResponse () {
    * @type String
    * @access private
    */
-  this.currencyCode = java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
+  this.currencyCode = "USD";
 
   /**
    * @name StatementResponse#transactionList
@@ -77,7 +77,7 @@ inherit(StatementResponse, "implements", AccountStatement);
  * @see java.util.Currency#getCurrencyCode()
  */
 StatementResponse.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURDEF", required: true, order: 0, owner: StatementResponse, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -98,7 +98,7 @@ StatementResponse.prototype.setCurrencyCode = function(currencyCode) {
  * @return {TransactionList} The transaction list.
  */
 StatementResponse.prototype.getTransactionList = function() {
-  return transactionList;
+  return this.transactionList;
 };
 ChildAggregate.add({order: 20, owner: StatementResponse, /*type: TransactionList,*/ fcn: "getTransactionList"});
 
@@ -119,7 +119,7 @@ StatementResponse.prototype.setTransactionList = function(transactionList) {
  * @return {BalanceInfo} The ledger balance.
  */
 StatementResponse.prototype.getLedgerBalance = function() {
-  return ledgerBalance;
+  return this.ledgerBalance;
 };
 ChildAggregate.add({name: "LEDGERBAL", order: 30, owner: StatementResponse, /*type: BalanceInfo,*/ fcn: "getLedgerBalance"});
 
@@ -140,7 +140,7 @@ StatementResponse.prototype.setLedgerBalance = function(ledgerBalance) {
  * @return {BalanceInfo} The available balance.
  */
 StatementResponse.prototype.getAvailableBalance = function() {
-  return availableBalance;
+  return this.availableBalance;
 };
 ChildAggregate.add({name: "AVAILBAL", order: 40, owner: StatementResponse, /*type: BalanceInfo,*/ fcn: "getAvailableBalance"});
 
@@ -161,7 +161,7 @@ StatementResponse.prototype.setAvailableBalance = function(availableBalance) {
  * @return {String} Marketing information.
  */
 StatementResponse.prototype.getMarketingInfo = function() {
-  return marketingInfo;
+  return this.marketingInfo;
 };
 Element.add({name: "MKTGINFO", order: 50, owner: StatementResponse, /*type: String,*/ fcn: "getMarketingInfo"});
 

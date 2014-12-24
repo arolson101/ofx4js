@@ -17,16 +17,19 @@
 var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseBuyInvestmentTransaction = require("./BaseBuyInvestmentTransaction");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying debt (i.e. bonds, CDs, etc.,).
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseBuyInvestmentTransaction
  */
 function BuyDebtTransaction () {
+  BaseBuyInvestmentTransaction.call(this, TransactionType.BUY_DEBT);
 
   /**
    * @name BuyDebtTransaction#accruedInterest
@@ -42,9 +45,6 @@ inherit(BuyDebtTransaction, "extends", BaseBuyInvestmentTransaction);
 Aggregate.add("BUYDEBT", BuyDebtTransaction);
 
 
-BuyDebtTransaction.prototype.BuyDebtTransaction = function() {
-  super(TransactionType.BUY_DEBT);
-};
 
 
 /**
@@ -55,7 +55,7 @@ BuyDebtTransaction.prototype.BuyDebtTransaction = function() {
  * @return {Double} the amount of accrued interest
  */
 BuyDebtTransaction.prototype.getAccruedInterest = function() {
-  return accruedInterest;
+  return this.accruedInterest;
 };
 Element.add({name: "ACCRDINT", order: 20, owner: BuyDebtTransaction, /*type: Double,*/ fcn: "getAccruedInterest"});
 

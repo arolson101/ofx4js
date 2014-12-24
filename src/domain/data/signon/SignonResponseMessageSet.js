@@ -18,17 +18,14 @@ var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ChildAggregate = require("meta/ChildAggregate");
 var Aggregate = require("meta/Aggregate");
-
-//import java.util.List;
-//import java.util.ArrayList;
 
 /**
  * The sign-on response message set.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessageSet
  * @see "Section 2.5, OFX Spec."
  */
 function SignonResponseMessageSet () {
@@ -65,7 +62,7 @@ SignonResponseMessageSet.prototype.getType = function() {
  * @return {SignonResponse} The message for this message set.
  */
 SignonResponseMessageSet.prototype.getSignonResponse = function() {
-  return signonResponse;
+  return this.signonResponse;
 };
 ChildAggregate.add({order: 0, owner: SignonResponseMessageSet, /*type: SignonResponse,*/ fcn: "getSignonResponse"});
 
@@ -86,7 +83,7 @@ SignonResponseMessageSet.prototype.setSignonResponse = function(signonResponse) 
  * @return {PasswordChangeResponseTransaction} The password change response.
  */
 SignonResponseMessageSet.prototype.getPasswordChangeResponse = function() {
-  return passwordChangeResponse;
+  return this.passwordChangeResponse;
 };
 ChildAggregate.add({order: 10, owner: SignonResponseMessageSet, /*type: PasswordChangeResponseTransaction,*/ fcn: "getPasswordChangeResponse"});
 
@@ -104,10 +101,10 @@ SignonResponseMessageSet.prototype.setPasswordChangeResponse = function(password
 //todo: challenge request/response
 // Inherited.
 SignonResponseMessageSet.prototype.getResponseMessages = function() {
-  ArrayList<ResponseMessage> messages = new ArrayList<ResponseMessage>();
+  var messages = [];
 
-  if (getSignonResponse() != null) {
-    messages.add(getSignonResponse());
+  if (this.getSignonResponse() !== null) {
+    messages.push(this.getSignonResponse());
   }
 
   return messages;

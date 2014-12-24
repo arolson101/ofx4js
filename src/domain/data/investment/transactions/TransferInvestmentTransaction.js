@@ -19,20 +19,23 @@ var inherit = require("../inherit");
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
 var PositionType = require("domain/data/investment/positions/PositionType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var TransferAction = require("./TransferAction");
 
 /**
  * Transaction for transfers.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
  */
 function TransferInvestmentTransaction () {
+  // TODO (jonp) -- INVACCTFROM
+  BaseOtherInvestmentTransaction.call(this, TransactionType.TRANSFER);
 
   /**
    * @name TransferInvestmentTransaction#securityId
@@ -104,12 +107,6 @@ inherit(TransferInvestmentTransaction, "extends", BaseOtherInvestmentTransaction
 Aggregate.add("TRANSFER", TransferInvestmentTransaction);
 
 
-// TODO (jonp) -- INVACCTFROM
-TransferInvestmentTransaction.prototype.TransferInvestmentTransaction = function() {
-  super(TransactionType.TRANSFER);
-};
-
-
 /**
  * Gets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
@@ -118,7 +115,7 @@ TransferInvestmentTransaction.prototype.TransferInvestmentTransaction = function
  * @return {SecurityId} the security id of the security that was transferred
  */
 TransferInvestmentTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: TransferInvestmentTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -142,8 +139,8 @@ TransferInvestmentTransaction.prototype.setSecurityId = function(securityId) {
   * @return {String} the sub account type
   */
 TransferInvestmentTransaction.prototype.getSubAccountSecurity = function() {
-   return subAccountSecurity;
- };
+  return this.subAccountSecurity;
+};
 Element.add({name: "SUBACCTSEC", order: 30, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
 
@@ -164,7 +161,7 @@ TransferInvestmentTransaction.prototype.setSubAccountSecurity = function(subAcco
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -178,7 +175,7 @@ TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {Double} the number of units transferred
  */
 TransferInvestmentTransaction.prototype.getUnits = function() {
-  return units;
+  return this.units;
 };
 Element.add({name: "UNITS", required: true, order: 40, owner: TransferInvestmentTransaction, /*type: Double,*/ fcn: "getUnits"});
 
@@ -204,7 +201,7 @@ TransferInvestmentTransaction.prototype.setUnits = function(units) {
  * @return {String} the type of transfer
  */
 TransferInvestmentTransaction.prototype.getTransferAction = function() {
-  return transferAction;
+  return this.transferAction;
 };
 Element.add({name: "TFERACTION", required: true, order: 50, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "getTransferAction"});
 
@@ -226,7 +223,7 @@ TransferInvestmentTransaction.prototype.setTransferAction = function(transferAct
  * @return {TransferAction} the type of transfer or null if it's not well known
  */
 TransferInvestmentTransaction.prototype.getTransferActionEnum = function() {
-  return TransferAction.fromOfx(getTransferAction());
+  return TransferAction.fromOfx(this.getTransferAction());
 };
 
 
@@ -237,7 +234,7 @@ TransferInvestmentTransaction.prototype.getTransferActionEnum = function() {
  * @return {String} the position type
  */
 TransferInvestmentTransaction.prototype.getPositionType = function() {
-  return positionType;
+  return this.positionType;
 };
 Element.add({name: "POSTYPE", required: true, order: 60, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "getPositionType"});
 
@@ -259,7 +256,7 @@ TransferInvestmentTransaction.prototype.setPositionType = function(positionType)
  * @return {PositionType} the position type or null if it's not well known
  */
 TransferInvestmentTransaction.prototype.getPositionTypeEnum = function() {
-  return PositionType.fromOfx(getPositionType());
+  return PositionType.fromOfx(this.getPositionType());
 };
 
 
@@ -270,7 +267,7 @@ TransferInvestmentTransaction.prototype.getPositionTypeEnum = function() {
  * @return {Double} the average cost basis
  */
 TransferInvestmentTransaction.prototype.getAverageCostBasis = function() {
-  return averageCostBasis;
+  return this.averageCostBasis;
 };
 Element.add({name: "AVGCOSTBASIS", order: 70, owner: TransferInvestmentTransaction, /*type: Double,*/ fcn: "getAverageCostBasis"});
 
@@ -295,7 +292,7 @@ TransferInvestmentTransaction.prototype.setAverageCostBasis = function(averageCo
  * @return {Double} the per unit price
  */
 TransferInvestmentTransaction.prototype.getUnitPrice = function() {
-  return unitPrice;
+  return this.unitPrice;
 };
 Element.add({name: "UNITPRICE", required: true, order: 80, owner: TransferInvestmentTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
 
@@ -320,7 +317,7 @@ TransferInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
  * @return {Date} the original date of purchase
  */
 TransferInvestmentTransaction.prototype.getPurchaseDate = function() {
-  return purchaseDate;
+  return this.purchaseDate;
 };
 Element.add({name: "DTPURCHASE", order: 90, owner: TransferInvestmentTransaction, /*type: Date,*/ fcn: "getPurchaseDate"});
 
@@ -345,7 +342,7 @@ TransferInvestmentTransaction.prototype.setPurchaseDate = function(purchaseDate)
  * @return {String} the state withholding
  */
 TransferInvestmentTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 100, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -369,7 +366,7 @@ TransferInvestmentTransaction.prototype.set401kSource = function(inv401kSource) 
  * @return {Inv401KSource} the type of close or null if it's not well known.
  */
 TransferInvestmentTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

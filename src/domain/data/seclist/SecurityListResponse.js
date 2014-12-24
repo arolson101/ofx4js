@@ -18,16 +18,14 @@ var inherit = require("../inherit");
 
 var ResponseMessage = require("domain/data/ResponseMessage");
 var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.List;
 
 /**
  * Security list response. This is an empty aggregate. The actual security information is included
  * in the "SECLIST" aggregate.
  * @see "Section 13.8.3, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments ResponseMessage
  */
 function SecurityListResponse () {
 }

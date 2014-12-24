@@ -18,18 +18,24 @@ var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
+var TransactionType = require("./TransactionType");
+var IncomeType = require("./IncomeType");
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
 function IncomeTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.INCOME);
 
   /**
    * @name IncomeTransaction#securityId
@@ -109,10 +115,6 @@ inherit(IncomeTransaction, "implements", TransactionWithSecurity);
 Aggregate.add("INCOME", IncomeTransaction);
 
 
-IncomeTransaction.prototype.IncomeTransaction = function() {
-  super(TransactionType.INCOME);
-};
-
 
 /**
  * Gets the id of the security that the income was for. This is a required field according to the
@@ -122,7 +124,7 @@ IncomeTransaction.prototype.IncomeTransaction = function() {
  * @return {SecurityId} the security id of the security that the income was for
  */
 IncomeTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: IncomeTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -147,7 +149,7 @@ IncomeTransaction.prototype.setSecurityId = function(securityId) {
  * @return {String} the type of income
  */
 IncomeTransaction.prototype.getIncomeType = function() {
-  return incomeType;
+  return this.incomeType;
 };
 Element.add({name: "INCOMETYPE", required: true, order: 30, owner: IncomeTransaction, /*type: String,*/ fcn: "getIncomeType"});
 
@@ -170,7 +172,7 @@ IncomeTransaction.prototype.setIncomeType = function(incomeType) {
  * @return {IncomeType} the income type or null if it's not well known
  */
 IncomeTransaction.prototype.getIncomeTypeEnum = function() {
-  return IncomeType.fromOfx(getIncomeType());
+  return IncomeType.fromOfx(this.getIncomeType());
 };
 
 
@@ -181,7 +183,7 @@ IncomeTransaction.prototype.getIncomeTypeEnum = function() {
  * @return {Double} the total
  */
 IncomeTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", required: true, order: 40, owner: IncomeTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -204,7 +206,7 @@ IncomeTransaction.prototype.setTotal = function(total) {
  * @return {String} the sub account type
  */
 IncomeTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 50, owner: IncomeTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -226,7 +228,7 @@ IncomeTransaction.prototype.setSubAccountSecurity = function(subAcctSec) {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 IncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -237,7 +239,7 @@ IncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund for the transaction
  */
 IncomeTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 60, owner: IncomeTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -259,7 +261,7 @@ IncomeTransaction.prototype.setSubAccountFund = function(subAcctFund) {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 IncomeTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 
@@ -270,7 +272,7 @@ IncomeTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {Boolean} whether the transaction was tax exempt
  */
 IncomeTransaction.prototype.getTaxExempt = function() {
-  return taxExempt;
+  return this.taxExempt;
 };
 Element.add({name: "TAXEXEMPT", order: 70, owner: IncomeTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
 
@@ -293,7 +295,7 @@ IncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
  * @return {Double} the withholding
  */
 IncomeTransaction.prototype.getWithholding = function() {
-  return withholding;
+  return this.withholding;
 };
 Element.add({name: "WITHHOLDING", order: 80, owner: IncomeTransaction, /*type: Double,*/ fcn: "getWithholding"});
 
@@ -317,7 +319,7 @@ IncomeTransaction.prototype.setWithholding = function(withholding) {
  * @return {String} the currency code for the transaction
  */
 IncomeTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 90, owner: IncomeTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -342,7 +344,7 @@ IncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
  * @return {OriginalCurrency} the currency info for the transaction
  */
 IncomeTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 ChildAggregate.add({order: 120, owner: IncomeTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -368,7 +370,7 @@ IncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalCurrencyI
  * @return {String} the state withholding
  */
 IncomeTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 110, owner: IncomeTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -392,7 +394,7 @@ IncomeTransaction.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the type of close or null if it's not well known.
  */
 IncomeTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

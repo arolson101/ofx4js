@@ -18,18 +18,21 @@ var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for a stock split.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
  */
 function SplitTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.SPLIT);
 
   /**
    * @name SplitTransaction#securityId
@@ -115,11 +118,6 @@ inherit(SplitTransaction, "extends", BaseOtherInvestmentTransaction);
 Aggregate.add("SPLIT", SplitTransaction);
 
 
-SplitTransaction.prototype.SplitTransaction = function() {
-  super(TransactionType.SPLIT);
-};
-
-
 /**
  * Gets the id of the security for the split. This is a required field according to the OFX
  * spec.
@@ -128,7 +126,7 @@ SplitTransaction.prototype.SplitTransaction = function() {
  * @return {SecurityId} the security id of the security for the expsense
  */
 SplitTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: SplitTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -153,7 +151,7 @@ SplitTransaction.prototype.setSecurityId = function(securityId) {
  * @return {String} the sub account type
  */
 SplitTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 30, owner: SplitTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -176,7 +174,7 @@ SplitTransaction.prototype.setSubAccountSecurity = function(subAccountSecurity) 
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 SplitTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -187,7 +185,7 @@ SplitTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {Double} the old number of units.
  */
 SplitTransaction.prototype.getOldUnits = function() {
-  return oldUnits;
+  return this.oldUnits;
 };
 Element.add({name: "OLDUNITS", order: 40, owner: SplitTransaction, /*type: Double,*/ fcn: "getOldUnits"});
 
@@ -210,7 +208,7 @@ SplitTransaction.prototype.setOldUnits = function(oldUnits) {
  * @return {Double} the new number of units.
  */
 SplitTransaction.prototype.getNewUnits = function() {
-  return newUnits;
+  return this.newUnits;
 };
 Element.add({name: "NEWUNITS", order: 50, owner: SplitTransaction, /*type: Double,*/ fcn: "getNewUnits"});
 
@@ -232,7 +230,7 @@ SplitTransaction.prototype.setNewUnits = function(newUnits) {
  * @return {Double} the numerator for the split ratio
  */
 SplitTransaction.prototype.getNumerator = function() {
-  return numerator;
+  return this.numerator;
 };
 Element.add({name: "NUMERATOR", order: 60, owner: SplitTransaction, /*type: Double,*/ fcn: "getNumerator"});
 
@@ -253,7 +251,7 @@ SplitTransaction.prototype.setNumerator = function(numerator) {
  * @return {Double} the numerator for the split ratio
  */
 SplitTransaction.prototype.getDenominator = function() {
-  return denominator;
+  return this.denominator;
 };
 Element.add({name: "DENOMINATOR", order: 70, owner: SplitTransaction, /*type: Double,*/ fcn: "getDenominator"});
 
@@ -276,7 +274,7 @@ SplitTransaction.prototype.setDenominator = function(denominator) {
  * @return {String} the currency code for the transaction
  */
 SplitTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 80, owner: SplitTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -301,7 +299,7 @@ SplitTransaction.prototype.setCurrencyCode = function(/*String*/ currencyCode) {
  * @return {OriginalCurrency} the original currency info for the transaction
  */
 SplitTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 Element.add({name: "ORIGCURRENCY", order: 90, owner: SplitTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -324,7 +322,7 @@ SplitTransaction.prototype.setOriginalCurrencyInfo = function(/*OriginalCurrency
  * @return {Double} the cash for fractional units
  */
 SplitTransaction.prototype.getCashForFractionalUnits = function() {
-  return cashForFractionalUnits;
+  return this.cashForFractionalUnits;
 };
 Element.add({name: "FRACCASH", order: 100, owner: SplitTransaction, /*type: Double,*/ fcn: "getCashForFractionalUnits"});
 
@@ -346,7 +344,7 @@ SplitTransaction.prototype.setCashForFractionalUnits = function(cashForFractiona
  * @return {String} the sub account fund
  */
 SplitTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 110, owner: SplitTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -368,7 +366,7 @@ SplitTransaction.prototype.setSubAccountFund = function(subAccountFund) {
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 SplitTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 
@@ -381,7 +379,7 @@ SplitTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {String} the 401k source
  */
 SplitTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 120, owner: SplitTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -405,7 +403,7 @@ SplitTransaction.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the 401k source or null if its not one of the well-known types
  */
 SplitTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

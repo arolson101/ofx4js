@@ -14,13 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function FinancialInstitution () {
 
@@ -50,7 +48,7 @@ Aggregate.add("FI", FinancialInstitution);
  * @return {String} Financial institution id.
  */
 FinancialInstitution.prototype.getId = function() {
-  return id;
+  return this.id;
 };
 Element.add({name: "FID", order: 10, owner: FinancialInstitution, /*type: String,*/ fcn: "getId"});
 
@@ -71,7 +69,7 @@ FinancialInstitution.prototype.setId = function(id) {
  * @return {String} The organization.
  */
 FinancialInstitution.prototype.getOrganization = function() {
-  return organization;
+  return this.organization;
 };
 Element.add({name: "ORG", required: true, order: 0, owner: FinancialInstitution, /*type: String,*/ fcn: "getOrganization"});
 

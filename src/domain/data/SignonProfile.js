@@ -14,12 +14,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var CharacterType = require("domain/data/profile/CharacterType");
-
 /**
- * @author Ryan Heaton
+ * @class
  */
 function SignonProfile() {
 }

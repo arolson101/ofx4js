@@ -16,15 +16,14 @@
 
 var inherit = require("../inherit");
 
-var * = require("domain/data/*");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.List;
-//import java.util.ArrayList;
+var ResponseMessageSet = require("./ResponseMessageSet");
+var MessageSetType = require("./MessageSetType");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessageSet
  */
 function SignupResponseMessageSet () {
 
@@ -53,7 +52,7 @@ SignupResponseMessageSet.prototype.getType = function() {
  * @return {AccountInfoResponseTransaction} The account info response.
  */
 SignupResponseMessageSet.prototype.getAccountInfoResponse = function() {
-  return accountInfoResponse;
+  return this.accountInfoResponse;
 };
 ChildAggregate.add({order: 0, owner: SignupResponseMessageSet, /*type: AccountInfoResponseTransaction,*/ fcn: "getAccountInfoResponse"});
 
@@ -74,10 +73,10 @@ SignupResponseMessageSet.prototype.setAccountInfoResponse = function(accountInfo
  * @return {ResponseMessage[]} The response messages.
  */
 SignupResponseMessageSet.prototype.getResponseMessages = function() {
-  ArrayList<ResponseMessage> messages = new ArrayList<ResponseMessage>();
+  var messages = [];
 
-  if (getAccountInfoResponse() != null) {
-    messages.add(getAccountInfoResponse());
+  if (this.getAccountInfoResponse() !== null) {
+    messages.push(this.getAccountInfoResponse());
   }
 
   return messages;

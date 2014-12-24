@@ -18,14 +18,19 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var BaseSecurityInfo = require("./BaseSecurityInfo");
+var DebtType = require("./DebtType");
+var DebtClass = require("./DebtClass");
+var CouponFrequency = require("./CouponFrequency");
+var CallType = require("./CallType");
+var AssetClass = require("./AssetClass");
 
 /**
  * Info about a debt security.
  * @see "Section 13.8.5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSecurityInfo
  */
 function DebtSecurityInfo () {
 
@@ -140,7 +145,7 @@ Aggregate.add("DEBTINFO", DebtSecurityInfo);
  * @return {Double} the par value of the debt
  */
 DebtSecurityInfo.prototype.getParValue = function() {
-  return parValue;
+  return this.parValue;
 };
 Element.add({name: "PARVALUE", required:true, order: 20, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getParValue"});
 
@@ -162,7 +167,7 @@ DebtSecurityInfo.prototype.setParValue = function(parValue) {
  * @return {String} the type of debt
  */
 DebtSecurityInfo.prototype.getDebtType = function() {
-  return debtType;
+  return this.debtType;
 };
 Element.add({name: "DEBTTYPE", required:true, order: 30, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtType"});
 
@@ -184,7 +189,7 @@ DebtSecurityInfo.prototype.setDebtType = function(debtType) {
  * @return {DebtType} the type of debt or null if it's not one of the well-known types
  */
 DebtSecurityInfo.prototype.getDebtTypeEnum = function() {
-  return DebtType.fromOfx(getDebtType());
+  return DebtType.fromOfx(this.getDebtType());
 };
 
 
@@ -195,7 +200,7 @@ DebtSecurityInfo.prototype.getDebtTypeEnum = function() {
  * @return {String} the class of debt
  */
 DebtSecurityInfo.prototype.getDebtClass = function() {
-  return debtClass;
+  return this.debtClass;
 };
 Element.add({name: "DEBTCLASS", order: 40, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtClass"});
 
@@ -217,7 +222,7 @@ DebtSecurityInfo.prototype.setDebtClass = function(debtClass) {
  * @return {DebtClass} the class of debt or null if it's not one of the well-known types
  */
 DebtSecurityInfo.prototype.getDebtClassEnum = function() {
-  return DebtClass.fromOfx(debtClass);
+  return DebtClass.fromOfx(this.debtClass);
 };
 
 
@@ -228,7 +233,7 @@ DebtSecurityInfo.prototype.getDebtClassEnum = function() {
  * @return {Double} the coupon rate
  */
 DebtSecurityInfo.prototype.getCouponRate = function() {
-  return couponRate;
+  return this.couponRate;
 };
 Element.add({name: "COUPONRT", order: 50, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCouponRate"});
 
@@ -251,7 +256,7 @@ DebtSecurityInfo.prototype.setCouponRate = function(couponRate) {
  * @return {Date} the maturity date for the next coupon
  */
 DebtSecurityInfo.prototype.getNextMaturityDate = function() {
-  return nextMaturityDate;
+  return this.nextMaturityDate;
 };
 Element.add({name: "DTCOUPON", order: 60, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextMaturityDate"});
 
@@ -274,7 +279,7 @@ DebtSecurityInfo.prototype.setNextMaturityDate = function(nextMaturityDate) {
  * @return {String} the coupon frequency
  */
 DebtSecurityInfo.prototype.getCouponFrequency = function() {
-  return couponFrequency;
+  return this.couponFrequency;
 };
 Element.add({name: "COUPONFREQ", order: 70, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCouponFrequency"});
 
@@ -296,7 +301,7 @@ DebtSecurityInfo.prototype.setCouponFrequency = function(couponFrequency) {
  * @return {CouponFrequency} the coupon frequency or null if it's not one of the well-known types
  */
 DebtSecurityInfo.prototype.getCouponFrequencyEnum = function() {
-  return CouponFrequency.fromOfx(getCouponFrequency());
+  return CouponFrequency.fromOfx(this.getCouponFrequency());
 };
 
 
@@ -306,7 +311,7 @@ DebtSecurityInfo.prototype.getCouponFrequencyEnum = function() {
  * @return {Double} the bond price
  */
 DebtSecurityInfo.prototype.getCallPrice = function() {
-  return callPrice;
+  return this.callPrice;
 };
 Element.add({name: "CALLPRICE", order: 80, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCallPrice"});
 
@@ -327,7 +332,7 @@ DebtSecurityInfo.prototype.setCallPrice = function(callPrice) {
  * @return {Double} the yield to call rate
  */
 DebtSecurityInfo.prototype.getYieldToCall = function() {
-  return yieldToCall;
+  return this.yieldToCall;
 };
 Element.add({name: "YIELDTOCALL", order: 90, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToCall"});
 
@@ -348,7 +353,7 @@ DebtSecurityInfo.prototype.setYieldToCall = function(yieldToCall) {
  * @return {Date} the next call date.
  */
 DebtSecurityInfo.prototype.getNextCallDate = function() {
-  return nextCallDate;
+  return this.nextCallDate;
 };
 Element.add({name: "DTCALL", order: 100, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextCallDate"});
 
@@ -369,7 +374,7 @@ DebtSecurityInfo.prototype.setNextCallDate = function(nextCallDate) {
  * @return {String} the type of call
  */
 DebtSecurityInfo.prototype.getCallType = function() {
-  return callType;
+  return this.callType;
 };
 Element.add({name: "CALLTYPE", order: 110, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCallType"});
 
@@ -390,7 +395,7 @@ DebtSecurityInfo.prototype.setCallType = function(callType) {
  * @return {CallType} the type of call or null if it's not one of the well-known types
  */
 DebtSecurityInfo.prototype.getCallTypeEnum = function() {
-  return CallType.fromOfx(getCallType());
+  return CallType.fromOfx(this.getCallType());
 };
 
 
@@ -400,7 +405,7 @@ DebtSecurityInfo.prototype.getCallTypeEnum = function() {
  * @return {Double} the yield to call rate
  */
 DebtSecurityInfo.prototype.getYieldToMaturity = function() {
-  return yieldToMaturity;
+  return this.yieldToMaturity;
 };
 Element.add({name: "YIELDTOMAT", order: 120, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToMaturity"});
 
@@ -421,7 +426,7 @@ DebtSecurityInfo.prototype.setYieldToMaturity = function(yieldToMaturity) {
  * @return {Date} the date when the debt matures
  */
 DebtSecurityInfo.prototype.getDebtMaturityDate = function() {
-  return debtMaturityDate;
+  return this.debtMaturityDate;
 };
 Element.add({name: "DTMAT", order: 130, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getDebtMaturityDate"});
 
@@ -442,7 +447,7 @@ DebtSecurityInfo.prototype.setDebtMaturityDate = function(debtMaturityDate) {
  * @return {String} the asset class of the debt
  */
 DebtSecurityInfo.prototype.getAssetClass = function() {
-  return assetClass;
+  return this.assetClass;
 };
 Element.add({name: "ASSETCLASS", order: 140, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
 
@@ -463,7 +468,7 @@ DebtSecurityInfo.prototype.setAssetClass = function(assetClass) {
  * @return {AssetClass} the asset class or null if it's not one of the well-known types
  */
 DebtSecurityInfo.prototype.getAssetClassEnum = function() {
-  return AssetClass.fromOfx(getAssetClass());
+  return AssetClass.fromOfx(this.getAssetClass());
 };
 
 
@@ -474,7 +479,7 @@ DebtSecurityInfo.prototype.getAssetClassEnum = function() {
  * @return {String} the FI-defined asset class of the debt
  */
 DebtSecurityInfo.prototype.getFiAssetClass = function() {
-  return fiAssetClass;
+  return this.fiAssetClass;
 };
 Element.add({name: "FIASSETCLASS", order: 150, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
 

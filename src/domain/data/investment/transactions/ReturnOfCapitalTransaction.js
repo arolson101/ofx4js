@@ -18,18 +18,23 @@ var inherit = require("../inherit");
 
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionWithSecurity = require("./TransactionWithSecurity");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for return of capital transactions.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
+ * @augments TransactionWithSecurity
  */
 function ReturnOfCapitalTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.RETURN_OF_CAPITAL);
 
   /**
    * @name ReturnOfCapitalTransaction#securityId
@@ -88,11 +93,6 @@ inherit(ReturnOfCapitalTransaction, "implements", TransactionWithSecurity);
 Aggregate.add("RETOFCAP", ReturnOfCapitalTransaction);
 
 
-ReturnOfCapitalTransaction.prototype.ReturnOfCapitalTransaction = function() {
-  super(TransactionType.RETURN_OF_CAPITAL);
-};
-
-
 /**
  * Gets the id of the security that capital was returned from. This is a required field according
  * to the OFX spec.
@@ -101,7 +101,7 @@ ReturnOfCapitalTransaction.prototype.ReturnOfCapitalTransaction = function() {
  * @return {SecurityId} the security id of the security that capital was returned from
  */
 ReturnOfCapitalTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: ReturnOfCapitalTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -125,7 +125,7 @@ ReturnOfCapitalTransaction.prototype.setSecurityId = function(securityId) {
  * @return {Double} the total
  */
 ReturnOfCapitalTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", required: true, order: 40, owner: ReturnOfCapitalTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -149,7 +149,7 @@ ReturnOfCapitalTransaction.prototype.setTotal = function(total) {
  * @return {String} the sub account type
  */
 ReturnOfCapitalTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 50, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -172,7 +172,7 @@ ReturnOfCapitalTransaction.prototype.setSubAccountSecurity = function(subAccount
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 ReturnOfCapitalTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -184,7 +184,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund
  */
 ReturnOfCapitalTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 140, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -207,7 +207,7 @@ ReturnOfCapitalTransaction.prototype.setSubAccountFund = function(subAccountFund
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 ReturnOfCapitalTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 
@@ -219,7 +219,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {String} the currency code for the transaction
  */
 ReturnOfCapitalTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 110, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -244,7 +244,7 @@ ReturnOfCapitalTransaction.prototype.setCurrencyCode = function(currencyCode) {
  * @return {OriginalCurrency} the currency code for the transaction.
  */
 ReturnOfCapitalTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 Element.add({name: "ORIGCURRENCY", order: 120, owner: ReturnOfCapitalTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -270,7 +270,7 @@ ReturnOfCapitalTransaction.prototype.setOriginalCurrencyInfo = function(original
  * @return {String} the state withholding
  */
 ReturnOfCapitalTransaction.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 180, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "get401kSource"});
 
@@ -294,7 +294,7 @@ ReturnOfCapitalTransaction.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the type of close or null if it's not well known.
  */
 ReturnOfCapitalTransaction.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

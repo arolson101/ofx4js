@@ -14,21 +14,19 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var PositionType = require("./PositionType");
+var Inv401KSource = require("./Inv401KSource");
 
 /**
  * Class for the investment position aggregate.
  * @see "Section 13.9.2.6.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BasePosition
  */
 function InvestmentPosition () {
 
@@ -115,7 +113,7 @@ Aggregate.add("INVPOS", InvestmentPosition);
  * @return {SecurityId} the security id for the position
  */
 InvestmentPosition.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 10, owner: InvestmentPosition, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -139,7 +137,7 @@ InvestmentPosition.prototype.setSecurityId = function(securityId) {
  * @return {String} the sub-account type
  */
 InvestmentPosition.prototype.getHeldInAccount = function() {
-  return heldInAccount;
+  return this.heldInAccount;
 };
 Element.add({name: "HELDINACCT", required: true, order: 20, owner: InvestmentPosition, /*type: String,*/ fcn: "getHeldInAccount"});
 
@@ -163,7 +161,7 @@ InvestmentPosition.prototype.setHeldInAccount = function(heldInAccount) {
  * @return {SubAccountType} the sub-account type or null if it's not one of the well-known types
  */
 InvestmentPosition.prototype.getHeldInAccountEnum = function() {
-  return SubAccountType.fromOfx(getHeldInAccount());
+  return SubAccountType.fromOfx(this.getHeldInAccount());
 };
 
 
@@ -175,7 +173,7 @@ InvestmentPosition.prototype.getHeldInAccountEnum = function() {
  * @return {String} the position type
  */
 InvestmentPosition.prototype.getPositionType = function() {
-  return positionType;
+  return this.positionType;
 };
 Element.add({name: "POSTYPE", required: true, order: 30, owner: InvestmentPosition, /*type: String,*/ fcn: "getPositionType"});
 
@@ -199,7 +197,7 @@ InvestmentPosition.prototype.setPositionType = function(positionType) {
  * @return {PositionType} the position type or null if it's not one of the well-known types
  */
 InvestmentPosition.prototype.getPositionTypeEnum = function() {
-  return PositionType.fromOfx(getPositionType());
+  return PositionType.fromOfx(this.getPositionType());
 };
 
 
@@ -212,7 +210,7 @@ InvestmentPosition.prototype.getPositionTypeEnum = function() {
  * @return {Double} the number of units in the position
  */
 InvestmentPosition.prototype.getUnits = function() {
-  return units;
+  return this.units;
 };
 Element.add({name: "UNITS", required: true, order: 40, owner: InvestmentPosition, /*type: Double,*/ fcn: "getUnits"});
 
@@ -239,7 +237,7 @@ InvestmentPosition.prototype.setUnits = function(units) {
  * @return {Double} the per unit price
  */
 InvestmentPosition.prototype.getUnitPrice = function() {
-  return unitPrice;
+  return this.unitPrice;
 };
 Element.add({name: "UNITPRICE", required: true, order: 50, owner: InvestmentPosition, /*type: Double,*/ fcn: "getUnitPrice"});
 
@@ -264,7 +262,7 @@ InvestmentPosition.prototype.setUnitPrice = function(unitPrice) {
  * @return {Double} the market value of the position
  */
 InvestmentPosition.prototype.getMarketValue = function() {
-  return marketValue;
+  return this.marketValue;
 };
 Element.add({name: "MKTVAL", required: true, order: 60, owner: InvestmentPosition, /*type: Double,*/ fcn: "getMarketValue"});
 
@@ -288,7 +286,7 @@ InvestmentPosition.prototype.setMarketValue = function(marketValue) {
  * @return {Date} the market value date
  */
 InvestmentPosition.prototype.getMarketValueDate = function() {
-  return marketValueDate;
+  return this.marketValueDate;
 };
 Element.add({name: "DTPRICEASOF", required: true, order: 70, owner: InvestmentPosition, /*type: Date,*/ fcn: "getMarketValueDate"});
 
@@ -313,7 +311,7 @@ InvestmentPosition.prototype.setMarketValueDate = function(marketValueDate) {
  * @return {String} the currency code of the position or null for the default currency
  */
 InvestmentPosition.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 80, owner: InvestmentPosition, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -338,7 +336,7 @@ InvestmentPosition.prototype.setCurrencyCode = function(currencyCode) {
  * @return {String} the memo
  */
 InvestmentPosition.prototype.getMemo = function() {
-  return memo;
+  return this.memo;
 };
 Element.add({name: "MEMO", order: 90, owner: InvestmentPosition, /*type: String,*/ fcn: "getMemo"});
 
@@ -364,7 +362,7 @@ InvestmentPosition.prototype.setMemo = function(memo) {
  * @return {String} the 401k source
  */
 InvestmentPosition.prototype.get401kSource = function() {
-  return inv401kSource;
+  return this.inv401kSource;
 };
 Element.add({name: "INV401KSOURCE", order: 100, owner: InvestmentPosition, /*type: String,*/ fcn: "get401kSource"});
 
@@ -388,7 +386,7 @@ InvestmentPosition.prototype.set401kSource = function(inv401kSource) {
  * @return {Inv401KSource} the 401k source or null if it's not one of the well-known types
  */
 InvestmentPosition.prototype.get401kSourceEnum = function() {
-  return Inv401KSource.fromOfx(get401kSource());
+  return Inv401KSource.fromOfx(this.get401kSource());
 };
 
 

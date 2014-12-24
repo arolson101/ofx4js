@@ -18,20 +18,16 @@
 var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
-var RequestMessage = require("domain/data/RequestMessage");
 var RequestMessageSet = require("domain/data/RequestMessageSet");
-var InvestmentStatementRequestTransaction = require("domain/data/investment/statements/InvestmentStatementRequestTransaction");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.ArrayList;
-//import java.util.List;
 
 /**
  * Security list request message set.
  * @see "Section 13.7.2.2.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments RequestMessageSet
  */
 function SecurityListRequestMessageSet () {
 
@@ -60,7 +56,7 @@ SecurityListRequestMessageSet.prototype.getType = function() {
  * @return {SecurityListRequestTransaction} the request
  */
 SecurityListRequestMessageSet.prototype.getSecurityListRequest = function() {
-  return securityListRequest;
+  return this.securityListRequest;
 };
 ChildAggregate.add({order: 0, owner: SecurityListRequestMessageSet, /*type: SecurityListRequestTransaction,*/ fcn: "getSecurityListRequest"});
 
@@ -77,9 +73,9 @@ SecurityListRequestMessageSet.prototype.setSecurityListRequest = function(statem
 
 // Inherited.
 SecurityListRequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-  if (getSecurityListRequest() != null) {
-    requestMessages.add(getSecurityListRequest());
+  var requestMessages = [];
+  if (this.getSecurityListRequest() !== null) {
+    requestMessages.push(this.getSecurityListRequest());
   }
   return requestMessages;
 };

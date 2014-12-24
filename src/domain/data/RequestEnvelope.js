@@ -14,19 +14,16 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Header = require("meta/Header");
-
-//import java.util.SortedSet;
-//import java.util.UUID;
+var ApplicationSecurity = require("./ApplicationSecurity");
+var UUID = require("uuid");
 
 /**
  * Envelope for enclosing an OFX request.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 2.4.3, OFX Spec"
  */
 function RequestEnvelope () {
@@ -68,7 +65,7 @@ Aggregate.add("OFX", RequestEnvelope);
 //headers
 //content
 RequestEnvelope.prototype.RequestEnvelope = function() {
-  this.UID = UUID.randomUUID().toString();
+  this.UID = UUID.v4();
 };
 
 
@@ -84,7 +81,7 @@ RequestEnvelope.prototype.RequestEnvelope = function(/*String*/ UID) {
  * @see "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getSecurity = function() {
-  return security;
+  return this.security;
 };
 Header.add({name: "SECURITY", owner: RequestEnvelope, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
 
@@ -107,7 +104,7 @@ RequestEnvelope.prototype.setSecurity = function(security) {
  * @see "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getUID = function() {
-  return UID;
+  return this.UID;
 };
 Header.add({name: "NEWFILEUID", owner: RequestEnvelope, /*type: String,*/ fcn: "getUID"});
 
@@ -130,7 +127,7 @@ RequestEnvelope.prototype.setUID = function(UID) {
  * @see "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getLastProcessedUID = function() {
-  return lastProcessedUID;
+  return this.lastProcessedUID;
 };
 Header.add({name: "OLDFILEUID", owner: RequestEnvelope, /*type: String,*/ fcn: "getLastProcessedUID"});
 
@@ -153,7 +150,7 @@ RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
  * @see "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.getMessageSets = function() {
-  return messageSets;
+  return this.messageSets;
 };
 ChildAggregate.add({order: 1, owner: RequestEnvelope, /*type: SortedSet<RequestMessageSet>,*/ fcn: "getMessageSets"});
 

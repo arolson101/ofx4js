@@ -14,9 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var Transaction = require("domain/data/common/Transaction");
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
@@ -26,7 +23,7 @@ var Element = require("meta/Element");
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
  * @see "Section 13.9.2.3, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function InvestmentBankTransaction () {
 
@@ -55,7 +52,7 @@ Aggregate.add("INVBANKTRAN", InvestmentBankTransaction);
  * @return {Transaction} the wrapped transaction
  */
 InvestmentBankTransaction.prototype.getTransaction = function() {
-  return transaction;
+  return this.transaction;
 };
 ChildAggregate.add({order: 10, owner: InvestmentBankTransaction, /*type: Transaction,*/ fcn: "getTransaction"});
 
@@ -76,7 +73,7 @@ InvestmentBankTransaction.prototype.setTransaction = function(transaction) {
  * @return {String} the sub account fund for the transaction
  */
 InvestmentBankTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", required: true, order: 20, owner: InvestmentBankTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -98,7 +95,7 @@ InvestmentBankTransaction.prototype.setSubAccountFund = function(subAccountFund)
  * @return {SubAccountType} the type of null if it wasn't one of the well known types
  */
 InvestmentBankTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 

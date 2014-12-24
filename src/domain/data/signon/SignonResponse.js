@@ -16,20 +16,18 @@
 
 var inherit = require("../inherit");
 
-var Status = require("domain/data/common/Status");
 var StatusHolder = require("domain/data/common/StatusHolder");
 var ResponseMessage = require("domain/data/ResponseMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
-//import java.util.Date;
-//import java.util.Locale;
-
 /**
  * The signon response message.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
+ * @augments StatusHolder
  * @see "Section 2.5.1.2, OFX Spec."
  */
 function SignonResponse () {
@@ -67,7 +65,7 @@ function SignonResponse () {
    * @type String
    * @access private
    */
-  this.language = Locale.US.getISO3Language();
+  this.language = "eng";
 
   /**
    * @name SignonResponse#profileLastUpdated
@@ -118,7 +116,7 @@ SignonResponse.prototype.getResponseMessageName = function() {
 
 
 SignonResponse.prototype.getStatusHolderName = function() {
-  return getResponseMessageName();
+  return this.getResponseMessageName();
 };
 
 
@@ -128,7 +126,7 @@ SignonResponse.prototype.getStatusHolderName = function() {
  * @return {Status} The signon response status.
  */
 SignonResponse.prototype.getStatus = function() {
-  return status;
+  return this.status;
 };
 ChildAggregate.add({required: true, order: 0, owner: SignonResponse, /*type: Status,*/ fcn: "getStatus"});
 
@@ -149,7 +147,7 @@ SignonResponse.prototype.setStatus = function(status) {
  * @return {Date} The timestamp of this response.
  */
 SignonResponse.prototype.getTimestamp = function() {
-  return timestamp;
+  return this.timestamp;
 };
 Element.add({name: "DTSERVER", required: true, order: 10, owner: SignonResponse, /*type: Date,*/ fcn: "getTimestamp"});
 
@@ -170,7 +168,7 @@ SignonResponse.prototype.setTimestamp = function(timestamp) {
  * @return {String} The userkey that can be used instead of the username/password.
  */
 SignonResponse.prototype.getUserKey = function() {
-  return userKey;
+  return this.userKey;
 };
 Element.add({name: "USERKEY", order: 20, owner: SignonResponse, /*type: String,*/ fcn: "getUserKey"});
 
@@ -191,7 +189,7 @@ SignonResponse.prototype.setUserKey = function(userKey) {
  * @return {Date} The date/time of the expiration of the user key.
  */
 SignonResponse.prototype.getUserKeyExpiration = function() {
-  return userKeyExpiration;
+  return this.userKeyExpiration;
 };
 Element.add({name: "TSKEYEXPIRE", order: 30, owner: SignonResponse, /*type: Date,*/ fcn: "getUserKeyExpiration"});
 
@@ -213,7 +211,7 @@ SignonResponse.prototype.setUserKeyExpiration = function(userKeyExpiration) {
  * @see java.util.Locale#getISO3Language()
  */
 SignonResponse.prototype.getLanguage = function() {
-  return language;
+  return this.language;
 };
 Element.add({name: "LANGUAGE", required: true, order: 40, owner: SignonResponse, /*type: String,*/ fcn: "getLanguage"});
 
@@ -234,7 +232,7 @@ SignonResponse.prototype.setLanguage = function(language) {
  * @return {Date} The date/time that the FI profile was last updated.
  */
 SignonResponse.prototype.getProfileLastUpdated = function() {
-  return profileLastUpdated;
+  return this.profileLastUpdated;
 };
 Element.add({name: "DTPROFUP", order: 50, owner: SignonResponse, /*type: Date,*/ fcn: "getProfileLastUpdated"});
 
@@ -255,7 +253,7 @@ SignonResponse.prototype.setProfileLastUpdated = function(profileLastUpdated) {
  * @return {Date} The date/time that the user's account information was updated.
  */
 SignonResponse.prototype.getAccountLastUpdated = function() {
-  return accountLastUpdated;
+  return this.accountLastUpdated;
 };
 Element.add({name: "DTACCTUP", order: 60, owner: SignonResponse, /*type: Date,*/ fcn: "getAccountLastUpdated"});
 
@@ -276,7 +274,7 @@ SignonResponse.prototype.setAccountLastUpdated = function(accountLastUpdated) {
  * @return {FinancialInstitution} The financial instutution identity information.
  */
 SignonResponse.prototype.getFinancialInstitution = function() {
-  return financialInstitution;
+  return this.financialInstitution;
 };
 ChildAggregate.add({order: 70, owner: SignonResponse, /*type: FinancialInstitution,*/ fcn: "getFinancialInstitution"});
 
@@ -297,7 +295,7 @@ SignonResponse.prototype.setFinancialInstitution = function(financialInstitution
  * @return {String} The session id for the client.
  */
 SignonResponse.prototype.getSessionId = function() {
-  return sessionId;
+  return this.sessionId;
 };
 Element.add({name: "SESSCOOKIE", order: 80, owner: SignonResponse, /*type: String,*/ fcn: "getSessionId"});
 
@@ -318,7 +316,7 @@ SignonResponse.prototype.setSessionId = function(sessionId) {
  * @return {String} The access key that the client should return in the next sign-on requuest.
  */
 SignonResponse.prototype.getAccessKey = function() {
-  return accessKey;
+  return this.accessKey;
 };
 Element.add({name: "ACCESSKEY", order: 90, owner: SignonResponse, /*type: String,*/ fcn: "getAccessKey"});
 

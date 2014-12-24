@@ -17,16 +17,21 @@ var inherit = require("../inherit");
 
 var ShortOptionSecurity = require("domain/data/investment/positions/ShortOptionSecurity");
 var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var OptionSellType = require("./OptionSellType");
+var RelatedOptionType = require("./RelatedOptionType");
 
 /**
  * Transaction for selling options.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSellInvestmentTransaction
  */
 function SellOptionTransaction () {
+  BaseSellInvestmentTransaction.call(this, TransactionType.SELL_OPTION);
 
   /**
    * @name SellOptionTransaction#optionSellType
@@ -70,11 +75,6 @@ inherit(SellOptionTransaction, "extends", BaseSellInvestmentTransaction);
 Aggregate.add("SELLOPT", SellOptionTransaction);
 
 
-SellOptionTransaction.prototype.SellOptionTransaction = function() {
-  super(TransactionType.SELL_OPTION);
-};
-
-
 /**
  * Gets the type of option sale (i.e. "SELLTOCLOSE" or "SELLTOOPEN"). This is a required field
  * according to the OFX spec.
@@ -83,7 +83,7 @@ SellOptionTransaction.prototype.SellOptionTransaction = function() {
  * @return {String} the option sell type
  */
 SellOptionTransaction.prototype.getOptionSellType = function() {
-  return optionSellType;
+  return this.optionSellType;
 };
 Element.add({name: "OPTSELLTYPE", required: true, order: 20, owner: SellOptionTransaction, /*type: String,*/ fcn: "getOptionSellType"});
 
@@ -106,7 +106,7 @@ SellOptionTransaction.prototype.setOptionSellType = function(optionSellType) {
  * @return {OptionSellType} the type of sale or null if it's not known.
  */
 SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
-  return OptionSellType.fromOfx(optionSellType);
+  return OptionSellType.fromOfx(this.optionSellType);
 };
 
 
@@ -117,7 +117,7 @@ SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
  * @return {Integer} the number of shares per contact
  */
 SellOptionTransaction.prototype.getSharesPerContact = function() {
-  return sharesPerContact;
+  return this.sharesPerContact;
 };
 Element.add({name: "SHPERCTRCT", required: true, order: 30, owner: SellOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContact"});
 
@@ -141,7 +141,7 @@ SellOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact)
  * @return {String} The related transaction id
  */
 SellOptionTransaction.prototype.getRelatedTransactionId = function() {
-  return relatedTransactionId;
+  return this.relatedTransactionId;
 };
 Element.add({name: "RELFITID", order: 40, owner: SellOptionTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
 
@@ -166,7 +166,7 @@ SellOptionTransaction.prototype.setRelatedTransactionId = function(relatedTransa
  * @return {String} The related tansaction type
  */
 SellOptionTransaction.prototype.getRelatedType = function() {
-  return relatedType;
+  return this.relatedType;
 };
 Element.add({name: "RELTYPE", order: 50, owner: SellOptionTransaction, /*type: String,*/ fcn: "getRelatedType"});
 
@@ -189,7 +189,7 @@ SellOptionTransaction.prototype.setRelatedType = function(relatedType) {
  * @return {RelatedOptionType} the related tansaction type or null if it's not well known
  */
 SellOptionTransaction.prototype.getRelatedTypeEnum = function() {
-  return RelatedOptionType.fromOfx(getRelatedType());
+  return RelatedOptionType.fromOfx(this.getRelatedType());
 };
 
 
@@ -201,7 +201,7 @@ SellOptionTransaction.prototype.getRelatedTypeEnum = function() {
  * @return {String} how the option sale is secured
  */
 SellOptionTransaction.prototype.getSecured = function() {
-  return secured;
+  return this.secured;
 };
 Element.add({name: "SECURED", order: 60, owner: SellOptionTransaction, /*type: String,*/ fcn: "getSecured"});
 
@@ -224,7 +224,7 @@ SellOptionTransaction.prototype.setSecured = function(secured) {
  * @return {ShortOptionSecurity} the type indicating how the option is secured or null if it's not well known.
  */
 SellOptionTransaction.prototype.getSecuredEnum = function() {
-  return  ShortOptionSecurity.fromOfx(getSecured());
+  return  ShortOptionSecurity.fromOfx(this.getSecured());
 };
 
 

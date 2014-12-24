@@ -14,14 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-//import java.util.List;
-
 /**
  * A message set enclosed in an OFX request envelope.
  *
- * @author Ryan Heaton
+ * @class
  */
 function RequestMessageSet () {
 
@@ -33,42 +29,37 @@ function RequestMessageSet () {
   this.version = "1";
 }
 
-inherit(RequestMessageSet, "implements", Comparable<RequestMessageSet>);
 
-
-
-
-RequestMessageSet.prototype.getType = function() {
+RequestMessageSet.prototype.getType = function() { throw new Error("not implemented"); };
 
 /**
  * The version of this request message.
  *
- * @return The version of this request message.
+ * @return {String} The version of this request message.
  */
-public String getVersion() {
-  return version;
-}
+RequestMessageSet.prototype.getVersion = function() {
+  return this.version;
+};
 
 /**
  * The version of this request message.
  *
- * @param version The version of this request message.
+ * @param {String} version The version of this request message.
  */
-public void setVersion(String version) {
+RequestMessageSet.prototype.setVersion = function(version) {
   this.version = version;
-}
+};
 
 /**
  * The request messages for this request message set.
  *
- * @return The request messages for this request message set.
+ * @return {RequestMessage[]} The request messages for this request message set.
  */
-public abstract List<RequestMessage> getRequestMessages();
+RequestMessageSet.prototype.getRequestMessages = function() { throw new Error("not implemented"); };
 
 // Inherited.
-public int compareTo(RequestMessageSet o) {
-  return getType().compareTo(o.getType());
-}
+RequestMessageSet.prototype.compareTo = function(/*RequestMessageSet*/ o) {
+  return this.getType().compareTo(o.getType());
 };
 
 

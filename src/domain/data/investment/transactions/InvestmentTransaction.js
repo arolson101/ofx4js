@@ -14,18 +14,14 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
 
 /**
  * Investment transaction aggregate ("INVTRAN").
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function InvestmentTransaction () {
 
@@ -85,7 +81,7 @@ Aggregate.add("INVTRAN", InvestmentTransaction);
  * @return {String} the financial institution asssigned transaction id
  */
 InvestmentTransaction.prototype.getTransactionId = function() {
-  return transactionId;
+  return this.transactionId;
 };
 Element.add({name: "FITID", required: true, order: 0, owner: InvestmentTransaction, /*type: String,*/ fcn: "getTransactionId"});
 
@@ -110,7 +106,7 @@ InvestmentTransaction.prototype.setTransactionId = function(transactionId) {
  * @return {String} the server assigned transaction id
  */
 InvestmentTransaction.prototype.getServerId = function() {
-  return serverId;
+  return this.serverId;
 };
 Element.add({name: "SRVRTID", order: 10, owner: InvestmentTransaction, /*type: String,*/ fcn: "getServerId"});
 
@@ -135,7 +131,7 @@ InvestmentTransaction.prototype.setServerId = function(serverId) {
  * @return {Date} the trade date
  */
 InvestmentTransaction.prototype.getTradeDate = function() {
-  return tradeDate;
+  return this.tradeDate;
 };
 Element.add({name: "DTTRADE", required: true, order: 20, owner: InvestmentTransaction, /*type: Date,*/ fcn: "getTradeDate"});
 
@@ -160,7 +156,7 @@ InvestmentTransaction.prototype.setTradeDate = function(tradeDate) {
  * @return {Date} the trade date
  */
 InvestmentTransaction.prototype.getSettlementDate = function() {
-  return settlementDate;
+  return this.settlementDate;
 };
 Element.add({name: "DTSETTLE", order: 30, owner: InvestmentTransaction, /*type: Date,*/ fcn: "getSettlementDate"});
 
@@ -185,7 +181,7 @@ InvestmentTransaction.prototype.setSettlementDate = function(settlementDate) {
  * @return {String} the transaction id of the transaction being reversed
  */
 InvestmentTransaction.prototype.getReversalTransactionId = function() {
-  return reversalTransactionId;
+  return this.reversalTransactionId;
 };
 Element.add({name: "REVERSALFITID", order: 40, owner: InvestmentTransaction, /*type: String,*/ fcn: "getReversalTransactionId"});
 
@@ -210,7 +206,7 @@ InvestmentTransaction.prototype.setReversalTransactionId = function(reversalTran
  * @return {String} the memo
  */
 InvestmentTransaction.prototype.getMemo = function() {
-  return memo;
+  return this.memo;
 };
 Element.add({name: "MEMO", order: 50, owner: InvestmentTransaction, /*type: String,*/ fcn: "getMemo"});
 

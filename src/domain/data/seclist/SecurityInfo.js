@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
@@ -26,7 +24,7 @@ var Element = require("meta/Element");
  * Info about a security.
  * @see "Section 13.8.5.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function SecurityInfo () {
 
@@ -106,7 +104,7 @@ Aggregate.add("SECINFO", SecurityInfo);
  * @return {SecurityId} the security id
  */
 SecurityInfo.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 10, owner: SecurityInfo, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -128,7 +126,7 @@ SecurityInfo.prototype.setSecurityId = function(securityId) {
  * @return {String} the full name of the security
  */
 SecurityInfo.prototype.getSecurityName = function() {
-  return securityName;
+  return this.securityName;
 };
 Element.add({name: "SECNAME", required: true, order: 20, owner: SecurityInfo, /*type: String,*/ fcn: "getSecurityName"});
 
@@ -149,7 +147,7 @@ SecurityInfo.prototype.setSecurityName = function(securityName) {
  * @return {String} the ticket symbol or null if there's no ticker symbol
  */
 SecurityInfo.prototype.getTickerSymbol = function() {
-  return tickerSymbol;
+  return this.tickerSymbol;
 };
 Element.add({name: "TICKER", order: 30, owner: SecurityInfo, /*type: String,*/ fcn: "getTickerSymbol"});
 
@@ -170,7 +168,7 @@ SecurityInfo.prototype.setTickerSymbol = function(tickerSymbol) {
  * @return {String} the FI ID number for the security
  */
 SecurityInfo.prototype.getFiId = function() {
-  return fiId;
+  return this.fiId;
 };
 Element.add({name: "FIID", order: 40, owner: SecurityInfo, /*type: String,*/ fcn: "getFiId"});
 
@@ -191,7 +189,7 @@ SecurityInfo.prototype.setFiId = function(fiId) {
  * @return {String} the rating
  */
 SecurityInfo.prototype.getRating = function() {
-  return rating;
+  return this.rating;
 };
 Element.add({name: "RATING", order: 50, owner: SecurityInfo, /*type: String,*/ fcn: "getRating"});
 
@@ -215,7 +213,7 @@ SecurityInfo.prototype.setRating = function(rating) {
  * @return {Double} the per unit price
  */
 SecurityInfo.prototype.getUnitPrice = function() {
-  return unitPrice;
+  return this.unitPrice;
 };
 Element.add({name: "UNITPRICE", order: 60, owner: SecurityInfo, /*type: Double,*/ fcn: "getUnitPrice"});
 
@@ -239,7 +237,7 @@ SecurityInfo.prototype.setUnitPrice = function(unitPrice) {
  * @return {Date} the date as-of for the unit price
  */
 SecurityInfo.prototype.getUnitPriceAsOfDate = function() {
-  return marketValueDate;
+  return this.marketValueDate;
 };
 Element.add({name: "DTASOF", order: 70, owner: SecurityInfo, /*type: Date,*/ fcn: "getUnitPriceAsOfDate"});
 
@@ -261,7 +259,7 @@ SecurityInfo.prototype.setUnitPriceAsOfDate = function(/*Date*/ marketValueDate)
  * @return {String} the overriding currency code or null to mean the default currency
  */
 SecurityInfo.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 80, owner: SecurityInfo, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -284,7 +282,7 @@ SecurityInfo.prototype.setCurrencyCode = function(currencyCode) {
  * @return {String} the memo
  */
 SecurityInfo.prototype.getMemo = function() {
-  return memo;
+  return this.memo;
 };
 Element.add({name: "MEMO", order: 90, owner: SecurityInfo, /*type: String,*/ fcn: "getMemo"});
 

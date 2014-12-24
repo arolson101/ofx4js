@@ -16,14 +16,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
  * Email Profile
- * @author Scott Priddy
+ * @class
  * @see "Section 11.13.2.3 OFX Spec"
  */
 function EmailProfile () {
@@ -49,7 +47,7 @@ Aggregate.add("EMAILPROF", EmailProfile);
 
 
 EmailProfile.prototype.getCanEmail = function() {
-  return canEmail;
+  return this.canEmail;
 };
 Element.add({name: "CANEMAIL", required: true, order: 10, owner: EmailProfile, /*type: Boolean,*/ fcn: "getCanEmail"});
 
@@ -60,7 +58,7 @@ EmailProfile.prototype.setCanEmail = function(/*Boolean*/ canEmail) {
 
 
 EmailProfile.prototype.getCanNotify = function() {
-  return canNotify;
+  return this.canNotify;
 };
 Element.add({name: "CANNOTIFY", required: true, order: 20, owner: EmailProfile, /*type: Boolean,*/ fcn: "getCanNotify"});
 

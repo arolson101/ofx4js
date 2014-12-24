@@ -19,15 +19,19 @@ var inherit = require("../inherit");
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
+var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
  * account.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseOtherInvestmentTransaction
  */
 function MarginInterestTransaction () {
+  BaseOtherInvestmentTransaction.call(this, TransactionType.MARGIN_INTEREST);
 
   /**
    * @name MarginInterestTransaction#total
@@ -64,11 +68,6 @@ inherit(MarginInterestTransaction, "extends", BaseOtherInvestmentTransaction);
 Aggregate.add("MARGININTEREST", MarginInterestTransaction);
 
 
-MarginInterestTransaction.prototype.MarginInterestTransaction = function() {
-  super(TransactionType.MARGIN_INTEREST);
-};
-
-
 /**
  * Gets the sub account type the margin interest affects (e.g. CASH, MARGIN, SHORT, OTHER).
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -76,7 +75,7 @@ MarginInterestTransaction.prototype.MarginInterestTransaction = function() {
  * @return {String} the sub account type
  */
 MarginInterestTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 30, owner: MarginInterestTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -98,8 +97,8 @@ MarginInterestTransaction.prototype.setSubAccountFund = function(subAccountFund)
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
-  String type = getSubAccountFund();
-  return type != null ? SubAccountType.valueOf(type) : null;
+  var type = this.getSubAccountFund();
+  return type !== null ? SubAccountType.valueOf(type) : null;
 };
 
 
@@ -110,7 +109,7 @@ MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
  * @return {Double} the total
  */
 MarginInterestTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", order: 40, owner: MarginInterestTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -134,7 +133,7 @@ MarginInterestTransaction.prototype.setTotal = function(total) {
  * @return {String} the currency code for the transaction.
  */
 MarginInterestTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 110, owner: MarginInterestTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -159,7 +158,7 @@ MarginInterestTransaction.prototype.setCurrencyCode = function(currencyCode) {
  * @return {OriginalCurrency} the original currency info for the transaction.
  */
 MarginInterestTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 Element.add({name: "ORIGCURRENCY", order: 120, owner: MarginInterestTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 

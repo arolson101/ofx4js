@@ -16,6 +16,7 @@
 
 var inherit = require("../inherit");
 
+var InvestmentStatementRequest = require("./InvestmentStatementRequest");
 var TransactionWrappedRequestMessage = require("domain/data/TransactionWrappedRequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
@@ -24,7 +25,8 @@ var ChildAggregate = require("meta/ChildAggregate");
  * Investment statement transaction request.
  * @see "Section 13.9.1.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments TransactionWrappedRequestMessage
  */
 function InvestmentStatementRequestTransaction () {
 
@@ -48,7 +50,7 @@ Aggregate.add("INVSTMTTRNRQ", InvestmentStatementRequestTransaction);
  * @return {InvestmentStatementRequest} the statement request message.
  */
 InvestmentStatementRequestTransaction.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 ChildAggregate.add({required: true, order: 30, owner: InvestmentStatementRequestTransaction, /*type: InvestmentStatementRequest,*/ fcn: "getMessage"});
 
@@ -65,7 +67,7 @@ InvestmentStatementRequestTransaction.prototype.setMessage = function(message) {
 
 // Inherited.
 InvestmentStatementRequestTransaction.prototype.setWrappedMessage = function(/*InvestmentStatementRequest*/ message) {
-  setMessage(message);
+  this.setMessage(message);
 };
 
 

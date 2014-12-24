@@ -15,19 +15,14 @@
 
 var inherit = require("../inherit");
 
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-
 var MessageSetType = require("domain/data/MessageSetType");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
+ * @augments ResponseMessageSet
  */
 function Tax1099ResponseMessageSet () {
 
@@ -60,7 +55,7 @@ Tax1099ResponseMessageSet.prototype.getType = function() {
  * @return {Tax1099ResponseTransaction[]} The taxResponseTransaction list.
  */
 Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction = function() {
-  return taxResponseTransaction;
+  return this.taxResponseTransaction;
 };
 ChildAggregate.add({order: 0, owner: Tax1099ResponseMessageSet, /*type: Tax1099ResponseTransaction[],*/ fcn: "getTaxResponseTransaction"});
 
@@ -77,7 +72,7 @@ Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(taxResp
 
 // Inherited.
 Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
-  return new ArrayList<ResponseMessage>(taxResponseTransaction);
+  return this.taxResponseTransaction;
 };
 
 
@@ -88,12 +83,12 @@ Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 Tax1099ResponseMessageSet.prototype.getStatementResponse = function() {
-  return taxResponseTransaction == null || taxResponseTransaction.isEmpty() ? null : taxResponseTransaction.get(0);
+  return this.taxResponseTransaction === null || this.taxResponseTransaction.isEmpty() ? null : this.taxResponseTransaction.get(0);
 };
 
 
 Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(/*Tax1099ResponseTransaction*/ taxResponseTransaction) {
-  this.taxResponseTransaction = Collections.singletonList(taxResponseTransaction);
+  this.taxResponseTransaction = taxResponseTransaction;
 };
 
 

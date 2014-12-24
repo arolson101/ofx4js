@@ -14,16 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
-//import java.util.Date;
-
 /**
- * @author Ryan Heaton
+ * @class
  * @see "Section 3.1.3, OFX Spec"
  */
 function BalanceRecord () {
@@ -76,7 +72,10 @@ function BalanceRecord () {
 Aggregate.add("BAL", BalanceRecord);
 
 
-var Type = BalanceRecord.Type = {
+/**
+ * @enum
+ */
+BalanceRecord.Type = {
 
   DOLLAR: 0,
 
@@ -91,7 +90,7 @@ var Type = BalanceRecord.Type = {
  * @return {String} Name of the balance.
  */
 BalanceRecord.prototype.getName = function() {
-  return name;
+  return this.name;
 };
 Element.add({name: "NAME", required: true, order: 0, owner: BalanceRecord, /*type: String,*/ fcn: "getName"});
 
@@ -112,7 +111,7 @@ BalanceRecord.prototype.setName = function(name) {
  * @return {String} Description of the balance.
  */
 BalanceRecord.prototype.getDescription = function() {
-  return description;
+  return this.description;
 };
 Element.add({name: "DESC", required: true, order: 10, owner: BalanceRecord, /*type: String,*/ fcn: "getDescription"});
 
@@ -133,7 +132,7 @@ BalanceRecord.prototype.setDescription = function(description) {
  * @return {Type} Type of the balance.
  */
 BalanceRecord.prototype.getType = function() {
-  return type;
+  return this.type;
 };
 Element.add({name: "BALTYPE", required: true, order: 20, owner: BalanceRecord, /*type: Type,*/ fcn: "getType"});
 
@@ -154,7 +153,7 @@ BalanceRecord.prototype.setType = function(type) {
  * @return {String} The value of the balance.
  */
 BalanceRecord.prototype.getValue = function() {
-  return value;
+  return this.value;
 };
 Element.add({name: "VALUE", required: true, order: 30, owner: BalanceRecord, /*type: String,*/ fcn: "getValue"});
 
@@ -175,7 +174,7 @@ BalanceRecord.prototype.setValue = function(value) {
  * @return {Date} Timestamp of the balance.
  */
 BalanceRecord.prototype.getTimestamp = function() {
-  return timestamp;
+  return this.timestamp;
 };
 Element.add({name: "DTASOF", order: 40, owner: BalanceRecord, /*type: Date,*/ fcn: "getTimestamp"});
 
@@ -196,7 +195,7 @@ BalanceRecord.prototype.setTimestamp = function(timestamp) {
  * @return {Currency} Currency.
  */
 BalanceRecord.prototype.getCurrency = function() {
-  return currency;
+  return this.currency;
 };
 ChildAggregate.add({order: 50, owner: BalanceRecord, /*type: Currency,*/ fcn: "getCurrency"});
 

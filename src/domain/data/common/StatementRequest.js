@@ -21,7 +21,8 @@ var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments RequestMessage
  */
 function StatementRequest () {
 
@@ -45,7 +46,7 @@ Aggregate.add("STMTRQ", StatementRequest);
  * @return {StatementRange} The statement range.
  */
 StatementRequest.prototype.getStatementRange = function() {
-  return statementRange;
+  return this.statementRange;
 };
 ChildAggregate.add({name: "INCTRAN", required: false, order: 10, owner: StatementRequest, /*type: StatementRange,*/ fcn: "getStatementRange"});
 

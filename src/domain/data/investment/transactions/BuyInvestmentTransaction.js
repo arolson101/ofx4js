@@ -14,10 +14,7 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var SecurityId = require("domain/data/seclist/SecurityId");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
@@ -26,7 +23,7 @@ var Element = require("meta/Element");
  * Buy investment transaction aggregate ("INVBUY").
  * @see "Section 13.9.2.4.3, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function BuyInvestmentTransaction () {
 
@@ -140,7 +137,7 @@ Aggregate.add("INVBUY", BuyInvestmentTransaction);
  * @return {InvestmentTransaction} the investment transaction child aggregate
  */
 BuyInvestmentTransaction.prototype.getInvestmentTransaction = function() {
-  return investmentTransaction;
+  return this.investmentTransaction;
 };
 ChildAggregate.add({order: 10, owner: BuyInvestmentTransaction, /*type: InvestmentTransaction,*/ fcn: "getInvestmentTransaction"});
 
@@ -163,7 +160,7 @@ BuyInvestmentTransaction.prototype.setInvestmentTransaction = function(investmen
  * @return {SecurityId} the security id of the security that was bought
  */
 BuyInvestmentTransaction.prototype.getSecurityId = function() {
-  return securityId;
+  return this.securityId;
 };
 ChildAggregate.add({required: true, order: 20, owner: BuyInvestmentTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
 
@@ -190,7 +187,7 @@ BuyInvestmentTransaction.prototype.setSecurityId = function(securityId) {
  * @return {Double} the number of units purchased.
  */
 BuyInvestmentTransaction.prototype.getUnits = function() {
-  return units;
+  return this.units;
 };
 Element.add({name: "UNITS", required: true, order: 30, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getUnits"});
 
@@ -218,7 +215,7 @@ BuyInvestmentTransaction.prototype.setUnits = function(units) {
  * @return {Double} the per unit price
  */
 BuyInvestmentTransaction.prototype.getUnitPrice = function() {
-  return unitPrice;
+  return this.unitPrice;
 };
 Element.add({name: "UNITPRICE", required: true, order: 40, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
 
@@ -244,7 +241,7 @@ BuyInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
  * @return {Double} the per unit markeup price
  */
 BuyInvestmentTransaction.prototype.getMarkup = function() {
-  return markup;
+  return this.markup;
 };
 Element.add({name: "MARKUP", order: 50, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getMarkup"});
 
@@ -269,7 +266,7 @@ BuyInvestmentTransaction.prototype.setMarkup = function(markup) {
  * @return {Double} the transaction commision
  */
 BuyInvestmentTransaction.prototype.getCommission = function() {
-  return commission;
+  return this.commission;
 };
 Element.add({name: "COMMISSION", order: 60, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getCommission"});
 
@@ -293,7 +290,7 @@ BuyInvestmentTransaction.prototype.setCommission = function(commission) {
  * @return {Double} the transaction taxes
  */
 BuyInvestmentTransaction.prototype.getTaxes = function() {
-  return taxes;
+  return this.taxes;
 };
 Element.add({name: "TAXES", order: 70, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getTaxes"});
 
@@ -316,7 +313,7 @@ BuyInvestmentTransaction.prototype.setTaxes = function(taxes) {
  * @return {Double} the transaction fees
  */
 BuyInvestmentTransaction.prototype.getFees = function() {
-  return fees;
+  return this.fees;
 };
 Element.add({name: "FEES", order: 80, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getFees"});
 
@@ -339,7 +336,7 @@ BuyInvestmentTransaction.prototype.setFees = function(fees) {
  * @return {Double} the load
  */
 BuyInvestmentTransaction.prototype.getLoad = function() {
-  return load;
+  return this.load;
 };
 Element.add({name: "LOAD", order: 90, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getLoad"});
 
@@ -364,7 +361,7 @@ BuyInvestmentTransaction.prototype.setLoad = function(load) {
  * @return {Double} the total
  */
 BuyInvestmentTransaction.prototype.getTotal = function() {
-  return total;
+  return this.total;
 };
 Element.add({name: "TOTAL", required: true, order: 100, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getTotal"});
 
@@ -390,7 +387,7 @@ BuyInvestmentTransaction.prototype.setTotal = function(total) {
  * @return {String} the currency code for the transaction.
  */
 BuyInvestmentTransaction.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURRENCY", order: 110, owner: BuyInvestmentTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
 
@@ -415,7 +412,7 @@ BuyInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
  * @return {OriginalCurrency} the original currency info for the transaction
  */
 BuyInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
-  return originalCurrencyInfo;
+  return this.originalCurrencyInfo;
 };
 ChildAggregate.add({order: 120, owner: BuyInvestmentTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
 
@@ -439,7 +436,7 @@ BuyInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalCu
  * @return {String} the sub account type
  */
 BuyInvestmentTransaction.prototype.getSubAccountSecurity = function() {
-  return subAccountSecurity;
+  return this.subAccountSecurity;
 };
 Element.add({name: "SUBACCTSEC", order: 130, owner: BuyInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
 
@@ -461,7 +458,7 @@ BuyInvestmentTransaction.prototype.setSubAccountSecurity = function(subAccountSe
  * @return {SubAccountType} the type of null if it wasn't one of the well known types.
  */
 BuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountSecurity());
+  return SubAccountType.fromOfx(this.getSubAccountSecurity());
 };
 
 
@@ -472,7 +469,7 @@ BuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * @return {String} the sub account fund
  */
 BuyInvestmentTransaction.prototype.getSubAccountFund = function() {
-  return subAccountFund;
+  return this.subAccountFund;
 };
 Element.add({name: "SUBACCTFUND", order: 140, owner: BuyInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
 
@@ -494,7 +491,7 @@ BuyInvestmentTransaction.prototype.setSubAccountFund = function(subAcctFund) {
  * @return {SubAccountType} the type or null if it wasn't one of the well known types.
  */
 BuyInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
-  return SubAccountType.fromOfx(getSubAccountFund());
+  return SubAccountType.fromOfx(this.getSubAccountFund());
 };
 
 

@@ -17,17 +17,12 @@ var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
 var RequestMessageSet = require("domain/data/RequestMessageSet");
-var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.List;
-//import java.util.ArrayList;
-
 /**
- * @author aparna.gawali
- * aparna.gawali@sungard.com
- * 
+ * @class
+ * @augments RequestMessageSet
  */
 function Tax1099RequestMessageSet () {
 
@@ -56,7 +51,7 @@ Tax1099RequestMessageSet.prototype.getType = function() {
  * @return {Tax1099RequestTransaction} The statement request.
  */
 Tax1099RequestMessageSet.prototype.getTaxRequestTransaction = function() {
-  return taxRequestTransaction;
+  return this.taxRequestTransaction;
 };
 ChildAggregate.add({order: 0, owner: Tax1099RequestMessageSet, /*type: Tax1099RequestTransaction,*/ fcn: "getTaxRequestTransaction"});
 
@@ -73,9 +68,9 @@ Tax1099RequestMessageSet.prototype.setTaxRequestTransaction = function(taxReques
 
 // Inherited.
 Tax1099RequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-  if (getTaxRequestTransaction() != null) {
-    requestMessages.add(getTaxRequestTransaction());
+  var requestMessages = [];
+  if (this.getTaxRequestTransaction() !== null) {
+    requestMessages.push(this.getTaxRequestTransaction());
   }
   return requestMessages;
 };

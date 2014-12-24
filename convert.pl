@@ -4,8 +4,8 @@ use warnings;
 my $single = 0;
 if($single)
 {
-  my $src = "src/domain/data/banking/BankAccountDetails.java";
-  my $dst = "src/domain/data/banking/BankAccountDetails.js";
+  my $src = "src/domain/data/signup/AccountProfile.java";
+  my $dst = "src/domain/data/signup/AccountProfile.js";
   convert($src, $dst);
 }
 else
@@ -41,6 +41,7 @@ sub processDir
         next if($js =~ /Inv401KSource/i);
         next if($js =~ /TransactionWrappedRequestMessage/i);
         next if($js =~ /TransactionWrappedResponseMessage/i);
+        
         convert($java, $js);
       }
     }
@@ -132,7 +133,7 @@ sub convert
       {
         my $last = 0;
         
-        if($line =~ /(public|private|protected)\s+static\s+([\w<>]+)\s+(\w+)\(([^\)]*)\)/)
+        if($line =~ /(public|private|protected)\s+static\s+([\w<>\.]+)\s+(\w+)\(([^\)]*)\)/)
         {
           my $access = $1;
           my $return = fixType($2);
@@ -143,7 +144,7 @@ sub convert
           my @newargs;
           foreach my $arg (@a)
           {
-            my ($type, $param) = $arg =~ /([\w<>]+)\s+(\w+)/;
+            my ($type, $param) = $arg =~ /([\w<>\.]+)\s+(\w+)/;
             $type = fixType($type);
             if($comment =~ s/\@param $param/\@param \{$type\} $param/mg)
             {
@@ -168,8 +169,8 @@ sub convert
           my $braces = 1;
           while($line = <$hsrc>)
           {
-            $braces += scalar($line =~ /{/g);
-            $braces -= scalar($line =~ /}/g);
+            $braces += scalar($line =~ /\{/g);
+            $braces -= scalar($line =~ /\}/g);
             if($braces == 0)
             {
               chomp $line;
@@ -209,7 +210,7 @@ sub convert
     {
       $aggregate = '1';
     }
-    elsif($line =~ m/public(?:\s+abstract)?\s+class (\w+)\s+(?:extends\s*([\w<>]+))?(\s+implements\s+[\w<>]+)*/)
+    elsif($line =~ m/public(?:\s+abstract)?\s+class (\w+)\s+(?:extends\s*([\w<>\.]+))?(\s+implements\s+[\w<>\.]+)*/)
     {
       my $class = $1;
       my $base = $2;
@@ -235,7 +236,7 @@ sub convert
           $line .= <$hsrc>;
         }
         
-        if($line =~ /(public|private|protected)?(\s+final)?\s+([\w\.<>]+)\s+(\w+)(\s*=\s*.*)?;/)
+        if($line =~ /(public|private|protected)?(\s+final)?\s+([\w<>\.]+)\s+(\w+)(\s*=\s*.*)?;/)
         {
           my $initializer = $5;
           if(! $initializer)
@@ -278,7 +279,7 @@ sub convert
           $childAggregate = trim($1);
           $childAggregate =~ s/ ?=/:/g;
         }
-        elsif($line =~ /(public|private|protected)?\s*([\w\.<>]+)?\s+(\w+)\(([^\)]*)\)/)
+        elsif($line =~ /(public|private|protected)?\s*([\w<>\.]+)?\s+(\w+)\(([^\)]*)\)/)
         {
           my $return = $2 ? fixType($2) : "";
           my $fcn = $3;
@@ -288,7 +289,7 @@ sub convert
           my @newargs;
           foreach my $arg (@a)
           {
-            my ($type, $param) = $arg =~ /([\w<>]+)\s+(\w+)/;
+            my ($type, $param) = $arg =~ /([\w<>\.]+)\s+(\w+)/;
             $type = fixType($type);
             if($comment =~ s/\@param $param/\@param \{$type\} $param/mg)
             {
@@ -315,8 +316,11 @@ sub convert
           {
             $line =~ s/^  //;
             $methods .= $line;
-            $braces += scalar($line =~ /{/g);
-            $braces -= scalar($line =~ /}/g);
+            my @up = $line =~ /\{/g;
+            my @dn = $line =~ /\}/g;
+            $braces += scalar(@up);
+            $braces -= scalar(@dn);
+            #print "$braces(@up,@dn): $line";
             if($braces == 0)
             {
               chomp $methods;
@@ -383,7 +387,7 @@ sub convert
               my @newargs;
               foreach my $arg (@a)
               {
-                my ($type, $param) = $arg =~ /([\w<>]+)\s+(\w+)/;
+                my ($type, $param) = $arg =~ /([\w<>\.]+)\s+(\w+)/;
                 $type = fixType($type);
                 $types{$param} = $type;
                 if($comment =~ s/\@param $param/\@param \{$type\} $param/mg)
@@ -424,7 +428,7 @@ sub convert
               $constructor .= ";\n";
               next;
             }
-            elsif($line =~ /(public|private|protected)(\s+final)?\s+([\w<>]+)\s+(\w+)(\s*=\s*.*)?;/)
+            elsif($line =~ /(public|private|protected)(\s+final)?\s+([\w<>\.]+)\s+(\w+)(\s*=\s*.*)?;/)
             {
               $access{$4} = $1;
               next;
@@ -439,7 +443,7 @@ sub convert
               my @newargs;
               foreach my $arg (@a)
               {
-                my ($type, $param) = $arg =~ /([\w<>]+)\s+(\w+)/;
+                my ($type, $param) = $arg =~ /([\w<>\.]+)\s+(\w+)/;
                 $type = fixType($type);
                 $statics .= " * \@param {$type} $param\n";
                 push @newargs, $param;
@@ -589,7 +593,7 @@ sub convert
             last if($line =~ /\*\//);
           }
         }
-        elsif($line =~ /\s*([\w<>]+)\s+(\w+)\(([^\)]*)\)/)
+        elsif($line =~ /\s*([\w<>\.]+)\s+(\w+)\(([^\)]*)\)/)
         {
           my $return = fixType($1);
           my $fcn = $2;
@@ -601,7 +605,7 @@ sub convert
             my @newargs;
             foreach my $arg (@a)
             {
-              my ($type, $param) = $arg =~ /([\w<>]+)\s+(\w+)/;
+              my ($type, $param) = $arg =~ /([\w<>\.]+)\s+(\w+)/;
               $type = fixType($type);
               if($comment =~ s/\@param $param/\@param \{$type\} $param/mg)
               {

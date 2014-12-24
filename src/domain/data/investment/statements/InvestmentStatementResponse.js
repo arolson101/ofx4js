@@ -17,22 +17,16 @@
 var inherit = require("../inherit");
 
 var StatementResponse = require("domain/data/common/StatementResponse");
-var InvestmentAccountDetails = require("domain/data/investment/accounts/InvestmentAccountDetails");
-var InvestmentPositionList = require("domain/data/investment/positions/InvestmentPositionList");
-var SecurityList = require("domain/data/seclist/SecurityList");
-var SecurityListResponse = require("domain/data/seclist/SecurityListResponse");
-var InvestmentTransactionList = require("domain/data/investment/transactions/InvestmentTransactionList");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
 
 /**
  * Aggregate for the investment statement download response.
  * @see "Section 13.9.2.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments StatementResponse
  */
 function InvestmentStatementResponse () {
 
@@ -103,7 +97,7 @@ InvestmentStatementResponse.prototype.getResponseMessageName = function() {
  * @return {Date} the date and time for the statement download
  */
 InvestmentStatementResponse.prototype.getDateOfStatement = function() {
-  return dateOfStatement;
+  return this.dateOfStatement;
 };
 Element.add({name: "DTASOF", required: true, order: 60, owner: InvestmentStatementResponse, /*type: Date,*/ fcn: "getDateOfStatement"});
 
@@ -125,7 +119,7 @@ InvestmentStatementResponse.prototype.setDateOfStatement = function(dateOfStatem
  * @return {InvestmentAccountDetails} the account for the statement
  */
 InvestmentStatementResponse.prototype.getAccount = function() {
-  return account;
+  return this.account;
 };
 ChildAggregate.add({name:"INVACCTFROM", required: true, order: 10, owner: InvestmentStatementResponse, /*type: InvestmentAccountDetails,*/ fcn: "getAccount"});
 
@@ -146,7 +140,7 @@ InvestmentStatementResponse.prototype.setAccount = function(account) {
  * @return {InvestmentTransactionList} the transaction list aggregate
  */
 InvestmentStatementResponse.prototype.getInvestmentTransactionList = function() {
-  return transactionList;
+  return this.transactionList;
 };
 ChildAggregate.add({order: 70, owner: InvestmentStatementResponse, /*type: InvestmentTransactionList,*/ fcn: "getInvestmentTransactionList"});
 
@@ -167,7 +161,7 @@ InvestmentStatementResponse.prototype.setInvestmentTransactionList = function(tr
  * @return {InvestmentPositionList} the position list aggregate
  */
 InvestmentStatementResponse.prototype.getPositionList = function() {
-  return positionList;
+  return this.positionList;
 };
 ChildAggregate.add({order: 80, owner: InvestmentStatementResponse, /*type: InvestmentPositionList,*/ fcn: "getPositionList"});
 
@@ -188,7 +182,7 @@ InvestmentStatementResponse.prototype.setPositionList = function(positionList) {
  * @return {InvestmentBalance} the account balance
  */
 InvestmentStatementResponse.prototype.getAccountBalance = function() {
-  return accountBalance;
+  return this.accountBalance;
 };
 ChildAggregate.add({order: 90, owner: InvestmentStatementResponse, /*type: InvestmentBalance,*/ fcn: "getAccountBalance"});
 
@@ -213,7 +207,7 @@ InvestmentStatementResponse.prototype.setAccountBalance = function(accountBalanc
  * @return {SecurityList} the security list aggregate
  */
 InvestmentStatementResponse.prototype.getSecurityList = function() {
-  return securityList;
+  return this.securityList;
 };
 
 

@@ -14,16 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.List;
 
 /**
  * Information about a message set.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.2.1, OFX Spec"
  */
 function AbstractMessageSetInfo () {
@@ -46,7 +42,7 @@ function AbstractMessageSetInfo () {
  * @return {VersionSpecificMessageSetInfo[]} List of information about a message set for each version supported.
  */
 AbstractMessageSetInfo.prototype.getVersionSpecificInformationList = function() {
-  return versionSpecificInformationList;
+  return this.versionSpecificInformationList;
 };
 ChildAggregate.add({order: 0, owner: AbstractMessageSetInfo, /*type: VersionSpecificMessageSetInfo[],*/ fcn: "getVersionSpecificInformationList"});
 

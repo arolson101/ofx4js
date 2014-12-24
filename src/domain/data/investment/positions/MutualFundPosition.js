@@ -18,12 +18,14 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var BasePosition = require("./BasePosition");
 
 /**
  * Represents a mutual fund position.
  * @see "Section 13.9.2.6.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BasePosition
  */
 function MutualFundPosition () {
 
@@ -68,7 +70,7 @@ Aggregate.add("POSMF", MutualFundPosition);
  * @return {Double} the number of units in the financial insititution's street name.
  */
 MutualFundPosition.prototype.getUnitsStreet = function() {
-  return unitsStreet;
+  return this.unitsStreet;
 };
 Element.add({name: "UNITSSTREET", order: 20, owner: MutualFundPosition, /*type: Double,*/ fcn: "getUnitsStreet"});
 
@@ -89,7 +91,7 @@ MutualFundPosition.prototype.setUnitsStreet = function(unitsStreet) {
  * @return {Double} the number of units in the user's name.
  */
 MutualFundPosition.prototype.getUnitsUser = function() {
-  return unitsUser;
+  return this.unitsUser;
 };
 Element.add({name: "UNITSUSER", order: 30, owner: MutualFundPosition, /*type: Double,*/ fcn: "getUnitsUser"});
 
@@ -110,7 +112,7 @@ MutualFundPosition.prototype.setUnitsUser = function(unitsUser) {
  * @return {Boolean} whether dividends are automatically reinvested
  */
 MutualFundPosition.prototype.getReinvestDividends = function() {
-  return reinvestDividends;
+  return this.reinvestDividends;
 };
 Element.add({name: "REINVDIV", order: 50, owner: MutualFundPosition, /*type: Boolean,*/ fcn: "getReinvestDividends"});
 
@@ -131,7 +133,7 @@ MutualFundPosition.prototype.setReinvestDividends = function(reinvestDividends) 
  * @return {Boolean} whether capital gains are automatically reinvested
  */
 MutualFundPosition.prototype.getReinvestCapitalGains = function() {
-  return reinvestCapitalGains;
+  return this.reinvestCapitalGains;
 };
 Element.add({name: "REINVCG", order: 60, owner: MutualFundPosition, /*type: Boolean,*/ fcn: "getReinvestCapitalGains"});
 

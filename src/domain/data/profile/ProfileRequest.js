@@ -19,8 +19,7 @@ var inherit = require("../inherit");
 var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var ClientRoutingCapability = require("./ClientRoutingCapability");
 
 /**
  * @author Ryan Heaton
@@ -55,7 +54,7 @@ Aggregate.add("PROFRQ", ProfileRequest);
  * @return {ClientRoutingCapability} The client routing capability.
  */
 ProfileRequest.prototype.getRoutingCapability = function() {
-  return routingCapability;
+  return this.routingCapability;
 };
 Element.add({name: "CLIENTROUTING", order: 0, owner: ProfileRequest, /*type: ClientRoutingCapability,*/ fcn: "getRoutingCapability"});
 
@@ -76,7 +75,7 @@ ProfileRequest.prototype.setRoutingCapability = function(routingCapability) {
  * @return {Date} The date the profile was last updated.
  */
 ProfileRequest.prototype.getProfileLastUpdated = function() {
-  return profileLastUpdated;
+  return this.profileLastUpdated;
 };
 Element.add({name: "DTPROFUP", order: 10, owner: ProfileRequest, /*type: Date,*/ fcn: "getProfileLastUpdated"});
 

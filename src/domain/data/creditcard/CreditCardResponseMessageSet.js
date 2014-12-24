@@ -16,18 +16,14 @@
 
 var inherit = require("../inherit");
 
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-
 var MessageSetType = require("domain/data/MessageSetType");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessageSet
  */
 function CreditCardResponseMessageSet () {
 
@@ -60,7 +56,7 @@ CreditCardResponseMessageSet.prototype.getType = function() {
  * @return {CreditCardStatementResponseTransaction[]} The statement response list.
  */
 CreditCardResponseMessageSet.prototype.getStatementResponses = function() {
-  return statementResponses;
+  return this.statementResponses;
 };
 ChildAggregate.add({order: 0, owner: CreditCardResponseMessageSet, /*type: CreditCardStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
 
@@ -82,7 +78,7 @@ CreditCardResponseMessageSet.prototype.setStatementResponses = function(statemen
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 CreditCardResponseMessageSet.prototype.getStatementResponse = function() {
-  return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 
@@ -92,13 +88,13 @@ CreditCardResponseMessageSet.prototype.getStatementResponse = function() {
  * @param {CreditCardStatementResponseTransaction} statementResponse The statement response.
  */
 CreditCardResponseMessageSet.prototype.setStatementResponse = function(statementResponse) {
-  this.statementResponses = Collections.singletonList(statementResponse);
+  this.statementResponses = [statementResponse];
 };
 
 
 // Inherited.
 CreditCardResponseMessageSet.prototype.getResponseMessages = function() {
-  return new ArrayList<ResponseMessage>(statementResponses);
+  return this.statementResponses;
 };
 
 

@@ -19,12 +19,14 @@ var inherit = require("../inherit");
 var TransactionWrappedRequestMessage = require("domain/data/TransactionWrappedRequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
+var SecurityListRequest = require("./SecurityListRequest");
 
 /**
  * Security list transaction request.
  * @see "Section 13.8.2.1, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments TransactionWrappedRequestMessage
  */
 function SecurityListRequestTransaction () {
 
@@ -48,7 +50,7 @@ Aggregate.add("SECLISTTRNRQ", SecurityListRequestTransaction);
  * @return {SecurityListRequest} The message.
  */
 SecurityListRequestTransaction.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 ChildAggregate.add({required: true, order: 30, owner: SecurityListRequestTransaction, /*type: SecurityListRequest,*/ fcn: "getMessage"});
 
@@ -66,7 +68,7 @@ SecurityListRequestTransaction.prototype.setMessage = function(message) {
 
 // Inherited.
 SecurityListRequestTransaction.prototype.setWrappedMessage = function(/*SecurityListRequest*/ message) {
-  setMessage(message);
+  this.setMessage(message);
 };
 
 

@@ -13,35 +13,32 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Related option transaction type.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var RelatedOptionType = {
   SPREAD: 0,
   STRADDLE: 1,
   NONE: 2,
-  OTHER: 3;
+  OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SPREAD".equals(ofxVal)) {
-      return SPREAD;
+      return RelatedOptionType.SPREAD;
     } else if ("STRADDLE".equals(ofxVal)) {
-      return STRADDLE;
+      return RelatedOptionType.STRADDLE;
     } else if ("NONE".equals(ofxVal)) {
-      return NONE;
+      return RelatedOptionType.NONE;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return RelatedOptionType.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = RelatedOptionType;

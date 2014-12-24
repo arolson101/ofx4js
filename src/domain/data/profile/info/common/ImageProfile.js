@@ -16,14 +16,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
  * Image Profile
- * @author Scott Priddy
+ * @class
  * @see "Section 3.1.6.2 OFX Spec"
  */
 function ImageProfile () {
@@ -49,7 +47,7 @@ Aggregate.add("IMAGEPROF", ImageProfile);
 
 
 ImageProfile.prototype.getClosingImageAvailable = function() {
-  return closingImageAvailable;
+  return this.closingImageAvailable;
 };
 Element.add({name: "CLOSINGIMGAVAIL", required: true, order: 10, owner: ImageProfile, /*type: Boolean,*/ fcn: "getClosingImageAvailable"});
 
@@ -60,7 +58,7 @@ ImageProfile.prototype.setClosingImageAvailable = function(/*Boolean*/ closingIm
 
 
 ImageProfile.prototype.getTransactionImageAvailable = function() {
-  return transactionImageAvailable;
+  return this.transactionImageAvailable;
 };
 Element.add({name: "TRANIMGAVAIL", required: true, order: 20, owner: ImageProfile, /*type: Boolean,*/ fcn: "getTransactionImageAvailable"});
 

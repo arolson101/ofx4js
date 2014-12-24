@@ -14,19 +14,13 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var ApplicationSecurity = require("domain/data/ApplicationSecurity");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.net.URL;
-//import java.util.Locale;
 
 /**
  * Core information about a specific version of a specific message set.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.2.1, OFX Spec"
  */
 function CoreMessageSetInfo () {
@@ -78,7 +72,7 @@ function CoreMessageSetInfo () {
    * @type String
    * @access private
    */
-  this.language = Locale.US.getISO3Language();
+  this.language = "eng";
 
   /**
    * @name CoreMessageSetInfo#syncCapability
@@ -113,7 +107,7 @@ Aggregate.add("MSGSETCORE", CoreMessageSetInfo);
  * @return {String} The version of the message set.
  */
 CoreMessageSetInfo.prototype.getVersion = function() {
-  return version;
+  return this.version;
 };
 Element.add({name: "VER", required: true, order: 0, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getVersion"});
 
@@ -134,7 +128,7 @@ CoreMessageSetInfo.prototype.setVersion = function(version) {
  * @return {String} The name of the service provider (sometimes the message set processing is outsourced).
  */
 CoreMessageSetInfo.prototype.getServiceProviderName = function() {
-  return serviceProviderName;
+  return this.serviceProviderName;
 };
 Element.add({name: "SPNAME", order: 10, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getServiceProviderName"});
 
@@ -155,7 +149,7 @@ CoreMessageSetInfo.prototype.setServiceProviderName = function(serviceProviderNa
  * @return {String} The URL at which the message set is processed.
  */
 CoreMessageSetInfo.prototype.getUrl = function() {
-  return url;
+  return this.url;
 };
 Element.add({name: "URL", required: true, order: 20, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getUrl"});
 
@@ -176,7 +170,7 @@ CoreMessageSetInfo.prototype.setUrl = function(url) {
  * @return {ApplicationSecurity} The application-level security required for this message set.
  */
 CoreMessageSetInfo.prototype.getSecurity = function() {
-  return security;
+  return this.security;
 };
 Element.add({name: "OFXSEC", required: true, order: 30, owner: CoreMessageSetInfo, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
 
@@ -197,7 +191,7 @@ CoreMessageSetInfo.prototype.setSecurity = function(security) {
  * @return {Boolean} Whether transport-level security is required for this message set.
  */
 CoreMessageSetInfo.prototype.getSslRequired = function() {
-  return sslRequired;
+  return this.sslRequired;
 };
 Element.add({name: "TRANSPSEC", required: true, order: 40, owner: CoreMessageSetInfo, /*type: Boolean,*/ fcn: "getSslRequired"});
 
@@ -218,7 +212,7 @@ CoreMessageSetInfo.prototype.setSslRequired = function(sslRequired) {
  * @return {String} The sign-on realm.
  */
 CoreMessageSetInfo.prototype.getRealm = function() {
-  return realm;
+  return this.realm;
 };
 Element.add({name: "SIGNONREALM", required: true, order: 50, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getRealm"});
 
@@ -240,7 +234,7 @@ CoreMessageSetInfo.prototype.setRealm = function(realm) {
  * @see java.util.Locale#getISO3Language()
  */
 CoreMessageSetInfo.prototype.getLanguage = function() {
-  return language;
+  return this.language;
 };
 Element.add({name: "LANGUAGE", required: true, order: 60, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getLanguage"});
 
@@ -261,7 +255,7 @@ CoreMessageSetInfo.prototype.setLanguage = function(language) {
  * @return {SynchronizationCapability} The synchronization capability for this message set.
  */
 CoreMessageSetInfo.prototype.getSyncCapability = function() {
-  return syncCapability;
+  return this.syncCapability;
 };
 Element.add({name: "SYNCMODE", required: true, order: 70, owner: CoreMessageSetInfo, /*type: SynchronizationCapability,*/ fcn: "getSyncCapability"});
 
@@ -282,7 +276,7 @@ CoreMessageSetInfo.prototype.setSyncCapability = function(syncCapability) {
  * @return {Boolean} Whether there exists support for resposne-file based error recovery.
  */
 CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport = function() {
-  return fileBasedErrorRecoverySupport;
+  return this.fileBasedErrorRecoverySupport;
 };
 Element.add({name: "RESPFILEER", required: true, order: 80, owner: CoreMessageSetInfo, /*type: Boolean,*/ fcn: "getFileBasedErrorRecoverySupport"});
 
@@ -304,7 +298,7 @@ CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport = function(fileBas
  * @return {Integer} the "INTU.TIMEOUT" property
  */
 CoreMessageSetInfo.prototype.getIntuTimeout = function() {
-  return timeout;
+  return this.timeout;
 };
 Element.add({name: "INTU.TIMEOUT", order: 90, owner: CoreMessageSetInfo, /*type: Integer,*/ fcn: "getIntuTimeout"});
 

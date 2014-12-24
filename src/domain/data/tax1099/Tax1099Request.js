@@ -15,14 +15,13 @@
 
 var inherit = require("../inherit");
 
-
 var T1099Request = require("domain/data/common/T1099Request");
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
+ * @augments T1099Request
  */
 function Tax1099Request () {
 
@@ -41,14 +40,14 @@ Aggregate.add("TAX1099RQ", Tax1099Request);
 
 
 Tax1099Request.prototype.getTaxYear = function() {
-		return taxYear;
-	};
+  return this.taxYear;
+};
 Element.add({name: "TAXYEAR", required: true, order: 0, owner: Tax1099Request, /*type: String,*/ fcn: "getTaxYear"});
 
 
 Tax1099Request.prototype.setTaxYear = function(/*String*/ taxYear) {
-		this.taxYear = taxYear;
-	};
+  this.taxYear = taxYear;
+};
 
 
 

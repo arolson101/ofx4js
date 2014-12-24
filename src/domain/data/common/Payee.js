@@ -14,13 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function Payee () {
 
@@ -99,7 +97,7 @@ Aggregate.add("PAYEE", Payee);
  * @return {String} The name of the payee.
  */
 Payee.prototype.getName = function() {
-  return name;
+  return this.name;
 };
 Element.add({name: "NAME", order: 30, owner: Payee, /*type: String,*/ fcn: "getName"});
 
@@ -120,7 +118,7 @@ Payee.prototype.setName = function(name) {
  * @return {String} The address of the payee.
  */
 Payee.prototype.getAddress1 = function() {
-  return address1;
+  return this.address1;
 };
 Element.add({name: "ADDR1", required: true, order: 40, owner: Payee, /*type: String,*/ fcn: "getAddress1"});
 
@@ -141,7 +139,7 @@ Payee.prototype.setAddress1 = function(address1) {
  * @return {String} The address of the payee.
  */
 Payee.prototype.getAddress2 = function() {
-  return address2;
+  return this.address2;
 };
 Element.add({name: "ADDR2", order: 50, owner: Payee, /*type: String,*/ fcn: "getAddress2"});
 
@@ -162,7 +160,7 @@ Payee.prototype.setAddress2 = function(address2) {
  * @return {String} The address of the payee.
  */
 Payee.prototype.getAddress3 = function() {
-  return address3;
+  return this.address3;
 };
 Element.add({name: "ADDR3", order: 60, owner: Payee, /*type: String,*/ fcn: "getAddress3"});
 
@@ -183,7 +181,7 @@ Payee.prototype.setAddress3 = function(address3) {
  * @return {String} The city of the payee.
  */
 Payee.prototype.getCity = function() {
-  return city;
+  return this.city;
 };
 Element.add({name: "CITY", required: true, order: 70, owner: Payee, /*type: String,*/ fcn: "getCity"});
 
@@ -204,7 +202,7 @@ Payee.prototype.setCity = function(city) {
  * @return {String} The state of this payee.
  */
 Payee.prototype.getState = function() {
-  return state;
+  return this.state;
 };
 Element.add({name: "STATE", required: true, order: 80, owner: Payee, /*type: String,*/ fcn: "getState"});
 
@@ -225,7 +223,7 @@ Payee.prototype.setState = function(state) {
  * @return {String} The postal code of this payee.
  */
 Payee.prototype.getZip = function() {
-  return zip;
+  return this.zip;
 };
 Element.add({name: "POSTALCODE", required: true, order: 90, owner: Payee, /*type: String,*/ fcn: "getZip"});
 
@@ -247,7 +245,7 @@ Payee.prototype.setZip = function(zip) {
  * @see java.util.Locale#getISO3Country()
  */
 Payee.prototype.getCountry = function() {
-  return country;
+  return this.country;
 };
 Element.add({name: "COUNTRY", required: true, order: 100, owner: Payee, /*type: String,*/ fcn: "getCountry"});
 
@@ -268,7 +266,7 @@ Payee.prototype.setCountry = function(country) {
  * @return {String} The phone number.
  */
 Payee.prototype.getPhone = function() {
-  return phone;
+  return this.phone;
 };
 Element.add({name: "PHONE", order: 110, owner: Payee, /*type: String,*/ fcn: "getPhone"});
 

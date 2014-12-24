@@ -21,13 +21,11 @@ var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 var RequestMessage = require("domain/data/RequestMessage");
 
-//import java.util.Date;
-//import java.util.Locale;
-
 /**
  * Sign-on request
  *
- * @author Ryan Heaton
+ * @class
+ * @augments RequestMessage
  * @see "Section 2.5.1.2, OFX Spec."
  */
 function SignonRequest () {
@@ -78,7 +76,7 @@ function SignonRequest () {
    * @type String
    * @access private
    */
-  this.language = Locale.US.getISO3Language().toUpperCase();
+  this.language = "ENG";
 
   /**
    * @name SignonRequest#financialInstitution
@@ -156,7 +154,7 @@ Aggregate.add("SONRQ", SignonRequest);
  * @return {Date} The date and time of the request.
  */
 SignonRequest.prototype.getTimestamp = function() {
-  return timestamp;
+  return this.timestamp;
 };
 Element.add({name: "DTCLIENT", required: true, order: 0, owner: SignonRequest, /*type: Date,*/ fcn: "getTimestamp"});
 
@@ -177,7 +175,7 @@ SignonRequest.prototype.setTimestamp = function(timestamp) {
  * @return {String} The user id.
  */
 SignonRequest.prototype.getUserId = function() {
-  return userId;
+  return this.userId;
 };
 Element.add({name: "USERID", order: 10, owner: SignonRequest, /*type: String,*/ fcn: "getUserId"});
 
@@ -198,7 +196,7 @@ SignonRequest.prototype.setUserId = function(userId) {
  * @return {String} The password.
  */
 SignonRequest.prototype.getPassword = function() {
-  return password;
+  return this.password;
 };
 Element.add({name: "USERPASS", order: 20, owner: SignonRequest, /*type: String,*/ fcn: "getPassword"});
 
@@ -219,7 +217,7 @@ SignonRequest.prototype.setPassword = function(password) {
  * @return {String} The user key provided by the server so as not to require further username/password authentication.
  */
 SignonRequest.prototype.getUserKey = function() {
-  return userKey;
+  return this.userKey;
 };
 Element.add({name: "USERKEY", order: 30, owner: SignonRequest, /*type: String,*/ fcn: "getUserKey"});
 
@@ -240,7 +238,7 @@ SignonRequest.prototype.setUserKey = function(userKey) {
  * @return {Boolean} Whether to request the server to generate a user key.
  */
 SignonRequest.prototype.getGenerateUserKey = function() {
-  return generateUserKey;
+  return this.generateUserKey;
 };
 Element.add({name: "GENUSERKEY", order: 40, owner: SignonRequest, /*type: Boolean,*/ fcn: "getGenerateUserKey"});
 
@@ -262,7 +260,7 @@ SignonRequest.prototype.setGenerateUserKey = function(generateUserKey) {
  * @see java.util.Locale#getISO3Language()
  */
 SignonRequest.prototype.getLanguage = function() {
-  return language;
+  return this.language;
 };
 Element.add({name: "LANGUAGE", required: true, order: 50, owner: SignonRequest, /*type: String,*/ fcn: "getLanguage"});
 
@@ -283,7 +281,7 @@ SignonRequest.prototype.setLanguage = function(language) {
  * @return {FinancialInstitution} The financial institution.
  */
 SignonRequest.prototype.getFinancialInstitution = function() {
-  return financialInstitution;
+  return this.financialInstitution;
 };
 ChildAggregate.add({order: 60, owner: SignonRequest, /*type: FinancialInstitution,*/ fcn: "getFinancialInstitution"});
 
@@ -304,7 +302,7 @@ SignonRequest.prototype.setFinancialInstitution = function(financialInstitution)
  * @return {String} The server-supplied session id.
  */
 SignonRequest.prototype.getSessionId = function() {
-  return sessionId;
+  return this.sessionId;
 };
 Element.add({name: "SESSCOOKIE", order: 70, owner: SignonRequest, /*type: String,*/ fcn: "getSessionId"});
 
@@ -325,7 +323,7 @@ SignonRequest.prototype.setSessionId = function(sessionId) {
  * @return {String} The application id.
  */
 SignonRequest.prototype.getApplicationId = function() {
-  return applicationId;
+  return this.applicationId;
 };
 Element.add({name: "APPID", required: true, order: 80, owner: SignonRequest, /*type: String,*/ fcn: "getApplicationId"});
 
@@ -346,7 +344,7 @@ SignonRequest.prototype.setApplicationId = function(applicationId) {
  * @return {String} The application version.
  */
 SignonRequest.prototype.getApplicationVersion = function() {
-  return applicationVersion;
+  return this.applicationVersion;
 };
 Element.add({name: "APPVER", required: true, order: 90, owner: SignonRequest, /*type: String,*/ fcn: "getApplicationVersion"});
 
@@ -367,7 +365,7 @@ SignonRequest.prototype.setApplicationVersion = function(applicationVersion) {
  * @return {String} The client-supplied UID.
  */
 SignonRequest.prototype.getClientUID = function() {
-  return clientUID;
+  return this.clientUID;
 };
 Element.add({name: "CLIENTUID", order: 100, owner: SignonRequest, /*type: String,*/ fcn: "getClientUID"});
 
@@ -388,7 +386,7 @@ SignonRequest.prototype.setClientUID = function(clientUID) {
  * @return {String} Any additional credentials.
  */
 SignonRequest.prototype.getAdditionalCredentials1 = function() {
-  return additionalCredentials1;
+  return this.additionalCredentials1;
 };
 Element.add({name: "USERCRED1", order: 110, owner: SignonRequest, /*type: String,*/ fcn: "getAdditionalCredentials1"});
 
@@ -409,7 +407,7 @@ SignonRequest.prototype.setAdditionalCredentials1 = function(additionalCredentia
  * @return {String} Any additional credentials.
  */
 SignonRequest.prototype.getAdditionalCredentials2 = function() {
-  return additionalCredentials2;
+  return this.additionalCredentials2;
 };
 Element.add({name: "USERCRED2", order: 120, owner: SignonRequest, /*type: String,*/ fcn: "getAdditionalCredentials2"});
 
@@ -430,7 +428,7 @@ SignonRequest.prototype.setAdditionalCredentials2 = function(additionalCredentia
  * @return {String} The authentication token.
  */
 SignonRequest.prototype.getAuthToken = function() {
-  return authToken;
+  return this.authToken;
 };
 Element.add({name: "AUTHTOKEN", order: 130, owner: SignonRequest, /*type: String,*/ fcn: "getAuthToken"});
 
@@ -451,7 +449,7 @@ SignonRequest.prototype.setAuthToken = function(authToken) {
  * @return {String} The access key.
  */
 SignonRequest.prototype.getAccessKey = function() {
-  return accessKey;
+  return this.accessKey;
 };
 Element.add({name: "ACCESSKEY", order: 140, owner: SignonRequest, /*type: String,*/ fcn: "getAccessKey"});
 

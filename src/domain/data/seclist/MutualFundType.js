@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * The type of mutual fund.
  * @see "Section 13.8.5.2, OFX Spec"
@@ -25,21 +23,20 @@ var inherit = require("../inherit");
 var MutualFundType = {
   OPEN_END: 0,
   CLOSE_END: 1,
-  OTHER: 2;
+  OTHER: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("OPENEND".equals(ofxVal)) {
-      return OPEN_END;
+      return MutualFundType.OPEN_END;
     } else if ("CLOSEEND".equals(ofxVal)) {
-      return CLOSE_END;
+      return MutualFundType.CLOSE_END;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return MutualFundType.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = MutualFundType;

@@ -18,15 +18,14 @@ var inherit = require("../inherit");
 
 var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
 var MessageSetType = require("domain/data/MessageSetType");
-var ImageProfile = require("domain/data/profile/info/common/ImageProfile");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
 /**
  * Credit Card Message Set Profile
- * @author Scott Priddy
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  * @see "Section 11.13.3 OFX Spec"
  */
 function CreditCardV1MessageSetInfo () {
@@ -62,7 +61,7 @@ CreditCardV1MessageSetInfo.prototype.getMessageSetType = function() {
  * @return {Boolean} Boolean
  */
 CreditCardV1MessageSetInfo.prototype.getClosingAvail = function() {
-  return closingAvail;
+  return this.closingAvail;
 };
 Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: CreditCardV1MessageSetInfo, /*type: Boolean,*/ fcn: "getClosingAvail"});
 
@@ -77,7 +76,7 @@ CreditCardV1MessageSetInfo.prototype.setClosingAvail = function(/*Boolean*/ clos
  * @return {ImageProfile} ImageProfile
  */
 CreditCardV1MessageSetInfo.prototype.getImageProfile = function() {
-  return imageProfile;
+  return this.imageProfile;
 };
 ChildAggregate.add({name: "IMAGEPROF", order: 10, owner: CreditCardV1MessageSetInfo, /*type: ImageProfile,*/ fcn: "getImageProfile"});
 

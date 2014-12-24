@@ -21,7 +21,8 @@ var MessageSetType = require("domain/data/MessageSetType");
 var Aggregate = require("meta/Aggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  */
 function ProfileV1MessageSetInfo () {
 }

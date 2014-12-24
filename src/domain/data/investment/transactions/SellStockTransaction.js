@@ -17,16 +17,20 @@
 var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
+var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
+var TransactionType = require("./TransactionType");
+var SellType = require("./SellType");
 
 /**
  * Transaction for selling stock.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSellInvestmentTransaction
  */
 function SellStockTransaction () {
+  BaseSellInvestmentTransaction.call(this, TransactionType.SELL_STOCK);
 
   /**
    * @name SellStockTransaction#sellType
@@ -42,11 +46,6 @@ inherit(SellStockTransaction, "extends", BaseSellInvestmentTransaction);
 Aggregate.add("SELLSTOCK", SellStockTransaction);
 
 
-SellStockTransaction.prototype.SellStockTransaction = function() {
-  super(TransactionType.SELL_STOCK);
-};
-
-
 /**
  * Gets the type of stock sale (i.e. "SELL" or "SELLSHORT"). This is a required field
  * according to the OFX spec.
@@ -55,7 +54,7 @@ SellStockTransaction.prototype.SellStockTransaction = function() {
  * @return {String} the sell type
  */
 SellStockTransaction.prototype.getSellType = function() {
-  return sellType;
+  return this.sellType;
 };
 Element.add({name: "SELLTYPE", required: true, order: 20, owner: SellStockTransaction, /*type: String,*/ fcn: "getSellType"});
 
@@ -78,7 +77,7 @@ SellStockTransaction.prototype.setSellType = function(sellType) {
  * @return {SellType} the type of sale or null if it's not known
  */
 SellStockTransaction.prototype.getSellTypeEnum = function() {
-  return SellType.fromOfx(sellType);
+  return SellType.fromOfx(this.sellType);
 };
 
 

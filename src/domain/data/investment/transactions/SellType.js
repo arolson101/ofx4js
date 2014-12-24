@@ -14,28 +14,25 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of sale for stocks and mutual funds.
  *
- * @author Jon Perlow
+ * @enum
  */
 var SellType = {
   SELL: 0,
-  SELL_SHORT: 1;
+  SELL_SHORT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SELL".equals(ofxVal)) {
-      return SELL;
+      return SellType.SELL;
     } else if ("SELLSHORT".equals(ofxVal)) {
-      return SELL_SHORT;
+      return SellType.SELL_SHORT;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = SellType;

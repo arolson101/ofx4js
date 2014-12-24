@@ -14,29 +14,26 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of purchase for stocks and mutual funds.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var BuyType = {
   BUY: 0,
-  BUY_TO_COVER: 1;
+  BUY_TO_COVER: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("BUY".equals(ofxVal)) {
-      return BUY;
+      return BuyType.BUY;
     } else if ("BUYTOCOVER".equals(ofxVal)) {
-      return BUY_TO_COVER;
+      return BuyType.BUY_TO_COVER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = BuyType;

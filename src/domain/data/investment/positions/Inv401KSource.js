@@ -14,16 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-//import java.util.HashMap;
-//import java.util.Map;
-
 /**
  * Types of 401(k) sources.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var Inv401KSource = {
   PRETAX: 0,
@@ -32,20 +27,28 @@ var Inv401KSource = {
   PROFIT_SHARING: 3,
   ROLLOVER: 4,
   OTHER_VEST: 5,
-  OTHER_NONVEST: 6;
-
-  static: 7 Map<String, Inv401KSource> ofxMapping = new HashMap<String, Inv401KSource>();
-  static: 8 {
-    ofxMapping: 9.put("PRETAX", PRETAX);
-    ofxMapping: 10.put("AFTERTAX", AFTER_TAX);
-    ofxMapping: 11.put("MATCH", MATCH);
-    ofxMapping: 12.put("PROFITSHARING", PROFIT_SHARING);
-    ofxMapping: 13.put("ROLLOVER", ROLLOVER);
-    ofxMapping: 14.put("OTHERVEST", OTHER_VEST);
-    ofxMapping: 15.put("OTHERNONVEST", OTHER_NONVEST);
-  };
+  OTHER_NONVEST: 6,
+  
+  fromOfx: function(/*String*/ ofxVal) {
+    if ("PRETAX".equals(ofxVal)) {
+      return Inv401KSource.PRETAX;
+    } else if ("AFTERTAX".equals(ofxVal)) {
+      return Inv401KSource.AFTER_TAX;
+    } else if ("MATCH".equals(ofxVal)) {
+      return Inv401KSource.MATCH;
+    } else if ("PROFITSHARING".equals(ofxVal)) {
+      return Inv401KSource.PROFIT_SHARING;
+    } else if ("ROLLOVER".equals(ofxVal)) {
+      return Inv401KSource.ROLLOVER;
+    } else if ("OTHERVEST".equals(ofxVal)) {
+      return Inv401KSource.OTHER_VEST;
+    } else if ("OTHERNONVEST".equals(ofxVal)) {
+      return Inv401KSource.OTHER_NONVEST;
+    } else {
+      return null;
+    }
+  }
+};
 
 
 module.exports = Inv401KSource;
-
-  public static Inv401KSource fromOfx(String ofxVal) {

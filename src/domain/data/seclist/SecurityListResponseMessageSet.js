@@ -17,17 +17,13 @@
 var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
-var ResponseMessage = require("domain/data/ResponseMessage");
 var ResponseMessageSet = require("domain/data/ResponseMessageSet");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-
 /**
- * @author Jon Perlow
+ * @class
+ * @augments ResponseMessageSet
  */
 function SecurityListResponseMessageSet () {
 
@@ -65,7 +61,7 @@ SecurityListResponseMessageSet.prototype.getType = function() {
  * @return {SecurityListResponseTransaction} The security list response list.
  */
 SecurityListResponseMessageSet.prototype.getSecurityListResponse = function() {
-  return securityListResponse;
+  return this.securityListResponse;
 };
 ChildAggregate.add({order: 0, owner: SecurityListResponseMessageSet, /*type: SecurityListResponseTransaction,*/ fcn: "getSecurityListResponse"});
 
@@ -81,7 +77,7 @@ SecurityListResponseMessageSet.prototype.setSecurityListResponse = function(secu
 
 
 SecurityListResponseMessageSet.prototype.getSecurityList = function() {
-  return securityList;
+  return this.securityList;
 };
 ChildAggregate.add({order: 10, owner: SecurityListResponseMessageSet, /*type: SecurityList,*/ fcn: "getSecurityList"});
 
@@ -93,8 +89,8 @@ SecurityListResponseMessageSet.prototype.setSecurityList = function(/*SecurityLi
 
 // Inherited.
 SecurityListResponseMessageSet.prototype.getResponseMessages = function() {
-  ArrayList<ResponseMessage> ret = new ArrayList<ResponseMessage>();
-  ret.add(securityListResponse);
+  var ret = [];
+  ret.push(this.securityListResponse);
   return ret;
 };
 

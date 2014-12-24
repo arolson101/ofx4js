@@ -16,14 +16,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 /**
  * Client Enrollment option, contains indicator as to whether the account number is required as part of enrollment
- * @author Scott Priddy
+ * @class
  * @see "Section 8.8 OFX Spec"
  */
 function ClientEnrollment () {
@@ -46,7 +44,7 @@ Aggregate.add("CLIENTENROLL", ClientEnrollment);
  * @return {Boolean} Boolean
  */
 ClientEnrollment.prototype.getAccountRequired = function() {
-  return accountRequired;
+  return this.accountRequired;
 };
 Element.add({name: "ACCTREQUIRED", required: true, order: 0, owner: ClientEnrollment, /*type: Boolean,*/ fcn: "getAccountRequired"});
 

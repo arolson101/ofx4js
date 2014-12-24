@@ -18,8 +18,6 @@ var inherit = require("../inherit");
 
 var ChildAggregate = require("meta/ChildAggregate");
 var MessageSetProfile = require("domain/data/MessageSetProfile");
-var ApplicationSecurity = require("domain/data/ApplicationSecurity");
-var MessageSetType = require("domain/data/MessageSetType");
 
 /**
  * Information specific to a version of a message set.
@@ -48,7 +46,7 @@ inherit(VersionSpecificMessageSetInfo, "implements", MessageSetProfile);
  * @return {CoreMessageSetInfo} The information core.
  */
 VersionSpecificMessageSetInfo.prototype.getCore = function() {
-  return core;
+  return this.core;
 };
 ChildAggregate.add({order: 0, owner: VersionSpecificMessageSetInfo, /*type: CoreMessageSetInfo,*/ fcn: "getCore"});
 
@@ -68,43 +66,42 @@ VersionSpecificMessageSetInfo.prototype.setCore = function(core) {
  *
  * @return {MessageSetType} The message set type.
  */
-VersionSpecificMessageSetInfo.prototype.getMessageSetType = function() {
+VersionSpecificMessageSetInfo.prototype.getMessageSetType = function() { throw new Error("not implemented"); };
 
-public String getVersion() {
-  return core != null ? core.getVersion() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getVersion = function() {
+  return this.core !== null ? this.core.getVersion() : null;
+};
 
-public String getServiceProviderName() {
-  return core != null ? core.getServiceProviderName() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getServiceProviderName = function() {
+  return this.core !== null ? this.core.getServiceProviderName() : null;
+};
 
-public String getUrl() {
-  return core != null ? core.getUrl() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getUrl = function() {
+  return this.core !== null ? this.core.getUrl() : null;
+};
 
-public ApplicationSecurity getSecurity() {
-  return core != null ? core.getSecurity() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getSecurity = function() {
+  return this.core !== null ? this.core.getSecurity() : null;
+};
 
-public boolean isSslRequired() {
-  return core != null && core.getSslRequired() != null ? core.getSslRequired() : true;
-}
+VersionSpecificMessageSetInfo.prototype.isSslRequired = function() {
+  return this.core !== null && this.core.getSslRequired() !== null ? this.core.getSslRequired() : true;
+};
 
-public String getRealm() {
-  return core != null ? core.getRealm() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getRealm = function() {
+  return this.core !== null ? this.core.getRealm() : null;
+};
 
-public String getLanguage() {
-  return core != null ? core.getLanguage() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getLanguage = function() {
+  return this.core !== null ? this.core.getLanguage() : null;
+};
 
-public SynchronizationCapability getSyncCapability() {
-  return core != null ? core.getSyncCapability() : null;
-}
+VersionSpecificMessageSetInfo.prototype.getSyncCapability = function() {
+  return this.core !== null ? this.core.getSyncCapability() : null;
+};
 
-public boolean hasFileBasedErrorRecoverySupport() {
-  return core != null && core.getFileBasedErrorRecoverySupport() != null ? core.getFileBasedErrorRecoverySupport() : false;
-}
+VersionSpecificMessageSetInfo.prototype.hasFileBasedErrorRecoverySupport = function() {
+  return this.core !== null && this.core.getFileBasedErrorRecoverySupport() !== null ? this.core.getFileBasedErrorRecoverySupport() : false;
 };
 
 

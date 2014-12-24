@@ -14,14 +14,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-var SynchronizationCapability = require("domain/data/profile/SynchronizationCapability");
-
-//import java.net.URL;
-
 /**
- * @author Ryan Heaton
+ * @class
  */
 function MessageSetProfile() {
 }

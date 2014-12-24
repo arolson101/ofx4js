@@ -21,7 +21,8 @@ var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments StatementRequest
  */
 function CreditCardStatementRequest () {
 
@@ -45,7 +46,7 @@ Aggregate.add("CCSTMTRQ", CreditCardStatementRequest);
  * @return {CreditCardAccountDetails} The account details.
  */
 CreditCardStatementRequest.prototype.getAccount = function() {
-  return account;
+  return this.account;
 };
 ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardStatementRequest, /*type: CreditCardAccountDetails,*/ fcn: "getAccount"});
 

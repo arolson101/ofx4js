@@ -13,8 +13,6 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
 var PayerAddress = require("domain/data/tax1099/PayerAddress");
 var RecAddress = require("domain/data/tax1099/RecAddress");
 var Aggregate = require("meta/Aggregate");
@@ -23,11 +21,8 @@ var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
  */
-
-
 function Tax1099B () {
 
   /**
@@ -93,127 +88,127 @@ Aggregate.add("TAX1099B_V100", Tax1099B);
 
 
 Tax1099B.prototype.getSrvrtId = function() {
-	    return srvrtId;
-	  };
+  return this.srvrtId;
+};
 Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099B, /*type: String,*/ fcn: "getSrvrtId"});
 
 
 Tax1099B.prototype.setSrvrtId = function(/*String*/ srvrtId) {
-	    this.srvrtId = srvrtId;
-	  };
+  this.srvrtId = srvrtId;
+};
 
 
 Tax1099B.prototype.getTaxYear = function() {
-	    return taxYear;
-	  };
+  return this.taxYear;
+};
 Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099B, /*type: String,*/ fcn: "getTaxYear"});
 
 
 Tax1099B.prototype.setTaxYear = function(/*String*/ taxYear) {
-	    this.taxYear = taxYear;
-	  };
+  this.taxYear = taxYear;
+};
 
 
-	/**
-	 * @return {ExtDBInfo} the extDBInfo
-	 */
+/**
+ * @return {ExtDBInfo} the extDBInfo
+ */
 Tax1099B.prototype.getExtDBInfo = function() {
-		return extDBInfo;
-	};
+  return this.extDBInfo;
+};
 ChildAggregate.add({required:true, order: 2, owner: Tax1099B, /*type: ExtDBInfo,*/ fcn: "getExtDBInfo"});
 
 
-	/**
-	 * @param {ExtDBInfo} extDBInfo the extDBInfo to set
-	 */
+/**
+ * @param {ExtDBInfo} extDBInfo the extDBInfo to set
+ */
 Tax1099B.prototype.setExtDBInfo = function(extDBInfo) {
-		this.extDBInfo = extDBInfo;
-	};
+  this.extDBInfo = extDBInfo;
+};
 
 
-	/**
-	 * @return {PayerAddress} the payerAddress
-	 */
+/**
+ * @return {PayerAddress} the payerAddress
+ */
 Tax1099B.prototype.getPayerAddress = function() {
-		return payerAddress;
-	};
+  return this.payerAddress;
+};
 ChildAggregate.add({required:true, order: 3, owner: Tax1099B, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
 
 
-	/**
-	 * @param {PayerAddress} payerAddress the payerAddress to set
-	 */
+/**
+ * @param {PayerAddress} payerAddress the payerAddress to set
+ */
 Tax1099B.prototype.setPayerAddress = function(payerAddress) {
-		this.payerAddress = payerAddress;
-	};
+  this.payerAddress = payerAddress;
+};
 
 
-	/**
-	 * @return {String} the payerId
-	 */
+/**
+ * @return {String} the payerId
+ */
 Tax1099B.prototype.getPayerId = function() {
-		return payerId;
-	};
+  return this.payerId;
+};
 Element.add({name: "PAYERID", required: true, order: 4, owner: Tax1099B, /*type: String,*/ fcn: "getPayerId"});
 
 
-	/**
-	 * @param {String} payerId the payerId to set
-	 */
+/**
+ * @param {String} payerId the payerId to set
+ */
 Tax1099B.prototype.setPayerId = function(payerId) {
-		this.payerId = payerId;
-	};
+  this.payerId = payerId;
+};
 
 
-	/**
-	 * @return {RecAddress} the recAddress
-	 */
+/**
+ * @return {RecAddress} the recAddress
+ */
 Tax1099B.prototype.getRecAddress = function() {
-		return recAddress;
-	};
+  return this.recAddress;
+};
 ChildAggregate.add({required:true, order: 5, owner: Tax1099B, /*type: RecAddress,*/ fcn: "getRecAddress"});
 
 
-	/**
-	 * @param {RecAddress} recAddress the recAddress to set
-	 */
+/**
+ * @param {RecAddress} recAddress the recAddress to set
+ */
 Tax1099B.prototype.setRecAddress = function(recAddress) {
-		this.recAddress = recAddress;
-	};
+  this.recAddress = recAddress;
+};
 
 
-	/**
-	 * @return {String} the recId
-	 */
+/**
+ * @return {String} the recId
+ */
 Tax1099B.prototype.getRecId = function() {
-		return recId;
-	};
+  return this.recId;
+};
 Element.add({name: "RECID", required: true, order: 6, owner: Tax1099B, /*type: String,*/ fcn: "getRecId"});
 
 
-	/**
-	 * @param {String} recId the recId to set
-	 */
+/**
+ * @param {String} recId the recId to set
+ */
 Tax1099B.prototype.setRecId = function(recId) {
-		this.recId = recId;
-	};
+  this.recId = recId;
+};
 
 
-	/**
-	 * @return {String} the recAcct
-	 */
+/**
+ * @return {String} the recAcct
+ */
 Tax1099B.prototype.getRecAcct = function() {
-		return recAcct;
-	};
+  return this.recAcct;
+};
 Element.add({name: "RECACCT", required: true, order: 7, owner: Tax1099B, /*type: String,*/ fcn: "getRecAcct"});
 
 
-	/**
-	 * @param {String} recAcct the recAcct to set
-	 */
+/**
+ * @param {String} recAcct the recAcct to set
+ */
 Tax1099B.prototype.setRecAcct = function(recAcct) {
-		this.recAcct = recAcct;
-	};
+  this.recAcct = recAcct;
+};
 
 
 

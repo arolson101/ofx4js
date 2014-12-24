@@ -18,14 +18,19 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var TransactionType = require("./TransactionType");
+var BaseBuyInvestmentTransaction = require("./BaseBuyInvestmentTransaction");
+var BuyType = require("./BuyType");
 
 /**
  * Transaction for buying stock.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseBuyInvestmentTransaction
  */
 function BuyStockTransaction () {
+  BaseBuyInvestmentTransaction.call(this, TransactionType.BUY_STOCK);
 
   /**
    * @name BuyStockTransaction#buyType
@@ -41,10 +46,6 @@ inherit(BuyStockTransaction, "extends", BaseBuyInvestmentTransaction);
 Aggregate.add("BUYSTOCK", BuyStockTransaction);
 
 
-BuyStockTransaction.prototype.BuyStockTransaction = function() {
-  super(TransactionType.BUY_STOCK);
-};
-
 
 /**
  * Gets the type of stock purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field
@@ -54,7 +55,7 @@ BuyStockTransaction.prototype.BuyStockTransaction = function() {
  * @return {String} the buy type
  */
 BuyStockTransaction.prototype.getBuyType = function() {
-  return buyType;
+  return this.buyType;
 };
 Element.add({name: "BUYTYPE", required: true, order: 20, owner: BuyStockTransaction, /*type: String,*/ fcn: "getBuyType"});
 
@@ -77,7 +78,7 @@ BuyStockTransaction.prototype.setBuyType = function(buyType) {
  * @return {BuyType} the type of purchase or null if it's not well known
  */
 BuyStockTransaction.prototype.getBuyTypeEnum = function() {
-  return BuyType.fromOfx(buyType);
+  return BuyType.fromOfx(this.buyType);
 };
 
 

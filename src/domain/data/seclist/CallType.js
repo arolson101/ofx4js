@@ -14,35 +14,32 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Call type for debt.
  * @see "Section 13.8.5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var CallType = {
   CALL: 0,
   PUT: 1,
   PREFUND: 2,
-  MATURITY: 3;
+  MATURITY: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CALL".equals(ofxVal)) {
-      return CALL;
+      return CallType.CALL;
     } else if ("PUT".equals(ofxVal)) {
-      return PUT;
+      return CallType.PUT;
     } else if ("PREFUND".equals(ofxVal)) {
-      return PREFUND;
+      return CallType.PREFUND;
     } else if ("MATURITY".equals(ofxVal)) {
-      return MATURITY;
+      return CallType.MATURITY;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = CallType;

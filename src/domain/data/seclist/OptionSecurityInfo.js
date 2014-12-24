@@ -18,14 +18,16 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var BaseSecurityInfo = require("./BaseSecurityInfo");
+var OptionType = require("./OptionType");
+var AssetClass = require("./AssetClass");
 
 /**
  * Info about an option security.
  * @see "Section 13.8.5.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSecurityInfo
  */
 function OptionSecurityInfo () {
 
@@ -92,7 +94,7 @@ Aggregate.add("OPTINFO", OptionSecurityInfo);
  * @return {String} the option type
  */
 OptionSecurityInfo.prototype.getOptionType = function() {
-  return optionType;
+  return this.optionType;
 };
 Element.add({name: "OPTTYPE", order: 20, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getOptionType"});
 
@@ -114,7 +116,7 @@ OptionSecurityInfo.prototype.setOptionType = function(optionType) {
  * @return {OptionType} the option type or null if it's not one of the well-known types
  */
 OptionSecurityInfo.prototype.getOptionTypeEnum = function() {
-  return OptionType.fromOfx(getOptionType());
+  return OptionType.fromOfx(this.getOptionType());
 };
 
 
@@ -124,7 +126,7 @@ OptionSecurityInfo.prototype.getOptionTypeEnum = function() {
  * @return {Double} the option strike price
  */
 OptionSecurityInfo.prototype.getStrikePrice = function() {
-  return strikePrice;
+  return this.strikePrice;
 };
 Element.add({name: "STRIKEPRICE", order: 30, owner: OptionSecurityInfo, /*type: Double,*/ fcn: "getStrikePrice"});
 
@@ -145,7 +147,7 @@ OptionSecurityInfo.prototype.setStrikePrice = function(strikePrice) {
  * @return {Date} the expiration date of the option
  */
 OptionSecurityInfo.prototype.getExpirationDate = function() {
-  return expirationDate;
+  return this.expirationDate;
 };
 Element.add({name: "DTEXPIRE", order: 40, owner: OptionSecurityInfo, /*type: Date,*/ fcn: "getExpirationDate"});
 
@@ -167,7 +169,7 @@ OptionSecurityInfo.prototype.setExpirationDate = function(expirationDate) {
  * @return {Integer} the number of shares per option contact
  */
 OptionSecurityInfo.prototype.getSharesPerContact = function() {
-  return sharesPerContact;
+  return this.sharesPerContact;
 };
 Element.add({name: "SHPERCTRCT", order: 50, owner: OptionSecurityInfo, /*type: Integer,*/ fcn: "getSharesPerContact"});
 
@@ -190,7 +192,7 @@ OptionSecurityInfo.prototype.setSharesPerContact = function(sharesPerContact) {
  * @return {SecurityId} the security id of the underlying security
  */
 OptionSecurityInfo.prototype.getUnderlyingSecurity = function() {
-  return underlyingSecurity;
+  return this.underlyingSecurity;
 };
 Element.add({name: "SECID", order: 60, owner: OptionSecurityInfo, /*type: SecurityId,*/ fcn: "getUnderlyingSecurity"});
 
@@ -212,7 +214,7 @@ OptionSecurityInfo.prototype.setUnderlyingSecurity = function(underlyingSecurity
  * @return {String} the asset class of the option
  */
 OptionSecurityInfo.prototype.getAssetClass = function() {
-  return assetClass;
+  return this.assetClass;
 };
 Element.add({name: "ASSETCLASS", order: 70, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
 
@@ -233,7 +235,7 @@ OptionSecurityInfo.prototype.setAssetClass = function(assetClass) {
  * @return {AssetClass} the asset class or null if it's not one of the well-known types
  */
 OptionSecurityInfo.prototype.getAssetClassEnum = function() {
-  return AssetClass.fromOfx(getAssetClass());
+  return AssetClass.fromOfx(this.getAssetClass());
 };
 
 
@@ -244,7 +246,7 @@ OptionSecurityInfo.prototype.getAssetClassEnum = function() {
  * @return {String} the FI-defined asset class of the option
  */
 OptionSecurityInfo.prototype.getFiAssetClass = function() {
-  return fiAssetClass;
+  return this.fiAssetClass;
 };
 Element.add({name: "FIASSETCLASS", order: 80, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
 

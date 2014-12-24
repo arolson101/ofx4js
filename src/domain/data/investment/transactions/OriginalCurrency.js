@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
@@ -26,7 +24,7 @@ var Element = require("meta/Element");
  * rate of conversion was.
  * @see "Section 5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function OriginalCurrency () {
 
@@ -57,7 +55,7 @@ Aggregate.add("ORIGCURRENCY", OriginalCurrency);
  * @return {double} the currency rate
  */
 OriginalCurrency.prototype.getCurrencyRate = function() {
-  return currencyRate;
+  return this.currencyRate;
 };
 Element.add({name: "CURRATE", required: true, order: 10, owner: OriginalCurrency, /*type: double,*/ fcn: "getCurrencyRate"});
 
@@ -80,7 +78,7 @@ OriginalCurrency.prototype.setCurrencyRate = function(currencyRate) {
  * @return {String} the currency code
  */
 OriginalCurrency.prototype.getCurrencyCode = function() {
-  return currencyCode;
+  return this.currencyCode;
 };
 Element.add({name: "CURSYM", required: true, order: 20, owner: OriginalCurrency, /*type: String,*/ fcn: "getCurrencyCode"});
 

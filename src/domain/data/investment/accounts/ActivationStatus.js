@@ -14,26 +14,24 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Activation status of an account.
  * @see "Section 13.6.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var ActivationStatus = {
   ACTIVE: 0,
   PENDING: 1,
-  AVAILABLE: 2;
+  AVAILABLE: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("ACTIVE".equals(ofxVal)) {
-      return ACTIVE;
+      return ActivationStatus.ACTIVE;
     } else if ("PEND".equals(ofxVal)) {
-      return PENDING;
+      return ActivationStatus.PENDING;
     } else if ("AVAIL".equals(ofxVal)) {
-      return AVAILABLE;
+      return ActivationStatus.AVAILABLE;
     } else {
       return null;
     }

@@ -14,18 +14,14 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.List;
 
 /**
  * Aggregate for a list of securities.
  * @see "Section 13.8.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 function SecurityList () {
 
@@ -43,7 +39,7 @@ Aggregate.add("SECLIST", SecurityList);
 
 
 SecurityList.prototype.getSecurityInfos = function() {
-  return securityInfos;
+  return this.securityInfos;
 };
 ChildAggregate.add({order: 10, owner: SecurityList, /*type: BaseSecurityInfo[],*/ fcn: "getSecurityInfos"});
 

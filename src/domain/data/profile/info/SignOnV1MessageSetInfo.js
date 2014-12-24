@@ -21,7 +21,8 @@ var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecific
 var Aggregate = require("meta/Aggregate");
 
 /**
- * @author Jon Perlow
+ * @class
+ * @augments VersionSpecificMessageSetInfo
  */
 function SignOnV1MessageSetInfo () {
 }

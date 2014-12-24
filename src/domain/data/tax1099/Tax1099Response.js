@@ -22,8 +22,8 @@ var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
+ * @augments T1099Response
  */
 function Tax1099Response () {
 
@@ -83,112 +83,112 @@ inherit(Tax1099Response, "extends", T1099Response);
 Aggregate.add("TAX1099RS", Tax1099Response);
 
 
-	/**
-	 * @return {Tax1099DIV[]} the lstTax1099DIV
-	 */
+/**
+ * @return {Tax1099DIV[]} the lstTax1099DIV
+ */
 Tax1099Response.prototype.getLstTax1099DIV = function() {
-		return lstTax1099DIV;
-	};
+  return this.lstTax1099DIV;
+};
 ChildAggregate.add({required: false, order: 0, owner: Tax1099Response, /*type: Tax1099DIV[],*/ fcn: "getLstTax1099DIV"});
 
 
-	/**
-	 * @param {Tax1099DIV[]} lstTax1099DIV
-	 *            the lstTax1099DIV to set
-	 */
+/**
+ * @param {Tax1099DIV[]} lstTax1099DIV
+ *            the lstTax1099DIV to set
+ */
 Tax1099Response.prototype.setLstTax1099DIV = function(lstTax1099DIV) {
-		this.lstTax1099DIV = lstTax1099DIV;
-	};
+  this.lstTax1099DIV = lstTax1099DIV;
+};
 
 
 Tax1099Response.prototype.getResponseMessageName = function() {
-		return "1099 Tax details";
-	};
+  return "1099 Tax details";
+};
 
 
-	/**
-	 * @return {Tax1099INT[]} the lstTax1099INT
-	 */
+/**
+ * @return {Tax1099INT[]} the lstTax1099INT
+ */
 Tax1099Response.prototype.getLstTax1099INT = function() {
-		return lstTax1099INT;
-	};
+  return this.lstTax1099INT;
+};
 ChildAggregate.add({required: false, order: 1, owner: Tax1099Response, /*type: Tax1099INT[],*/ fcn: "getLstTax1099INT"});
 
 
-	/**
-	 * @param {Tax1099INT[]} lstTax1099INT the lstTax1099INT to set
-	 */
+/**
+ * @param {Tax1099INT[]} lstTax1099INT the lstTax1099INT to set
+ */
 Tax1099Response.prototype.setLstTax1099INT = function(lstTax1099INT) {
-		this.lstTax1099INT = lstTax1099INT;
-	};
+  this.lstTax1099INT = lstTax1099INT;
+};
 
 
-	/**
-	 * @return {Tax1099R[]} the lstTax1099R
-	 */
+/**
+ * @return {Tax1099R[]} the lstTax1099R
+ */
 Tax1099Response.prototype.getLstTax1099R = function() {
-		return lstTax1099R;
-	};
+  return this.lstTax1099R;
+};
 ChildAggregate.add({required: false, order: 2, owner: Tax1099Response, /*type: Tax1099R[],*/ fcn: "getLstTax1099R"});
 
 
-	/**
-	 * @param {Tax1099R[]} lstTax1099R the lstTax1099R to set
-	 */
+/**
+ * @param {Tax1099R[]} lstTax1099R the lstTax1099R to set
+ */
 Tax1099Response.prototype.setLstTax1099R = function(lstTax1099R) {
-		this.lstTax1099R = lstTax1099R;
-	};
+  this.lstTax1099R = lstTax1099R;
+};
 
 
-	/**
-	 * @return {Tax1099B[]} the lstTax1099B
-	 */
+/**
+ * @return {Tax1099B[]} the lstTax1099B
+ */
 Tax1099Response.prototype.getLstTax1099B = function() {
-		return lstTax1099B;
-	};
+  return this.lstTax1099B;
+};
 ChildAggregate.add({required: false, order: 3, owner: Tax1099Response, /*type: Tax1099B[],*/ fcn: "getLstTax1099B"});
 
 
-	/**
-	 * @param {Tax1099B[]} lstTax1099B the lstTax1099B to set
-	 */
+/**
+ * @param {Tax1099B[]} lstTax1099B the lstTax1099B to set
+ */
 Tax1099Response.prototype.setLstTax1099B = function(lstTax1099B) {
-		this.lstTax1099B = lstTax1099B;
-	};
+  this.lstTax1099B = lstTax1099B;
+};
 
 
-	/**
-	 * @return {Tax1099MISC[]} the lstTax1099MISC
-	 */
+/**
+ * @return {Tax1099MISC[]} the lstTax1099MISC
+ */
 Tax1099Response.prototype.getLstTax1099MISC = function() {
-		return lstTax1099MISC;
-	};
+  return this.lstTax1099MISC;
+};
 ChildAggregate.add({required: false, order: 4, owner: Tax1099Response, /*type: Tax1099MISC[],*/ fcn: "getLstTax1099MISC"});
 
 
-	/**
-	 * @param {Tax1099MISC[]} lstTax1099MISC the lstTax1099MISC to set
-	 */
+/**
+ * @param {Tax1099MISC[]} lstTax1099MISC the lstTax1099MISC to set
+ */
 Tax1099Response.prototype.setLstTax1099MISC = function(lstTax1099MISC) {
-		this.lstTax1099MISC = lstTax1099MISC;
-	};
+  this.lstTax1099MISC = lstTax1099MISC;
+};
 
 
-	/**
-	 * @return {Tax1099OID[]} the lstTax1099OID
-	 */
+/**
+ * @return {Tax1099OID[]} the lstTax1099OID
+ */
 Tax1099Response.prototype.getLstTax1099OID = function() {
-		return lstTax1099OID;
-	};
+  return this.lstTax1099OID;
+};
 ChildAggregate.add({required: false, order:5, owner: Tax1099Response, /*type: Tax1099OID[],*/ fcn: "getLstTax1099OID"});
 
 
-	/**
-	 * @param {Tax1099OID[]} lstTax1099OID the lstTax1099OID to set
-	 */
+/**
+ * @param {Tax1099OID[]} lstTax1099OID the lstTax1099OID to set
+ */
 Tax1099Response.prototype.setLstTax1099OID = function(lstTax1099OID) {
-		this.lstTax1099OID = lstTax1099OID;
-	};
+  this.lstTax1099OID = lstTax1099OID;
+};
 
 
 

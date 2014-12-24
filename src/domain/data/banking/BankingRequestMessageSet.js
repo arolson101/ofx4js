@@ -18,15 +18,12 @@ var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
 var RequestMessageSet = require("domain/data/RequestMessageSet");
-var RequestMessage = require("domain/data/RequestMessage");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
-//import java.util.List;
-//import java.util.ArrayList;
-
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments BankingRequestMessageSet
  */
 function BankingRequestMessageSet () {
 
@@ -55,7 +52,7 @@ BankingRequestMessageSet.prototype.getType = function() {
  * @return {BankStatementRequestTransaction} The statement request.
  */
 BankingRequestMessageSet.prototype.getStatementRequest = function() {
-  return statementRequest;
+  return this.statementRequest;
 };
 ChildAggregate.add({order: 0, owner: BankingRequestMessageSet, /*type: BankStatementRequestTransaction,*/ fcn: "getStatementRequest"});
 
@@ -72,9 +69,9 @@ BankingRequestMessageSet.prototype.setStatementRequest = function(statementReque
 
 // Inherited.
 BankingRequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-  if (getStatementRequest() != null) {
-    requestMessages.add(getStatementRequest());
+  var requestMessages = [];
+  if (this.getStatementRequest() !== null) {
+    requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;
 };

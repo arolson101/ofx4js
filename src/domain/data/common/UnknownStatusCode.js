@@ -15,11 +15,13 @@
 "use strict";
 
 var inherit = require("../inherit");
+var StatusCode = require("./StatusCode");
 
 /**
  * Holder for an unknown status code.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments StatusCode
  */
 function UnknownStatusCode () {
 
@@ -58,23 +60,23 @@ UnknownStatusCode.prototype.UnknownStatusCode = function(/*int*/ code, /*String*
 
 
 UnknownStatusCode.prototype.getCode = function() {
-  return code;
+  return this.code;
 };
 
 
 UnknownStatusCode.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 
 
 UnknownStatusCode.prototype.getDefaultSeverity = function() {
-  return defaultSeverity;
+  return this.defaultSeverity;
 };
 
 
 // @Override
 UnknownStatusCode.prototype.toString = function() {
-  return String.valueOf(code);
+  return String.valueOf(this.code);
 };
 
 

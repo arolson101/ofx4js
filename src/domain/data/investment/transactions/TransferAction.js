@@ -20,7 +20,7 @@ var inherit = require("../inherit");
  * Type of transfer.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var TransferAction = {
   IN: 0,
@@ -28,15 +28,14 @@ var TransferAction = {
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("IN".equals(ofxVal)) {
-      return IN;
+      return TransferAction.IN;
     } else if ("OUT".equals(ofxVal)) {
-      return OUT;
+      return TransferAction.OUT;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = TransferAction;

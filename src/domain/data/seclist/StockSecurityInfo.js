@@ -18,14 +18,16 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
-
-//import java.util.Date;
+var BaseSecurityInfo = require("./BaseSecurityInfo");
+var StockType = require("./StockType");
+var AssetClass = require("./AssetClass");
 
 /**
  * Info about a stock security.
  * @see "Section 13.8.5.6, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseSecurityInfo
  */
 function StockSecurityInfo () {
 
@@ -78,7 +80,7 @@ Aggregate.add("STOCKINFO", StockSecurityInfo);
  * @return {String} the type of stock
  */
 StockSecurityInfo.prototype.getType = function() {
-  return stockType;
+  return this.stockType;
 };
 Element.add({name: "STOCKTYPE", order: 20, owner: StockSecurityInfo, /*type: String,*/ fcn: "getType"});
 
@@ -100,7 +102,7 @@ StockSecurityInfo.prototype.setType = function(stockType) {
  * @return {StockType} the type of stock or null if it's not one of the well-known types
  */
 StockSecurityInfo.prototype.getTypeEnum = function() {
-  return StockType.fromOfx(getType());
+  return StockType.fromOfx(this.getType());
 };
 
 
@@ -111,7 +113,7 @@ StockSecurityInfo.prototype.getTypeEnum = function() {
  * @return {Double} the dividend yield
  */
 StockSecurityInfo.prototype.getYield = function() {
-  return yield;
+  return this.yield;
 };
 Element.add({name: "YIELD", order: 30, owner: StockSecurityInfo, /*type: Double,*/ fcn: "getYield"});
 
@@ -122,8 +124,8 @@ Element.add({name: "YIELD", order: 30, owner: StockSecurityInfo, /*type: Double,
  *
  * @param {Double} yield the dividend yield
  */
-StockSecurityInfo.prototype.setYield = function(yield) {
-  this.yield = yield;
+StockSecurityInfo.prototype.setYield = function(yield_) {
+  this.yield = yield_;
 };
 
 
@@ -133,7 +135,7 @@ StockSecurityInfo.prototype.setYield = function(yield) {
  * @return {Date} the as-of date for the yield
  */
 StockSecurityInfo.prototype.getDateYieldAsOf = function() {
-  return dateYieldAsOf;
+  return this.dateYieldAsOf;
 };
 Element.add({name: "DTYIELDASOF", order: 40, owner: StockSecurityInfo, /*type: Date,*/ fcn: "getDateYieldAsOf"});
 
@@ -154,7 +156,7 @@ StockSecurityInfo.prototype.setDateYieldAsOf = function(dateYieldAsOf) {
  * @return {String} the asset class of the stock
  */
 StockSecurityInfo.prototype.getAssetClass = function() {
-  return assetClass;
+  return this.assetClass;
 };
 Element.add({name: "ASSETCLASS", order: 50, owner: StockSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
 
@@ -175,7 +177,7 @@ StockSecurityInfo.prototype.setAssetClass = function(assetClass) {
  * @return {AssetClass} the asset class or null if it's not one of the well-known types
  */
 StockSecurityInfo.prototype.getAssetClassEnum = function() {
-  return AssetClass.fromOfx(getAssetClass());
+  return AssetClass.fromOfx(this.getAssetClass());
 };
 
 
@@ -186,7 +188,7 @@ StockSecurityInfo.prototype.getAssetClassEnum = function() {
  * @return {String} the FI-defined asset class of the stock
  */
 StockSecurityInfo.prototype.getFiAssetClass = function() {
-  return fiAssetClass;
+  return this.fiAssetClass;
 };
 Element.add({name: "FIASSETCLASS", order: 60, owner: StockSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
 

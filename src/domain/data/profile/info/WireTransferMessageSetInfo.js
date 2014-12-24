@@ -21,7 +21,8 @@ var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments AbstractMessageSetInfo
  */
 function WireTransferMessageSetInfo () {
 
@@ -40,7 +41,7 @@ Aggregate.add("WIREXFERMSGSET", WireTransferMessageSetInfo);
 
 
 WireTransferMessageSetInfo.prototype.getVersion1Info = function() {
-  return version1Info;
+  return this.version1Info;
 };
 ChildAggregate.add({order: 0, owner: WireTransferMessageSetInfo, /*type: WireTransferV1MessageSetInfo,*/ fcn: "getVersion1Info"});
 

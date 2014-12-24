@@ -14,10 +14,8 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
- * @author Ryan Heaton
+ * @enum
  * @see "Section 7.2.2, OFX Spec"
  */
 var CharacterType = {

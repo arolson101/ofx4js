@@ -14,15 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
-//import java.util.Locale;
-
 /**
- * @author Ryan Heaton
+ * @class
  * @see "Section 5.2, OFX Spec"
  */
 function Currency () {
@@ -32,7 +28,7 @@ function Currency () {
    * @type String
    * @access private
    */
-  this.code = java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
+  this.code = "USD";
 
   /**
    * @name Currency#exchangeRate
@@ -54,7 +50,7 @@ Aggregate.add("CURRENCY", Currency);
  * @see java.util.Currency#getCurrencyCode()
  */
 Currency.prototype.getCode = function() {
-  return code;
+  return this.code;
 };
 Element.add({name: "CURSYM", required: true, order: 0, owner: Currency, /*type: String,*/ fcn: "getCode"});
 
@@ -75,7 +71,7 @@ Currency.prototype.setCode = function(code) {
  * @return {Float} The exchange rate.
  */
 Currency.prototype.getExchangeRate = function() {
-  return exchangeRate;
+  return this.exchangeRate;
 };
 Element.add({name: "CURRATE", required: true, order: 10, owner: Currency, /*type: Float,*/ fcn: "getExchangeRate"});
 

@@ -18,17 +18,14 @@ var inherit = require("../inherit");
 
 var MessageSetType = require("domain/data/MessageSetType");
 var RequestMessageSet = require("domain/data/RequestMessageSet");
-var RequestMessage = require("domain/data/RequestMessage");
 var ChildAggregate = require("meta/ChildAggregate");
 var Aggregate = require("meta/Aggregate");
-
-//import java.util.List;
-//import java.util.ArrayList;
 
 /**
  * The sign-on request message set.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments RequestMessageSet
  * @see "Section 2.5, OFX Spec."
  */
 function SignonRequestMessageSet () {
@@ -65,7 +62,7 @@ SignonRequestMessageSet.prototype.getType = function() {
  * @return {SignonRequest} The message for this message set.
  */
 SignonRequestMessageSet.prototype.getSignonRequest = function() {
-  return signonRequest;
+  return this.signonRequest;
 };
 ChildAggregate.add({required: true, order: 0, owner: SignonRequestMessageSet, /*type: SignonRequest,*/ fcn: "getSignonRequest"});
 
@@ -86,7 +83,7 @@ SignonRequestMessageSet.prototype.setSignonRequest = function(signonRequest) {
  * @return {PasswordChangeRequestTransaction} The password change request.
  */
 SignonRequestMessageSet.prototype.getPasswordChangeRequest = function() {
-  return passwordChangeRequest;
+  return this.passwordChangeRequest;
 };
 ChildAggregate.add({order: 10, owner: SignonRequestMessageSet, /*type: PasswordChangeRequestTransaction,*/ fcn: "getPasswordChangeRequest"});
 
@@ -104,14 +101,14 @@ SignonRequestMessageSet.prototype.setPasswordChangeRequest = function(passwordCh
 //todo: challenge request/response
 // Inherited.
 SignonRequestMessageSet.prototype.getRequestMessages = function() {
-  ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
+  var requestMessages = [];
 
-  if (getSignonRequest() != null) {
-    requestMessages.add(getSignonRequest());
+  if (this.getSignonRequest() !== null) {
+    requestMessages.push(this.getSignonRequest());
   }
 
-  if (getPasswordChangeRequest() != null) {
-    requestMessages.add(getPasswordChangeRequest());
+  if (this.getPasswordChangeRequest() !== null) {
+    requestMessages.this(this.getPasswordChangeRequest());
   }
 
   return requestMessages;

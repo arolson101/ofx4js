@@ -14,19 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 var ChildAggregate = require("meta/ChildAggregate");
-var BankAccountDetails = require("domain/data/banking/BankAccountDetails");
-var CreditCardAccountDetails = require("domain/data/creditcard/CreditCardAccountDetails");
-
-//import java.math.BigDecimal;
-//import java.util.Date;
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function Transaction () {
 
@@ -182,7 +175,7 @@ Aggregate.add("STMTTRN", Transaction);
  * @return {TransactionType} The transaction type.
  */
 Transaction.prototype.getTransactionType = function() {
-  return transactionType;
+  return this.transactionType;
 };
 Element.add({name: "TRNTYPE", required: true, order: 0, owner: Transaction, /*type: TransactionType,*/ fcn: "getTransactionType"});
 
@@ -203,7 +196,7 @@ Transaction.prototype.setTransactionType = function(transactionType) {
  * @return {Date} The date the transaction was posted.
  */
 Transaction.prototype.getDatePosted = function() {
-  return datePosted;
+  return this.datePosted;
 };
 Element.add({name: "DTPOSTED", required: true, order: 10, owner: Transaction, /*type: Date,*/ fcn: "getDatePosted"});
 
@@ -224,7 +217,7 @@ Transaction.prototype.setDatePosted = function(datePosted) {
  * @return {Date} The date the transaction was initiated.
  */
 Transaction.prototype.getDateInitiated = function() {
-  return dateInitiated;
+  return this.dateInitiated;
 };
 Element.add({name: "DTUSER", order: 20, owner: Transaction, /*type: Date,*/ fcn: "getDateInitiated"});
 
@@ -245,7 +238,7 @@ Transaction.prototype.setDateInitiated = function(dateInitiated) {
  * @return {Date} The date the funds are available.
  */
 Transaction.prototype.getDateAvailable = function() {
-  return dateAvailable;
+  return this.dateAvailable;
 };
 Element.add({name: "DTAVAIL", order: 30, owner: Transaction, /*type: Date,*/ fcn: "getDateAvailable"});
 
@@ -266,7 +259,7 @@ Transaction.prototype.setDateAvailable = function(dateAvailable) {
  * @return {Double} The transaction amount.
  */
 Transaction.prototype.getAmount = function() {
-  return amount == null ? null : amount.doubleValue();
+  return this.amount;
 };
 
 
@@ -276,7 +269,7 @@ Transaction.prototype.getAmount = function() {
  * @param {Double} amount The transaction amount.
  */
 Transaction.prototype.setAmount = function(amount) {
-  this.amount = amount == null ? null : new BigDecimal(amount);
+  this.amount = amount;
 };
 
 
@@ -286,7 +279,7 @@ Transaction.prototype.setAmount = function(amount) {
  * @return {BigDecimal} The transaction amount.
  */
 Transaction.prototype.getBigDecimalAmount = function() {
-  return amount;
+  return this.amount;
 };
 Element.add({name: "TRNAMT", required: true, order: 40, owner: Transaction, /*type: BigDecimal,*/ fcn: "getBigDecimalAmount"});
 
@@ -307,7 +300,7 @@ Transaction.prototype.setBigDecimalAmount = function(amount) {
  * @return {String} The transaction id (server-assigned).
  */
 Transaction.prototype.getId = function() {
-  return id;
+  return this.id;
 };
 Element.add({name: "FITID", required: true, order: 50, owner: Transaction, /*type: String,*/ fcn: "getId"});
 
@@ -328,7 +321,7 @@ Transaction.prototype.setId = function(id) {
  * @return {String} The id of the transaction that this is correcting.
  */
 Transaction.prototype.getCorrectionId = function() {
-  return correctionId;
+  return this.correctionId;
 };
 Element.add({name: "CORRECTFITID", order: 60, owner: Transaction, /*type: String,*/ fcn: "getCorrectionId"});
 
@@ -349,7 +342,7 @@ Transaction.prototype.setCorrectionId = function(correctionId) {
  * @return {CorrectionAction} The action to take on the {@link #getCorrectionId() corrected transaction}.
  */
 Transaction.prototype.getCorrectionAction = function() {
-  return correctionAction;
+  return this.correctionAction;
 };
 Element.add({name: "CORRECTACTION", order: 70, owner: Transaction, /*type: CorrectionAction,*/ fcn: "getCorrectionAction"});
 
@@ -370,7 +363,7 @@ Transaction.prototype.setCorrectionAction = function(correctionAction) {
  * @return {String} The server-assigned temporary id for client-initiated transactions.
  */
 Transaction.prototype.getTempId = function() {
-  return tempId;
+  return this.tempId;
 };
 Element.add({name: "SRVRTID", order: 80, owner: Transaction, /*type: String,*/ fcn: "getTempId"});
 
@@ -391,7 +384,7 @@ Transaction.prototype.setTempId = function(tempId) {
  * @return {String} The check number.
  */
 Transaction.prototype.getCheckNumber = function() {
-  return checkNumber;
+  return this.checkNumber;
 };
 Element.add({name: "CHECKNUM", order: 90, owner: Transaction, /*type: String,*/ fcn: "getCheckNumber"});
 
@@ -412,7 +405,7 @@ Transaction.prototype.setCheckNumber = function(checkNumber) {
  * @return {String} The reference number.
  */
 Transaction.prototype.getReferenceNumber = function() {
-  return referenceNumber;
+  return this.referenceNumber;
 };
 Element.add({name: "REFNUM", order: 100, owner: Transaction, /*type: String,*/ fcn: "getReferenceNumber"});
 
@@ -433,7 +426,7 @@ Transaction.prototype.setReferenceNumber = function(referenceNumber) {
  * @return {String} The standard industrial code.
  */
 Transaction.prototype.getStandardIndustrialCode = function() {
-  return standardIndustrialCode;
+  return this.standardIndustrialCode;
 };
 Element.add({name: "SIC", order: 110, owner: Transaction, /*type: String,*/ fcn: "getStandardIndustrialCode"});
 
@@ -454,7 +447,7 @@ Transaction.prototype.setStandardIndustrialCode = function(standardIndustrialCod
  * @return {String} The payee id.
  */
 Transaction.prototype.getPayeeId = function() {
-  return payeeId;
+  return this.payeeId;
 };
 Element.add({name: "PAYEEID", order: 120, owner: Transaction, /*type: String,*/ fcn: "getPayeeId"});
 
@@ -475,7 +468,7 @@ Transaction.prototype.setPayeeId = function(payeeId) {
  * @return {String} The name (description) or the transaction.
  */
 Transaction.prototype.getName = function() {
-  return name;
+  return this.name;
 };
 Element.add({name: "NAME", order: 130, owner: Transaction, /*type: String,*/ fcn: "getName"});
 
@@ -496,7 +489,7 @@ Transaction.prototype.setName = function(name) {
  * @return {Payee} The payee.
  */
 Transaction.prototype.getPayee = function() {
-  return payee;
+  return this.payee;
 };
 ChildAggregate.add({order: 140, owner: Transaction, /*type: Payee,*/ fcn: "getPayee"});
 
@@ -517,7 +510,7 @@ Transaction.prototype.setPayee = function(payee) {
  * @return {BankAccountDetails} The bank account the transfer was to.
  */
 Transaction.prototype.getBankAccountTo = function() {
-  return bankAccountTo;
+  return this.bankAccountTo;
 };
 ChildAggregate.add({name: "BANKACCTTO", order: 150, owner: Transaction, /*type: BankAccountDetails,*/ fcn: "getBankAccountTo"});
 
@@ -538,7 +531,7 @@ Transaction.prototype.setBankAccountTo = function(bankAccountTo) {
  * @return {CreditCardAccountDetails} The credit-card account the transfer was to.
  */
 Transaction.prototype.getCreditCardAccountTo = function() {
-  return creditCardAccountTo;
+  return this.creditCardAccountTo;
 };
 ChildAggregate.add({name: "CCACCTTO", order: 160, owner: Transaction, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountTo"});
 
@@ -559,7 +552,7 @@ Transaction.prototype.setCreditCardAccountTo = function(creditCardAccountTo) {
  * @return {String} Notes.
  */
 Transaction.prototype.getMemo = function() {
-  return memo;
+  return this.memo;
 };
 Element.add({name: "MEMO", order: 170, owner: Transaction, /*type: String,*/ fcn: "getMemo"});
 
@@ -580,7 +573,7 @@ Transaction.prototype.setMemo = function(memo) {
  * @return {Currency} The currency.
  */
 Transaction.prototype.getCurrency = function() {
-  return currency;
+  return this.currency;
 };
 ChildAggregate.add({order: 180, owner: Transaction, /*type: Currency,*/ fcn: "getCurrency"});
 
@@ -601,7 +594,7 @@ Transaction.prototype.setCurrency = function(currency) {
  * @return {Currency} The original currency.
  */
 Transaction.prototype.getOriginalCurrency = function() {
-  return originalCurrency;
+  return this.originalCurrency;
 };
 ChildAggregate.add({name: "ORIGCURRENCY", order: 190, owner: Transaction, /*type: Currency,*/ fcn: "getOriginalCurrency"});
 

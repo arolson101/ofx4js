@@ -14,29 +14,26 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of option.
  * @see "Section 13.8.5.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var OptionType = {
   PUT: 0,
-  CALL: 1;
+  CALL: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("PUT".equals(ofxVal)) {
-      return PUT;
+      return OptionType.PUT;
     } else if ("CALL".equals(ofxVal)) {
-      return CALL;
+      return OptionType.CALL;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = OptionType;

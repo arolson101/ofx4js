@@ -13,21 +13,14 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
-var PayerAddress = require("domain/data/tax1099/PayerAddress");
-var RecAddress = require("domain/data/tax1099/RecAddress");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 var Element = require("meta/Element");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
  */
-
-
 function Tax1099R () {
 
   /**
@@ -163,297 +156,297 @@ Aggregate.add("TAX1099R_V100", Tax1099R);
 
 
 Tax1099R.prototype.getSrvrtId = function() {
-	    return srvrtId;
-	  };
+  return this.srvrtId;
+};
 Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099R, /*type: String,*/ fcn: "getSrvrtId"});
 
 
 Tax1099R.prototype.setSrvrtId = function(/*String*/ srvrtId) {
-	    this.srvrtId = srvrtId;
-	  };
+  this.srvrtId = srvrtId;
+};
 
 
 Tax1099R.prototype.getTaxYear = function() {
-	    return taxYear;
-	  };
+  return this.taxYear;
+};
 Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099R, /*type: String,*/ fcn: "getTaxYear"});
 
 
 Tax1099R.prototype.setTaxYear = function(/*String*/ taxYear) {
-	    this.taxYear = taxYear;
-	  };
+  this.taxYear = taxYear;
+};
 
 
-	  /**
-		 * @return {String} the grossDist
-		 */
+/**
+ * @return {String} the grossDist
+ */
 Tax1099R.prototype.getGrossDist = function() {
-			return grossDist;
-		};
+  return this.grossDist;
+};
 Element.add({name: "GROSSDIST", required: true, order: 2, owner: Tax1099R, /*type: String,*/ fcn: "getGrossDist"});
 
 
-		/**
-		 * @param {String} grossDist the grossDist to set
-		 */
+/**
+ * @param {String} grossDist the grossDist to set
+ */
 Tax1099R.prototype.setGrossDist = function(grossDist) {
-			this.grossDist = grossDist;
-		};
+  this.grossDist = grossDist;
+};
 
 
-		/**
-		 * @return {String} the taxAmt
-		 */
+/**
+ * @return {String} the taxAmt
+ */
 Tax1099R.prototype.getTaxAmt = function() {
-			return taxAmt;
-		};
+  return this.taxAmt;
+};
 Element.add({name: "TAXAMT", required: false, order: 3, owner: Tax1099R, /*type: String,*/ fcn: "getTaxAmt"});
 
 
-		/**
-		 * @param {String} taxAmt the taxAmt to set
-		 */
+/**
+ * @param {String} taxAmt the taxAmt to set
+ */
 Tax1099R.prototype.setTaxAmt = function(taxAmt) {
-			this.taxAmt = taxAmt;
-		};
+  this.taxAmt = taxAmt;
+};
 
 
-		/**
-		 * @return {String} the taxAmtNd
-		 */
+/**
+ * @return {String} the taxAmtNd
+ */
 Tax1099R.prototype.getTaxAmtNd = function() {
-			return taxAmtNd;
-		};
+  return this.taxAmtNd;
+};
 Element.add({name: "TAXAMTND", required: false, order: 4, owner: Tax1099R, /*type: String,*/ fcn: "getTaxAmtNd"});
 
 
-		/**
-		 * @param {String} taxAmtNd the taxAmtNd to set
-		 */
+/**
+ * @param {String} taxAmtNd the taxAmtNd to set
+ */
 Tax1099R.prototype.setTaxAmtNd = function(taxAmtNd) {
-			this.taxAmtNd = taxAmtNd;
-		};
+  this.taxAmtNd = taxAmtNd;
+};
 
 
-		/**
-		 * @return {String} the capGain
-		 */
+/**
+ * @return {String} the capGain
+ */
 Tax1099R.prototype.getCapGain = function() {
-			return capGain;
-		};
+  return this.capGain;
+};
 Element.add({name: "CAPGAIN", required: false, order: 5, owner: Tax1099R, /*type: String,*/ fcn: "getCapGain"});
 
 
-		/**
-		 * @param {String} capGain the capGain to set
-		 */
+/**
+ * @param {String} capGain the capGain to set
+ */
 Tax1099R.prototype.setCapGain = function(capGain) {
-			this.capGain = capGain;
-		};
+  this.capGain = capGain;
+};
 
 
-	/**
-	 * @return {String} the fedTaxWh
-	 */
+/**
+ * @return {String} the fedTaxWh
+ */
 Tax1099R.prototype.getFedTaxWh = function() {
-		return fedTaxWh;
-	};
+  return this.fedTaxWh;
+};
 Element.add({name: "FEDTAXWH", required: false, order: 6, owner: Tax1099R, /*type: String,*/ fcn: "getFedTaxWh"});
 
 
-	/**
-	 * @param {String} fedTaxWh the fedTaxWh to set
-	 */
+/**
+ * @param {String} fedTaxWh the fedTaxWh to set
+ */
 Tax1099R.prototype.setFedTaxWh = function(fedTaxWh) {
-		this.fedTaxWh = fedTaxWh;
-	};
+  this.fedTaxWh = fedTaxWh;
+};
 
 
-	/**
-	 * @return {String} the empContins
-	 */
+/**
+ * @return {String} the empContins
+ */
 Tax1099R.prototype.getEmpContins = function() {
-		return empContins;
-	};
+  return this.empContins;
+};
 Element.add({name: "EMPCONTINS", required: false, order: 7, owner: Tax1099R, /*type: String,*/ fcn: "getEmpContins"});
 
 
-	/**
-	 * @param {String} empContins the empContins to set
-	 */
+/**
+ * @param {String} empContins the empContins to set
+ */
 Tax1099R.prototype.setEmpContins = function(empContins) {
-		this.empContins = empContins;
-	};
+  this.empContins = empContins;
+};
 
 
-	/**
-	 * @return {String} the netUnapEmp
-	 */
+/**
+ * @return {String} the netUnapEmp
+ */
 Tax1099R.prototype.getNetUnapEmp = function() {
-		return netUnapEmp;
-	};
+  return this.netUnapEmp;
+};
 Element.add({name: "NETUNAPEMP", required: false, order: 8, owner: Tax1099R, /*type: String,*/ fcn: "getNetUnapEmp"});
 
 
-	/**
-	 * @param {String} netUnapEmp the netUnapEmp to set
-	 */
+/**
+ * @param {String} netUnapEmp the netUnapEmp to set
+ */
 Tax1099R.prototype.setNetUnapEmp = function(netUnapEmp) {
-		this.netUnapEmp = netUnapEmp;
-	};
+  this.netUnapEmp = netUnapEmp;
+};
 
 
-	/**
-	 * @return {String} the distCode
-	 */
+/**
+ * @return {String} the distCode
+ */
 Tax1099R.prototype.getDistCode = function() {
-		return distCode;
-	};
+  return this.distCode;
+};
 Element.add({name: "DISTCODE", required: true, order: 9, owner: Tax1099R, /*type: String,*/ fcn: "getDistCode"});
 
 
-	/**
-	 * @param {String} distCode the distCode to set
-	 */
+/**
+ * @param {String} distCode the distCode to set
+ */
 Tax1099R.prototype.setDistCode = function(distCode) {
-		this.distCode = distCode;
-	};
+  this.distCode = distCode;
+};
 
 
-	/**
-	 * @return {String} the iraSepSimp
-	 */
+/**
+ * @return {String} the iraSepSimp
+ */
 Tax1099R.prototype.getIraSepSimp = function() {
-		return iraSepSimp;
-	};
+  return this.iraSepSimp;
+};
 Element.add({name: "IRASEPSIMP", required: true, order: 10, owner: Tax1099R, /*type: String,*/ fcn: "getIraSepSimp"});
 
 
-	/**
-	 * @param {String} iraSepSimp the iraSepSimp to set
-	 */
+/**
+ * @param {String} iraSepSimp the iraSepSimp to set
+ */
 Tax1099R.prototype.setIraSepSimp = function(iraSepSimp) {
-		this.iraSepSimp = iraSepSimp;
-	};
+  this.iraSepSimp = iraSepSimp;
+};
 
 
-	/**
-	 * @return {String} the annCtrctDist
-	 */
+/**
+ * @return {String} the annCtrctDist
+ */
 Tax1099R.prototype.getAnnCtrctDist = function() {
-		return annCtrctDist;
-	};
+  return this.annCtrctDist;
+};
 Element.add({name: "ANNCTRCTDIST", required: false, order: 11, owner: Tax1099R, /*type: String,*/ fcn: "getAnnCtrctDist"});
 
 
-	/**
-	 * @param {String} annCtrctDist the annCtrctDist to set
-	 */
+/**
+ * @param {String} annCtrctDist the annCtrctDist to set
+ */
 Tax1099R.prototype.setAnnCtrctDist = function(annCtrctDist) {
-		this.annCtrctDist = annCtrctDist;
-	};
+  this.annCtrctDist = annCtrctDist;
+};
 
 
-	/**
-	 * @return {String} the totEmpCount
-	 */
+/**
+ * @return {String} the totEmpCount
+ */
 Tax1099R.prototype.getTotEmpCount = function() {
-		return totEmpCount;
-	};
+  return this.totEmpCount;
+};
 Element.add({name: "TOTEMPCONT", required: false, order: 12, owner: Tax1099R, /*type: String,*/ fcn: "getTotEmpCount"});
 
 
-	/**
-	 * @param {String} totEmpCount the totEmpCount to set
-	 */
+/**
+ * @param {String} totEmpCount the totEmpCount to set
+ */
 Tax1099R.prototype.setTotEmpCount = function(totEmpCount) {
-		this.totEmpCount = totEmpCount;
-	};
+  this.totEmpCount = totEmpCount;
+};
 
 
-	/**
-	 * @return {PayerAddress} the payerAddress
-	 */
+/**
+ * @return {PayerAddress} the payerAddress
+ */
 Tax1099R.prototype.getPayerAddress = function() {
-		return payerAddress;
-	};
+  return this.payerAddress;
+};
 ChildAggregate.add({required:true, order: 13, owner: Tax1099R, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
 
 
-	/**
-	 * @param {PayerAddress} payerAddress the payerAddress to set
-	 */
+/**
+ * @param {PayerAddress} payerAddress the payerAddress to set
+ */
 Tax1099R.prototype.setPayerAddress = function(payerAddress) {
-		this.payerAddress = payerAddress;
-	};
+  this.payerAddress = payerAddress;
+};
 
 
-	/**
-	 * @return {String} the payerId
-	 */
+/**
+ * @return {String} the payerId
+ */
 Tax1099R.prototype.getPayerId = function() {
-		return payerId;
-	};
+  return this.payerId;
+};
 Element.add({name: "PAYERID", required: true, order: 14, owner: Tax1099R, /*type: String,*/ fcn: "getPayerId"});
 
 
-	/**
-	 * @param {String} payerId the payerId to set
-	 */
+/**
+ * @param {String} payerId the payerId to set
+ */
 Tax1099R.prototype.setPayerId = function(payerId) {
-		this.payerId = payerId;
-	};
+  this.payerId = payerId;
+};
 
 
-	/**
-	 * @return {RecAddress} the recAddress
-	 */
+/**
+ * @return {RecAddress} the recAddress
+ */
 Tax1099R.prototype.getRecAddress = function() {
-		return recAddress;
-	};
+  return this.recAddress;
+};
 ChildAggregate.add({required:true, order: 15, owner: Tax1099R, /*type: RecAddress,*/ fcn: "getRecAddress"});
 
 
-	/**
-	 * @param {RecAddress} recAddress the recAddress to set
-	 */
+/**
+ * @param {RecAddress} recAddress the recAddress to set
+ */
 Tax1099R.prototype.setRecAddress = function(recAddress) {
-		this.recAddress = recAddress;
-	};
+  this.recAddress = recAddress;
+};
 
 
-	/**
-	 * @return {String} the recId
-	 */
+/**
+ * @return {String} the recId
+ */
 Tax1099R.prototype.getRecId = function() {
-		return recId;
-	};
+  return this.recId;
+};
 Element.add({name: "RECID", required: true, order: 16, owner: Tax1099R, /*type: String,*/ fcn: "getRecId"});
 
 
-	/**
-	 * @param {String} recId the recId to set
-	 */
+/**
+ * @param {String} recId the recId to set
+ */
 Tax1099R.prototype.setRecId = function(recId) {
-		this.recId = recId;
-	};
+  this.recId = recId;
+};
 
 
-	/**
-	 * @return {String} the recAcct
-	 */
+/**
+ * @return {String} the recAcct
+ */
 Tax1099R.prototype.getRecAcct = function() {
-		return recAcct;
-	};
+  return this.recAcct;
+};
 Element.add({name: "RECACCT", required: true, order: 17, owner: Tax1099R, /*type: String,*/ fcn: "getRecAcct"});
 
 
-	/**
-	 * @param {String} recAcct the recAcct to set
-	 */
+/**
+ * @param {String} recAcct the recAcct to set
+ */
 Tax1099R.prototype.setRecAcct = function(recAcct) {
-		this.recAcct = recAcct;
-	};
+  this.recAcct = recAcct;
+};
 
 
 

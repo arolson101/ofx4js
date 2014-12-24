@@ -16,15 +16,14 @@
 
 var inherit = require("../inherit");
 
-var AccountStatus = require("domain/data/common/AccountStatus");
 var AccountInfo = require("domain/data/common/AccountInfo");
-var AccountDetails = require("domain/data/common/AccountDetails");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 var Element = require("meta/Element");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments AccountInfo
  */
 function CreditCardAccountInfo () {
 
@@ -76,7 +75,7 @@ Aggregate.add("CCACCTINFO", CreditCardAccountInfo);
  * @return {CreditCardAccountDetails} The credit card account this information is referencing.
  */
 CreditCardAccountInfo.prototype.getCreditCardAccount = function() {
-  return creditCardAccount;
+  return this.creditCardAccount;
 };
 ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardAccountInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccount"});
 
@@ -93,7 +92,7 @@ CreditCardAccountInfo.prototype.setCreditCardAccount = function(creditCardAccoun
 
 // Inherited.
 CreditCardAccountInfo.prototype.getAccountDetails = function() {
-  return getCreditCardAccount();
+  return this.getCreditCardAccount();
 };
 
 
@@ -103,7 +102,7 @@ CreditCardAccountInfo.prototype.getAccountDetails = function() {
  * @return {Boolean} Whether this account supports download of transaction details.
  */
 CreditCardAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
-  return supportsTransactionDetailOperations;
+  return this.supportsTransactionDetailOperations;
 };
 Element.add({name: "SUPTXDL", required: true, order: 10, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransactionDetailOperations"});
 
@@ -124,7 +123,7 @@ CreditCardAccountInfo.prototype.setSupportsTransactionDetailOperations = functio
  * @return {Boolean} Whether this account supports transfer operations to other accounts.
  */
 CreditCardAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
-  return supportsTransferToOtherAccountOperations;
+  return this.supportsTransferToOtherAccountOperations;
 };
 Element.add({name: "XFERSRC", required: true, order: 20, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferToOtherAccountOperations"});
 
@@ -145,7 +144,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = fu
  * @return {Boolean} Whether this account supports transfer operations from other accounts.
  */
 CreditCardAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
-  return supportsTransferFromOtherAccountOperations;
+  return this.supportsTransferFromOtherAccountOperations;
 };
 Element.add({name: "XFERDEST", required: true, order: 30, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferFromOtherAccountOperations"});
 
@@ -166,7 +165,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations = 
  * @return {AccountStatus} The account status.
  */
 CreditCardAccountInfo.prototype.getStatus = function() {
-  return status;
+  return this.status;
 };
 Element.add({name: "SVCSTATUS", required: true, order: 40, owner: CreditCardAccountInfo, /*type: AccountStatus,*/ fcn: "getStatus"});
 

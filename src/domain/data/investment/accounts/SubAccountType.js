@@ -14,35 +14,32 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Types of well-known sub-accounts.
  * @see "Section 13.9.2.4.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var SubAccountType = {
   CASH: 0,
   MARGIN: 1,
   SHORT: 2,
-  OTHER: 3;
+  OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CASH".equals(ofxVal)) {
-      return CASH;
+      return SubAccountType.CASH;
     } else if ("MARGIN".equals(ofxVal)) {
-      return MARGIN;
+      return SubAccountType.MARGIN;
     } else if ("SHORT".equals(ofxVal)) {
-      return SHORT;
+      return SubAccountType.SHORT;
     } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
+      return SubAccountType.OTHER;
     } else {
       return null;
     }
   }
-}
-;
+};
 
 
 module.exports = SubAccountType;

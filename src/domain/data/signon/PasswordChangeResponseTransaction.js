@@ -19,9 +19,11 @@ var inherit = require("../inherit");
 var TransactionWrappedResponseMessage = require("domain/data/TransactionWrappedResponseMessage");
 var ChildAggregate = require("meta/ChildAggregate");
 var Aggregate = require("meta/Aggregate");
+var PasswordChangeResponse = require("./PasswordChangeResponse");
 
 /**
- * @author Ryan Heaton
+ * @class
+ * @augments TransactionWrappedResponseMessage
  */
 function PasswordChangeResponseTransaction () {
 
@@ -45,7 +47,7 @@ Aggregate.add("PINCHTRNRS", PasswordChangeResponseTransaction);
  * @return {PasswordChangeResponse} The message.
  */
 PasswordChangeResponseTransaction.prototype.getMessage = function() {
-  return message;
+  return this.message;
 };
 ChildAggregate.add({required: true, order: 30, owner: PasswordChangeResponseTransaction, /*type: PasswordChangeResponse,*/ fcn: "getMessage"});
 
@@ -62,7 +64,7 @@ PasswordChangeResponseTransaction.prototype.setMessage = function(message) {
 
 // Inherited.
 PasswordChangeResponseTransaction.prototype.getWrappedMessage = function() {
-  return getMessage();
+  return this.getMessage();
 };
 
 

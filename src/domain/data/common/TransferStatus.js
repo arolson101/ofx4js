@@ -14,15 +14,13 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
 
 //import java.util.Date;
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function TransferStatus () {
 
@@ -52,7 +50,7 @@ Aggregate.add("XFERPRCSTS", TransferStatus);
  * @return {TransferStatusEvent} The event.
  */
 TransferStatus.prototype.getEvent = function() {
-  return event;
+  return this.event;
 };
 Element.add({name: "XFERPRCCODE", required: true, order: 0, owner: TransferStatus, /*type: TransferStatusEvent,*/ fcn: "getEvent"});
 
@@ -73,7 +71,7 @@ TransferStatus.prototype.setEvent = function(event) {
  * @return {Date} The date of the event.
  */
 TransferStatus.prototype.getDate = function() {
-  return date;
+  return this.date;
 };
 Element.add({name: "DTXFERPRC", required: true, order: 10, owner: TransferStatus, /*type: Date,*/ fcn: "getDate"});
 

@@ -14,10 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
-//import java.util.Date;
-
 /**
  * Base class for all investment transactions.
  * <br>
@@ -25,25 +21,19 @@ var inherit = require("../inherit");
  * common to all investment transactions as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
  */
-function BaseInvestmentTransaction () {
+function BaseInvestmentTransaction (/*TransactionType*/ transactionType) {
 
   /**
    * @name BaseInvestmentTransaction#transactionType
    * @type TransactionType
    * @access private
    */
-  this.transactionType = null;
+  this.transactionType = transactionType;
 }
 
 
-
-
-
-BaseInvestmentTransaction.prototype.BaseInvestmentTransaction = function(/*TransactionType*/ transactionType) {
-  this.transactionType = transactionType;
-};
 
 
 /**
@@ -52,7 +42,7 @@ BaseInvestmentTransaction.prototype.BaseInvestmentTransaction = function(/*Trans
  * @return {TransactionType} the type of transaction
  */
 BaseInvestmentTransaction.prototype.getTransactionType = function() {
-  return transactionType;
+  return this.transactionType;
 };
 
 
@@ -61,73 +51,72 @@ BaseInvestmentTransaction.prototype.getTransactionType = function() {
  *
  * @return {InvestmentTransaction} the {@link InvestmentTransaction} aggregate
  */
-BaseInvestmentTransaction.prototype.getInvestmentTransaction = function() {
+BaseInvestmentTransaction.prototype.getInvestmentTransaction = function() { throw new Error("Not implemented"); };
 
 /**
  * Gets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @return the financial institution asssigned transaction id
+ * @return {String} the financial institution asssigned transaction id
  */
-public String getTransactionId() {
-  return getInvestmentTransaction().getTransactionId();
-}
+BaseInvestmentTransaction.prototype.getTransactionId = function() {
+  return this.getInvestmentTransaction().getTransactionId();
+};
 
 /**
  * Gets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @return the server assigned transaction id
+ * @return {String} the server assigned transaction id
  */
-public String getServerId() {
-  return getInvestmentTransaction().getServerId();
-}
+BaseInvestmentTransaction.prototype.getServerId = function() {
+  return this.getInvestmentTransaction().getServerId();
+};
 
 /**
  * Gets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @return the trade date
+ * @return {Date} the trade date
  */
-public Date getTradeDate() {
-  return getInvestmentTransaction().getTradeDate();
-}
+BaseInvestmentTransaction.prototype.getTradeDate = function() {
+  return this.getInvestmentTransaction().getTradeDate();
+};
 
 /**
  * Gets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @return the trade date
+ * @return {Date} the trade date
  */
-public Date getSettlementDate() {
-  return getInvestmentTransaction().getSettlementDate();
-}
+BaseInvestmentTransaction.prototype.getSettlementDate = function() {
+  return this.getInvestmentTransaction().getSettlementDate();
+};
 
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @return the transaction id of the transaction being reversed
+ * @return {String} the transaction id of the transaction being reversed
  */
-public String getReversalTransactionId() {
-  return getInvestmentTransaction().getReversalTransactionId();
-}
+BaseInvestmentTransaction.prototype.getReversalTransactionId = function() {
+  return this.getInvestmentTransaction().getReversalTransactionId();
+};
 
 /**
  * Gets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
  * @see "Section 13.9.2.4.1, OFX Spec"
  *
- * @return the memo
+ * @return {String} the memo
  */
-public String getMemo() {
-  return getInvestmentTransaction().getMemo();
-}
+BaseInvestmentTransaction.prototype.getMemo = function() {
+  return this.getInvestmentTransaction().getMemo();
 };
 
 

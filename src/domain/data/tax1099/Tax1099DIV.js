@@ -13,21 +13,14 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
-
-var PayerAddress = require("domain/data/tax1099/PayerAddress");
-var RecAddress = require("domain/data/tax1099/RecAddress");
 var Aggregate = require("meta/Aggregate");
 var ChildAggregate = require("meta/ChildAggregate");
 
 var Element = require("meta/Element");
 
 /**
- * @author Aparna Gawali
- * aparna.gawali@sungard.com
+ * @class
  */
-
-
 function Tax1099DIV () {
 
   /**
@@ -170,314 +163,314 @@ Aggregate.add("TAX1099DIV_V100", Tax1099DIV);
 
 
 Tax1099DIV.prototype.getSrvrtId = function() {
-	    return srvrtId;
-	  };
+  return this.srvrtId;
+};
 Element.add({name: "SRVRTID",required: false , order: 0, owner: Tax1099DIV, /*type: String,*/ fcn: "getSrvrtId"});
 
 
 Tax1099DIV.prototype.setSrvrtId = function(/*String*/ srvrtId) {
-	    this.srvrtId = srvrtId;
-	  };
+  this.srvrtId = srvrtId;
+};
 
 
 Tax1099DIV.prototype.getTaxYear = function() {
-	    return taxYear;
-	  };
+  return this.taxYear;
+};
 Element.add({name: "TAXYEAR", required: false, order: 1, owner: Tax1099DIV, /*type: String,*/ fcn: "getTaxYear"});
 
 
 Tax1099DIV.prototype.setTaxYear = function(/*String*/ taxYear) {
-	    this.taxYear = taxYear;
-	  };
+  this.taxYear = taxYear;
+};
 
 
-	/**
-	 * @return {String} the ordDiv
-	 */
+/**
+ * @return {String} the ordDiv
+ */
 Tax1099DIV.prototype.getOrdDiv = function() {
-		return ordDiv;
-	};
+  return this.ordDiv;
+};
 Element.add({name: "ORDDIV", required: false, order: 2, owner: Tax1099DIV, /*type: String,*/ fcn: "getOrdDiv"});
 
 
-	/**
-	 * @param {String} ordDiv the ordDiv to set
-	 */
+/**
+ * @param {String} ordDiv the ordDiv to set
+ */
 Tax1099DIV.prototype.setOrdDiv = function(ordDiv) {
-		this.ordDiv = ordDiv;
-	};
+  this.ordDiv = ordDiv;
+};
 
 
-	/**
-	 * @return {String} the qualifiedDiv
-	 */
+/**
+ * @return {String} the qualifiedDiv
+ */
 Tax1099DIV.prototype.getQualifiedDiv = function() {
-		return qualifiedDiv;
-	};
+  return this.qualifiedDiv;
+};
 Element.add({name: "QUALIFIEDDIV", required: false, order: 3, owner: Tax1099DIV, /*type: String,*/ fcn: "getQualifiedDiv"});
 
 
-	/**
-	 * @param {String} qualifiedDiv the qualifiedDiv to set
-	 */
+/**
+ * @param {String} qualifiedDiv the qualifiedDiv to set
+ */
 Tax1099DIV.prototype.setQualifiedDiv = function(qualifiedDiv) {
-		this.qualifiedDiv = qualifiedDiv;
-	};
+  this.qualifiedDiv = qualifiedDiv;
+};
 
 
-	/**
-	 * @return {String} the totCapGain
-	 */
+/**
+ * @return {String} the totCapGain
+ */
 Tax1099DIV.prototype.getTotCapGain = function() {
-		return totCapGain;
-	};
+  return this.totCapGain;
+};
 Element.add({name: "TOTCAPGAIN", required: false, order: 4, owner: Tax1099DIV, /*type: String,*/ fcn: "getTotCapGain"});
 
 
-	/**
-	 * @param {String} totCapGain the totCapGain to set
-	 */
+/**
+ * @param {String} totCapGain the totCapGain to set
+ */
 Tax1099DIV.prototype.setTotCapGain = function(totCapGain) {
-		this.totCapGain = totCapGain;
-	};
+  this.totCapGain = totCapGain;
+};
 
 
-	/**
-	 * @return {String} the p28Gain
-	 */
+/**
+ * @return {String} the p28Gain
+ */
 Tax1099DIV.prototype.getP28Gain = function() {
-		return p28Gain;
-	};
+  return this.p28Gain;
+};
 Element.add({name: "P28GAIN", required: false, order: 5, owner: Tax1099DIV, /*type: String,*/ fcn: "getP28Gain"});
 
 
-	/**
-	 * @param {String} p28Gain the p28Gain to set
-	 */
+/**
+ * @param {String} p28Gain the p28Gain to set
+ */
 Tax1099DIV.prototype.setP28Gain = function(p28Gain) {
-		this.p28Gain = p28Gain;
-	};
+  this.p28Gain = p28Gain;
+};
 
 
-	/**
-	 * @return {String} the unrecSec1250
-	 */
+/**
+ * @return {String} the unrecSec1250
+ */
 Tax1099DIV.prototype.getUnrecSec1250 = function() {
-		return unrecSec1250;
-	};
+  return this.unrecSec1250;
+};
 Element.add({name: "UNRECSEC1250", required: false, order: 6, owner: Tax1099DIV, /*type: String,*/ fcn: "getUnrecSec1250"});
 
 
-	/**
-	 * @param {String} unrecSec1250 the unrecSec1250 to set
-	 */
+/**
+ * @param {String} unrecSec1250 the unrecSec1250 to set
+ */
 Tax1099DIV.prototype.setUnrecSec1250 = function(unrecSec1250) {
-		this.unrecSec1250 = unrecSec1250;
-	};
+  this.unrecSec1250 = unrecSec1250;
+};
 
 
-	/**
-	 * @return {String} the sec1202
-	 */
+/**
+ * @return {String} the sec1202
+ */
 Tax1099DIV.prototype.getSec1202 = function() {
-		return sec1202;
-	};
+  return this.sec1202;
+};
 Element.add({name: "SEC1202", required: false, order: 7, owner: Tax1099DIV, /*type: String,*/ fcn: "getSec1202"});
 
 
-	/**
-	 * @param {String} sec1202 the sec1202 to set
-	 */
+/**
+ * @param {String} sec1202 the sec1202 to set
+ */
 Tax1099DIV.prototype.setSec1202 = function(sec1202) {
-		this.sec1202 = sec1202;
-	};
+  this.sec1202 = sec1202;
+};
 
 
-	/**
-	 * @return {String} the nonTaxDist
-	 */
+/**
+ * @return {String} the nonTaxDist
+ */
 Tax1099DIV.prototype.getNonTaxDist = function() {
-		return nonTaxDist;
-	};
+  return this.nonTaxDist;
+};
 Element.add({name: "NONTAXDIST", required: false, order: 8, owner: Tax1099DIV, /*type: String,*/ fcn: "getNonTaxDist"});
 
 
-	/**
-	 * @param {String} nonTaxDist the nonTaxDist to set
-	 */
+/**
+ * @param {String} nonTaxDist the nonTaxDist to set
+ */
 Tax1099DIV.prototype.setNonTaxDist = function(nonTaxDist) {
-		this.nonTaxDist = nonTaxDist;
-	};
+  this.nonTaxDist = nonTaxDist;
+};
 
 
-	/**
-	 * @return {String} the fedTaxWh
-	 */
+/**
+ * @return {String} the fedTaxWh
+ */
 Tax1099DIV.prototype.getFedTaxWh = function() {
-		return fedTaxWh;
-	};
+  return this.fedTaxWh;
+};
 Element.add({name: "FEDTAXWH", required: false, order: 9, owner: Tax1099DIV, /*type: String,*/ fcn: "getFedTaxWh"});
 
 
-	/**
-	 * @param {String} fedTaxWh the fedTaxWh to set
-	 */
+/**
+ * @param {String} fedTaxWh the fedTaxWh to set
+ */
 Tax1099DIV.prototype.setFedTaxWh = function(fedTaxWh) {
-		this.fedTaxWh = fedTaxWh;
-	};
+  this.fedTaxWh = fedTaxWh;
+};
 
 
-	/**
-	 * @return {String} the investExp
-	 */
+/**
+ * @return {String} the investExp
+ */
 Tax1099DIV.prototype.getInvestExp = function() {
-		return investExp;
-	};
+  return this.investExp;
+};
 Element.add({name: "INVESTEXP", required: false, order: 10, owner: Tax1099DIV, /*type: String,*/ fcn: "getInvestExp"});
 
 
-	/**
-	 * @param {String} investExp the investExp to set
-	 */
+/**
+ * @param {String} investExp the investExp to set
+ */
 Tax1099DIV.prototype.setInvestExp = function(investExp) {
-		this.investExp = investExp;
-	};
+  this.investExp = investExp;
+};
 
 
-	/**
-	 * @return {String} the forTaxPd
-	 */
+/**
+ * @return {String} the forTaxPd
+ */
 Tax1099DIV.prototype.getForTaxPd = function() {
-		return forTaxPd;
-	};
+  return this.forTaxPd;
+};
 Element.add({name: "FORTAXPD", required: false, order: 11, owner: Tax1099DIV, /*type: String,*/ fcn: "getForTaxPd"});
 
 
-	/**
-	 * @param {String} forTaxPd the forTaxPd to set
-	 */
+/**
+ * @param {String} forTaxPd the forTaxPd to set
+ */
 Tax1099DIV.prototype.setForTaxPd = function(forTaxPd) {
-		this.forTaxPd = forTaxPd;
-	};
+  this.forTaxPd = forTaxPd;
+};
 
 
-	/**
-	 * @return {String} the cashLiq
-	 */
+/**
+ * @return {String} the cashLiq
+ */
 Tax1099DIV.prototype.getCashLiq = function() {
-		return cashLiq;
-	};
+  return this.cashLiq;
+};
 Element.add({name: "CASHLIQ", required: false, order: 12, owner: Tax1099DIV, /*type: String,*/ fcn: "getCashLiq"});
 
 
-	/**
-	 * @param {String} cashLiq the cashLiq to set
-	 */
+/**
+ * @param {String} cashLiq the cashLiq to set
+ */
 Tax1099DIV.prototype.setCashLiq = function(cashLiq) {
-		this.cashLiq = cashLiq;
-	};
+  this.cashLiq = cashLiq;
+};
 
 
-	/**
-	 * @return {String} the nonCashLiq
-	 */
+/**
+ * @return {String} the nonCashLiq
+ */
 Tax1099DIV.prototype.getNonCashLiq = function() {
-		return nonCashLiq;
-	};
+  return this.nonCashLiq;
+};
 Element.add({name: "NONCASHLIQ", required: false, order: 13, owner: Tax1099DIV, /*type: String,*/ fcn: "getNonCashLiq"});
 
 
-	/**
-	 * @param {String} nonCashLiq the nonCashLiq to set
-	 */
+/**
+ * @param {String} nonCashLiq the nonCashLiq to set
+ */
 Tax1099DIV.prototype.setNonCashLiq = function(nonCashLiq) {
-		this.nonCashLiq = nonCashLiq;
-	};
+  this.nonCashLiq = nonCashLiq;
+};
 
 
-	/**
-	 * @return {PayerAddress} the payerAddress
-	 */
+/**
+ * @return {PayerAddress} the payerAddress
+ */
 Tax1099DIV.prototype.getPayerAddress = function() {
-		return payerAddress;
-	};
+  return this.payerAddress;
+};
 ChildAggregate.add({required:true, order: 14, owner: Tax1099DIV, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
 
 
-	/**
-	 * @param {PayerAddress} payerAddress the payerAddress to set
-	 */
+/**
+ * @param {PayerAddress} payerAddress the payerAddress to set
+ */
 Tax1099DIV.prototype.setPayerAddress = function(payerAddress) {
-		this.payerAddress = payerAddress;
-	};
+  this.payerAddress = payerAddress;
+};
 
 
-	/**
-	 * @return {String} the payerId
-	 */
+/**
+ * @return {String} the payerId
+ */
 Tax1099DIV.prototype.getPayerId = function() {
-		return payerId;
-	};
+  return this.payerId;
+};
 Element.add({name: "PAYERID", required: true, order: 15, owner: Tax1099DIV, /*type: String,*/ fcn: "getPayerId"});
 
 
-	/**
-	 * @param {String} payerId the payerId to set
-	 */
+/**
+ * @param {String} payerId the payerId to set
+ */
 Tax1099DIV.prototype.setPayerId = function(payerId) {
-		this.payerId = payerId;
-	};
+  this.payerId = payerId;
+};
 
 
-	/**
-	 * @return {RecAddress} the recAddress
-	 */
+/**
+ * @return {RecAddress} the recAddress
+ */
 Tax1099DIV.prototype.getRecAddress = function() {
-		return recAddress;
-	};
+  return this.recAddress;
+};
 ChildAggregate.add({required:true, order: 16, owner: Tax1099DIV, /*type: RecAddress,*/ fcn: "getRecAddress"});
 
 
-	/**
-	 * @param {RecAddress} recAddress the recAddress to set
-	 */
+/**
+ * @param {RecAddress} recAddress the recAddress to set
+ */
 Tax1099DIV.prototype.setRecAddress = function(recAddress) {
-		this.recAddress = recAddress;
-	};
+  this.recAddress = recAddress;
+};
 
 
-	/**
-	 * @return {String} the recId
-	 */
+/**
+ * @return {String} the recId
+ */
 Tax1099DIV.prototype.getRecId = function() {
-		return recId;
-	};
+  return this.recId;
+};
 Element.add({name: "RECID", required: true, order: 17, owner: Tax1099DIV, /*type: String,*/ fcn: "getRecId"});
 
 
-	/**
-	 * @param {String} recId the recId to set
-	 */
+/**
+ * @param {String} recId the recId to set
+ */
 Tax1099DIV.prototype.setRecId = function(recId) {
-		this.recId = recId;
-	};
+  this.recId = recId;
+};
 
 
-	/**
-	 * @return {String} the recAcct
-	 */
+/**
+ * @return {String} the recAcct
+ */
 Tax1099DIV.prototype.getRecAcct = function() {
-		return recAcct;
-	};
+  return this.recAcct;
+};
 Element.add({name: "RECACCT", required: true, order: 18, owner: Tax1099DIV, /*type: String,*/ fcn: "getRecAcct"});
 
 
-	/**
-	 * @param {String} recAcct the recAcct to set
-	 */
+/**
+ * @param {String} recAcct the recAcct to set
+ */
 Tax1099DIV.prototype.setRecAcct = function(recAcct) {
-		this.recAcct = recAcct;
-	};
+  this.recAcct = recAcct;
+};
 
 
 

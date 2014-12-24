@@ -18,14 +18,19 @@ var inherit = require("../inherit");
 
 var Aggregate = require("meta/Aggregate");
 var Element = require("meta/Element");
+var TransactionType = require("./TransactionType");
+var BaseBuyInvestmentTransaction = require("./BaseBuyInvestmentTransaction");
+var OptionBuyType = require("./OptionBuyType");
 
 /**
  * Transaction for buying options.
  * @see "Section 13.9.2.4.4, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
+ * @augments BaseBuyInvestmentTransaction
  */
 function BuyOptionTransaction () {
+  BaseBuyInvestmentTransaction.call(this, TransactionType.BUY_OPTION);
 
   /**
    * @name BuyOptionTransaction#optionBuyType
@@ -48,10 +53,6 @@ inherit(BuyOptionTransaction, "extends", BaseBuyInvestmentTransaction);
 Aggregate.add("BUYOPT", BuyOptionTransaction);
 
 
-BuyOptionTransaction.prototype.BuyOptionTransaction = function() {
-  super(TransactionType.BUY_OPTION);
-};
-
 
 /**
  * Gets the type of option purchase (i.e. "BUYTOOPEN" or "BUYTOCLOSE"). This is a required field
@@ -61,7 +62,7 @@ BuyOptionTransaction.prototype.BuyOptionTransaction = function() {
  * @return {String} the option buy type
  */
 BuyOptionTransaction.prototype.getOptionBuyType = function() {
-  return optionBuyType;
+  return this.optionBuyType;
 };
 Element.add({name: "OPTBUYTYPE", required: true, order: 20, owner: BuyOptionTransaction, /*type: String,*/ fcn: "getOptionBuyType"});
 
@@ -84,7 +85,7 @@ BuyOptionTransaction.prototype.setOptionBuyType = function(optionBuyType) {
  * @return {OptionBuyType} the type of purchase or null if it's not known
  */
 BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
-  return OptionBuyType.fromOfx(optionBuyType);
+  return OptionBuyType.fromOfx(this.optionBuyType);
 };
 
 
@@ -95,7 +96,7 @@ BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
  * @return {Integer} the number of shares per contact
  */
 BuyOptionTransaction.prototype.getSharesPerContract = function() {
-  return sharesPerContact;
+  return this.sharesPerContact;
 };
 Element.add({name: "SHPERCTRCT", required: true, order: 30, owner: BuyOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContract"});
 
