@@ -14,11 +14,11 @@
 
 "use strict";
 
-var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
+var SubAccountType = require("../accounts/SubAccountType");
+var Inv401KSource = require("../positions/Inv401KSource");
+var Aggregate = require("../../../../meta/Aggregate");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Sell investment transaction aggregate ("INVSELL").

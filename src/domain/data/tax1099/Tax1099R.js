@@ -13,10 +13,10 @@
  */
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
 
-var Element = require("meta/Element");
+var Element = require("../../../meta/Element");
 
 /**
  * @class

@@ -13,12 +13,12 @@
  */
 "use strict";
 
-var PayerAddress = require("domain/data/tax1099/PayerAddress");
-var RecAddress = require("domain/data/tax1099/RecAddress");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
+var PayerAddress = require("./PayerAddress");
+var RecAddress = require("./RecAddress");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
 
-var Element = require("meta/Element");
+var Element = require("../../../meta/Element");
 
 /**
  * @class

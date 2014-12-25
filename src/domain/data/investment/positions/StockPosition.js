@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
 var BasePosition = require("./BasePosition");
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../meta/Aggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Represents a stock position.

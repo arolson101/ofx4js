@@ -18,7 +18,7 @@
  * The type of mutual fund.
  * @see "Section 13.8.5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @enum
  */
 var MutualFundType = {
   OPEN_END: 0,

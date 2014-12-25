@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
-var AccountDetails = require("domain/data/common/AccountDetails");
+var Aggregate = require("../../../meta/Aggregate");
+var Element = require("../../../meta/Element");
+var AccountDetails = require("../common/AccountDetails");
 
 /**
  * Base bank account details.

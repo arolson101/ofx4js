@@ -14,12 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
-var Aggregate = require("meta/Aggregate");
-var AccountInfo = require("domain/data/common/AccountInfo");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Element = require("../../../meta/Element");
+var Aggregate = require("../../../meta/Aggregate");
+var AccountInfo = require("../common/AccountInfo");
 
 /**
  * @class

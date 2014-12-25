@@ -14,9 +14,9 @@
 
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Header = require("meta/Header");
+var Aggregate = require("../../meta/Aggregate");
+var ChildAggregate = require("../../meta/ChildAggregate");
+var Header = require("../../meta/Header");
 var ApplicationSecurity = require("./ApplicationSecurity");
 var UUID = require("uuid");
 

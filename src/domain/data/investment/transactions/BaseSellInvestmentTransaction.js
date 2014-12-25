@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var Inv401KSource = require("domain/data/investment/positions/Inv401KSource");
-var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var ChildAggregate = require("meta/ChildAggregate");
+var Inv401KSource = require("../positions/Inv401KSource");
+var SubAccountType = require("../accounts/SubAccountType");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
 var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 

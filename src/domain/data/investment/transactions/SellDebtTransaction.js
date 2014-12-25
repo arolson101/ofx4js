@@ -14,10 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../meta/Aggregate");
+var Element = require("../../../../meta/Element");
 var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
 var TransactionType = require("./TransactionType");
 var SellDebtReason = require("./SellDebtReason");

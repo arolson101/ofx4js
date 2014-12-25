@@ -14,10 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ResponseMessage = require("domain/data/ResponseMessage");
-var Aggregate = require("meta/Aggregate");
+var ResponseMessage = require("../ResponseMessage");
+var Aggregate = require("../../../meta/Aggregate");
 
 /**
  * Security list response. This is an empty aggregate. The actual security information is included

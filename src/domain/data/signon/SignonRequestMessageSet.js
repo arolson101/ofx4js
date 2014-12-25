@@ -14,12 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var MessageSetType = require("domain/data/MessageSetType");
-var RequestMessageSet = require("domain/data/RequestMessageSet");
-var ChildAggregate = require("meta/ChildAggregate");
-var Aggregate = require("meta/Aggregate");
+var MessageSetType = require("../MessageSetType");
+var RequestMessageSet = require("../RequestMessageSet");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Aggregate = require("../../../meta/Aggregate");
 
 /**
  * The sign-on request message set.

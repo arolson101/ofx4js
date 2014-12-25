@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../inherit");
-
 /**
  * Type of transfer.
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -24,7 +22,7 @@ var inherit = require("../inherit");
  */
 var TransferAction = {
   IN: 0,
-  OUT: 1;
+  OUT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("IN".equals(ofxVal)) {

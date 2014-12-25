@@ -14,12 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
-var RequestMessage = require("domain/data/RequestMessage");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Element = require("../../../meta/Element");
+var RequestMessage = require("../RequestMessage");
 
 /**
  * Sign-on request

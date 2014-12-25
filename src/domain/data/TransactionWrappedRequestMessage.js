@@ -14,9 +14,9 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../util/inherit");
 
-var Element = require("meta/Element");
+var Element = require("../../meta/Element");
 var UUID = require("uuid");
 var RequestMessage = require("./ResponseMessage");
 

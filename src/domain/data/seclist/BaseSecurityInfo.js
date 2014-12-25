@@ -14,7 +14,7 @@
 
 "use strict";
 
-var ChildAggregate = require("meta/ChildAggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
 
 /**
  * Base class for info about the various types of securities.

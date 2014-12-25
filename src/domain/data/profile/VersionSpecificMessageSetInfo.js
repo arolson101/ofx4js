@@ -14,10 +14,10 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ChildAggregate = require("meta/ChildAggregate");
-var MessageSetProfile = require("domain/data/MessageSetProfile");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var MessageSetProfile = require("../MessageSetProfile");
 
 /**
  * Information specific to a version of a message set.

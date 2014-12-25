@@ -13,13 +13,11 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-//import java.util.List;
-
-var T1099Response = require("domain/data/common/T1099Response");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
+var T1099Response = require("../common/T1099Response");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
 
 /**
  * @class

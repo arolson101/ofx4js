@@ -14,7 +14,7 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
 /**
  * A status holder (usually applied to a response).

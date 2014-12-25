@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var TransactionWrappedRequestMessage = require("domain/data/TransactionWrappedRequestMessage");
-var ChildAggregate = require("meta/ChildAggregate");
-var Aggregate = require("meta/Aggregate");
+var TransactionWrappedRequestMessage = require("../TransactionWrappedRequestMessage");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Aggregate = require("../../../meta/Aggregate");
 var AccountInfoRequest = require("./AccountInfoRequest");
 
 /**

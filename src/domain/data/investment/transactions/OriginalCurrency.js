@@ -14,8 +14,8 @@
 
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../meta/Aggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Original currency aggregate ("ORIGCURRENCY"). For investment transactions in other currencies,

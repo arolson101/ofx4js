@@ -14,12 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var StatementRequest = require("domain/data/common/StatementRequest");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
+var StatementRequest = require("../../common/StatementRequest");
+var Aggregate = require("../../../../meta/Aggregate");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Aggregate for the investment statement download request.

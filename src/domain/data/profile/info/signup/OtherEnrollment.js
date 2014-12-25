@@ -16,8 +16,8 @@
 
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../../meta/Aggregate");
+var Element = require("../../../../../meta/Element");
 
 /**
  * Other Enrollment option containing a text message directing users to some other method (such as a phone call)

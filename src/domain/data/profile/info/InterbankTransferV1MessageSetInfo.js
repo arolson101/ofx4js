@@ -14,13 +14,13 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
-var MessageSetType = require("domain/data/MessageSetType");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
+var VersionSpecificMessageSetInfo = require("../../profile/VersionSpecificMessageSetInfo");
+var MessageSetType = require("../../MessageSetType");
+var Aggregate = require("../../../../meta/Aggregate");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Interbank Funds Transfer Message Set Profile

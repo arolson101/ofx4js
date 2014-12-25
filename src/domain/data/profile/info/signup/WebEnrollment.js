@@ -16,8 +16,8 @@
 
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../../meta/Aggregate");
+var Element = require("../../../../../meta/Element");
 
 /**
  * Web Enrollment option containing URL to direct user for web based enrollment, if supported.

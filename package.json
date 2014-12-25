@@ -1,0 +1,28 @@
+{
+  "name": "ofx4js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "uuid": "^2.0.1"
+  },
+  "devDependencies": {
+    "browserify": "^8.0.1",
+    "gulp": "^3.8.10",
+    "gulp-config-sync": "0.0.1",
+    "gulp-jsdoc": "^0.1.4",
+    "gulp-jshint": "^1.9.0",
+    "gulp-mocha-phantomjs": "^0.5.3",
+    "gulp-sourcemaps": "^1.2.8",
+    "gulp-uglify": "^1.0.2",
+    "gulp-util": "^3.0.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

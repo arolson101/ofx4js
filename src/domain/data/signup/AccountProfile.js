@@ -14,12 +14,12 @@
 
 "use strict";
 
-var InvestmentAccountInfo = require("domain/data/investment/accounts/InvestmentAccountInfo");
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
-var ChildAggregate = require("meta/ChildAggregate");
-var BankAccountInfo = require("domain/data/banking/BankAccountInfo");
-var CreditCardAccountInfo = require("domain/data/creditcard/CreditCardAccountInfo");
+var InvestmentAccountInfo = require("../investment/accounts/InvestmentAccountInfo");
+var Aggregate = require("../../../meta/Aggregate");
+var Element = require("../../../meta/Element");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var BankAccountInfo = require("../banking/BankAccountInfo");
+var CreditCardAccountInfo = require("../creditcard/CreditCardAccountInfo");
 
 /**
  * @class

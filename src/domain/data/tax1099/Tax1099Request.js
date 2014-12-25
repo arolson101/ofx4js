@@ -13,11 +13,11 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var T1099Request = require("domain/data/common/T1099Request");
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var T1099Request = require("../common/T1099Request");
+var Aggregate = require("../../../meta/Aggregate");
+var Element = require("../../../meta/Element");
 
 /**
  * @class

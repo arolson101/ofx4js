@@ -14,8 +14,8 @@
 
 "use strict";
 
-var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var ChildAggregate = require("meta/ChildAggregate");
+var SubAccountType = require("../accounts/SubAccountType");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
 var PositionType = require("./PositionType");
 var Inv401KSource = require("./Inv401KSource");
 

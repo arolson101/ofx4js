@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var AccountDetails = require("domain/data/common/AccountDetails");
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var AccountDetails = require("../../common/AccountDetails");
+var Aggregate = require("../../../../meta/Aggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Aggregate for the details that identifity a brokerage account.

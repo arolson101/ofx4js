@@ -14,10 +14,10 @@
 
 "use strict";
 
-var SubAccountType = require("domain/data/investment/accounts/SubAccountType");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
+var SubAccountType = require("../accounts/SubAccountType");
+var Aggregate = require("../../../../meta/Aggregate");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
+var Element = require("../../../../meta/Element");
 
 /**
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.

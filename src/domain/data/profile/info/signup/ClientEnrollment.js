@@ -16,8 +16,8 @@
 
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../../meta/Aggregate");
+var Element = require("../../../../../meta/Element");
 
 /**
  * Client Enrollment option, contains indicator as to whether the account number is required as part of enrollment

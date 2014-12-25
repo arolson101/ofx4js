@@ -13,11 +13,11 @@
  */
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var ShortOptionSecurity = require("domain/data/investment/positions/ShortOptionSecurity");
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var ShortOptionSecurity = require("../positions/ShortOptionSecurity");
+var Aggregate = require("../../../../meta/Aggregate");
+var Element = require("../../../../meta/Element");
 var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
 var TransactionType = require("./TransactionType");
 var OptionSellType = require("./OptionSellType");

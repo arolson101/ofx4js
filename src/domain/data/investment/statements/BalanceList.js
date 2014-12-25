@@ -13,10 +13,8 @@
  */
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-
-//import java.util.List;
+var Aggregate = require("../../../../meta/Aggregate");
+var ChildAggregate = require("../../../../meta/ChildAggregate");
 
 /**
  * Aggregate for the investment balance list.

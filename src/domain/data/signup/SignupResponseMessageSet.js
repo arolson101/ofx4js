@@ -14,12 +14,12 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var ResponseMessageSet = require("./ResponseMessageSet");
-var MessageSetType = require("./MessageSetType");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var ResponseMessageSet = require("../ResponseMessageSet");
+var MessageSetType = require("../MessageSetType");
 
 /**
  * @class

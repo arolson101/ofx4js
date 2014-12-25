@@ -14,14 +14,14 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ResponseMessage = require("domain/data/ResponseMessage");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
-var FinancialInstitutionProfile = require("client/FinancialInstitutionProfile");
-
+var ResponseMessage = require("../ResponseMessage");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Element = require("../../../meta/Element");
+//var FinancialInstitutionProfile = require("client/FinancialInstitutionProfile");
+//TODO
 /**
  * @class
  * @augments ResponseMessage
@@ -144,7 +144,7 @@ function ProfileResponse () {
 }
 
 inherit(ProfileResponse, "extends", ResponseMessage);
-inherit(ProfileResponse, "implements", FinancialInstitutionProfile);
+//inherit(ProfileResponse, "implements", FinancialInstitutionProfile);
 
 
 Aggregate.add("PROFRS", ProfileResponse);

@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ResponseMessage = require("domain/data/ResponseMessage");
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var ResponseMessage = require("../ResponseMessage");
+var Aggregate = require("../../../meta/Aggregate");
+var Element = require("../../../meta/Element");
 
 /**
  * Response to a change a user password request.

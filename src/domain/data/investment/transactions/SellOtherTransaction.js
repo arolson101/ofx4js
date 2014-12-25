@@ -14,9 +14,9 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var Aggregate = require("meta/Aggregate");
+var Aggregate = require("../../../../meta/Aggregate");
 var BaseSellInvestmentTransaction = require("./BaseSellInvestmentTransaction");
 var TransactionType = require("./TransactionType");
 

@@ -16,8 +16,8 @@
 
 "use strict";
 
-var Aggregate = require("meta/Aggregate");
-var Element = require("meta/Element");
+var Aggregate = require("../../../../../meta/Aggregate");
+var Element = require("../../../../../meta/Element");
 
 /**
  * Email Profile

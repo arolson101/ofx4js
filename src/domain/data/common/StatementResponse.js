@@ -14,12 +14,13 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ResponseMessage = require("domain/data/ResponseMessage");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
-var AccountStatement = require("client/AccountStatement");
+var ResponseMessage = require("../ResponseMessage");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Element = require("../../../meta/Element");
+//var AccountStatement = require("../../../client/AccountStatement");
+//TODO
 
 /**
  * @class
@@ -65,7 +66,7 @@ function StatementResponse () {
 }
 
 inherit(StatementResponse, "extends", ResponseMessage);
-inherit(StatementResponse, "implements", AccountStatement);
+//inherit(StatementResponse, "implements", AccountStatement);
 
 
 

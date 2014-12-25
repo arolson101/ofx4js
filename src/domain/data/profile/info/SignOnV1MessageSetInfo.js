@@ -14,11 +14,11 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../../util/inherit");
 
-var MessageSetType = require("domain/data/MessageSetType");
-var VersionSpecificMessageSetInfo = require("domain/data/profile/VersionSpecificMessageSetInfo");
-var Aggregate = require("meta/Aggregate");
+var MessageSetType = require("../../MessageSetType");
+var VersionSpecificMessageSetInfo = require("../../profile/VersionSpecificMessageSetInfo");
+var Aggregate = require("../../../../meta/Aggregate");
 
 /**
  * @class

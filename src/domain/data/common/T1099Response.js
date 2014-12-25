@@ -14,9 +14,9 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var ResponseMessage = require("domain/data/ResponseMessage");
+var ResponseMessage = require("../ResponseMessage");
 
 /**
  * @class

@@ -14,13 +14,13 @@
 
 "use strict";
 
-var inherit = require("../inherit");
+var inherit = require("../../../util/inherit");
 
-var StatusHolder = require("domain/data/common/StatusHolder");
-var ResponseMessage = require("domain/data/ResponseMessage");
-var Aggregate = require("meta/Aggregate");
-var ChildAggregate = require("meta/ChildAggregate");
-var Element = require("meta/Element");
+var StatusHolder = require("../common/StatusHolder");
+var ResponseMessage = require("../ResponseMessage");
+var Aggregate = require("../../../meta/Aggregate");
+var ChildAggregate = require("../../../meta/ChildAggregate");
+var Element = require("../../../meta/Element");
 
 /**
  * The signon response message.
