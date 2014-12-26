@@ -4,13 +4,13 @@ use warnings;
 my $single = 0;
 if($single)
 {
-  my $src = "src/domain/data/signup/AccountProfile.java";
-  my $dst = "src/domain/data/signup/AccountProfile.js";
+  my $src = "src/client/impl/BaseAccountImpl.java";
+  my $dst = "src/client/impl/BaseAccountImpl.js";
   convert($src, $dst);
 }
 else
 {
-  processDir("src/domain");
+  processDir("src/io");
 }
 
 sub processDir
@@ -41,6 +41,10 @@ sub processDir
         next if($js =~ /Inv401KSource/i);
         next if($js =~ /TransactionWrappedRequestMessage/i);
         next if($js =~ /TransactionWrappedResponseMessage/i);
+
+        #next if($js =~ /OFXHomeFIDataStore/i);
+        next if($js =~ /DownloadAccountInfo/i);
+        next if($js =~ /DownloadStatement/i);
         
         convert($java, $js);
       }
@@ -202,6 +206,10 @@ sub convert
       }
       print $hdst "\n\nmodule.exports = $sym;\n";
     }
+    elsif($line =~ /^\s*\@Xml/i)
+    {
+      #$comment .= "//$line";
+    }
     elsif($line =~ /^\s*\@Aggregate\s*\(\s*"(\w+)"\s*\)/)
     {
       $aggregate = $1;
@@ -210,7 +218,7 @@ sub convert
     {
       $aggregate = '1';
     }
-    elsif($line =~ m/public(?:\s+abstract)?\s+class (\w+)\s+(?:extends\s*([\w<>\.]+))?(\s+implements\s+[\w<>\.]+)*/)
+    elsif($line =~ m/public(?:\s+abstract)?\s+class ([\w<>\.]+)\s+(?:extends\s*([\w<>\.]+))?(\s+implements\s+[\w<>\.]+)*/)
     {
       my $class = $1;
       my $base = $2;
@@ -268,6 +276,10 @@ sub convert
         {
           $header = trim($1);
           $header =~ s/ ?=/:/g;
+        }
+        elsif($line =~ /^\s*\@Xml.*/)
+        {
+          #$comment .= "//$line";
         }
         elsif($line =~ /^\s*\@Element\s*\(\s*([^\)]+\s*)/i)
         {

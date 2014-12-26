@@ -15,15 +15,17 @@
 "use strict";
 
 /**
- * @enum
- * @see "Section 4, OFX spec"
+ * @class
  */
-var ApplicationSecurity = {
+function BankAccount() {
+}
 
-  NONE: 0,
+/**
+ * The details of the account.
+ *
+ * @return {BankAccountDetails} The details of the account.
+ */
+BankAccount.prototype.getDetails = function() { throw new Error("not implemented"); };
 
-  TYPE1: 1
-};
 
-
-module.exports = ApplicationSecurity;
+module.exports = BankAccount;

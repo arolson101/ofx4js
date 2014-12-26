@@ -15,15 +15,21 @@
 "use strict";
 
 /**
- * @enum
- * @see "Section 4, OFX spec"
+ * Connection to an OFX interface.
+ *
+ * @author Ryan Heaton
  */
-var ApplicationSecurity = {
+function OFXConnection() {
+}
 
-  NONE: 0,
+/**
+ * Send a request.
+ *
+ * @param {RequestEnvelope} request The request to send.
+ * @param {URL} url The URL to which to send the request.
+ * @return {ResponseEnvelope} The response.
+ */
+OFXConnection.prototype.sendRequest = function(/*request, url*/) { throw new Error("not implemented"); };
 
-  TYPE1: 1
-};
 
-
-module.exports = ApplicationSecurity;
+module.exports = OFXConnection;

@@ -19,8 +19,7 @@ var inherit = require("../../../util/inherit");
 var ResponseMessage = require("../ResponseMessage");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
-//var AccountStatement = require("../../../client/AccountStatement");
-//TODO
+var AccountStatement = require("../../../client/AccountStatement");
 
 /**
  * @class
@@ -66,7 +65,7 @@ function StatementResponse () {
 }
 
 inherit(StatementResponse, "extends", ResponseMessage);
-//inherit(StatementResponse, "implements", AccountStatement);
+inherit(StatementResponse, "implements", AccountStatement);
 
 
 

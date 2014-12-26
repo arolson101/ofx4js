@@ -15,15 +15,32 @@
 "use strict";
 
 /**
- * @enum
- * @see "Section 4, OFX spec"
+ * @author Ryan Heaton
  */
-var ApplicationSecurity = {
+function FIDataList () {
 
-  NONE: 0,
+  /**
+   * @name FIDataList#data
+   * @type BaseFinancialInstitutionData[]
+   * @access private
+   */
+  this.data = null;
+}
 
-  TYPE1: 1
+
+
+
+
+FIDataList.prototype.getData = function() {
+  return this.data;
 };
 
 
-module.exports = ApplicationSecurity;
+FIDataList.prototype.setData = function(/*Collection<BaseFinancialInstitutionData>*/ data) {
+  this.data = data;
+};
+
+
+
+
+module.exports = FIDataList;

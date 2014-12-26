@@ -20,8 +20,8 @@ var ResponseMessage = require("../ResponseMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
-//var FinancialInstitutionProfile = require("client/FinancialInstitutionProfile");
-//TODO
+var FinancialInstitutionProfile = require("../../../client/FinancialInstitutionProfile");
+
 /**
  * @class
  * @augments ResponseMessage
@@ -144,7 +144,7 @@ function ProfileResponse () {
 }
 
 inherit(ProfileResponse, "extends", ResponseMessage);
-//inherit(ProfileResponse, "implements", FinancialInstitutionProfile);
+inherit(ProfileResponse, "implements", FinancialInstitutionProfile);
 
 
 Aggregate.add("PROFRS", ProfileResponse);

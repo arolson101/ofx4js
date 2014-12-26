@@ -15,15 +15,17 @@
 "use strict";
 
 /**
- * @enum
- * @see "Section 4, OFX spec"
+ * @class
  */
-var ApplicationSecurity = {
+function CreditCardAccount() {
+}
 
-  NONE: 0,
+/**
+ * The details of the credit card account.
+ *
+ * @return {CreditCardAccountDetails} The details of the credit card account.
+ */
+CreditCardAccount.prototype.getDetails = function() { throw new Error("not implemented"); };
 
-  TYPE1: 1
-};
 
-
-module.exports = ApplicationSecurity;
+module.exports = CreditCardAccount;

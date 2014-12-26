@@ -15,15 +15,26 @@
 "use strict";
 
 /**
- * @enum
- * @see "Section 4, OFX spec"
+ * The application context.
+ *
+ * @class
  */
-var ApplicationSecurity = {
+function OFXApplicationContext() {
+}
 
-  NONE: 0,
+/**
+ * The current application id.
+ *
+ * @return {String} The current application id.
+ */
+OFXApplicationContext.prototype.getAppId = function() { throw new Error("not implemented"); };
 
-  TYPE1: 1
-};
+/**
+ * The application version.
+ *
+ * @return {String} The application version.
+ */
+OFXApplicationContext.prototype.getAppVersion = function() { throw new Error("not implemented"); };
 
 
-module.exports = ApplicationSecurity;
+module.exports = OFXApplicationContext;

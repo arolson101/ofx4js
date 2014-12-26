@@ -15,15 +15,21 @@
 "use strict";
 
 /**
- * @enum
- * @see "Section 4, OFX spec"
+ * A specific account at a financial institution.
+ *
+ * @class
  */
-var ApplicationSecurity = {
+function FinancialInstitutionAccount() {
+}
 
-  NONE: 0,
+/**
+ * Read an account statement.
+ *
+ * @param {Date} start The start date of the statement.
+ * @param {Date} end The end date of the statement.
+ * @return {AccountStatement} The account statement.
+ */
+FinancialInstitutionAccount.prototype.readStatement = function(/*start, end*/) { throw new Error("not implemented"); };
 
-  TYPE1: 1
-};
 
-
-module.exports = ApplicationSecurity;
+module.exports = FinancialInstitutionAccount;
