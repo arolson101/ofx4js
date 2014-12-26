@@ -90,7 +90,7 @@ Aggregate.add("INVACCTINFO", InvestmentAccountInfo);
 InvestmentAccountInfo.prototype.getInvestmentAccount = function() {
   return this.investmentAccount;
 };
-ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentAccountInfo, /*type: InvestmentAccountDetails,*/ readMethod: "getInvestmentAccount", writeMethod: "setInvestmentAccount"});
+ChildAggregate.add(InvestmentAccountInfo, {name: "INVACCTFROM", required: true, order: 0, attributeType: InvestmentAccountDetails, readMethod: "getInvestmentAccount", writeMethod: "setInvestmentAccount"});
 
 
 /**
@@ -119,7 +119,7 @@ InvestmentAccountInfo.prototype.getAccountDetails = function() {
 InvestmentAccountInfo.prototype.getUnitedStatesAccountType = function() {
   return this.unitedStatesAccountType;
 };
-Element.add({name: "USPRODUCTTYPE", required: true, order: 10, owner: InvestmentAccountInfo, /*type: String,*/ readMethod: "getUnitedStatesAccountType", writeMethod: "setUnitedStatesAccountType"});
+Element.add(InvestmentAccountInfo, {name: "USPRODUCTTYPE", required: true, order: 10, attributeType: String, readMethod: "getUnitedStatesAccountType", writeMethod: "setUnitedStatesAccountType"});
 
 
 /**
@@ -152,7 +152,7 @@ InvestmentAccountInfo.prototype.getUnitedStatesAccountTypeEnum = function() {
 InvestmentAccountInfo.prototype.getSupportsChecking = function() {
   return this.supportsChecking;
 };
-Element.add({name: "CHECKING", required: true, order: 20, owner: InvestmentAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsChecking", writeMethod: "setSupportsChecking"});
+Element.add(InvestmentAccountInfo, {name: "CHECKING", required: true, order: 20, attributeType: bool, readMethod: "getSupportsChecking", writeMethod: "setSupportsChecking"});
 
 
 /**
@@ -175,7 +175,7 @@ InvestmentAccountInfo.prototype.setSupportsChecking = function(supportsChecking)
 InvestmentAccountInfo.prototype.getActivationStatus = function() {
   return this.activationStatus;
 };
-Element.add({name: "SVCSTATUS", required: true, order: 30, owner: InvestmentAccountInfo, /*type: String,*/ readMethod: "getActivationStatus", writeMethod: "setActivationStatus"});
+Element.add(InvestmentAccountInfo, {name: "SVCSTATUS", required: true, order: 30, attributeType: String, readMethod: "getActivationStatus", writeMethod: "setActivationStatus"});
 
 
 /**
@@ -208,7 +208,7 @@ InvestmentAccountInfo.prototype.getActivationStatusEnum = function() {
 InvestmentAccountInfo.prototype.getInvestmentAccountType = function() {
   return this.investmentAccountType;
 };
-Element.add({name: "INVACCTTYPE", order: 40, owner: InvestmentAccountInfo, /*type: String,*/ readMethod: "getInvestmentAccountType", writeMethod: "setInvestmentAccountType"});
+Element.add(InvestmentAccountInfo, {name: "INVACCTTYPE", order: 40, attributeType: String, readMethod: "getInvestmentAccountType", writeMethod: "setInvestmentAccountType"});
 
 
 /**
@@ -241,7 +241,7 @@ InvestmentAccountInfo.prototype.getInvestmentAccountTypeEnum = function() {
 InvestmentAccountInfo.prototype.getOptionLevel = function() {
   return this.optionLevel;
 };
-Element.add({name: "OPTIONLEVEL", order: 50, owner: InvestmentAccountInfo, /*type: String,*/ readMethod: "getOptionLevel", writeMethod: "setOptionLevel"});
+Element.add(InvestmentAccountInfo, {name: "OPTIONLEVEL", order: 50, attributeType: String, readMethod: "getOptionLevel", writeMethod: "setOptionLevel"});
 
 
 /**

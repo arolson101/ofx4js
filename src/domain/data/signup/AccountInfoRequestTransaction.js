@@ -49,7 +49,7 @@ Aggregate.add("ACCTINFOTRNRQ", AccountInfoRequestTransaction);
 AccountInfoRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: AccountInfoRequestTransaction, /*type: AccountInfoRequest,*/ readMethod: "getMessage", writeMethod: "setMessage"});
+ChildAggregate.add(AccountInfoRequestTransaction, {required: true, order: 30, attributeType: AccountInfoRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

@@ -54,7 +54,7 @@ inherit(BaseOtherInvestmentTransaction, "extends", BaseInvestmentTransaction);
 BaseOtherInvestmentTransaction.prototype.getInvestmentTransaction = function() {
   return this.investmentTransaction;
 };
-ChildAggregate.add({order: 10, owner: BaseOtherInvestmentTransaction, /*type: InvestmentTransaction,*/ readMethod: "getInvestmentTransaction", writeMethod: "setInvestmentTransaction"});
+ChildAggregate.add(BaseOtherInvestmentTransaction, {order: 10, attributeType: InvestmentTransaction, readMethod: "getInvestmentTransaction", writeMethod: "setInvestmentTransaction"});
 
 
 /**

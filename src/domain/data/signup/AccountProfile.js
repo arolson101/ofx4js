@@ -75,7 +75,7 @@ Aggregate.add("ACCTINFO", AccountProfile);
 AccountProfile.prototype.getDescription = function() {
   return this.description;
 };
-Element.add({name: "DESC", order: 0, owner: AccountProfile, /*type: String,*/ readMethod: "getDescription", writeMethod: "setDescription"});
+Element.add(AccountProfile, {name: "DESC", order: 0, attributeType: String, readMethod: "getDescription", writeMethod: "setDescription"});
 
 
 /**
@@ -96,7 +96,7 @@ AccountProfile.prototype.setDescription = function(description) {
 AccountProfile.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE", order: 10, owner: AccountProfile, /*type: String,*/ readMethod: "getPhone", writeMethod: "setPhone"});
+Element.add(AccountProfile, {name: "PHONE", order: 10, attributeType: String, readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**
@@ -157,7 +157,7 @@ AccountProfile.prototype.setSpecifics = function(specifics) {
 AccountProfile.prototype.getBankSpecifics = function() {
   return this.bankSpecifics;
 };
-ChildAggregate.add({order: 20, owner: AccountProfile, /*type: BankAccountInfo,*/ readMethod: "getBankSpecifics", writeMethod: "setBankSpecifics"});
+ChildAggregate.add(AccountProfile, {order: 20, attributeType: BankAccountInfo, readMethod: "getBankSpecifics", writeMethod: "setBankSpecifics"});
 
 
 /**
@@ -180,7 +180,7 @@ AccountProfile.prototype.setBankSpecifics = function(bankSpecifics) {
 AccountProfile.prototype.getCreditCardSpecifics = function() {
   return this.creditCardSpecifics;
 };
-ChildAggregate.add({order: 30, owner: AccountProfile, /*type: CreditCardAccountInfo,*/ readMethod: "getCreditCardSpecifics", writeMethod: "setCreditCardSpecifics"});
+ChildAggregate.add(AccountProfile, {order: 30, attributeType: CreditCardAccountInfo, readMethod: "getCreditCardSpecifics", writeMethod: "setCreditCardSpecifics"});
 
 
 /**
@@ -203,7 +203,7 @@ AccountProfile.prototype.setCreditCardSpecifics = function(creditCardSpecifics) 
 AccountProfile.prototype.getInvestmentSpecifics = function() {
   return this.investSpecifics;
 };
-ChildAggregate.add({order: 40, owner: AccountProfile, /*type: InvestmentAccountInfo,*/ readMethod: "getInvestmentSpecifics", writeMethod: "setInvestmentSpecifics"});
+ChildAggregate.add(AccountProfile, {order: 40, attributeType: InvestmentAccountInfo, readMethod: "getInvestmentSpecifics", writeMethod: "setInvestmentSpecifics"});
 
 
 /**

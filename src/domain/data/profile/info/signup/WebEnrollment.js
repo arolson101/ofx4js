@@ -46,7 +46,7 @@ Aggregate.add("WEBENROLL", WebEnrollment);
 WebEnrollment.prototype.getUrl = function() {
   return this.url;
 };
-Element.add({name: "URL", required: true, order: 0, owner: WebEnrollment, /*type: String,*/ readMethod: "getUrl", writeMethod: "setUrl"});
+Element.add(WebEnrollment, {name: "URL", required: true, order: 0, attributeType: String, readMethod: "getUrl", writeMethod: "setUrl"});
 
 
 WebEnrollment.prototype.setUrl = function(/*String*/ url) {

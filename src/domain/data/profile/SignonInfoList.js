@@ -48,7 +48,7 @@ Aggregate.add("SIGNONINFOLIST", SignonInfoList);
 SignonInfoList.prototype.getInfoList = function() {
   return this.infoList;
 };
-ChildAggregate.add({order: 0, owner: SignonInfoList, /*type: SignonInfo[],*/ readMethod: "getInfoList", writeMethod: "setInfoList"});
+ChildAggregate.add(SignonInfoList, {order: 0, attributeType: Array, collectionEntryType: SignonInfo, readMethod: "getInfoList", writeMethod: "setInfoList"});
 
 
 /**

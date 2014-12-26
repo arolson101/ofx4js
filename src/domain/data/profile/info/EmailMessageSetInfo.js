@@ -43,7 +43,7 @@ Aggregate.add("EMAILMSGSET", EmailMessageSetInfo);
 EmailMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: EmailMessageSetInfo, /*type: EmailV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
+ChildAggregate.add(EmailMessageSetInfo, {order: 0, attributeType: EmailV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 EmailMessageSetInfo.prototype.setVersion1Info = function(/*EmailV1MessageSetInfo*/ version1Info) {

@@ -58,7 +58,7 @@ Aggregate.add("BANKTRANLIST", TransactionList);
 TransactionList.prototype.getStart = function() {
   return this.start;
 };
-Element.add({name: "DTSTART", required: true, order: 0, owner: TransactionList, /*type: Date,*/ readMethod: "getStart", writeMethod: "setStart"});
+Element.add(TransactionList, {name: "DTSTART", required: true, order: 0, attributeType: Date, readMethod: "getStart", writeMethod: "setStart"});
 
 
 /**
@@ -79,7 +79,7 @@ TransactionList.prototype.setStart = function(start) {
 TransactionList.prototype.getEnd = function() {
   return this.end;
 };
-Element.add({name: "DTEND", required: true, order: 10, owner: TransactionList, /*type: Date,*/ readMethod: "getEnd", writeMethod: "setEnd"});
+Element.add(TransactionList, {name: "DTEND", required: true, order: 10, attributeType: Date, readMethod: "getEnd", writeMethod: "setEnd"});
 
 
 /**
@@ -100,7 +100,7 @@ TransactionList.prototype.setEnd = function(end) {
 TransactionList.prototype.getTransactions = function() {
   return this.transactions;
 };
-ChildAggregate.add({order: 20, owner: TransactionList, /*type: Transaction[],*/ readMethod: "getTransactions", writeMethod: "setTransactions"});
+ChildAggregate.add(TransactionList, {order: 20, attributeType: Array, collectionEntryType: Transaction, readMethod: "getTransactions", writeMethod: "setTransactions"});
 
 
 /**

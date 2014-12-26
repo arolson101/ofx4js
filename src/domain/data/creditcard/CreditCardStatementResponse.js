@@ -53,7 +53,7 @@ CreditCardStatementResponse.prototype.getResponseMessageName = function() {
 CreditCardStatementResponse.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name:"CCACCTFROM", order: 10, owner: CreditCardStatementResponse, /*type: CreditCardAccountDetails,*/ readMethod: "getAccount", writeMethod: "setAccount"});
+ChildAggregate.add(CreditCardStatementResponse, {name:"CCACCTFROM", order: 10, attributeType: CreditCardAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**

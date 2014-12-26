@@ -67,7 +67,7 @@ Aggregate.add("OTHERINFO", OtherSecurityInfo);
 OtherSecurityInfo.prototype.getTypeDesc = function() {
   return this.typeDesc;
 };
-Element.add({name: "TYPEDESC", order: 20, owner: OtherSecurityInfo, /*type: String,*/ readMethod: "getTypeDesc", writeMethod: "setTypeDesc"});
+Element.add(OtherSecurityInfo, {name: "TYPEDESC", order: 20, attributeType: String, readMethod: "getTypeDesc", writeMethod: "setTypeDesc"});
 
 
 /**
@@ -89,7 +89,7 @@ OtherSecurityInfo.prototype.setTypeDesc = function(typeDesc) {
 OtherSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 30, owner: OtherSecurityInfo, /*type: String,*/ readMethod: "getAssetClass", writeMethod: "setAssetClass"});
+Element.add(OtherSecurityInfo, {name: "ASSETCLASS", order: 30, attributeType: String, readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -121,7 +121,7 @@ OtherSecurityInfo.prototype.getAssetClassEnum = function() {
 OtherSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 40, owner: OtherSecurityInfo, /*type: String,*/ readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
+Element.add(OtherSecurityInfo, {name: "FIASSETCLASS", order: 40, attributeType: String, readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**

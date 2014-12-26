@@ -53,7 +53,7 @@ BankStatementResponse.prototype.getResponseMessageName = function() {
 BankStatementResponse.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name:"BANKACCTFROM", order: 10, owner: BankStatementResponse, /*type: BankAccountDetails,*/ readMethod: "getAccount", writeMethod: "setAccount"});
+ChildAggregate.add(BankStatementResponse, {name:"BANKACCTFROM", order: 10, attributeType: BankAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**

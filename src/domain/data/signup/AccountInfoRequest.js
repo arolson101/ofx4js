@@ -48,7 +48,7 @@ Aggregate.add("ACCTINFORQ", AccountInfoRequest);
 AccountInfoRequest.prototype.getLastUpdated = function() {
   return this.lastUpdated;
 };
-Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoRequest, /*type: Date,*/ readMethod: "getLastUpdated", writeMethod: "setLastUpdated"});
+Element.add(AccountInfoRequest, {name: "DTACCTUP", required: true, order: 0, attributeType: Date, readMethod: "getLastUpdated", writeMethod: "setLastUpdated"});
 
 
 /**

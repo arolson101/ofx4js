@@ -99,7 +99,7 @@ InvestmentStatementResponse.prototype.getResponseMessageName = function() {
 InvestmentStatementResponse.prototype.getDateOfStatement = function() {
   return this.dateOfStatement;
 };
-Element.add({name: "DTASOF", required: true, order: 60, owner: InvestmentStatementResponse, /*type: Date,*/ readMethod: "getDateOfStatement", writeMethod: "setDateOfStatement"});
+Element.add(InvestmentStatementResponse, {name: "DTASOF", required: true, order: 60, attributeType: Date, readMethod: "getDateOfStatement", writeMethod: "setDateOfStatement"});
 
 
 /**
@@ -121,7 +121,7 @@ InvestmentStatementResponse.prototype.setDateOfStatement = function(dateOfStatem
 InvestmentStatementResponse.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name:"INVACCTFROM", required: true, order: 10, owner: InvestmentStatementResponse, /*type: InvestmentAccountDetails,*/ readMethod: "getAccount", writeMethod: "setAccount"});
+ChildAggregate.add(InvestmentStatementResponse, {name:"INVACCTFROM", required: true, order: 10, attributeType: InvestmentAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -142,7 +142,7 @@ InvestmentStatementResponse.prototype.setAccount = function(account) {
 InvestmentStatementResponse.prototype.getInvestmentTransactionList = function() {
   return this.transactionList;
 };
-ChildAggregate.add({order: 70, owner: InvestmentStatementResponse, /*type: InvestmentTransactionList,*/ readMethod: "getInvestmentTransactionList", writeMethod: "setInvestmentTransactionList"});
+ChildAggregate.add(InvestmentStatementResponse, {order: 70, attributeType: InvestmentTransactionList, readMethod: "getInvestmentTransactionList", writeMethod: "setInvestmentTransactionList"});
 
 
 /**
@@ -163,7 +163,7 @@ InvestmentStatementResponse.prototype.setInvestmentTransactionList = function(tr
 InvestmentStatementResponse.prototype.getPositionList = function() {
   return this.positionList;
 };
-ChildAggregate.add({order: 80, owner: InvestmentStatementResponse, /*type: InvestmentPositionList,*/ readMethod: "getPositionList", writeMethod: "setPositionList"});
+ChildAggregate.add(InvestmentStatementResponse, {order: 80, attributeType: InvestmentPositionList, readMethod: "getPositionList", writeMethod: "setPositionList"});
 
 
 /**
@@ -184,7 +184,7 @@ InvestmentStatementResponse.prototype.setPositionList = function(positionList) {
 InvestmentStatementResponse.prototype.getAccountBalance = function() {
   return this.accountBalance;
 };
-ChildAggregate.add({order: 90, owner: InvestmentStatementResponse, /*type: InvestmentBalance,*/ readMethod: "getAccountBalance", writeMethod: "setAccountBalance"});
+ChildAggregate.add(InvestmentStatementResponse, {order: 90, attributeType: InvestmentBalance, readMethod: "getAccountBalance", writeMethod: "setAccountBalance"});
 
 
 /**

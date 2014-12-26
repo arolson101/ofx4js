@@ -57,7 +57,7 @@ Aggregate.add("PINCHRQ", PasswordChangeRequest);
 PasswordChangeRequest.prototype.getUserId = function() {
   return this.userId;
 };
-Element.add({name: "USERID", required: true, order: 0, owner: PasswordChangeRequest, /*type: String,*/ readMethod: "getUserId", writeMethod: "setUserId"});
+Element.add(PasswordChangeRequest, {name: "USERID", required: true, order: 0, attributeType: String, readMethod: "getUserId", writeMethod: "setUserId"});
 
 
 /**
@@ -78,7 +78,7 @@ PasswordChangeRequest.prototype.setUserId = function(userId) {
 PasswordChangeRequest.prototype.getNewPassword = function() {
   return this.newPassword;
 };
-Element.add({name: "NEWUSERPASS", required: true, order: 10, owner: PasswordChangeRequest, /*type: String,*/ readMethod: "getNewPassword", writeMethod: "setNewPassword"});
+Element.add(PasswordChangeRequest, {name: "NEWUSERPASS", required: true, order: 10, attributeType: String, readMethod: "getNewPassword", writeMethod: "setNewPassword"});
 
 
 /**

@@ -45,7 +45,7 @@ Aggregate.add("BALLIST", BalanceList);
 BalanceList.prototype.getBalanceRecords = function() {
   return this.balanceRecords;
 };
-ChildAggregate.add({order: 10, owner: BalanceList, /*type: BalanceRecord[],*/ readMethod: "getBalanceRecords", writeMethod: "setBalanceRecords"});
+ChildAggregate.add(BalanceList, {order: 10, attributeType: Array, collectionEntryType: BalanceRecord, readMethod: "getBalanceRecords", writeMethod: "setBalanceRecords"});
 
 
 /**

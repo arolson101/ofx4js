@@ -55,7 +55,7 @@ Aggregate.add("SECRQ", SecurityRequest);
 SecurityRequest.prototype.getSecurityId = function() {
   return this.securityId;
 };
-Element.add({name: "SECID", order: 10, owner: SecurityRequest, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
+Element.add(SecurityRequest, {name: "SECID", order: 10, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 SecurityRequest.prototype.setSecurityId = function(/*SecurityId*/ securityId) {
@@ -68,7 +68,7 @@ SecurityRequest.prototype.setSecurityId = function(/*SecurityId*/ securityId) {
 SecurityRequest.prototype.getTickerSymbol = function() {
   return this.tickerSymbol;
 };
-Element.add({name: "TICKER", order: 20, owner: SecurityRequest, /*type: String,*/ readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
+Element.add(SecurityRequest, {name: "TICKER", order: 20, attributeType: String, readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
 
 
 SecurityRequest.prototype.setTickerSymbol = function(/*String*/ tickerSymbol) {
@@ -81,7 +81,7 @@ SecurityRequest.prototype.setTickerSymbol = function(/*String*/ tickerSymbol) {
 SecurityRequest.prototype.getFiId = function() {
   return this.fiId;
 };
-Element.add({name: "FIID", order: 30, owner: SecurityRequest, /*type: String,*/ readMethod: "getFiId", writeMethod: "setFiId"});
+Element.add(SecurityRequest, {name: "FIID", order: 30, attributeType: String, readMethod: "getFiId", writeMethod: "setFiId"});
 
 
 SecurityRequest.prototype.setFiId = function(/*String*/ fiId) {

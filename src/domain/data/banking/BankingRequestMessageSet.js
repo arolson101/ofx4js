@@ -54,7 +54,7 @@ BankingRequestMessageSet.prototype.getType = function() {
 BankingRequestMessageSet.prototype.getStatementRequest = function() {
   return this.statementRequest;
 };
-ChildAggregate.add({order: 0, owner: BankingRequestMessageSet, /*type: BankStatementRequestTransaction,*/ readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
+ChildAggregate.add(BankingRequestMessageSet, {order: 0, attributeType: BankStatementRequestTransaction, readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
 
 
 /**

@@ -64,7 +64,7 @@ Aggregate.add("BUYMF", BuyMutualFundTransaction);
 BuyMutualFundTransaction.prototype.getBuyType = function() {
   return this.buyType;
 };
-Element.add({name: "BUYTYPE", required: true, order: 20, owner: BuyMutualFundTransaction, /*type: String,*/ readMethod: "getBuyType", writeMethod: "setBuyType"});
+Element.add(BuyMutualFundTransaction, {name: "BUYTYPE", required: true, order: 20, attributeType: String, readMethod: "getBuyType", writeMethod: "setBuyType"});
 
 
 /**
@@ -99,7 +99,7 @@ BuyMutualFundTransaction.prototype.getBuyTypeEnum = function() {
 BuyMutualFundTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 30, owner: BuyMutualFundTransaction, /*type: String,*/ readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
+Element.add(BuyMutualFundTransaction, {name: "RELFITID", order: 30, attributeType: String, readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**

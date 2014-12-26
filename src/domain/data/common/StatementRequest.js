@@ -48,7 +48,7 @@ Aggregate.add("STMTRQ", StatementRequest);
 StatementRequest.prototype.getStatementRange = function() {
   return this.statementRange;
 };
-ChildAggregate.add({name: "INCTRAN", required: false, order: 10, owner: StatementRequest, /*type: StatementRange,*/ readMethod: "getStatementRange", writeMethod: "setStatementRange"});
+ChildAggregate.add(StatementRequest, {name: "INCTRAN", required: false, order: 10, attributeType: StatementRange, readMethod: "getStatementRange", writeMethod: "setStatementRange"});
 
 
 /**

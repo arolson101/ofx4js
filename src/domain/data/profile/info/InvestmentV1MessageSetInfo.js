@@ -93,7 +93,7 @@ InvestmentV1MessageSetInfo.prototype.getMessageSetType = function() {
 InvestmentV1MessageSetInfo.prototype.getSupportsStatementsDownload = function() {
   return this.supportsStatementsDownload;
 };
-Element.add({name: "TRANDNLD", required:true, order: 10, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsStatementsDownload", writeMethod: "setSupportsStatementsDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "TRANDNLD", required:true, order: 10, attributeType: bool, readMethod: "getSupportsStatementsDownload", writeMethod: "setSupportsStatementsDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsStatementsDownload = function(/*Boolean*/ supportsStatementsDownload) {
@@ -104,7 +104,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsStatementsDownload = function(/*
 InvestmentV1MessageSetInfo.prototype.getSupportsOpenOrdersDownload = function() {
   return this.supportsOpenOrdersDownload;
 };
-Element.add({name: "OODNLD", required:true, order: 20, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsOpenOrdersDownload", writeMethod: "setSupportsOpenOrdersDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "OODNLD", required:true, order: 20, attributeType: bool, readMethod: "getSupportsOpenOrdersDownload", writeMethod: "setSupportsOpenOrdersDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsOpenOrdersDownload = function(/*Boolean*/ supportsOpenOrdersDownload) {
@@ -115,7 +115,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsOpenOrdersDownload = function(/*
 InvestmentV1MessageSetInfo.prototype.getSupportsPositionsDownload = function() {
   return this.supportsPositionsDownload;
 };
-Element.add({name: "POSDNLD", required:true, order: 30, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsPositionsDownload", writeMethod: "setSupportsPositionsDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "POSDNLD", required:true, order: 30, attributeType: bool, readMethod: "getSupportsPositionsDownload", writeMethod: "setSupportsPositionsDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsPositionsDownload = function(/*Boolean*/ supportsPositionsDownload) {
@@ -126,7 +126,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsPositionsDownload = function(/*B
 InvestmentV1MessageSetInfo.prototype.getSupportsBalanceDownload = function() {
   return this.supportsBalanceDownload;
 };
-Element.add({name: "BALDNLD", required:true, order: 40, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsBalanceDownload", writeMethod: "setSupportsBalanceDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "BALDNLD", required:true, order: 40, attributeType: bool, readMethod: "getSupportsBalanceDownload", writeMethod: "setSupportsBalanceDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsBalanceDownload = function(/*Boolean*/ supportsBalanceDownload) {
@@ -137,7 +137,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsBalanceDownload = function(/*Boo
 InvestmentV1MessageSetInfo.prototype.getSupportsEmail = function() {
   return this.supportsEmail;
 };
-Element.add({name: "CANEMAIL", required:true, order: 50, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsEmail", writeMethod: "setSupportsEmail"});
+Element.add(InvestmentV1MessageSetInfo, {name: "CANEMAIL", required:true, order: 50, attributeType: bool, readMethod: "getSupportsEmail", writeMethod: "setSupportsEmail"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsEmail = function(/*Boolean*/ supportsEmail) {
@@ -148,7 +148,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsEmail = function(/*Boolean*/ sup
 InvestmentV1MessageSetInfo.prototype.getSupports401kInformation = function() {
   return this.supports401kInformation;
 };
-Element.add({name: "INV401KDNLD", order: 60, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupports401kInformation", writeMethod: "setSupports401kInformation"});
+Element.add(InvestmentV1MessageSetInfo, {name: "INV401KDNLD", order: 60, attributeType: bool, readMethod: "getSupports401kInformation", writeMethod: "setSupports401kInformation"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupports401kInformation = function(/*Boolean*/ supports401kInformation) {
@@ -159,7 +159,7 @@ InvestmentV1MessageSetInfo.prototype.setSupports401kInformation = function(/*Boo
 InvestmentV1MessageSetInfo.prototype.getSupportsClosingStatements = function() {
   return this.supportsClosingStatements;
 };
-Element.add({name: "CLOSINGAVAIL", order: 70, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsClosingStatements", writeMethod: "setSupportsClosingStatements"});
+Element.add(InvestmentV1MessageSetInfo, {name: "CLOSINGAVAIL", order: 70, attributeType: bool, readMethod: "getSupportsClosingStatements", writeMethod: "setSupportsClosingStatements"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsClosingStatements = function(/*Boolean*/ supportsClosingStatements) {

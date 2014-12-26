@@ -57,7 +57,7 @@ inherit(BaseBuyInvestmentTransaction, "implements", TransactionWithSecurity);
 BaseBuyInvestmentTransaction.prototype.getBuyInvestment = function() {
   return this.buyInvestment;
 };
-ChildAggregate.add({order: 10, owner: BaseBuyInvestmentTransaction, /*type: BuyInvestmentTransaction,*/ readMethod: "getBuyInvestment", writeMethod: "setBuyInvestment"});
+ChildAggregate.add(BaseBuyInvestmentTransaction, {order: 10, attributeType: BuyInvestmentTransaction, readMethod: "getBuyInvestment", writeMethod: "setBuyInvestment"});
 
 
 /**

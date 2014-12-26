@@ -83,7 +83,7 @@ Aggregate.add("INVTRAN", InvestmentTransaction);
 InvestmentTransaction.prototype.getTransactionId = function() {
   return this.transactionId;
 };
-Element.add({name: "FITID", required: true, order: 0, owner: InvestmentTransaction, /*type: String,*/ readMethod: "getTransactionId", writeMethod: "setTransactionId"});
+Element.add(InvestmentTransaction, {name: "FITID", required: true, order: 0, attributeType: String, readMethod: "getTransactionId", writeMethod: "setTransactionId"});
 
 
 /**
@@ -108,7 +108,7 @@ InvestmentTransaction.prototype.setTransactionId = function(transactionId) {
 InvestmentTransaction.prototype.getServerId = function() {
   return this.serverId;
 };
-Element.add({name: "SRVRTID", order: 10, owner: InvestmentTransaction, /*type: String,*/ readMethod: "getServerId", writeMethod: "setServerId"});
+Element.add(InvestmentTransaction, {name: "SRVRTID", order: 10, attributeType: String, readMethod: "getServerId", writeMethod: "setServerId"});
 
 
 /**
@@ -133,7 +133,7 @@ InvestmentTransaction.prototype.setServerId = function(serverId) {
 InvestmentTransaction.prototype.getTradeDate = function() {
   return this.tradeDate;
 };
-Element.add({name: "DTTRADE", required: true, order: 20, owner: InvestmentTransaction, /*type: Date,*/ readMethod: "getTradeDate", writeMethod: "setTradeDate"});
+Element.add(InvestmentTransaction, {name: "DTTRADE", required: true, order: 20, attributeType: Date, readMethod: "getTradeDate", writeMethod: "setTradeDate"});
 
 
 /**
@@ -158,7 +158,7 @@ InvestmentTransaction.prototype.setTradeDate = function(tradeDate) {
 InvestmentTransaction.prototype.getSettlementDate = function() {
   return this.settlementDate;
 };
-Element.add({name: "DTSETTLE", order: 30, owner: InvestmentTransaction, /*type: Date,*/ readMethod: "getSettlementDate", writeMethod: "setSettlementDate"});
+Element.add(InvestmentTransaction, {name: "DTSETTLE", order: 30, attributeType: Date, readMethod: "getSettlementDate", writeMethod: "setSettlementDate"});
 
 
 /**
@@ -183,7 +183,7 @@ InvestmentTransaction.prototype.setSettlementDate = function(settlementDate) {
 InvestmentTransaction.prototype.getReversalTransactionId = function() {
   return this.reversalTransactionId;
 };
-Element.add({name: "REVERSALFITID", order: 40, owner: InvestmentTransaction, /*type: String,*/ readMethod: "getReversalTransactionId", writeMethod: "setReversalTransactionId"});
+Element.add(InvestmentTransaction, {name: "REVERSALFITID", order: 40, attributeType: String, readMethod: "getReversalTransactionId", writeMethod: "setReversalTransactionId"});
 
 
 /**
@@ -208,7 +208,7 @@ InvestmentTransaction.prototype.setReversalTransactionId = function(reversalTran
 InvestmentTransaction.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 50, owner: InvestmentTransaction, /*type: String,*/ readMethod: "getMemo", writeMethod: "setMemo"});
+Element.add(InvestmentTransaction, {name: "MEMO", order: 50, attributeType: String, readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**

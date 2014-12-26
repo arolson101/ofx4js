@@ -106,7 +106,7 @@ Aggregate.add("SECINFO", SecurityInfo);
 SecurityInfo.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 10, owner: SecurityInfo, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
+ChildAggregate.add(SecurityInfo, {required: true, order: 10, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -128,7 +128,7 @@ SecurityInfo.prototype.setSecurityId = function(securityId) {
 SecurityInfo.prototype.getSecurityName = function() {
   return this.securityName;
 };
-Element.add({name: "SECNAME", required: true, order: 20, owner: SecurityInfo, /*type: String,*/ readMethod: "getSecurityName", writeMethod: "setSecurityName"});
+Element.add(SecurityInfo, {name: "SECNAME", required: true, order: 20, attributeType: String, readMethod: "getSecurityName", writeMethod: "setSecurityName"});
 
 
 /**
@@ -149,7 +149,7 @@ SecurityInfo.prototype.setSecurityName = function(securityName) {
 SecurityInfo.prototype.getTickerSymbol = function() {
   return this.tickerSymbol;
 };
-Element.add({name: "TICKER", order: 30, owner: SecurityInfo, /*type: String,*/ readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
+Element.add(SecurityInfo, {name: "TICKER", order: 30, attributeType: String, readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
 
 
 /**
@@ -170,7 +170,7 @@ SecurityInfo.prototype.setTickerSymbol = function(tickerSymbol) {
 SecurityInfo.prototype.getFiId = function() {
   return this.fiId;
 };
-Element.add({name: "FIID", order: 40, owner: SecurityInfo, /*type: String,*/ readMethod: "getFiId", writeMethod: "setFiId"});
+Element.add(SecurityInfo, {name: "FIID", order: 40, attributeType: String, readMethod: "getFiId", writeMethod: "setFiId"});
 
 
 /**
@@ -191,7 +191,7 @@ SecurityInfo.prototype.setFiId = function(fiId) {
 SecurityInfo.prototype.getRating = function() {
   return this.rating;
 };
-Element.add({name: "RATING", order: 50, owner: SecurityInfo, /*type: String,*/ readMethod: "getRating", writeMethod: "setRating"});
+Element.add(SecurityInfo, {name: "RATING", order: 50, attributeType: String, readMethod: "getRating", writeMethod: "setRating"});
 
 
 /**
@@ -215,7 +215,7 @@ SecurityInfo.prototype.setRating = function(rating) {
 SecurityInfo.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", order: 60, owner: SecurityInfo, /*type: Double,*/ readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(SecurityInfo, {name: "UNITPRICE", order: 60, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -239,7 +239,7 @@ SecurityInfo.prototype.setUnitPrice = function(unitPrice) {
 SecurityInfo.prototype.getUnitPriceAsOfDate = function() {
   return this.marketValueDate;
 };
-Element.add({name: "DTASOF", order: 70, owner: SecurityInfo, /*type: Date,*/ readMethod: "getUnitPriceAsOfDate", writeMethod: "setUnitPriceAsOfDate"});
+Element.add(SecurityInfo, {name: "DTASOF", order: 70, attributeType: Date, readMethod: "getUnitPriceAsOfDate", writeMethod: "setUnitPriceAsOfDate"});
 
 
 /**
@@ -261,7 +261,7 @@ SecurityInfo.prototype.setUnitPriceAsOfDate = function(/*Date*/ marketValueDate)
 SecurityInfo.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: SecurityInfo, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
+Element.add(SecurityInfo, {name: "CURRENCY", order: 80, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -284,7 +284,7 @@ SecurityInfo.prototype.setCurrencyCode = function(currencyCode) {
 SecurityInfo.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 90, owner: SecurityInfo, /*type: String,*/ readMethod: "getMemo", writeMethod: "setMemo"});
+Element.add(SecurityInfo, {name: "MEMO", order: 90, attributeType: String, readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**

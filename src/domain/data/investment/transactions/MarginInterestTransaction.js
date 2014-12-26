@@ -77,7 +77,7 @@ Aggregate.add("MARGININTEREST", MarginInterestTransaction);
 MarginInterestTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 30, owner: MarginInterestTransaction, /*type: String,*/ readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
+Element.add(MarginInterestTransaction, {name: "SUBACCTFUND", order: 30, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -111,7 +111,7 @@ MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
 MarginInterestTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", order: 40, owner: MarginInterestTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(MarginInterestTransaction, {name: "TOTAL", order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -135,7 +135,7 @@ MarginInterestTransaction.prototype.setTotal = function(total) {
 MarginInterestTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 110, owner: MarginInterestTransaction, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
+Element.add(MarginInterestTransaction, {name: "CURRENCY", order: 110, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -160,7 +160,7 @@ MarginInterestTransaction.prototype.setCurrencyCode = function(currencyCode) {
 MarginInterestTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 120, owner: MarginInterestTransaction, /*type: OriginalCurrency,*/ readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
+Element.add(MarginInterestTransaction, {name: "ORIGCURRENCY", order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**

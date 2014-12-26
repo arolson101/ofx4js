@@ -64,7 +64,7 @@ SignonRequestMessageSet.prototype.getType = function() {
 SignonRequestMessageSet.prototype.getSignonRequest = function() {
   return this.signonRequest;
 };
-ChildAggregate.add({required: true, order: 0, owner: SignonRequestMessageSet, /*type: SignonRequest,*/ readMethod: "getSignonRequest", writeMethod: "setSignonRequest"});
+ChildAggregate.add(SignonRequestMessageSet, {required: true, order: 0, attributeType: SignonRequest, readMethod: "getSignonRequest", writeMethod: "setSignonRequest"});
 
 
 /**
@@ -85,7 +85,7 @@ SignonRequestMessageSet.prototype.setSignonRequest = function(signonRequest) {
 SignonRequestMessageSet.prototype.getPasswordChangeRequest = function() {
   return this.passwordChangeRequest;
 };
-ChildAggregate.add({order: 10, owner: SignonRequestMessageSet, /*type: PasswordChangeRequestTransaction,*/ readMethod: "getPasswordChangeRequest", writeMethod: "setPasswordChangeRequest"});
+ChildAggregate.add(SignonRequestMessageSet, {order: 10, attributeType: PasswordChangeRequestTransaction, readMethod: "getPasswordChangeRequest", writeMethod: "setPasswordChangeRequest"});
 
 
 /**

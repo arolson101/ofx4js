@@ -55,7 +55,7 @@ function TransactionWrappedResponseMessage(/*M*/) {
   c.prototype.getUID = function() {
     return this.UID;
   };
-  Element.add({name: "TRNUID", required: true, order: 0, owner: c, /*type: String,*/ readMethod: "getUID", writeMethod: "setUID"});
+  Element.add(c, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
 
   /**
    * UID of this transaction.
@@ -74,7 +74,7 @@ function TransactionWrappedResponseMessage(/*M*/) {
   c.prototype.getClientCookie = function() {
     return this.clientCookie;
   };
-  Element.add({name: "CLTCOOKIE", order: 20, owner: c, /*type: String,*/ readMethod: "getClientCookie", writeMethod: "setClientCookie"});
+  Element.add(c, {name: "CLTCOOKIE", order: 20, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
 
   /**
    * Client cookie (echoed back by the response).
@@ -111,7 +111,7 @@ function TransactionWrappedResponseMessage(/*M*/) {
   c.prototype.getStatus = function() {
     return this.status;
   };
-  ChildAggregate.add({required: true, order: 10, owner: c, /*type: Status,*/ readMethod: "getStatus", writeMethod: "setStatus"});
+  ChildAggregate.add(c, {required: true, order: 10, attributeType: Status, readMethod: "getStatus", writeMethod: "setStatus"});
 
   /**
    * Status of the transaction.

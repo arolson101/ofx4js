@@ -58,7 +58,7 @@ Aggregate.add("PINCHRQ", PasswordChangeResponse);
 PasswordChangeResponse.prototype.getUserId = function() {
   return this.userId;
 };
-Element.add({name: "USERID", required: true, order: 0, owner: PasswordChangeResponse, /*type: String,*/ readMethod: "getUserId", writeMethod: "setUserId"});
+Element.add(PasswordChangeResponse, {name: "USERID", required: true, order: 0, attributeType: String, readMethod: "getUserId", writeMethod: "setUserId"});
 
 
 // Inherited.
@@ -85,7 +85,7 @@ PasswordChangeResponse.prototype.setUserId = function(userId) {
 PasswordChangeResponse.prototype.getChangeTimestamp = function() {
   return this.changeTimestamp;
 };
-Element.add({name: "DTCHANGED", order: 10, owner: PasswordChangeResponse, /*type: Date,*/ readMethod: "getChangeTimestamp", writeMethod: "setChangeTimestamp"});
+Element.add(PasswordChangeResponse, {name: "DTCHANGED", order: 10, attributeType: Date, readMethod: "getChangeTimestamp", writeMethod: "setChangeTimestamp"});
 
 
 /**

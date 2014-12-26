@@ -117,7 +117,7 @@ Aggregate.add("TRANSFER", TransferInvestmentTransaction);
 TransferInvestmentTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: TransferInvestmentTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
+ChildAggregate.add(TransferInvestmentTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -141,7 +141,7 @@ TransferInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 TransferInvestmentTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 30, owner: TransferInvestmentTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
+Element.add(TransferInvestmentTransaction, {name: "SUBACCTSEC", order: 30, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -177,7 +177,7 @@ TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 TransferInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 40, owner: TransferInvestmentTransaction, /*type: Double,*/ readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(TransferInvestmentTransaction, {name: "UNITS", required: true, order: 40, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -203,7 +203,7 @@ TransferInvestmentTransaction.prototype.setUnits = function(units) {
 TransferInvestmentTransaction.prototype.getTransferAction = function() {
   return this.transferAction;
 };
-Element.add({name: "TFERACTION", required: true, order: 50, owner: TransferInvestmentTransaction, /*type: String,*/ readMethod: "getTransferAction", writeMethod: "setTransferAction"});
+Element.add(TransferInvestmentTransaction, {name: "TFERACTION", required: true, order: 50, attributeType: String, readMethod: "getTransferAction", writeMethod: "setTransferAction"});
 
 
 /**
@@ -236,7 +236,7 @@ TransferInvestmentTransaction.prototype.getTransferActionEnum = function() {
 TransferInvestmentTransaction.prototype.getPositionType = function() {
   return this.positionType;
 };
-Element.add({name: "POSTYPE", required: true, order: 60, owner: TransferInvestmentTransaction, /*type: String,*/ readMethod: "getPositionType", writeMethod: "setPositionType"});
+Element.add(TransferInvestmentTransaction, {name: "POSTYPE", required: true, order: 60, attributeType: String, readMethod: "getPositionType", writeMethod: "setPositionType"});
 
 
 /**
@@ -269,7 +269,7 @@ TransferInvestmentTransaction.prototype.getPositionTypeEnum = function() {
 TransferInvestmentTransaction.prototype.getAverageCostBasis = function() {
   return this.averageCostBasis;
 };
-Element.add({name: "AVGCOSTBASIS", order: 70, owner: TransferInvestmentTransaction, /*type: Double,*/ readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
+Element.add(TransferInvestmentTransaction, {name: "AVGCOSTBASIS", order: 70, attributeType: Double, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
 
 
 /**
@@ -294,7 +294,7 @@ TransferInvestmentTransaction.prototype.setAverageCostBasis = function(averageCo
 TransferInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 80, owner: TransferInvestmentTransaction, /*type: Double,*/ readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(TransferInvestmentTransaction, {name: "UNITPRICE", required: true, order: 80, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -319,7 +319,7 @@ TransferInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 TransferInvestmentTransaction.prototype.getPurchaseDate = function() {
   return this.purchaseDate;
 };
-Element.add({name: "DTPURCHASE", order: 90, owner: TransferInvestmentTransaction, /*type: Date,*/ readMethod: "getPurchaseDate", writeMethod: "setPurchaseDate"});
+Element.add(TransferInvestmentTransaction, {name: "DTPURCHASE", order: 90, attributeType: Date, readMethod: "getPurchaseDate", writeMethod: "setPurchaseDate"});
 
 
 /**
@@ -344,7 +344,7 @@ TransferInvestmentTransaction.prototype.setPurchaseDate = function(purchaseDate)
 TransferInvestmentTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 100, owner: TransferInvestmentTransaction, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
+Element.add(TransferInvestmentTransaction, {name: "INV401KSOURCE", order: 100, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

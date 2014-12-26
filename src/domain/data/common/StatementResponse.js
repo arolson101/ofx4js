@@ -79,7 +79,7 @@ inherit(StatementResponse, "implements", AccountStatement);
 StatementResponse.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURDEF", required: true, order: 0, owner: StatementResponse, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
+Element.add(StatementResponse, {name: "CURDEF", required: true, order: 0, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -100,7 +100,7 @@ StatementResponse.prototype.setCurrencyCode = function(currencyCode) {
 StatementResponse.prototype.getTransactionList = function() {
   return this.transactionList;
 };
-ChildAggregate.add({order: 20, owner: StatementResponse, /*type: TransactionList,*/ readMethod: "getTransactionList", writeMethod: "setTransactionList"});
+ChildAggregate.add(StatementResponse, {order: 20, attributeType: TransactionList, readMethod: "getTransactionList", writeMethod: "setTransactionList"});
 
 
 /**
@@ -121,7 +121,7 @@ StatementResponse.prototype.setTransactionList = function(transactionList) {
 StatementResponse.prototype.getLedgerBalance = function() {
   return this.ledgerBalance;
 };
-ChildAggregate.add({name: "LEDGERBAL", order: 30, owner: StatementResponse, /*type: BalanceInfo,*/ readMethod: "getLedgerBalance", writeMethod: "setLedgerBalance"});
+ChildAggregate.add(StatementResponse, {name: "LEDGERBAL", order: 30, attributeType: BalanceInfo, readMethod: "getLedgerBalance", writeMethod: "setLedgerBalance"});
 
 
 /**
@@ -142,7 +142,7 @@ StatementResponse.prototype.setLedgerBalance = function(ledgerBalance) {
 StatementResponse.prototype.getAvailableBalance = function() {
   return this.availableBalance;
 };
-ChildAggregate.add({name: "AVAILBAL", order: 40, owner: StatementResponse, /*type: BalanceInfo,*/ readMethod: "getAvailableBalance", writeMethod: "setAvailableBalance"});
+ChildAggregate.add(StatementResponse, {name: "AVAILBAL", order: 40, attributeType: BalanceInfo, readMethod: "getAvailableBalance", writeMethod: "setAvailableBalance"});
 
 
 /**
@@ -163,7 +163,7 @@ StatementResponse.prototype.setAvailableBalance = function(availableBalance) {
 StatementResponse.prototype.getMarketingInfo = function() {
   return this.marketingInfo;
 };
-Element.add({name: "MKTGINFO", order: 50, owner: StatementResponse, /*type: String,*/ readMethod: "getMarketingInfo", writeMethod: "setMarketingInfo"});
+Element.add(StatementResponse, {name: "MKTGINFO", order: 50, attributeType: String, readMethod: "getMarketingInfo", writeMethod: "setMarketingInfo"});
 
 
 /**

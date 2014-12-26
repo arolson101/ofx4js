@@ -75,7 +75,7 @@ Aggregate.add("STPCHKPROF", StopCheckProfile);
 StopCheckProfile.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 0, owner: StopCheckProfile, /*type: ProcessorDayOff[],*/ readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
+Element.add(StopCheckProfile, {name: "PROCDAYSOFF", order: 0, attributeType: Array, collectionEntryType: ProcessorDayOff, readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -94,7 +94,7 @@ StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ 
 StopCheckProfile.prototype.getProcessEndTime = function() {
   return this.processEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 10, owner: StopCheckProfile, /*type: String,*/ readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
+Element.add(StopCheckProfile, {name: "PROCENDTM", required: true, order: 10, attributeType: String, readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
 
 
 /**
@@ -114,7 +114,7 @@ StopCheckProfile.prototype.setProcessEndTime = function(processEndTime) {
 StopCheckProfile.prototype.getCanUseRange = function() {
   return this.canUseRange;
 };
-Element.add({name: "CANUSERANGE", required: true, order: 20, owner: StopCheckProfile, /*type: Boolean,*/ readMethod: "getCanUseRange", writeMethod: "setCanUseRange"});
+Element.add(StopCheckProfile, {name: "CANUSERANGE", required: true, order: 20, attributeType: bool, readMethod: "getCanUseRange", writeMethod: "setCanUseRange"});
 
 
 StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
@@ -125,7 +125,7 @@ StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
 StopCheckProfile.prototype.getCanUseDescription = function() {
   return this.canUseDescription;
 };
-Element.add({name: "CANUSEDESC", required: true, order: 30, owner: StopCheckProfile, /*type: Boolean,*/ readMethod: "getCanUseDescription", writeMethod: "setCanUseDescription"});
+Element.add(StopCheckProfile, {name: "CANUSEDESC", required: true, order: 30, attributeType: bool, readMethod: "getCanUseDescription", writeMethod: "setCanUseDescription"});
 
 
 StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDescription) {
@@ -136,7 +136,7 @@ StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDes
 StopCheckProfile.prototype.getStopCheckFee = function() {
   return this.stopCheckFee;
 };
-Element.add({name: "STPCHKFEE", required: true, order: 40, owner: StopCheckProfile, /*type: Double,*/ readMethod: "getStopCheckFee", writeMethod: "setStopCheckFee"});
+Element.add(StopCheckProfile, {name: "STPCHKFEE", required: true, order: 40, attributeType: Double, readMethod: "getStopCheckFee", writeMethod: "setStopCheckFee"});
 
 
 StopCheckProfile.prototype.setStopCheckFee = function(/*Double*/ stopCheckFee) {

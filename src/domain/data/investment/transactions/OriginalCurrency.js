@@ -57,7 +57,7 @@ Aggregate.add("ORIGCURRENCY", OriginalCurrency);
 OriginalCurrency.prototype.getCurrencyRate = function() {
   return this.currencyRate;
 };
-Element.add({name: "CURRATE", required: true, order: 10, owner: OriginalCurrency, /*type: double,*/ readMethod: "getCurrencyRate", writeMethod: "setCurrencyRate"});
+Element.add(OriginalCurrency, {name: "CURRATE", required: true, order: 10, attributeType: double, readMethod: "getCurrencyRate", writeMethod: "setCurrencyRate"});
 
 
 /**
@@ -80,7 +80,7 @@ OriginalCurrency.prototype.setCurrencyRate = function(currencyRate) {
 OriginalCurrency.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURSYM", required: true, order: 20, owner: OriginalCurrency, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
+Element.add(OriginalCurrency, {name: "CURSYM", required: true, order: 20, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**

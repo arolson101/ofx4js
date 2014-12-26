@@ -56,7 +56,7 @@ Aggregate.add("SELLSTOCK", SellStockTransaction);
 SellStockTransaction.prototype.getSellType = function() {
   return this.sellType;
 };
-Element.add({name: "SELLTYPE", required: true, order: 20, owner: SellStockTransaction, /*type: String,*/ readMethod: "getSellType", writeMethod: "setSellType"});
+Element.add(SellStockTransaction, {name: "SELLTYPE", required: true, order: 20, attributeType: String, readMethod: "getSellType", writeMethod: "setSellType"});
 
 
 /**

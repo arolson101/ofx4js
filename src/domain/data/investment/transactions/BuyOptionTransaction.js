@@ -64,7 +64,7 @@ Aggregate.add("BUYOPT", BuyOptionTransaction);
 BuyOptionTransaction.prototype.getOptionBuyType = function() {
   return this.optionBuyType;
 };
-Element.add({name: "OPTBUYTYPE", required: true, order: 20, owner: BuyOptionTransaction, /*type: String,*/ readMethod: "getOptionBuyType", writeMethod: "setOptionBuyType"});
+Element.add(BuyOptionTransaction, {name: "OPTBUYTYPE", required: true, order: 20, attributeType: String, readMethod: "getOptionBuyType", writeMethod: "setOptionBuyType"});
 
 
 /**
@@ -98,7 +98,7 @@ BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
 BuyOptionTransaction.prototype.getSharesPerContract = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", required: true, order: 30, owner: BuyOptionTransaction, /*type: Integer,*/ readMethod: "getSharesPerContract", writeMethod: "setSharesPerContract"});
+Element.add(BuyOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Integer, readMethod: "getSharesPerContract", writeMethod: "setSharesPerContract"});
 
 
 /**

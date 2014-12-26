@@ -83,7 +83,7 @@ Aggregate.add("JRNLSEC", JournalSecurityTransaction);
 JournalSecurityTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: JournalSecurityTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
+ChildAggregate.add(JournalSecurityTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -107,7 +107,7 @@ JournalSecurityTransaction.prototype.setSecurityId = function(securityId) {
 JournalSecurityTransaction.prototype.getFromSubAccountFund = function() {
   return this.subAccountFrom;
 };
-Element.add({name: "SUBACCTFROM", order: 30, owner: JournalSecurityTransaction, /*type: String,*/ readMethod: "getFromSubAccountFund", writeMethod: "setFromSubAccountFund"});
+Element.add(JournalSecurityTransaction, {name: "SUBACCTFROM", order: 30, attributeType: String, readMethod: "getFromSubAccountFund", writeMethod: "setFromSubAccountFund"});
 
 
 /**
@@ -140,7 +140,7 @@ JournalSecurityTransaction.prototype.getFromSubAccountFundEnum = function() {
 JournalSecurityTransaction.prototype.getToSubAccountFund = function() {
   return this.subAccountTo;
 };
-Element.add({name: "SUBACCTTO", order: 40, owner: JournalSecurityTransaction, /*type: String,*/ readMethod: "getToSubAccountFund", writeMethod: "setToSubAccountFund"});
+Element.add(JournalSecurityTransaction, {name: "SUBACCTTO", order: 40, attributeType: String, readMethod: "getToSubAccountFund", writeMethod: "setToSubAccountFund"});
 
 
 /**
@@ -173,7 +173,7 @@ JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
 JournalSecurityTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", order: 50, owner: JournalSecurityTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(JournalSecurityTransaction, {name: "TOTAL", order: 50, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

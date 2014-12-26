@@ -156,7 +156,7 @@ Aggregate.add("SONRQ", SignonRequest);
 SignonRequest.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTCLIENT", required: true, order: 0, owner: SignonRequest, /*type: Date,*/ readMethod: "getTimestamp", writeMethod: "setTimestamp"});
+Element.add(SignonRequest, {name: "DTCLIENT", required: true, order: 0, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -177,7 +177,7 @@ SignonRequest.prototype.setTimestamp = function(timestamp) {
 SignonRequest.prototype.getUserId = function() {
   return this.userId;
 };
-Element.add({name: "USERID", order: 10, owner: SignonRequest, /*type: String,*/ readMethod: "getUserId", writeMethod: "setUserId"});
+Element.add(SignonRequest, {name: "USERID", order: 10, attributeType: String, readMethod: "getUserId", writeMethod: "setUserId"});
 
 
 /**
@@ -198,7 +198,7 @@ SignonRequest.prototype.setUserId = function(userId) {
 SignonRequest.prototype.getPassword = function() {
   return this.password;
 };
-Element.add({name: "USERPASS", order: 20, owner: SignonRequest, /*type: String,*/ readMethod: "getPassword", writeMethod: "setPassword"});
+Element.add(SignonRequest, {name: "USERPASS", order: 20, attributeType: String, readMethod: "getPassword", writeMethod: "setPassword"});
 
 
 /**
@@ -219,7 +219,7 @@ SignonRequest.prototype.setPassword = function(password) {
 SignonRequest.prototype.getUserKey = function() {
   return this.userKey;
 };
-Element.add({name: "USERKEY", order: 30, owner: SignonRequest, /*type: String,*/ readMethod: "getUserKey", writeMethod: "setUserKey"});
+Element.add(SignonRequest, {name: "USERKEY", order: 30, attributeType: String, readMethod: "getUserKey", writeMethod: "setUserKey"});
 
 
 /**
@@ -240,7 +240,7 @@ SignonRequest.prototype.setUserKey = function(userKey) {
 SignonRequest.prototype.getGenerateUserKey = function() {
   return this.generateUserKey;
 };
-Element.add({name: "GENUSERKEY", order: 40, owner: SignonRequest, /*type: Boolean,*/ readMethod: "getGenerateUserKey", writeMethod: "setGenerateUserKey"});
+Element.add(SignonRequest, {name: "GENUSERKEY", order: 40, attributeType: bool, readMethod: "getGenerateUserKey", writeMethod: "setGenerateUserKey"});
 
 
 /**
@@ -262,7 +262,7 @@ SignonRequest.prototype.setGenerateUserKey = function(generateUserKey) {
 SignonRequest.prototype.getLanguage = function() {
   return this.language;
 };
-Element.add({name: "LANGUAGE", required: true, order: 50, owner: SignonRequest, /*type: String,*/ readMethod: "getLanguage", writeMethod: "setLanguage"});
+Element.add(SignonRequest, {name: "LANGUAGE", required: true, order: 50, attributeType: String, readMethod: "getLanguage", writeMethod: "setLanguage"});
 
 
 /**
@@ -283,7 +283,7 @@ SignonRequest.prototype.setLanguage = function(language) {
 SignonRequest.prototype.getFinancialInstitution = function() {
   return this.financialInstitution;
 };
-ChildAggregate.add({order: 60, owner: SignonRequest, /*type: FinancialInstitution,*/ readMethod: "getFinancialInstitution", writeMethod: "setFinancialInstitution"});
+ChildAggregate.add(SignonRequest, {order: 60, attributeType: FinancialInstitution, readMethod: "getFinancialInstitution", writeMethod: "setFinancialInstitution"});
 
 
 /**
@@ -304,7 +304,7 @@ SignonRequest.prototype.setFinancialInstitution = function(financialInstitution)
 SignonRequest.prototype.getSessionId = function() {
   return this.sessionId;
 };
-Element.add({name: "SESSCOOKIE", order: 70, owner: SignonRequest, /*type: String,*/ readMethod: "getSessionId", writeMethod: "setSessionId"});
+Element.add(SignonRequest, {name: "SESSCOOKIE", order: 70, attributeType: String, readMethod: "getSessionId", writeMethod: "setSessionId"});
 
 
 /**
@@ -325,7 +325,7 @@ SignonRequest.prototype.setSessionId = function(sessionId) {
 SignonRequest.prototype.getApplicationId = function() {
   return this.applicationId;
 };
-Element.add({name: "APPID", required: true, order: 80, owner: SignonRequest, /*type: String,*/ readMethod: "getApplicationId", writeMethod: "setApplicationId"});
+Element.add(SignonRequest, {name: "APPID", required: true, order: 80, attributeType: String, readMethod: "getApplicationId", writeMethod: "setApplicationId"});
 
 
 /**
@@ -346,7 +346,7 @@ SignonRequest.prototype.setApplicationId = function(applicationId) {
 SignonRequest.prototype.getApplicationVersion = function() {
   return this.applicationVersion;
 };
-Element.add({name: "APPVER", required: true, order: 90, owner: SignonRequest, /*type: String,*/ readMethod: "getApplicationVersion", writeMethod: "setApplicationVersion"});
+Element.add(SignonRequest, {name: "APPVER", required: true, order: 90, attributeType: String, readMethod: "getApplicationVersion", writeMethod: "setApplicationVersion"});
 
 
 /**
@@ -367,7 +367,7 @@ SignonRequest.prototype.setApplicationVersion = function(applicationVersion) {
 SignonRequest.prototype.getClientUID = function() {
   return this.clientUID;
 };
-Element.add({name: "CLIENTUID", order: 100, owner: SignonRequest, /*type: String,*/ readMethod: "getClientUID", writeMethod: "setClientUID"});
+Element.add(SignonRequest, {name: "CLIENTUID", order: 100, attributeType: String, readMethod: "getClientUID", writeMethod: "setClientUID"});
 
 
 /**
@@ -388,7 +388,7 @@ SignonRequest.prototype.setClientUID = function(clientUID) {
 SignonRequest.prototype.getAdditionalCredentials1 = function() {
   return this.additionalCredentials1;
 };
-Element.add({name: "USERCRED1", order: 110, owner: SignonRequest, /*type: String,*/ readMethod: "getAdditionalCredentials1", writeMethod: "setAdditionalCredentials1"});
+Element.add(SignonRequest, {name: "USERCRED1", order: 110, attributeType: String, readMethod: "getAdditionalCredentials1", writeMethod: "setAdditionalCredentials1"});
 
 
 /**
@@ -409,7 +409,7 @@ SignonRequest.prototype.setAdditionalCredentials1 = function(additionalCredentia
 SignonRequest.prototype.getAdditionalCredentials2 = function() {
   return this.additionalCredentials2;
 };
-Element.add({name: "USERCRED2", order: 120, owner: SignonRequest, /*type: String,*/ readMethod: "getAdditionalCredentials2", writeMethod: "setAdditionalCredentials2"});
+Element.add(SignonRequest, {name: "USERCRED2", order: 120, attributeType: String, readMethod: "getAdditionalCredentials2", writeMethod: "setAdditionalCredentials2"});
 
 
 /**
@@ -430,7 +430,7 @@ SignonRequest.prototype.setAdditionalCredentials2 = function(additionalCredentia
 SignonRequest.prototype.getAuthToken = function() {
   return this.authToken;
 };
-Element.add({name: "AUTHTOKEN", order: 130, owner: SignonRequest, /*type: String,*/ readMethod: "getAuthToken", writeMethod: "setAuthToken"});
+Element.add(SignonRequest, {name: "AUTHTOKEN", order: 130, attributeType: String, readMethod: "getAuthToken", writeMethod: "setAuthToken"});
 
 
 /**
@@ -451,7 +451,7 @@ SignonRequest.prototype.setAuthToken = function(authToken) {
 SignonRequest.prototype.getAccessKey = function() {
   return this.accessKey;
 };
-Element.add({name: "ACCESSKEY", order: 140, owner: SignonRequest, /*type: String,*/ readMethod: "getAccessKey", writeMethod: "setAccessKey"});
+Element.add(SignonRequest, {name: "ACCESSKEY", order: 140, attributeType: String, readMethod: "getAccessKey", writeMethod: "setAccessKey"});
 
 
 /**

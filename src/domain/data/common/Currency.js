@@ -52,7 +52,7 @@ Aggregate.add("CURRENCY", Currency);
 Currency.prototype.getCode = function() {
   return this.code;
 };
-Element.add({name: "CURSYM", required: true, order: 0, owner: Currency, /*type: String,*/ readMethod: "getCode", writeMethod: "setCode"});
+Element.add(Currency, {name: "CURSYM", required: true, order: 0, attributeType: String, readMethod: "getCode", writeMethod: "setCode"});
 
 
 /**
@@ -73,7 +73,7 @@ Currency.prototype.setCode = function(code) {
 Currency.prototype.getExchangeRate = function() {
   return this.exchangeRate;
 };
-Element.add({name: "CURRATE", required: true, order: 10, owner: Currency, /*type: Float,*/ readMethod: "getExchangeRate", writeMethod: "setExchangeRate"});
+Element.add(Currency, {name: "CURRATE", required: true, order: 10, attributeType: Float, readMethod: "getExchangeRate", writeMethod: "setExchangeRate"});
 
 
 /**

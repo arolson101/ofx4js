@@ -57,7 +57,7 @@ InvestmentStatementResponseMessageSet.prototype.getType = function() {
 InvestmentStatementResponseMessageSet.prototype.getStatementResponses = function() {
   return this.statementResponses;
 };
-ChildAggregate.add({order: 0, owner: InvestmentStatementResponseMessageSet, /*type: InvestmentStatementResponseTransaction[],*/ readMethod: "getStatementResponses", writeMethod: "setStatementResponses"});
+ChildAggregate.add(InvestmentStatementResponseMessageSet, {order: 0, attributeType: Array, collectionEntryType: InvestmentStatementResponseTransaction, readMethod: "getStatementResponses", writeMethod: "setStatementResponses"});
 
 
 /**

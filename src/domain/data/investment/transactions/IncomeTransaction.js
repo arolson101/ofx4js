@@ -126,7 +126,7 @@ Aggregate.add("INCOME", IncomeTransaction);
 IncomeTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: IncomeTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
+ChildAggregate.add(IncomeTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -151,7 +151,7 @@ IncomeTransaction.prototype.setSecurityId = function(securityId) {
 IncomeTransaction.prototype.getIncomeType = function() {
   return this.incomeType;
 };
-Element.add({name: "INCOMETYPE", required: true, order: 30, owner: IncomeTransaction, /*type: String,*/ readMethod: "getIncomeType", writeMethod: "setIncomeType"});
+Element.add(IncomeTransaction, {name: "INCOMETYPE", required: true, order: 30, attributeType: String, readMethod: "getIncomeType", writeMethod: "setIncomeType"});
 
 
 /**
@@ -185,7 +185,7 @@ IncomeTransaction.prototype.getIncomeTypeEnum = function() {
 IncomeTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 40, owner: IncomeTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(IncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -208,7 +208,7 @@ IncomeTransaction.prototype.setTotal = function(total) {
 IncomeTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 50, owner: IncomeTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
+Element.add(IncomeTransaction, {name: "SUBACCTSEC", order: 50, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -241,7 +241,7 @@ IncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 IncomeTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 60, owner: IncomeTransaction, /*type: String,*/ readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
+Element.add(IncomeTransaction, {name: "SUBACCTFUND", order: 60, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -274,7 +274,7 @@ IncomeTransaction.prototype.getSubAccountFundEnum = function() {
 IncomeTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add({name: "TAXEXEMPT", order: 70, owner: IncomeTransaction, /*type: Boolean,*/ readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
+Element.add(IncomeTransaction, {name: "TAXEXEMPT", order: 70, attributeType: bool, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -297,7 +297,7 @@ IncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 IncomeTransaction.prototype.getWithholding = function() {
   return this.withholding;
 };
-Element.add({name: "WITHHOLDING", order: 80, owner: IncomeTransaction, /*type: Double,*/ readMethod: "getWithholding", writeMethod: "setWithholding"});
+Element.add(IncomeTransaction, {name: "WITHHOLDING", order: 80, attributeType: Double, readMethod: "getWithholding", writeMethod: "setWithholding"});
 
 
 /**
@@ -321,7 +321,7 @@ IncomeTransaction.prototype.setWithholding = function(withholding) {
 IncomeTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 90, owner: IncomeTransaction, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
+Element.add(IncomeTransaction, {name: "CURRENCY", order: 90, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -346,7 +346,7 @@ IncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 IncomeTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-ChildAggregate.add({order: 120, owner: IncomeTransaction, /*type: OriginalCurrency,*/ readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
+ChildAggregate.add(IncomeTransaction, {order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -372,7 +372,7 @@ IncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalCurrencyI
 IncomeTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 110, owner: IncomeTransaction, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
+Element.add(IncomeTransaction, {name: "INV401KSOURCE", order: 110, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

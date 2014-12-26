@@ -64,7 +64,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   c.prototype.getUID = function() {
     return this.UID;
   };
-  Element.add({name: "TRNUID", required: true, order: 0, owner: c, /*type: String,*/ readMethod: "getUID", writeMethod: "setUID"});
+  Element.add(c, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
 
 
   /**
@@ -84,7 +84,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   c.prototype.getClientCookie = function() {
     return this.clientCookie;
   };
-  Element.add({name: "CLTCOOKIE", order: 10, owner: c, /*type: String,*/ readMethod: "getClientCookie", writeMethod: "setClientCookie"});
+  Element.add(c, {name: "CLTCOOKIE", order: 10, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
 
   /**
    * Client cookie (echoed back by the response).
@@ -103,7 +103,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   c.prototype.getTransactionAuthorizationNumber = function() {
     return this.transactionAuthorizationNumber;
   };
-  Element.add({name: "TAN", order: 20, owner: c, /*type: String,*/ readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
+  Element.add(c, {name: "TAN", order: 20, attributeType: String, readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
 
   /**
    * The transaction authorization number.

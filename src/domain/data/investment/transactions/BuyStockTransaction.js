@@ -57,7 +57,7 @@ Aggregate.add("BUYSTOCK", BuyStockTransaction);
 BuyStockTransaction.prototype.getBuyType = function() {
   return this.buyType;
 };
-Element.add({name: "BUYTYPE", required: true, order: 20, owner: BuyStockTransaction, /*type: String,*/ readMethod: "getBuyType", writeMethod: "setBuyType"});
+Element.add(BuyStockTransaction, {name: "BUYTYPE", required: true, order: 20, attributeType: String, readMethod: "getBuyType", writeMethod: "setBuyType"});
 
 
 /**

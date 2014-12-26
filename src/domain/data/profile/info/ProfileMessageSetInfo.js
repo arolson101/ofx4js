@@ -43,7 +43,7 @@ Aggregate.add("PROFMSGSET", ProfileMessageSetInfo);
 ProfileMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: ProfileMessageSetInfo, /*type: ProfileV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
+ChildAggregate.add(ProfileMessageSetInfo, {order: 0, attributeType: ProfileV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 ProfileMessageSetInfo.prototype.setVersion1Info = function(/*ProfileV1MessageSetInfo*/ version1Info) {

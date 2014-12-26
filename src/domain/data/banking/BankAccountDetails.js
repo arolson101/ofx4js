@@ -79,7 +79,7 @@ Aggregate.add("BankAccountDetails", BankAccountDetails);
 BankAccountDetails.prototype.getBankId = function() {
   return this.bankId;
 };
-Element.add({name: "BANKID", required: true, order: 0, owner: BankAccountDetails, /*type: String,*/ readMethod: "getBankId", writeMethod: "setBankId"});
+Element.add(BankAccountDetails, {name: "BANKID", required: true, order: 0, attributeType: String, readMethod: "getBankId", writeMethod: "setBankId"});
 
 
 /**
@@ -120,7 +120,7 @@ BankAccountDetails.prototype.setRoutingNumber = function(routingNumber) {
 BankAccountDetails.prototype.getBranchId = function() {
   return this.branchId;
 };
-Element.add({name: "BRANCHID", order: 10, owner: BankAccountDetails, /*type: String,*/ readMethod: "getBranchId", writeMethod: "setBranchId"});
+Element.add(BankAccountDetails, {name: "BRANCHID", order: 10, attributeType: String, readMethod: "getBranchId", writeMethod: "setBranchId"});
 
 
 /**
@@ -141,7 +141,7 @@ BankAccountDetails.prototype.setBranchId = function(branchId) {
 BankAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 20, owner: BankAccountDetails, /*type: String,*/ readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
+Element.add(BankAccountDetails, {name: "ACCTID", required: true, order: 20, attributeType: String, readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -162,7 +162,7 @@ BankAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 BankAccountDetails.prototype.getAccountType = function() {
   return this.accountType;
 };
-Element.add({name: "ACCTTYPE", required: true, order: 30, owner: BankAccountDetails, /*type: AccountType,*/ readMethod: "getAccountType", writeMethod: "setAccountType"});
+Element.add(BankAccountDetails, {name: "ACCTTYPE", required: true, order: 30, attributeType: AccountType, readMethod: "getAccountType", writeMethod: "setAccountType"});
 
 
 /**
@@ -183,7 +183,7 @@ BankAccountDetails.prototype.setAccountType = function(accountType) {
 BankAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCTKEY", order: 40, owner: BankAccountDetails, /*type: String,*/ readMethod: "getAccountKey", writeMethod: "setAccountKey"});
+Element.add(BankAccountDetails, {name: "ACCTKEY", order: 40, attributeType: String, readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**

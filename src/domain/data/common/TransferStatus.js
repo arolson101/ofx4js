@@ -52,7 +52,7 @@ Aggregate.add("XFERPRCSTS", TransferStatus);
 TransferStatus.prototype.getEvent = function() {
   return this.event;
 };
-Element.add({name: "XFERPRCCODE", required: true, order: 0, owner: TransferStatus, /*type: TransferStatusEvent,*/ readMethod: "getEvent", writeMethod: "setEvent"});
+Element.add(TransferStatus, {name: "XFERPRCCODE", required: true, order: 0, attributeType: TransferStatusEvent, readMethod: "getEvent", writeMethod: "setEvent"});
 
 
 /**
@@ -73,7 +73,7 @@ TransferStatus.prototype.setEvent = function(event) {
 TransferStatus.prototype.getDate = function() {
   return this.date;
 };
-Element.add({name: "DTXFERPRC", required: true, order: 10, owner: TransferStatus, /*type: Date,*/ readMethod: "getDate", writeMethod: "setDate"});
+Element.add(TransferStatus, {name: "DTXFERPRC", required: true, order: 10, attributeType: Date, readMethod: "getDate", writeMethod: "setDate"});
 
 
 /**

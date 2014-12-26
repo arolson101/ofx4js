@@ -157,7 +157,7 @@ Aggregate.add("PROFRS", ProfileResponse);
 ProfileResponse.prototype.getMessageSetList = function() {
   return this.messageSetList;
 };
-ChildAggregate.add({order: 0, owner: ProfileResponse, /*type: MessageSetInfoList,*/ readMethod: "getMessageSetList", writeMethod: "setMessageSetList"});
+ChildAggregate.add(ProfileResponse, {order: 0, attributeType: MessageSetInfoList, readMethod: "getMessageSetList", writeMethod: "setMessageSetList"});
 
 
 /**
@@ -178,7 +178,7 @@ ProfileResponse.prototype.setMessageSetList = function(messageSetList) {
 ProfileResponse.prototype.getSignonInfoList = function() {
   return this.signonInfoList;
 };
-ChildAggregate.add({order: 10, owner: ProfileResponse, /*type: SignonInfoList,*/ readMethod: "getSignonInfoList", writeMethod: "setSignonInfoList"});
+ChildAggregate.add(ProfileResponse, {order: 10, attributeType: SignonInfoList, readMethod: "getSignonInfoList", writeMethod: "setSignonInfoList"});
 
 
 /**
@@ -211,7 +211,7 @@ ProfileResponse.prototype.getLastUpdated = function() {
 ProfileResponse.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTPROFUP", order: 20, owner: ProfileResponse, /*type: Date,*/ readMethod: "getTimestamp", writeMethod: "setTimestamp"});
+Element.add(ProfileResponse, {name: "DTPROFUP", order: 20, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -232,7 +232,7 @@ ProfileResponse.prototype.setTimestamp = function(timestamp) {
 ProfileResponse.prototype.getFinancialInstitutionName = function() {
   return this.financialInstitutionName;
 };
-Element.add({name: "FINAME", order: 30, owner: ProfileResponse, /*type: String,*/ readMethod: "getFinancialInstitutionName", writeMethod: "setFinancialInstitutionName"});
+Element.add(ProfileResponse, {name: "FINAME", order: 30, attributeType: String, readMethod: "getFinancialInstitutionName", writeMethod: "setFinancialInstitutionName"});
 
 
 /**
@@ -253,7 +253,7 @@ ProfileResponse.prototype.setFinancialInstitutionName = function(financialInstit
 ProfileResponse.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1", required: true, order: 40, owner: ProfileResponse, /*type: String,*/ readMethod: "getAddress1", writeMethod: "setAddress1"});
+Element.add(ProfileResponse, {name: "ADDR1", required: true, order: 40, attributeType: String, readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -274,7 +274,7 @@ ProfileResponse.prototype.setAddress1 = function(address1) {
 ProfileResponse.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2", order: 50, owner: ProfileResponse, /*type: String,*/ readMethod: "getAddress2", writeMethod: "setAddress2"});
+Element.add(ProfileResponse, {name: "ADDR2", order: 50, attributeType: String, readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -295,7 +295,7 @@ ProfileResponse.prototype.setAddress2 = function(address2) {
 ProfileResponse.prototype.getAddress3 = function() {
   return this.address3;
 };
-Element.add({name: "ADDR3", order: 60, owner: ProfileResponse, /*type: String,*/ readMethod: "getAddress3", writeMethod: "setAddress3"});
+Element.add(ProfileResponse, {name: "ADDR3", order: 60, attributeType: String, readMethod: "getAddress3", writeMethod: "setAddress3"});
 
 
 /**
@@ -316,7 +316,7 @@ ProfileResponse.prototype.setAddress3 = function(address3) {
 ProfileResponse.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY", required: true, order: 70, owner: ProfileResponse, /*type: String,*/ readMethod: "getCity", writeMethod: "setCity"});
+Element.add(ProfileResponse, {name: "CITY", required: true, order: 70, attributeType: String, readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -337,7 +337,7 @@ ProfileResponse.prototype.setCity = function(city) {
 ProfileResponse.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE", required: true, order: 80, owner: ProfileResponse, /*type: String,*/ readMethod: "getState", writeMethod: "setState"});
+Element.add(ProfileResponse, {name: "STATE", required: true, order: 80, attributeType: String, readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -358,7 +358,7 @@ ProfileResponse.prototype.setState = function(state) {
 ProfileResponse.prototype.getZip = function() {
   return this.zip;
 };
-Element.add({name: "POSTALCODE", required: true, order: 90, owner: ProfileResponse, /*type: String,*/ readMethod: "getZip", writeMethod: "setZip"});
+Element.add(ProfileResponse, {name: "POSTALCODE", required: true, order: 90, attributeType: String, readMethod: "getZip", writeMethod: "setZip"});
 
 
 /**
@@ -380,7 +380,7 @@ ProfileResponse.prototype.setZip = function(zip) {
 ProfileResponse.prototype.getCountry = function() {
   return this.country;
 };
-Element.add({name: "COUNTRY", required: true, order: 100, owner: ProfileResponse, /*type: String,*/ readMethod: "getCountry", writeMethod: "setCountry"});
+Element.add(ProfileResponse, {name: "COUNTRY", required: true, order: 100, attributeType: String, readMethod: "getCountry", writeMethod: "setCountry"});
 
 
 /**
@@ -401,7 +401,7 @@ ProfileResponse.prototype.setCountry = function(country) {
 ProfileResponse.prototype.getCustomerServicePhone = function() {
   return this.customerServicePhone;
 };
-Element.add({name: "CSPHONE", order: 110, owner: ProfileResponse, /*type: String,*/ readMethod: "getCustomerServicePhone", writeMethod: "setCustomerServicePhone"});
+Element.add(ProfileResponse, {name: "CSPHONE", order: 110, attributeType: String, readMethod: "getCustomerServicePhone", writeMethod: "setCustomerServicePhone"});
 
 
 /**
@@ -422,7 +422,7 @@ ProfileResponse.prototype.setCustomerServicePhone = function(customerServicePhon
 ProfileResponse.prototype.getTechnicalSupportPhone = function() {
   return this.technicalSupportPhone;
 };
-Element.add({name: "TSPHONE", order: 120, owner: ProfileResponse, /*type: String,*/ readMethod: "getTechnicalSupportPhone", writeMethod: "setTechnicalSupportPhone"});
+Element.add(ProfileResponse, {name: "TSPHONE", order: 120, attributeType: String, readMethod: "getTechnicalSupportPhone", writeMethod: "setTechnicalSupportPhone"});
 
 
 /**
@@ -443,7 +443,7 @@ ProfileResponse.prototype.setTechnicalSupportPhone = function(technicalSupportPh
 ProfileResponse.prototype.getFax = function() {
   return this.fax;
 };
-Element.add({name: "FAXPHONE", order: 130, owner: ProfileResponse, /*type: String,*/ readMethod: "getFax", writeMethod: "setFax"});
+Element.add(ProfileResponse, {name: "FAXPHONE", order: 130, attributeType: String, readMethod: "getFax", writeMethod: "setFax"});
 
 
 /**
@@ -464,7 +464,7 @@ ProfileResponse.prototype.setFax = function(fax) {
 ProfileResponse.prototype.getSiteURL = function() {
   return this.siteURL;
 };
-Element.add({name: "URL", order: 140, owner: ProfileResponse, /*type: String,*/ readMethod: "getSiteURL", writeMethod: "setSiteURL"});
+Element.add(ProfileResponse, {name: "URL", order: 140, attributeType: String, readMethod: "getSiteURL", writeMethod: "setSiteURL"});
 
 
 /**
@@ -485,7 +485,7 @@ ProfileResponse.prototype.setSiteURL = function(siteURL) {
 ProfileResponse.prototype.getEmail = function() {
   return this.email;
 };
-Element.add({name: "EMAIL", order: 150, owner: ProfileResponse, /*type: String,*/ readMethod: "getEmail", writeMethod: "setEmail"});
+Element.add(ProfileResponse, {name: "EMAIL", order: 150, attributeType: String, readMethod: "getEmail", writeMethod: "setEmail"});
 
 
 /**

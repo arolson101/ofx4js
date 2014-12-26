@@ -128,7 +128,7 @@ SignonResponse.prototype.getStatusHolderName = function() {
 SignonResponse.prototype.getStatus = function() {
   return this.status;
 };
-ChildAggregate.add({required: true, order: 0, owner: SignonResponse, /*type: Status,*/ readMethod: "getStatus", writeMethod: "setStatus"});
+ChildAggregate.add(SignonResponse, {required: true, order: 0, attributeType: Status, readMethod: "getStatus", writeMethod: "setStatus"});
 
 
 /**
@@ -149,7 +149,7 @@ SignonResponse.prototype.setStatus = function(status) {
 SignonResponse.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTSERVER", required: true, order: 10, owner: SignonResponse, /*type: Date,*/ readMethod: "getTimestamp", writeMethod: "setTimestamp"});
+Element.add(SignonResponse, {name: "DTSERVER", required: true, order: 10, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -170,7 +170,7 @@ SignonResponse.prototype.setTimestamp = function(timestamp) {
 SignonResponse.prototype.getUserKey = function() {
   return this.userKey;
 };
-Element.add({name: "USERKEY", order: 20, owner: SignonResponse, /*type: String,*/ readMethod: "getUserKey", writeMethod: "setUserKey"});
+Element.add(SignonResponse, {name: "USERKEY", order: 20, attributeType: String, readMethod: "getUserKey", writeMethod: "setUserKey"});
 
 
 /**
@@ -191,7 +191,7 @@ SignonResponse.prototype.setUserKey = function(userKey) {
 SignonResponse.prototype.getUserKeyExpiration = function() {
   return this.userKeyExpiration;
 };
-Element.add({name: "TSKEYEXPIRE", order: 30, owner: SignonResponse, /*type: Date,*/ readMethod: "getUserKeyExpiration", writeMethod: "setUserKeyExpiration"});
+Element.add(SignonResponse, {name: "TSKEYEXPIRE", order: 30, attributeType: Date, readMethod: "getUserKeyExpiration", writeMethod: "setUserKeyExpiration"});
 
 
 /**
@@ -213,7 +213,7 @@ SignonResponse.prototype.setUserKeyExpiration = function(userKeyExpiration) {
 SignonResponse.prototype.getLanguage = function() {
   return this.language;
 };
-Element.add({name: "LANGUAGE", required: true, order: 40, owner: SignonResponse, /*type: String,*/ readMethod: "getLanguage", writeMethod: "setLanguage"});
+Element.add(SignonResponse, {name: "LANGUAGE", required: true, order: 40, attributeType: String, readMethod: "getLanguage", writeMethod: "setLanguage"});
 
 
 /**
@@ -234,7 +234,7 @@ SignonResponse.prototype.setLanguage = function(language) {
 SignonResponse.prototype.getProfileLastUpdated = function() {
   return this.profileLastUpdated;
 };
-Element.add({name: "DTPROFUP", order: 50, owner: SignonResponse, /*type: Date,*/ readMethod: "getProfileLastUpdated", writeMethod: "setProfileLastUpdated"});
+Element.add(SignonResponse, {name: "DTPROFUP", order: 50, attributeType: Date, readMethod: "getProfileLastUpdated", writeMethod: "setProfileLastUpdated"});
 
 
 /**
@@ -255,7 +255,7 @@ SignonResponse.prototype.setProfileLastUpdated = function(profileLastUpdated) {
 SignonResponse.prototype.getAccountLastUpdated = function() {
   return this.accountLastUpdated;
 };
-Element.add({name: "DTACCTUP", order: 60, owner: SignonResponse, /*type: Date,*/ readMethod: "getAccountLastUpdated", writeMethod: "setAccountLastUpdated"});
+Element.add(SignonResponse, {name: "DTACCTUP", order: 60, attributeType: Date, readMethod: "getAccountLastUpdated", writeMethod: "setAccountLastUpdated"});
 
 
 /**
@@ -276,7 +276,7 @@ SignonResponse.prototype.setAccountLastUpdated = function(accountLastUpdated) {
 SignonResponse.prototype.getFinancialInstitution = function() {
   return this.financialInstitution;
 };
-ChildAggregate.add({order: 70, owner: SignonResponse, /*type: FinancialInstitution,*/ readMethod: "getFinancialInstitution", writeMethod: "setFinancialInstitution"});
+ChildAggregate.add(SignonResponse, {order: 70, attributeType: FinancialInstitution, readMethod: "getFinancialInstitution", writeMethod: "setFinancialInstitution"});
 
 
 /**
@@ -297,7 +297,7 @@ SignonResponse.prototype.setFinancialInstitution = function(financialInstitution
 SignonResponse.prototype.getSessionId = function() {
   return this.sessionId;
 };
-Element.add({name: "SESSCOOKIE", order: 80, owner: SignonResponse, /*type: String,*/ readMethod: "getSessionId", writeMethod: "setSessionId"});
+Element.add(SignonResponse, {name: "SESSCOOKIE", order: 80, attributeType: String, readMethod: "getSessionId", writeMethod: "setSessionId"});
 
 
 /**
@@ -318,7 +318,7 @@ SignonResponse.prototype.setSessionId = function(sessionId) {
 SignonResponse.prototype.getAccessKey = function() {
   return this.accessKey;
 };
-Element.add({name: "ACCESSKEY", order: 90, owner: SignonResponse, /*type: String,*/ readMethod: "getAccessKey", writeMethod: "setAccessKey"});
+Element.add(SignonResponse, {name: "ACCESSKEY", order: 90, attributeType: String, readMethod: "getAccessKey", writeMethod: "setAccessKey"});
 
 
 /**

@@ -53,7 +53,7 @@ Aggregate.add("SECID", SecurityId);
 SecurityId.prototype.getUniqueId = function() {
   return this.uniqueId;
 };
-Element.add({name: "UNIQUEID", required: true, order: 10, owner: SecurityId, /*type: String,*/ readMethod: "getUniqueId", writeMethod: "setUniqueId"});
+Element.add(SecurityId, {name: "UNIQUEID", required: true, order: 10, attributeType: String, readMethod: "getUniqueId", writeMethod: "setUniqueId"});
 
 
 /**
@@ -74,7 +74,7 @@ SecurityId.prototype.setUniqueId = function(uniqueId) {
 SecurityId.prototype.getUniqueIdType = function() {
   return this.uniqueIdType;
 };
-Element.add({name: "UNIQUEIDTYPE", required: true, order: 20, owner: SecurityId, /*type: String,*/ readMethod: "getUniqueIdType", writeMethod: "setUniqueIdType"});
+Element.add(SecurityId, {name: "UNIQUEIDTYPE", required: true, order: 20, attributeType: String, readMethod: "getUniqueIdType", writeMethod: "setUniqueIdType"});
 
 
 /**

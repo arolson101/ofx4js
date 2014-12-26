@@ -49,7 +49,7 @@ Aggregate.add("EMAILPROF", EmailProfile);
 EmailProfile.prototype.getCanEmail = function() {
   return this.canEmail;
 };
-Element.add({name: "CANEMAIL", required: true, order: 10, owner: EmailProfile, /*type: Boolean,*/ readMethod: "getCanEmail", writeMethod: "setCanEmail"});
+Element.add(EmailProfile, {name: "CANEMAIL", required: true, order: 10, attributeType: bool, readMethod: "getCanEmail", writeMethod: "setCanEmail"});
 
 
 EmailProfile.prototype.setCanEmail = function(/*Boolean*/ canEmail) {
@@ -60,7 +60,7 @@ EmailProfile.prototype.setCanEmail = function(/*Boolean*/ canEmail) {
 EmailProfile.prototype.getCanNotify = function() {
   return this.canNotify;
 };
-Element.add({name: "CANNOTIFY", required: true, order: 20, owner: EmailProfile, /*type: Boolean,*/ readMethod: "getCanNotify", writeMethod: "setCanNotify"});
+Element.add(EmailProfile, {name: "CANNOTIFY", required: true, order: 20, attributeType: bool, readMethod: "getCanNotify", writeMethod: "setCanNotify"});
 
 
 EmailProfile.prototype.setCanNotify = function(/*Boolean*/ canNotify) {

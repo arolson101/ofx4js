@@ -55,7 +55,7 @@ ProfileRequestMessageSet.prototype.getType = function() {
 ProfileRequestMessageSet.prototype.getProfileRequest = function() {
   return this.profileRequest;
 };
-ChildAggregate.add({required: true, order: 0, owner: ProfileRequestMessageSet, /*type: ProfileRequestTransaction,*/ readMethod: "getProfileRequest", writeMethod: "setProfileRequest"});
+ChildAggregate.add(ProfileRequestMessageSet, {required: true, order: 0, attributeType: ProfileRequestTransaction, readMethod: "getProfileRequest", writeMethod: "setProfileRequest"});
 
 
 /**

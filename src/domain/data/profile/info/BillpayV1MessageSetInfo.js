@@ -177,7 +177,7 @@ BillpayV1MessageSetInfo.prototype.getMessageSetType = function() {
 BillpayV1MessageSetInfo.prototype.getDaysWith = function() {
   return this.daysWith;
 };
-Element.add({name: "DAYSWITH", required: true, order: 10, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ readMethod: "getDaysWith", writeMethod: "setDaysWith"});
+Element.add(BillpayV1MessageSetInfo, {name: "DAYSWITH", required: true, order: 10, attributeType: Integer, readMethod: "getDaysWith", writeMethod: "setDaysWith"});
 
 
 BillpayV1MessageSetInfo.prototype.setDaysWith = function(/*Integer*/ daysWith) {
@@ -188,7 +188,7 @@ BillpayV1MessageSetInfo.prototype.setDaysWith = function(/*Integer*/ daysWith) {
 BillpayV1MessageSetInfo.prototype.getDefaultDaysToPay = function() {
   return this.defaultDaysToPay;
 };
-Element.add({name: "DFLTDAYSTOPAY", required: true, order: 20, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ readMethod: "getDefaultDaysToPay", writeMethod: "setDefaultDaysToPay"});
+Element.add(BillpayV1MessageSetInfo, {name: "DFLTDAYSTOPAY", required: true, order: 20, attributeType: Integer, readMethod: "getDefaultDaysToPay", writeMethod: "setDefaultDaysToPay"});
 
 
 BillpayV1MessageSetInfo.prototype.setDefaultDaysToPay = function(/*Integer*/ defaultDaysToPay) {
@@ -199,7 +199,7 @@ BillpayV1MessageSetInfo.prototype.setDefaultDaysToPay = function(/*Integer*/ def
 BillpayV1MessageSetInfo.prototype.getTransferDaysWith = function() {
   return this.transferDaysWith;
 };
-Element.add({name: "XFERDAYSWITH", required: true, order: 30, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ readMethod: "getTransferDaysWith", writeMethod: "setTransferDaysWith"});
+Element.add(BillpayV1MessageSetInfo, {name: "XFERDAYSWITH", required: true, order: 30, attributeType: Integer, readMethod: "getTransferDaysWith", writeMethod: "setTransferDaysWith"});
 
 
 BillpayV1MessageSetInfo.prototype.setTransferDaysWith = function(/*Integer*/ transferDaysWith) {
@@ -210,7 +210,7 @@ BillpayV1MessageSetInfo.prototype.setTransferDaysWith = function(/*Integer*/ tra
 BillpayV1MessageSetInfo.prototype.getTransferDefaultDaysToPay = function() {
   return this.transferDefaultDaysToPay;
 };
-Element.add({name: "XFERDFLTDAYSTOPAY", required: true, order: 40, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ readMethod: "getTransferDefaultDaysToPay", writeMethod: "setTransferDefaultDaysToPay"});
+Element.add(BillpayV1MessageSetInfo, {name: "XFERDFLTDAYSTOPAY", required: true, order: 40, attributeType: Integer, readMethod: "getTransferDefaultDaysToPay", writeMethod: "setTransferDefaultDaysToPay"});
 
 
 BillpayV1MessageSetInfo.prototype.setTransferDefaultDaysToPay = function(/*Integer*/ transferDefaultDaysToPay) {
@@ -221,7 +221,7 @@ BillpayV1MessageSetInfo.prototype.setTransferDefaultDaysToPay = function(/*Integ
 BillpayV1MessageSetInfo.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 50, owner: BillpayV1MessageSetInfo, /*type: ProcessorDayOff[],*/ readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
+Element.add(BillpayV1MessageSetInfo, {name: "PROCDAYSOFF", order: 50, attributeType: Array, collectionEntryType: ProcessorDayOff, readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 BillpayV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -232,7 +232,7 @@ BillpayV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayO
 BillpayV1MessageSetInfo.prototype.getProcessorEndTime = function() {
   return this.processorEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 60, owner: BillpayV1MessageSetInfo, /*type: String,*/ readMethod: "getProcessorEndTime", writeMethod: "setProcessorEndTime"});
+Element.add(BillpayV1MessageSetInfo, {name: "PROCENDTM", required: true, order: 60, attributeType: String, readMethod: "getProcessorEndTime", writeMethod: "setProcessorEndTime"});
 
 
 BillpayV1MessageSetInfo.prototype.setProcessorEndTime = function(/*String*/ processorEndTime) {
@@ -243,7 +243,7 @@ BillpayV1MessageSetInfo.prototype.setProcessorEndTime = function(/*String*/ proc
 BillpayV1MessageSetInfo.prototype.getModelWindow = function() {
   return this.modelWindow;
 };
-Element.add({name: "MODELWND", required: true, order: 70, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ readMethod: "getModelWindow", writeMethod: "setModelWindow"});
+Element.add(BillpayV1MessageSetInfo, {name: "MODELWND", required: true, order: 70, attributeType: Integer, readMethod: "getModelWindow", writeMethod: "setModelWindow"});
 
 
 BillpayV1MessageSetInfo.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
@@ -254,7 +254,7 @@ BillpayV1MessageSetInfo.prototype.setModelWindow = function(/*Integer*/ modelWin
 BillpayV1MessageSetInfo.prototype.getPostProcessorWindow = function() {
   return this.postProcessorWindow;
 };
-Element.add({name: "POSTPROCWND", required: true, order: 80, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ readMethod: "getPostProcessorWindow", writeMethod: "setPostProcessorWindow"});
+Element.add(BillpayV1MessageSetInfo, {name: "POSTPROCWND", required: true, order: 80, attributeType: Integer, readMethod: "getPostProcessorWindow", writeMethod: "setPostProcessorWindow"});
 
 
 BillpayV1MessageSetInfo.prototype.setPostProcessorWindow = function(/*Integer*/ postProcessorWindow) {
@@ -265,7 +265,7 @@ BillpayV1MessageSetInfo.prototype.setPostProcessorWindow = function(/*Integer*/ 
 BillpayV1MessageSetInfo.prototype.getSupportsStatusUpdateViaPaymentModificationResponse = function() {
   return this.supportsStatusUpdateViaPaymentModificationResponse;
 };
-Element.add({name: "STSVIAMODS", required: true, order: 90, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsStatusUpdateViaPaymentModificationResponse", writeMethod: "setSupportsStatusUpdateViaPaymentModificationResponse"});
+Element.add(BillpayV1MessageSetInfo, {name: "STSVIAMODS", required: true, order: 90, attributeType: bool, readMethod: "getSupportsStatusUpdateViaPaymentModificationResponse", writeMethod: "setSupportsStatusUpdateViaPaymentModificationResponse"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsStatusUpdateViaPaymentModificationResponse = function(/*Boolean*/ supportsStatusUpdateViaPaymentModificationResponse) {
@@ -276,7 +276,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsStatusUpdateViaPaymentModificationR
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByAddress = function() {
   return this.supportsPaymentByAddress;
 };
-Element.add({name: "PMTBYADDR", required: true, order: 100, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsPaymentByAddress", writeMethod: "setSupportsPaymentByAddress"});
+Element.add(BillpayV1MessageSetInfo, {name: "PMTBYADDR", required: true, order: 100, attributeType: bool, readMethod: "getSupportsPaymentByAddress", writeMethod: "setSupportsPaymentByAddress"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsPaymentByAddress = function(/*Boolean*/ supportsPaymentByAddress) {
@@ -287,7 +287,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByAddress = function(/*Boole
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByTransfer = function() {
   return this.supportsPaymentByTransfer;
 };
-Element.add({name: "PMTBYXFER", required: true, order: 110, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsPaymentByTransfer", writeMethod: "setSupportsPaymentByTransfer"});
+Element.add(BillpayV1MessageSetInfo, {name: "PMTBYXFER", required: true, order: 110, attributeType: bool, readMethod: "getSupportsPaymentByTransfer", writeMethod: "setSupportsPaymentByTransfer"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsPaymentByTransfer = function(/*Boolean*/ supportsPaymentByTransfer) {
@@ -298,7 +298,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByTransfer = function(/*Bool
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByPayeeId = function() {
   return this.supportsPaymentByPayeeId;
 };
-Element.add({name: "PMTBYPAYEEID", required: true, order: 120, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsPaymentByPayeeId", writeMethod: "setSupportsPaymentByPayeeId"});
+Element.add(BillpayV1MessageSetInfo, {name: "PMTBYPAYEEID", required: true, order: 120, attributeType: bool, readMethod: "getSupportsPaymentByPayeeId", writeMethod: "setSupportsPaymentByPayeeId"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsPaymentByPayeeId = function(/*Boolean*/ supportsPaymentByPayeeId) {
@@ -309,7 +309,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByPayeeId = function(/*Boole
 BillpayV1MessageSetInfo.prototype.getUserCanAddPayee = function() {
   return this.userCanAddPayee;
 };
-Element.add({name: "CANADDPAYEE", required: true, order: 130, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getUserCanAddPayee", writeMethod: "setUserCanAddPayee"});
+Element.add(BillpayV1MessageSetInfo, {name: "CANADDPAYEE", required: true, order: 130, attributeType: bool, readMethod: "getUserCanAddPayee", writeMethod: "setUserCanAddPayee"});
 
 
 BillpayV1MessageSetInfo.prototype.setUserCanAddPayee = function(/*Boolean*/ userCanAddPayee) {
@@ -320,7 +320,7 @@ BillpayV1MessageSetInfo.prototype.setUserCanAddPayee = function(/*Boolean*/ user
 BillpayV1MessageSetInfo.prototype.getSupportsExtendedPayment = function() {
   return this.supportsExtendedPayment;
 };
-Element.add({name: "HASEXTDPMT", required: true, order: 140, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsExtendedPayment", writeMethod: "setSupportsExtendedPayment"});
+Element.add(BillpayV1MessageSetInfo, {name: "HASEXTDPMT", required: true, order: 140, attributeType: bool, readMethod: "getSupportsExtendedPayment", writeMethod: "setSupportsExtendedPayment"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsExtendedPayment = function(/*Boolean*/ supportsExtendedPayment) {
@@ -331,7 +331,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsExtendedPayment = function(/*Boolea
 BillpayV1MessageSetInfo.prototype.getCanModifyPayments = function() {
   return this.canModifyPayments;
 };
-Element.add({name: "CANMODPMTS", required: true, order: 150, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getCanModifyPayments", writeMethod: "setCanModifyPayments"});
+Element.add(BillpayV1MessageSetInfo, {name: "CANMODPMTS", required: true, order: 150, attributeType: bool, readMethod: "getCanModifyPayments", writeMethod: "setCanModifyPayments"});
 
 
 BillpayV1MessageSetInfo.prototype.setCanModifyPayments = function(/*Boolean*/ canModifyPayments) {
@@ -342,7 +342,7 @@ BillpayV1MessageSetInfo.prototype.setCanModifyPayments = function(/*Boolean*/ ca
 BillpayV1MessageSetInfo.prototype.getCanModifyModels = function() {
   return this.canModifyModels;
 };
-Element.add({name: "CANMODMDLS", required: true, order: 160, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getCanModifyModels", writeMethod: "setCanModifyModels"});
+Element.add(BillpayV1MessageSetInfo, {name: "CANMODMDLS", required: true, order: 160, attributeType: bool, readMethod: "getCanModifyModels", writeMethod: "setCanModifyModels"});
 
 
 BillpayV1MessageSetInfo.prototype.setCanModifyModels = function(/*Boolean*/ canModifyModels) {
@@ -353,7 +353,7 @@ BillpayV1MessageSetInfo.prototype.setCanModifyModels = function(/*Boolean*/ canM
 BillpayV1MessageSetInfo.prototype.getSupportsDifferentFirstPayment = function() {
   return this.supportsDifferentFirstPayment;
 };
-Element.add({name: "DIFFFIRSTPMT", required: true, order: 170, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsDifferentFirstPayment", writeMethod: "setSupportsDifferentFirstPayment"});
+Element.add(BillpayV1MessageSetInfo, {name: "DIFFFIRSTPMT", required: true, order: 170, attributeType: bool, readMethod: "getSupportsDifferentFirstPayment", writeMethod: "setSupportsDifferentFirstPayment"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsDifferentFirstPayment = function(/*Boolean*/ supportsDifferentFirstPayment) {
@@ -364,7 +364,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsDifferentFirstPayment = function(/*
 BillpayV1MessageSetInfo.prototype.getSupportsDifferentLastPayment = function() {
   return this.supportsDifferentLastPayment;
 };
-Element.add({name: "DIFFLASTPMT", required: true, order: 180, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsDifferentLastPayment", writeMethod: "setSupportsDifferentLastPayment"});
+Element.add(BillpayV1MessageSetInfo, {name: "DIFFLASTPMT", required: true, order: 180, attributeType: bool, readMethod: "getSupportsDifferentLastPayment", writeMethod: "setSupportsDifferentLastPayment"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsDifferentLastPayment = function(/*Boolean*/ supportsDifferentLastPayment) {
@@ -375,7 +375,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsDifferentLastPayment = function(/*B
 BillpayV1MessageSetInfo.prototype.getSupportsBillPresentmentContext = function() {
   return this.supportsBillPresentmentContext;
 };
-Element.add({name: "BILLPUBCONTEXT", order: 190, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsBillPresentmentContext", writeMethod: "setSupportsBillPresentmentContext"});
+Element.add(BillpayV1MessageSetInfo, {name: "BILLPUBCONTEXT", order: 190, attributeType: bool, readMethod: "getSupportsBillPresentmentContext", writeMethod: "setSupportsBillPresentmentContext"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsBillPresentmentContext = function(/*Boolean*/ supportsBillPresentmentContext) {

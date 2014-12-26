@@ -48,7 +48,7 @@ Aggregate.add("CCSTMTRQ", CreditCardStatementRequest);
 CreditCardStatementRequest.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardStatementRequest, /*type: CreditCardAccountDetails,*/ readMethod: "getAccount", writeMethod: "setAccount"});
+ChildAggregate.add(CreditCardStatementRequest, {name: "CCACCTFROM", required: true, order: 0, attributeType: CreditCardAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**

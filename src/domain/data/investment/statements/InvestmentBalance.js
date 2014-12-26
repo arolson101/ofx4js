@@ -76,7 +76,7 @@ Aggregate.add("INVBAL", InvestmentBalance);
 InvestmentBalance.prototype.getAvailableCash = function() {
   return this.availableCash;
 };
-Element.add({name: "AVAILCASH", required: true, order: 10, owner: InvestmentBalance, /*type: Double,*/ readMethod: "getAvailableCash", writeMethod: "setAvailableCash"});
+Element.add(InvestmentBalance, {name: "AVAILCASH", required: true, order: 10, attributeType: Double, readMethod: "getAvailableCash", writeMethod: "setAvailableCash"});
 
 
 /**
@@ -100,7 +100,7 @@ InvestmentBalance.prototype.setAvailableCash = function(availableCash) {
 InvestmentBalance.prototype.getMarginBalance = function() {
   return this.marginBalance;
 };
-Element.add({name: "MARGINBALANCE", required: true, order: 20, owner: InvestmentBalance, /*type: Double,*/ readMethod: "getMarginBalance", writeMethod: "setMarginBalance"});
+Element.add(InvestmentBalance, {name: "MARGINBALANCE", required: true, order: 20, attributeType: Double, readMethod: "getMarginBalance", writeMethod: "setMarginBalance"});
 
 
 /**
@@ -124,7 +124,7 @@ InvestmentBalance.prototype.setMarginBalance = function(marginBalance) {
 InvestmentBalance.prototype.getShortBalance = function() {
   return this.shortBalance;
 };
-Element.add({name: "SHORTBALANCE", required: true, order: 30, owner: InvestmentBalance, /*type: Double,*/ readMethod: "getShortBalance", writeMethod: "setShortBalance"});
+Element.add(InvestmentBalance, {name: "SHORTBALANCE", required: true, order: 30, attributeType: Double, readMethod: "getShortBalance", writeMethod: "setShortBalance"});
 
 
 /**
@@ -146,7 +146,7 @@ InvestmentBalance.prototype.setShortBalance = function(shortBalance) {
 InvestmentBalance.prototype.getBuyingPower = function() {
   return this.buyingPower;
 };
-Element.add({name: "BUYPOWER", order: 40, owner: InvestmentBalance, /*type: Double,*/ readMethod: "getBuyingPower", writeMethod: "setBuyingPower"});
+Element.add(InvestmentBalance, {name: "BUYPOWER", order: 40, attributeType: Double, readMethod: "getBuyingPower", writeMethod: "setBuyingPower"});
 
 
 /**
@@ -167,7 +167,7 @@ InvestmentBalance.prototype.setBuyingPower = function(buyingPower) {
 InvestmentBalance.prototype.getBalanceList = function() {
   return this.balanceList;
 };
-ChildAggregate.add({order: 50, owner: InvestmentBalance, /*type: BalanceList,*/ readMethod: "getBalanceList", writeMethod: "setBalanceList"});
+ChildAggregate.add(InvestmentBalance, {order: 50, attributeType: BalanceList, readMethod: "getBalanceList", writeMethod: "setBalanceList"});
 
 
 /**

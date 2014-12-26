@@ -54,7 +54,7 @@ CreditCardRequestMessageSet.prototype.getType = function() {
 CreditCardRequestMessageSet.prototype.getStatementRequest = function() {
   return this.statementRequest;
 };
-ChildAggregate.add({order: 0, owner: CreditCardRequestMessageSet, /*type: CreditCardStatementRequestTransaction,*/ readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
+ChildAggregate.add(CreditCardRequestMessageSet, {order: 0, attributeType: CreditCardStatementRequestTransaction, readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
 
 
 /**

@@ -70,7 +70,7 @@ Aggregate.add("EXTDBINFO_V100", ExtDBInfo);
 ExtDBInfo.prototype.getProcDet = function() {
   return this.procDet;
 };
-ChildAggregate.add({required:false, order: 0, owner: ExtDBInfo, /*type: ProcDet[],*/ readMethod: "getProcDet", writeMethod: "setProcDet"});
+ChildAggregate.add(ExtDBInfo, {required:false, order: 0, attributeType: Array, collectionEntryType: ProcDet, readMethod: "getProcDet", writeMethod: "setProcDet"});
 
 
 /**
@@ -87,7 +87,7 @@ ExtDBInfo.prototype.setProcDet = function(procDet) {
 ExtDBInfo.prototype.getTeInterest = function() {
   return this.teInterest;
 };
-Element.add({name: "TEINTEREST",required: false , order: 1, owner: ExtDBInfo, /*type: String,*/ readMethod: "getTeInterest", writeMethod: "setTeInterest"});
+Element.add(ExtDBInfo, {name: "TEINTEREST",required: false , order: 1, attributeType: String, readMethod: "getTeInterest", writeMethod: "setTeInterest"});
 
 
 /**
@@ -104,7 +104,7 @@ ExtDBInfo.prototype.setTeInterest = function(teInterest) {
 ExtDBInfo.prototype.getPabInterest = function() {
   return this.pabInterest;
 };
-Element.add({name: "PABINTEREST",required: false , order: 2, owner: ExtDBInfo, /*type: String,*/ readMethod: "getPabInterest", writeMethod: "setPabInterest"});
+Element.add(ExtDBInfo, {name: "PABINTEREST",required: false , order: 2, attributeType: String, readMethod: "getPabInterest", writeMethod: "setPabInterest"});
 
 
 /**
@@ -121,7 +121,7 @@ ExtDBInfo.prototype.setPabInterest = function(pabInterest) {
 ExtDBInfo.prototype.getTeIntDividend = function() {
   return this.teIntDividend;
 };
-Element.add({name: "TEINTDIVIDEND",required: false , order: 3, owner: ExtDBInfo, /*type: String,*/ readMethod: "getTeIntDividend", writeMethod: "setTeIntDividend"});
+Element.add(ExtDBInfo, {name: "TEINTDIVIDEND",required: false , order: 3, attributeType: String, readMethod: "getTeIntDividend", writeMethod: "setTeIntDividend"});
 
 
 /**
@@ -138,7 +138,7 @@ ExtDBInfo.prototype.setTeIntDividend = function(teIntDividend) {
 ExtDBInfo.prototype.getPabDividend = function() {
   return this.pabDividend;
 };
-Element.add({name: "PABDIVIDEND",required: false , order: 4, owner: ExtDBInfo, /*type: String,*/ readMethod: "getPabDividend", writeMethod: "setPabDividend"});
+Element.add(ExtDBInfo, {name: "PABDIVIDEND",required: false , order: 4, attributeType: String, readMethod: "getPabDividend", writeMethod: "setPabDividend"});
 
 
 /**

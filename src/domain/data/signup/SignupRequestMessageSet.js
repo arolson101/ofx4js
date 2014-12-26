@@ -54,7 +54,7 @@ SignupRequestMessageSet.prototype.getType = function() {
 SignupRequestMessageSet.prototype.getAccountInfoRequest = function() {
   return this.accountInfoRequest;
 };
-ChildAggregate.add({order: 0, owner: SignupRequestMessageSet, /*type: AccountInfoRequestTransaction,*/ readMethod: "getAccountInfoRequest", writeMethod: "setAccountInfoRequest"});
+ChildAggregate.add(SignupRequestMessageSet, {order: 0, attributeType: AccountInfoRequestTransaction, readMethod: "getAccountInfoRequest", writeMethod: "setAccountInfoRequest"});
 
 
 /**

@@ -49,7 +49,7 @@ Aggregate.add("PROFTRNRS", ProfileResponseTransaction);
 ProfileResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: ProfileResponseTransaction, /*type: ProfileResponse,*/ readMethod: "getMessage", writeMethod: "setMessage"});
+ChildAggregate.add(ProfileResponseTransaction, {required: true, order: 30, attributeType: ProfileResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

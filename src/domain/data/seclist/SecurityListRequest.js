@@ -45,7 +45,7 @@ Aggregate.add("SECLISTRQ", SecurityListRequest);
 SecurityListRequest.prototype.getSecurityRequests = function() {
   return this.securityRequests;
 };
-ChildAggregate.add({required: true, order: 10, owner: SecurityListRequest, /*type: SecurityRequest[],*/ readMethod: "getSecurityRequests", writeMethod: "setSecurityRequests"});
+ChildAggregate.add(SecurityListRequest, {required: true, order: 10, attributeType: Array, collectionEntryType: SecurityRequest, readMethod: "getSecurityRequests", writeMethod: "setSecurityRequests"});
 
 
 SecurityListRequest.prototype.setSecurityRequests = function(/*SecurityRequest[]*/ securityRequests) {

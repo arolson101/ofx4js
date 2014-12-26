@@ -52,7 +52,7 @@ Aggregate.add("INVSTMTTRNRS", InvestmentStatementResponseTransaction);
 InvestmentStatementResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: InvestmentStatementResponseTransaction, /*type: InvestmentStatementResponse,*/ readMethod: "getMessage", writeMethod: "setMessage"});
+ChildAggregate.add(InvestmentStatementResponseTransaction, {required: true, order: 30, attributeType: InvestmentStatementResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

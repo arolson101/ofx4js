@@ -43,7 +43,7 @@ Aggregate.add("SIGNONMSGSET", SignOnMessageSetInfo);
 SignOnMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: SignOnMessageSetInfo, /*type: SignOnV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
+ChildAggregate.add(SignOnMessageSetInfo, {order: 0, attributeType: SignOnV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 SignOnMessageSetInfo.prototype.setVersion1Info = function(/*SignOnV1MessageSetInfo*/ version1Info) {

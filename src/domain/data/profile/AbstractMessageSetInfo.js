@@ -44,7 +44,7 @@ function AbstractMessageSetInfo () {
 AbstractMessageSetInfo.prototype.getVersionSpecificInformationList = function() {
   return this.versionSpecificInformationList;
 };
-ChildAggregate.add({order: 0, owner: AbstractMessageSetInfo, /*type: VersionSpecificMessageSetInfo[],*/ readMethod: "getVersionSpecificInformationList", writeMethod: "setVersionSpecificInformationList"});
+ChildAggregate.add(AbstractMessageSetInfo, {order: 0, attributeType: Array, collectionEntryType: VersionSpecificMessageSetInfo, readMethod: "getVersionSpecificInformationList", writeMethod: "setVersionSpecificInformationList"});
 
 
 /**

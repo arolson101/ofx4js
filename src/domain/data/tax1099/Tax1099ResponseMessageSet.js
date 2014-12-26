@@ -57,7 +57,7 @@ Tax1099ResponseMessageSet.prototype.getType = function() {
 Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction = function() {
   return this.taxResponseTransaction;
 };
-ChildAggregate.add({order: 0, owner: Tax1099ResponseMessageSet, /*type: Tax1099ResponseTransaction[],*/ readMethod: "getTaxResponseTransaction", writeMethod: "setTaxResponseTransaction"});
+ChildAggregate.add(Tax1099ResponseMessageSet, {order: 0, attributeType: Array, collectionEntryType: Tax1099ResponseTransaction, readMethod: "getTaxResponseTransaction", writeMethod: "setTaxResponseTransaction"});
 
 
 /**

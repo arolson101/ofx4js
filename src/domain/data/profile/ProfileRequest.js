@@ -56,7 +56,7 @@ Aggregate.add("PROFRQ", ProfileRequest);
 ProfileRequest.prototype.getRoutingCapability = function() {
   return this.routingCapability;
 };
-Element.add({name: "CLIENTROUTING", order: 0, owner: ProfileRequest, /*type: ClientRoutingCapability,*/ readMethod: "getRoutingCapability", writeMethod: "setRoutingCapability"});
+Element.add(ProfileRequest, {name: "CLIENTROUTING", order: 0, attributeType: ClientRoutingCapability, readMethod: "getRoutingCapability", writeMethod: "setRoutingCapability"});
 
 
 /**
@@ -77,7 +77,7 @@ ProfileRequest.prototype.setRoutingCapability = function(routingCapability) {
 ProfileRequest.prototype.getProfileLastUpdated = function() {
   return this.profileLastUpdated;
 };
-Element.add({name: "DTPROFUP", order: 10, owner: ProfileRequest, /*type: Date,*/ readMethod: "getProfileLastUpdated", writeMethod: "setProfileLastUpdated"});
+Element.add(ProfileRequest, {name: "DTPROFUP", order: 10, attributeType: Date, readMethod: "getProfileLastUpdated", writeMethod: "setProfileLastUpdated"});
 
 
 /**

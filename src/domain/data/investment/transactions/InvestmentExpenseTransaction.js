@@ -101,7 +101,7 @@ Aggregate.add("INVEXPENSE", InvestmentExpenseTransaction);
 InvestmentExpenseTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: InvestmentExpenseTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
+ChildAggregate.add(InvestmentExpenseTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -125,7 +125,7 @@ InvestmentExpenseTransaction.prototype.setSecurityId = function(securityId) {
 InvestmentExpenseTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 30, owner: InvestmentExpenseTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(InvestmentExpenseTransaction, {name: "TOTAL", required: true, order: 30, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -148,7 +148,7 @@ InvestmentExpenseTransaction.prototype.setTotal = function(total) {
 InvestmentExpenseTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 40, owner: InvestmentExpenseTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
+Element.add(InvestmentExpenseTransaction, {name: "SUBACCTSEC", order: 40, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -181,7 +181,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountSecurityEnum = function() {
 InvestmentExpenseTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 50, owner: InvestmentExpenseTransaction, /*type: String,*/ readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
+Element.add(InvestmentExpenseTransaction, {name: "SUBACCTFUND", order: 50, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -215,7 +215,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountFundEnum = function() {
 InvestmentExpenseTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 60, owner: InvestmentExpenseTransaction, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
+Element.add(InvestmentExpenseTransaction, {name: "CURRENCY", order: 60, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -240,7 +240,7 @@ InvestmentExpenseTransaction.prototype.setCurrencyCode = function(currencyCode) 
 InvestmentExpenseTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 70, owner: InvestmentExpenseTransaction, /*type: OriginalCurrency,*/ readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
+Element.add(InvestmentExpenseTransaction, {name: "ORIGCURRENCY", order: 70, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -266,7 +266,7 @@ InvestmentExpenseTransaction.prototype.setOriginalCurrencyInfo = function(origin
 InvestmentExpenseTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 180, owner: InvestmentExpenseTransaction, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
+Element.add(InvestmentExpenseTransaction, {name: "INV401KSOURCE", order: 180, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

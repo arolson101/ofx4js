@@ -49,7 +49,7 @@ Aggregate.add("PINCHTRNRQ", PasswordChangeRequestTransaction);
 PasswordChangeRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: PasswordChangeRequestTransaction, /*type: PasswordChangeRequest,*/ readMethod: "getMessage", writeMethod: "setMessage"});
+ChildAggregate.add(PasswordChangeRequestTransaction, {required: true, order: 30, attributeType: PasswordChangeRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

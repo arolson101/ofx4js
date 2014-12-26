@@ -85,7 +85,7 @@ Aggregate.add("SELLOPT", SellOptionTransaction);
 SellOptionTransaction.prototype.getOptionSellType = function() {
   return this.optionSellType;
 };
-Element.add({name: "OPTSELLTYPE", required: true, order: 20, owner: SellOptionTransaction, /*type: String,*/ readMethod: "getOptionSellType", writeMethod: "setOptionSellType"});
+Element.add(SellOptionTransaction, {name: "OPTSELLTYPE", required: true, order: 20, attributeType: String, readMethod: "getOptionSellType", writeMethod: "setOptionSellType"});
 
 
 /**
@@ -119,7 +119,7 @@ SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
 SellOptionTransaction.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", required: true, order: 30, owner: SellOptionTransaction, /*type: Integer,*/ readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
+Element.add(SellOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Integer, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -143,7 +143,7 @@ SellOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact)
 SellOptionTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 40, owner: SellOptionTransaction, /*type: String,*/ readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
+Element.add(SellOptionTransaction, {name: "RELFITID", order: 40, attributeType: String, readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**
@@ -168,7 +168,7 @@ SellOptionTransaction.prototype.setRelatedTransactionId = function(relatedTransa
 SellOptionTransaction.prototype.getRelatedType = function() {
   return this.relatedType;
 };
-Element.add({name: "RELTYPE", order: 50, owner: SellOptionTransaction, /*type: String,*/ readMethod: "getRelatedType", writeMethod: "setRelatedType"});
+Element.add(SellOptionTransaction, {name: "RELTYPE", order: 50, attributeType: String, readMethod: "getRelatedType", writeMethod: "setRelatedType"});
 
 
 /**
@@ -203,7 +203,7 @@ SellOptionTransaction.prototype.getRelatedTypeEnum = function() {
 SellOptionTransaction.prototype.getSecured = function() {
   return this.secured;
 };
-Element.add({name: "SECURED", order: 60, owner: SellOptionTransaction, /*type: String,*/ readMethod: "getSecured", writeMethod: "setSecured"});
+Element.add(SellOptionTransaction, {name: "SECURED", order: 60, attributeType: String, readMethod: "getSecured", writeMethod: "setSecured"});
 
 
 /**

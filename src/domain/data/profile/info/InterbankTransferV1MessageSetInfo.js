@@ -80,7 +80,7 @@ InterbankTransferV1MessageSetInfo.prototype.getMessageSetType = function() {
 InterbankTransferV1MessageSetInfo.prototype.getTransferProfile = function() {
   return this.transferProfile;
 };
-ChildAggregate.add({name: "XFERPROF", required: true, order: 10, owner: InterbankTransferV1MessageSetInfo, /*type: TransferProfile,*/ readMethod: "getTransferProfile", writeMethod: "setTransferProfile"});
+ChildAggregate.add(InterbankTransferV1MessageSetInfo, {name: "XFERPROF", required: true, order: 10, attributeType: TransferProfile, readMethod: "getTransferProfile", writeMethod: "setTransferProfile"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setTransferProfile = function(/*TransferProfile*/ transferProfile) {
@@ -91,7 +91,7 @@ InterbankTransferV1MessageSetInfo.prototype.setTransferProfile = function(/*Tran
 InterbankTransferV1MessageSetInfo.prototype.getSupportsBillPay = function() {
   return this.supportsBillPay;
 };
-Element.add({name: "CANBILLPAY", required: true, order: 20, owner: InterbankTransferV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsBillPay", writeMethod: "setSupportsBillPay"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "CANBILLPAY", required: true, order: 20, attributeType: bool, readMethod: "getSupportsBillPay", writeMethod: "setSupportsBillPay"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setSupportsBillPay = function(/*Boolean*/ supportsBillPay) {
@@ -102,7 +102,7 @@ InterbankTransferV1MessageSetInfo.prototype.setSupportsBillPay = function(/*Bool
 InterbankTransferV1MessageSetInfo.prototype.getCancelWindow = function() {
   return this.cancelWindow;
 };
-Element.add({name: "CANCELWND", required: true, order: 30, owner: InterbankTransferV1MessageSetInfo, /*type: Integer,*/ readMethod: "getCancelWindow", writeMethod: "setCancelWindow"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "CANCELWND", required: true, order: 30, attributeType: Integer, readMethod: "getCancelWindow", writeMethod: "setCancelWindow"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setCancelWindow = function(/*Integer*/ cancelWindow) {
@@ -113,7 +113,7 @@ InterbankTransferV1MessageSetInfo.prototype.setCancelWindow = function(/*Integer
 InterbankTransferV1MessageSetInfo.prototype.getDomesticInterbankTransferFee = function() {
   return this.domesticInterbankTransferFee;
 };
-Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: InterbankTransferV1MessageSetInfo, /*type: Double,*/ readMethod: "getDomesticInterbankTransferFee", writeMethod: "setDomesticInterbankTransferFee"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "DOMXFERFEE", required: true, order: 40, attributeType: Double, readMethod: "getDomesticInterbankTransferFee", writeMethod: "setDomesticInterbankTransferFee"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee = function(/*Double*/ domesticInterbankTransferFee) {
@@ -124,7 +124,7 @@ InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee = fu
 InterbankTransferV1MessageSetInfo.prototype.getInternationalInterbankTransferFee = function() {
   return this.internationalInterbankTransferFee;
 };
-Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: InterbankTransferV1MessageSetInfo, /*type: Double,*/ readMethod: "getInternationalInterbankTransferFee", writeMethod: "setInternationalInterbankTransferFee"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "INTLXFERFEE", required: true, order: 50, attributeType: Double, readMethod: "getInternationalInterbankTransferFee", writeMethod: "setInternationalInterbankTransferFee"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setInternationalInterbankTransferFee = function(/*Double*/ internationalInterbankTransferFee) {

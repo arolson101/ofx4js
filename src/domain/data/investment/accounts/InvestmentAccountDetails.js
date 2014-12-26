@@ -65,7 +65,7 @@ Aggregate.add("InvestmentAccountDetails", InvestmentAccountDetails);
 InvestmentAccountDetails.prototype.getBrokerId = function() {
   return this.brokerId;
 };
-Element.add({name: "BROKERID", required: true, order: 0, owner: InvestmentAccountDetails, /*type: String,*/ readMethod: "getBrokerId", writeMethod: "setBrokerId"});
+Element.add(InvestmentAccountDetails, {name: "BROKERID", required: true, order: 0, attributeType: String, readMethod: "getBrokerId", writeMethod: "setBrokerId"});
 
 
 /**
@@ -86,7 +86,7 @@ InvestmentAccountDetails.prototype.setBrokerId = function(brokerId) {
 InvestmentAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 20, owner: InvestmentAccountDetails, /*type: String,*/ readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
+Element.add(InvestmentAccountDetails, {name: "ACCTID", required: true, order: 20, attributeType: String, readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -107,7 +107,7 @@ InvestmentAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 InvestmentAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCTKEY", order: 40, owner: InvestmentAccountDetails, /*type: String,*/ readMethod: "getAccountKey", writeMethod: "setAccountKey"});
+Element.add(InvestmentAccountDetails, {name: "ACCTKEY", order: 40, attributeType: String, readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**

@@ -52,7 +52,7 @@ Aggregate.add("POSOPT", OptionsPosition);
 OptionsPosition.prototype.getSecured = function() {
   return this.secured;
 };
-Element.add({name: "SECURED", order: 20, owner: OptionsPosition, /*type: String,*/ readMethod: "getSecured", writeMethod: "setSecured"});
+Element.add(OptionsPosition, {name: "SECURED", order: 20, attributeType: String, readMethod: "getSecured", writeMethod: "setSecured"});
 
 
 /**
