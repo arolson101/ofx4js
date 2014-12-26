@@ -43,7 +43,7 @@ Aggregate.add("SIGNUPMSGSET", SignupMessageSetInfo);
 SignupMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: SignupMessageSetInfo, /*type: SignupV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: SignupMessageSetInfo, /*type: SignupV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 SignupMessageSetInfo.prototype.setVersion1Info = function(/*SignupV1MessageSetInfo*/ version1Info) {

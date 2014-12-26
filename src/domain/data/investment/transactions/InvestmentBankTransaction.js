@@ -54,7 +54,7 @@ Aggregate.add("INVBANKTRAN", InvestmentBankTransaction);
 InvestmentBankTransaction.prototype.getTransaction = function() {
   return this.transaction;
 };
-ChildAggregate.add({order: 10, owner: InvestmentBankTransaction, /*type: Transaction,*/ fcn: "getTransaction"});
+ChildAggregate.add({order: 10, owner: InvestmentBankTransaction, /*type: Transaction,*/ readMethod: "getTransaction", writeMethod: "setTransaction"});
 
 
 /**
@@ -75,7 +75,7 @@ InvestmentBankTransaction.prototype.setTransaction = function(transaction) {
 InvestmentBankTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", required: true, order: 20, owner: InvestmentBankTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add({name: "SUBACCTFUND", required: true, order: 20, owner: InvestmentBankTransaction, /*type: String,*/ readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**

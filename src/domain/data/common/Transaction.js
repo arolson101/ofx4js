@@ -177,7 +177,7 @@ Aggregate.add("STMTTRN", Transaction);
 Transaction.prototype.getTransactionType = function() {
   return this.transactionType;
 };
-Element.add({name: "TRNTYPE", required: true, order: 0, owner: Transaction, /*type: TransactionType,*/ fcn: "getTransactionType"});
+Element.add({name: "TRNTYPE", required: true, order: 0, owner: Transaction, /*type: TransactionType,*/ readMethod: "getTransactionType", writeMethod: "setTransactionType"});
 
 
 /**
@@ -198,7 +198,7 @@ Transaction.prototype.setTransactionType = function(transactionType) {
 Transaction.prototype.getDatePosted = function() {
   return this.datePosted;
 };
-Element.add({name: "DTPOSTED", required: true, order: 10, owner: Transaction, /*type: Date,*/ fcn: "getDatePosted"});
+Element.add({name: "DTPOSTED", required: true, order: 10, owner: Transaction, /*type: Date,*/ readMethod: "getDatePosted", writeMethod: "setDatePosted"});
 
 
 /**
@@ -219,7 +219,7 @@ Transaction.prototype.setDatePosted = function(datePosted) {
 Transaction.prototype.getDateInitiated = function() {
   return this.dateInitiated;
 };
-Element.add({name: "DTUSER", order: 20, owner: Transaction, /*type: Date,*/ fcn: "getDateInitiated"});
+Element.add({name: "DTUSER", order: 20, owner: Transaction, /*type: Date,*/ readMethod: "getDateInitiated", writeMethod: "setDateInitiated"});
 
 
 /**
@@ -240,7 +240,7 @@ Transaction.prototype.setDateInitiated = function(dateInitiated) {
 Transaction.prototype.getDateAvailable = function() {
   return this.dateAvailable;
 };
-Element.add({name: "DTAVAIL", order: 30, owner: Transaction, /*type: Date,*/ fcn: "getDateAvailable"});
+Element.add({name: "DTAVAIL", order: 30, owner: Transaction, /*type: Date,*/ readMethod: "getDateAvailable", writeMethod: "setDateAvailable"});
 
 
 /**
@@ -281,7 +281,7 @@ Transaction.prototype.setAmount = function(amount) {
 Transaction.prototype.getBigDecimalAmount = function() {
   return this.amount;
 };
-Element.add({name: "TRNAMT", required: true, order: 40, owner: Transaction, /*type: BigDecimal,*/ fcn: "getBigDecimalAmount"});
+Element.add({name: "TRNAMT", required: true, order: 40, owner: Transaction, /*type: BigDecimal,*/ readMethod: "getBigDecimalAmount", writeMethod: "setBigDecimalAmount"});
 
 
 /**
@@ -302,7 +302,7 @@ Transaction.prototype.setBigDecimalAmount = function(amount) {
 Transaction.prototype.getId = function() {
   return this.id;
 };
-Element.add({name: "FITID", required: true, order: 50, owner: Transaction, /*type: String,*/ fcn: "getId"});
+Element.add({name: "FITID", required: true, order: 50, owner: Transaction, /*type: String,*/ readMethod: "getId", writeMethod: "setId"});
 
 
 /**
@@ -323,7 +323,7 @@ Transaction.prototype.setId = function(id) {
 Transaction.prototype.getCorrectionId = function() {
   return this.correctionId;
 };
-Element.add({name: "CORRECTFITID", order: 60, owner: Transaction, /*type: String,*/ fcn: "getCorrectionId"});
+Element.add({name: "CORRECTFITID", order: 60, owner: Transaction, /*type: String,*/ readMethod: "getCorrectionId", writeMethod: "setCorrectionId"});
 
 
 /**
@@ -344,7 +344,7 @@ Transaction.prototype.setCorrectionId = function(correctionId) {
 Transaction.prototype.getCorrectionAction = function() {
   return this.correctionAction;
 };
-Element.add({name: "CORRECTACTION", order: 70, owner: Transaction, /*type: CorrectionAction,*/ fcn: "getCorrectionAction"});
+Element.add({name: "CORRECTACTION", order: 70, owner: Transaction, /*type: CorrectionAction,*/ readMethod: "getCorrectionAction", writeMethod: "setCorrectionAction"});
 
 
 /**
@@ -365,7 +365,7 @@ Transaction.prototype.setCorrectionAction = function(correctionAction) {
 Transaction.prototype.getTempId = function() {
   return this.tempId;
 };
-Element.add({name: "SRVRTID", order: 80, owner: Transaction, /*type: String,*/ fcn: "getTempId"});
+Element.add({name: "SRVRTID", order: 80, owner: Transaction, /*type: String,*/ readMethod: "getTempId", writeMethod: "setTempId"});
 
 
 /**
@@ -386,7 +386,7 @@ Transaction.prototype.setTempId = function(tempId) {
 Transaction.prototype.getCheckNumber = function() {
   return this.checkNumber;
 };
-Element.add({name: "CHECKNUM", order: 90, owner: Transaction, /*type: String,*/ fcn: "getCheckNumber"});
+Element.add({name: "CHECKNUM", order: 90, owner: Transaction, /*type: String,*/ readMethod: "getCheckNumber", writeMethod: "setCheckNumber"});
 
 
 /**
@@ -407,7 +407,7 @@ Transaction.prototype.setCheckNumber = function(checkNumber) {
 Transaction.prototype.getReferenceNumber = function() {
   return this.referenceNumber;
 };
-Element.add({name: "REFNUM", order: 100, owner: Transaction, /*type: String,*/ fcn: "getReferenceNumber"});
+Element.add({name: "REFNUM", order: 100, owner: Transaction, /*type: String,*/ readMethod: "getReferenceNumber", writeMethod: "setReferenceNumber"});
 
 
 /**
@@ -428,7 +428,7 @@ Transaction.prototype.setReferenceNumber = function(referenceNumber) {
 Transaction.prototype.getStandardIndustrialCode = function() {
   return this.standardIndustrialCode;
 };
-Element.add({name: "SIC", order: 110, owner: Transaction, /*type: String,*/ fcn: "getStandardIndustrialCode"});
+Element.add({name: "SIC", order: 110, owner: Transaction, /*type: String,*/ readMethod: "getStandardIndustrialCode", writeMethod: "setStandardIndustrialCode"});
 
 
 /**
@@ -449,7 +449,7 @@ Transaction.prototype.setStandardIndustrialCode = function(standardIndustrialCod
 Transaction.prototype.getPayeeId = function() {
   return this.payeeId;
 };
-Element.add({name: "PAYEEID", order: 120, owner: Transaction, /*type: String,*/ fcn: "getPayeeId"});
+Element.add({name: "PAYEEID", order: 120, owner: Transaction, /*type: String,*/ readMethod: "getPayeeId", writeMethod: "setPayeeId"});
 
 
 /**
@@ -470,7 +470,7 @@ Transaction.prototype.setPayeeId = function(payeeId) {
 Transaction.prototype.getName = function() {
   return this.name;
 };
-Element.add({name: "NAME", order: 130, owner: Transaction, /*type: String,*/ fcn: "getName"});
+Element.add({name: "NAME", order: 130, owner: Transaction, /*type: String,*/ readMethod: "getName", writeMethod: "setName"});
 
 
 /**
@@ -491,7 +491,7 @@ Transaction.prototype.setName = function(name) {
 Transaction.prototype.getPayee = function() {
   return this.payee;
 };
-ChildAggregate.add({order: 140, owner: Transaction, /*type: Payee,*/ fcn: "getPayee"});
+ChildAggregate.add({order: 140, owner: Transaction, /*type: Payee,*/ readMethod: "getPayee", writeMethod: "setPayee"});
 
 
 /**
@@ -512,7 +512,7 @@ Transaction.prototype.setPayee = function(payee) {
 Transaction.prototype.getBankAccountTo = function() {
   return this.bankAccountTo;
 };
-ChildAggregate.add({name: "BANKACCTTO", order: 150, owner: Transaction, /*type: BankAccountDetails,*/ fcn: "getBankAccountTo"});
+ChildAggregate.add({name: "BANKACCTTO", order: 150, owner: Transaction, /*type: BankAccountDetails,*/ readMethod: "getBankAccountTo", writeMethod: "setBankAccountTo"});
 
 
 /**
@@ -533,7 +533,7 @@ Transaction.prototype.setBankAccountTo = function(bankAccountTo) {
 Transaction.prototype.getCreditCardAccountTo = function() {
   return this.creditCardAccountTo;
 };
-ChildAggregate.add({name: "CCACCTTO", order: 160, owner: Transaction, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountTo"});
+ChildAggregate.add({name: "CCACCTTO", order: 160, owner: Transaction, /*type: CreditCardAccountDetails,*/ readMethod: "getCreditCardAccountTo", writeMethod: "setCreditCardAccountTo"});
 
 
 /**
@@ -554,7 +554,7 @@ Transaction.prototype.setCreditCardAccountTo = function(creditCardAccountTo) {
 Transaction.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 170, owner: Transaction, /*type: String,*/ fcn: "getMemo"});
+Element.add({name: "MEMO", order: 170, owner: Transaction, /*type: String,*/ readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**
@@ -575,7 +575,7 @@ Transaction.prototype.setMemo = function(memo) {
 Transaction.prototype.getCurrency = function() {
   return this.currency;
 };
-ChildAggregate.add({order: 180, owner: Transaction, /*type: Currency,*/ fcn: "getCurrency"});
+ChildAggregate.add({order: 180, owner: Transaction, /*type: Currency,*/ readMethod: "getCurrency", writeMethod: "setCurrency"});
 
 
 /**
@@ -596,7 +596,7 @@ Transaction.prototype.setCurrency = function(currency) {
 Transaction.prototype.getOriginalCurrency = function() {
   return this.originalCurrency;
 };
-ChildAggregate.add({name: "ORIGCURRENCY", order: 190, owner: Transaction, /*type: Currency,*/ fcn: "getOriginalCurrency"});
+ChildAggregate.add({name: "ORIGCURRENCY", order: 190, owner: Transaction, /*type: Currency,*/ readMethod: "getOriginalCurrency", writeMethod: "setOriginalCurrency"});
 
 
 /**

@@ -115,7 +115,7 @@ Aggregate.add("INVPOS", InvestmentPosition);
 InvestmentPosition.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 10, owner: InvestmentPosition, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add({required: true, order: 10, owner: InvestmentPosition, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -139,7 +139,7 @@ InvestmentPosition.prototype.setSecurityId = function(securityId) {
 InvestmentPosition.prototype.getHeldInAccount = function() {
   return this.heldInAccount;
 };
-Element.add({name: "HELDINACCT", required: true, order: 20, owner: InvestmentPosition, /*type: String,*/ fcn: "getHeldInAccount"});
+Element.add({name: "HELDINACCT", required: true, order: 20, owner: InvestmentPosition, /*type: String,*/ readMethod: "getHeldInAccount", writeMethod: "setHeldInAccount"});
 
 
 /**
@@ -175,7 +175,7 @@ InvestmentPosition.prototype.getHeldInAccountEnum = function() {
 InvestmentPosition.prototype.getPositionType = function() {
   return this.positionType;
 };
-Element.add({name: "POSTYPE", required: true, order: 30, owner: InvestmentPosition, /*type: String,*/ fcn: "getPositionType"});
+Element.add({name: "POSTYPE", required: true, order: 30, owner: InvestmentPosition, /*type: String,*/ readMethod: "getPositionType", writeMethod: "setPositionType"});
 
 
 /**
@@ -212,7 +212,7 @@ InvestmentPosition.prototype.getPositionTypeEnum = function() {
 InvestmentPosition.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 40, owner: InvestmentPosition, /*type: Double,*/ fcn: "getUnits"});
+Element.add({name: "UNITS", required: true, order: 40, owner: InvestmentPosition, /*type: Double,*/ readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -239,7 +239,7 @@ InvestmentPosition.prototype.setUnits = function(units) {
 InvestmentPosition.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 50, owner: InvestmentPosition, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add({name: "UNITPRICE", required: true, order: 50, owner: InvestmentPosition, /*type: Double,*/ readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -264,7 +264,7 @@ InvestmentPosition.prototype.setUnitPrice = function(unitPrice) {
 InvestmentPosition.prototype.getMarketValue = function() {
   return this.marketValue;
 };
-Element.add({name: "MKTVAL", required: true, order: 60, owner: InvestmentPosition, /*type: Double,*/ fcn: "getMarketValue"});
+Element.add({name: "MKTVAL", required: true, order: 60, owner: InvestmentPosition, /*type: Double,*/ readMethod: "getMarketValue", writeMethod: "setMarketValue"});
 
 
 /**
@@ -288,7 +288,7 @@ InvestmentPosition.prototype.setMarketValue = function(marketValue) {
 InvestmentPosition.prototype.getMarketValueDate = function() {
   return this.marketValueDate;
 };
-Element.add({name: "DTPRICEASOF", required: true, order: 70, owner: InvestmentPosition, /*type: Date,*/ fcn: "getMarketValueDate"});
+Element.add({name: "DTPRICEASOF", required: true, order: 70, owner: InvestmentPosition, /*type: Date,*/ readMethod: "getMarketValueDate", writeMethod: "setMarketValueDate"});
 
 
 /**
@@ -313,7 +313,7 @@ InvestmentPosition.prototype.setMarketValueDate = function(marketValueDate) {
 InvestmentPosition.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: InvestmentPosition, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add({name: "CURRENCY", order: 80, owner: InvestmentPosition, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -338,7 +338,7 @@ InvestmentPosition.prototype.setCurrencyCode = function(currencyCode) {
 InvestmentPosition.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 90, owner: InvestmentPosition, /*type: String,*/ fcn: "getMemo"});
+Element.add({name: "MEMO", order: 90, owner: InvestmentPosition, /*type: String,*/ readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**
@@ -364,7 +364,7 @@ InvestmentPosition.prototype.setMemo = function(memo) {
 InvestmentPosition.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 100, owner: InvestmentPosition, /*type: String,*/ fcn: "get401kSource"});
+Element.add({name: "INV401KSOURCE", order: 100, owner: InvestmentPosition, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

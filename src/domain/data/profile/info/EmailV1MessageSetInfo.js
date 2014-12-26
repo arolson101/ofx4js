@@ -63,7 +63,7 @@ EmailV1MessageSetInfo.prototype.getMessageSetType = function() {
 EmailV1MessageSetInfo.prototype.getSupportsMail = function() {
   return this.supportsMail;
 };
-Element.add({name: "MAILSUP", required: true, order: 10, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsMail"});
+Element.add({name: "MAILSUP", required: true, order: 10, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsMail", writeMethod: "setSupportsMail"});
 
 
 EmailV1MessageSetInfo.prototype.setSupportsMail = function(/*Boolean*/ supportsMail) {
@@ -78,7 +78,7 @@ EmailV1MessageSetInfo.prototype.setSupportsMail = function(/*Boolean*/ supportsM
 EmailV1MessageSetInfo.prototype.getSupportsMimeType = function() {
   return this.supportsMimeType;
 };
-Element.add({name: "GETMIMESUP", required: true, order: 20, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsMimeType"});
+Element.add({name: "GETMIMESUP", required: true, order: 20, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsMimeType", writeMethod: "setSupportsMimeType"});
 
 
 EmailV1MessageSetInfo.prototype.setSupportsMimeType = function(/*Boolean*/ supportsMimeType) {

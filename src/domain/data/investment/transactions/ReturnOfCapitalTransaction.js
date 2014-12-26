@@ -103,7 +103,7 @@ Aggregate.add("RETOFCAP", ReturnOfCapitalTransaction);
 ReturnOfCapitalTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: ReturnOfCapitalTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add({required: true, order: 20, owner: ReturnOfCapitalTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -127,7 +127,7 @@ ReturnOfCapitalTransaction.prototype.setSecurityId = function(securityId) {
 ReturnOfCapitalTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 40, owner: ReturnOfCapitalTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add({name: "TOTAL", required: true, order: 40, owner: ReturnOfCapitalTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -151,7 +151,7 @@ ReturnOfCapitalTransaction.prototype.setTotal = function(total) {
 ReturnOfCapitalTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 50, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add({name: "SUBACCTSEC", order: 50, owner: ReturnOfCapitalTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -186,7 +186,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountSecurityEnum = function() {
 ReturnOfCapitalTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 140, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add({name: "SUBACCTFUND", order: 140, owner: ReturnOfCapitalTransaction, /*type: String,*/ readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -221,7 +221,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountFundEnum = function() {
 ReturnOfCapitalTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 110, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add({name: "CURRENCY", order: 110, owner: ReturnOfCapitalTransaction, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -246,7 +246,7 @@ ReturnOfCapitalTransaction.prototype.setCurrencyCode = function(currencyCode) {
 ReturnOfCapitalTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 120, owner: ReturnOfCapitalTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add({name: "ORIGCURRENCY", order: 120, owner: ReturnOfCapitalTransaction, /*type: OriginalCurrency,*/ readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -272,7 +272,7 @@ ReturnOfCapitalTransaction.prototype.setOriginalCurrencyInfo = function(original
 ReturnOfCapitalTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 180, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add({name: "INV401KSOURCE", order: 180, owner: ReturnOfCapitalTransaction, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

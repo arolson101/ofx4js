@@ -67,7 +67,7 @@ Aggregate.add("MFINFO", MutualFundSecurityInfo);
 MutualFundSecurityInfo.prototype.getType = function() {
   return this.mfType;
 };
-Element.add({name: "MFTYPE", order: 20, owner: MutualFundSecurityInfo, /*type: String,*/ fcn: "getType"});
+Element.add({name: "MFTYPE", order: 20, owner: MutualFundSecurityInfo, /*type: String,*/ readMethod: "getType", writeMethod: "setType"});
 
 
 /**
@@ -99,7 +99,7 @@ MutualFundSecurityInfo.prototype.getTypeEnum = function() {
 MutualFundSecurityInfo.prototype.getYield = function() {
   return this.yield;
 };
-Element.add({name: "YIELD", order: 30, owner: MutualFundSecurityInfo, /*type: Double,*/ fcn: "getYield"});
+Element.add({name: "YIELD", order: 30, owner: MutualFundSecurityInfo, /*type: Double,*/ readMethod: "getYield", writeMethod: "setYield"});
 
 
 /**
@@ -120,7 +120,7 @@ MutualFundSecurityInfo.prototype.setYield = function(yield_) {
 MutualFundSecurityInfo.prototype.getDateYieldAsOf = function() {
   return this.dateYieldAsOf;
 };
-Element.add({name: "DTYIELDASOF", order: 40, owner: MutualFundSecurityInfo, /*type: Date,*/ fcn: "getDateYieldAsOf"});
+Element.add({name: "DTYIELDASOF", order: 40, owner: MutualFundSecurityInfo, /*type: Date,*/ readMethod: "getDateYieldAsOf", writeMethod: "setDateYieldAsOf"});
 
 
 /**

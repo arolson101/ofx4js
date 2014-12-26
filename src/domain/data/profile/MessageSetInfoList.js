@@ -44,7 +44,7 @@ Aggregate.add("MSGSETLIST", MessageSetInfoList);
 MessageSetInfoList.prototype.getInformationList = function() {
   return this.informationList;
 };
-ChildAggregate.add({order: 0, owner: MessageSetInfoList, /*type: AbstractMessageSetInfo[],*/ fcn: "getInformationList"});
+ChildAggregate.add({order: 0, owner: MessageSetInfoList, /*type: AbstractMessageSetInfo[],*/ readMethod: "getInformationList", writeMethod: "setInformationList"});
 
 
 /**

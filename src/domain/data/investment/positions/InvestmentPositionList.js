@@ -46,7 +46,7 @@ Aggregate.add("INVPOSLIST", InvestmentPositionList);
 InvestmentPositionList.prototype.getPositions = function() {
   return this.positions;
 };
-ChildAggregate.add({order: 10, owner: InvestmentPositionList, /*type: BasePosition[],*/ fcn: "getPositions"});
+ChildAggregate.add({order: 10, owner: InvestmentPositionList, /*type: BasePosition[],*/ readMethod: "getPositions", writeMethod: "setPositions"});
 
 
 /**

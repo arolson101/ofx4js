@@ -68,7 +68,7 @@ Aggregate.add("INVTRANLIST", InvestmentTransactionList);
 InvestmentTransactionList.prototype.getStart = function() {
   return this.start;
 };
-Element.add({name: "DTSTART", required: true, order: 0, owner: InvestmentTransactionList, /*type: Date,*/ fcn: "getStart"});
+Element.add({name: "DTSTART", required: true, order: 0, owner: InvestmentTransactionList, /*type: Date,*/ readMethod: "getStart", writeMethod: "setStart"});
 
 
 /**
@@ -89,7 +89,7 @@ InvestmentTransactionList.prototype.setStart = function(start) {
 InvestmentTransactionList.prototype.getEnd = function() {
   return this.end;
 };
-Element.add({name: "DTEND", required: true, order: 10, owner: InvestmentTransactionList, /*type: Date,*/ fcn: "getEnd"});
+Element.add({name: "DTEND", required: true, order: 10, owner: InvestmentTransactionList, /*type: Date,*/ readMethod: "getEnd", writeMethod: "setEnd"});
 
 
 /**
@@ -111,7 +111,7 @@ InvestmentTransactionList.prototype.setEnd = function(end) {
 InvestmentTransactionList.prototype.getInvestmentTransactions = function() {
   return this.transactions;
 };
-ChildAggregate.add({order: 20, owner: InvestmentTransactionList, /*type: BaseInvestmentTransaction[],*/ fcn: "getInvestmentTransactions"});
+ChildAggregate.add({order: 20, owner: InvestmentTransactionList, /*type: BaseInvestmentTransaction[],*/ readMethod: "getInvestmentTransactions", writeMethod: "setInvestmentTransactions"});
 
 
 /**
@@ -133,7 +133,7 @@ InvestmentTransactionList.prototype.setInvestmentTransactions = function(transac
 InvestmentTransactionList.prototype.getBankTransactions = function() {
   return this.bankTransactions;
 };
-ChildAggregate.add({order: 30, owner: InvestmentTransactionList, /*type: InvestmentBankTransaction[],*/ fcn: "getBankTransactions"});
+ChildAggregate.add({order: 30, owner: InvestmentTransactionList, /*type: InvestmentBankTransaction[],*/ readMethod: "getBankTransactions", writeMethod: "setBankTransactions"});
 
 
 /**

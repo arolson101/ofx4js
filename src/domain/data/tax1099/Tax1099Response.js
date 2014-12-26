@@ -87,7 +87,7 @@ Aggregate.add("TAX1099RS", Tax1099Response);
 Tax1099Response.prototype.getLstTax1099DIV = function() {
   return this.lstTax1099DIV;
 };
-ChildAggregate.add({required: false, order: 0, owner: Tax1099Response, /*type: Tax1099DIV[],*/ fcn: "getLstTax1099DIV"});
+ChildAggregate.add({required: false, order: 0, owner: Tax1099Response, /*type: Tax1099DIV[],*/ readMethod: "getLstTax1099DIV", writeMethod: "setLstTax1099DIV"});
 
 
 /**
@@ -110,7 +110,7 @@ Tax1099Response.prototype.getResponseMessageName = function() {
 Tax1099Response.prototype.getLstTax1099INT = function() {
   return this.lstTax1099INT;
 };
-ChildAggregate.add({required: false, order: 1, owner: Tax1099Response, /*type: Tax1099INT[],*/ fcn: "getLstTax1099INT"});
+ChildAggregate.add({required: false, order: 1, owner: Tax1099Response, /*type: Tax1099INT[],*/ readMethod: "getLstTax1099INT", writeMethod: "setLstTax1099INT"});
 
 
 /**
@@ -127,7 +127,7 @@ Tax1099Response.prototype.setLstTax1099INT = function(lstTax1099INT) {
 Tax1099Response.prototype.getLstTax1099R = function() {
   return this.lstTax1099R;
 };
-ChildAggregate.add({required: false, order: 2, owner: Tax1099Response, /*type: Tax1099R[],*/ fcn: "getLstTax1099R"});
+ChildAggregate.add({required: false, order: 2, owner: Tax1099Response, /*type: Tax1099R[],*/ readMethod: "getLstTax1099R", writeMethod: "setLstTax1099R"});
 
 
 /**
@@ -144,7 +144,7 @@ Tax1099Response.prototype.setLstTax1099R = function(lstTax1099R) {
 Tax1099Response.prototype.getLstTax1099B = function() {
   return this.lstTax1099B;
 };
-ChildAggregate.add({required: false, order: 3, owner: Tax1099Response, /*type: Tax1099B[],*/ fcn: "getLstTax1099B"});
+ChildAggregate.add({required: false, order: 3, owner: Tax1099Response, /*type: Tax1099B[],*/ readMethod: "getLstTax1099B", writeMethod: "setLstTax1099B"});
 
 
 /**
@@ -161,7 +161,7 @@ Tax1099Response.prototype.setLstTax1099B = function(lstTax1099B) {
 Tax1099Response.prototype.getLstTax1099MISC = function() {
   return this.lstTax1099MISC;
 };
-ChildAggregate.add({required: false, order: 4, owner: Tax1099Response, /*type: Tax1099MISC[],*/ fcn: "getLstTax1099MISC"});
+ChildAggregate.add({required: false, order: 4, owner: Tax1099Response, /*type: Tax1099MISC[],*/ readMethod: "getLstTax1099MISC", writeMethod: "setLstTax1099MISC"});
 
 
 /**
@@ -178,7 +178,7 @@ Tax1099Response.prototype.setLstTax1099MISC = function(lstTax1099MISC) {
 Tax1099Response.prototype.getLstTax1099OID = function() {
   return this.lstTax1099OID;
 };
-ChildAggregate.add({required: false, order:5, owner: Tax1099Response, /*type: Tax1099OID[],*/ fcn: "getLstTax1099OID"});
+ChildAggregate.add({required: false, order:5, owner: Tax1099Response, /*type: Tax1099OID[],*/ readMethod: "getLstTax1099OID", writeMethod: "setLstTax1099OID"});
 
 
 /**

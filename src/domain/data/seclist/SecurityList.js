@@ -41,7 +41,7 @@ Aggregate.add("SECLIST", SecurityList);
 SecurityList.prototype.getSecurityInfos = function() {
   return this.securityInfos;
 };
-ChildAggregate.add({order: 10, owner: SecurityList, /*type: BaseSecurityInfo[],*/ fcn: "getSecurityInfos"});
+ChildAggregate.add({order: 10, owner: SecurityList, /*type: BaseSecurityInfo[],*/ readMethod: "getSecurityInfos", writeMethod: "setSecurityInfos"});
 
 
 SecurityList.prototype.setSecurityInfos = function(/*BaseSecurityInfo[]*/ securityInfos) {

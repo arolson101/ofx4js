@@ -96,7 +96,7 @@ Aggregate.add("OPTINFO", OptionSecurityInfo);
 OptionSecurityInfo.prototype.getOptionType = function() {
   return this.optionType;
 };
-Element.add({name: "OPTTYPE", order: 20, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getOptionType"});
+Element.add({name: "OPTTYPE", order: 20, owner: OptionSecurityInfo, /*type: String,*/ readMethod: "getOptionType", writeMethod: "setOptionType"});
 
 
 /**
@@ -128,7 +128,7 @@ OptionSecurityInfo.prototype.getOptionTypeEnum = function() {
 OptionSecurityInfo.prototype.getStrikePrice = function() {
   return this.strikePrice;
 };
-Element.add({name: "STRIKEPRICE", order: 30, owner: OptionSecurityInfo, /*type: Double,*/ fcn: "getStrikePrice"});
+Element.add({name: "STRIKEPRICE", order: 30, owner: OptionSecurityInfo, /*type: Double,*/ readMethod: "getStrikePrice", writeMethod: "setStrikePrice"});
 
 
 /**
@@ -149,7 +149,7 @@ OptionSecurityInfo.prototype.setStrikePrice = function(strikePrice) {
 OptionSecurityInfo.prototype.getExpirationDate = function() {
   return this.expirationDate;
 };
-Element.add({name: "DTEXPIRE", order: 40, owner: OptionSecurityInfo, /*type: Date,*/ fcn: "getExpirationDate"});
+Element.add({name: "DTEXPIRE", order: 40, owner: OptionSecurityInfo, /*type: Date,*/ readMethod: "getExpirationDate", writeMethod: "setExpirationDate"});
 
 
 /**
@@ -171,7 +171,7 @@ OptionSecurityInfo.prototype.setExpirationDate = function(expirationDate) {
 OptionSecurityInfo.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", order: 50, owner: OptionSecurityInfo, /*type: Integer,*/ fcn: "getSharesPerContact"});
+Element.add({name: "SHPERCTRCT", order: 50, owner: OptionSecurityInfo, /*type: Integer,*/ readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -194,7 +194,7 @@ OptionSecurityInfo.prototype.setSharesPerContact = function(sharesPerContact) {
 OptionSecurityInfo.prototype.getUnderlyingSecurity = function() {
   return this.underlyingSecurity;
 };
-Element.add({name: "SECID", order: 60, owner: OptionSecurityInfo, /*type: SecurityId,*/ fcn: "getUnderlyingSecurity"});
+Element.add({name: "SECID", order: 60, owner: OptionSecurityInfo, /*type: SecurityId,*/ readMethod: "getUnderlyingSecurity", writeMethod: "setUnderlyingSecurity"});
 
 
 /**
@@ -216,7 +216,7 @@ OptionSecurityInfo.prototype.setUnderlyingSecurity = function(underlyingSecurity
 OptionSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 70, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add({name: "ASSETCLASS", order: 70, owner: OptionSecurityInfo, /*type: String,*/ readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -248,7 +248,7 @@ OptionSecurityInfo.prototype.getAssetClassEnum = function() {
 OptionSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 80, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add({name: "FIASSETCLASS", order: 80, owner: OptionSecurityInfo, /*type: String,*/ readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**

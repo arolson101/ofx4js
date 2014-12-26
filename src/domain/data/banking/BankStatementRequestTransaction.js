@@ -49,7 +49,7 @@ Aggregate.add("STMTTRNRQ", BankStatementRequestTransaction);
 BankStatementRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: BankStatementRequestTransaction, /*type: BankStatementRequest,*/ fcn: "getMessage"});
+ChildAggregate.add({required: true, order: 30, owner: BankStatementRequestTransaction, /*type: BankStatementRequest,*/ readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

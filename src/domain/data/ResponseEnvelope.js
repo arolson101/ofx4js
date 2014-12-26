@@ -63,7 +63,7 @@ Aggregate.add("OFX", ResponseEnvelope);
 ResponseEnvelope.prototype.getSecurity = function() {
   return this.security;
 };
-Header.add({name: "SECURITY", owner: ResponseEnvelope, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
+Header.add({name: "SECURITY", owner: ResponseEnvelope, /*type: ApplicationSecurity,*/ readMethod: "getSecurity", writeMethod: "setSecurity"});
 
 
 /**
@@ -86,7 +86,7 @@ ResponseEnvelope.prototype.setSecurity = function(security) {
 ResponseEnvelope.prototype.getUID = function() {
   return this.UID;
 };
-Header.add({name: "NEWFILEUID", owner: ResponseEnvelope, /*type: String,*/ fcn: "getUID"});
+Header.add({name: "NEWFILEUID", owner: ResponseEnvelope, /*type: String,*/ readMethod: "getUID", writeMethod: "setUID"});
 
 
 /**
@@ -109,7 +109,7 @@ ResponseEnvelope.prototype.setUID = function(UID) {
 ResponseEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
 };
-ChildAggregate.add({order: 1, owner: ResponseEnvelope, /*type: SortedSet<ResponseMessageSet>,*/ fcn: "getMessageSets"});
+ChildAggregate.add({order: 1, owner: ResponseEnvelope, /*type: SortedSet<ResponseMessageSet>,*/ readMethod: "getMessageSets", writeMethod: "setMessageSets"});
 
 
 /**

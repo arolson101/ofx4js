@@ -58,7 +58,7 @@ SecurityListRequestMessageSet.prototype.getType = function() {
 SecurityListRequestMessageSet.prototype.getSecurityListRequest = function() {
   return this.securityListRequest;
 };
-ChildAggregate.add({order: 0, owner: SecurityListRequestMessageSet, /*type: SecurityListRequestTransaction,*/ fcn: "getSecurityListRequest"});
+ChildAggregate.add({order: 0, owner: SecurityListRequestMessageSet, /*type: SecurityListRequestTransaction,*/ readMethod: "getSecurityListRequest", writeMethod: "setSecurityListRequest"});
 
 
 /**

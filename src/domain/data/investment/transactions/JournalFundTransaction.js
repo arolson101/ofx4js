@@ -75,7 +75,7 @@ JournalFundTransaction.prototype.JournalFundTransaction = function() {
 JournalFundTransaction.prototype.getFromSubAccountFund = function() {
   return this.subAccountFrom;
 };
-Element.add({name: "SUBACCTFROM", order: 20, owner: JournalFundTransaction, /*type: String,*/ fcn: "getFromSubAccountFund"});
+Element.add({name: "SUBACCTFROM", order: 20, owner: JournalFundTransaction, /*type: String,*/ readMethod: "getFromSubAccountFund", writeMethod: "setFromSubAccountFund"});
 
 
 /**
@@ -108,7 +108,7 @@ JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
 JournalFundTransaction.prototype.getToSubAccountFund = function() {
   return this.subAccountTo;
 };
-Element.add({name: "SUBACCTTO", order: 30, owner: JournalFundTransaction, /*type: String,*/ fcn: "getToSubAccountFund"});
+Element.add({name: "SUBACCTTO", order: 30, owner: JournalFundTransaction, /*type: String,*/ readMethod: "getToSubAccountFund", writeMethod: "setToSubAccountFund"});
 
 
 /**
@@ -141,7 +141,7 @@ JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
 JournalFundTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", order: 40, owner: JournalFundTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add({name: "TOTAL", order: 40, owner: JournalFundTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

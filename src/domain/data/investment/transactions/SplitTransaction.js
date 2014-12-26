@@ -128,7 +128,7 @@ Aggregate.add("SPLIT", SplitTransaction);
 SplitTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: SplitTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add({required: true, order: 20, owner: SplitTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -153,7 +153,7 @@ SplitTransaction.prototype.setSecurityId = function(securityId) {
 SplitTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 30, owner: SplitTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add({name: "SUBACCTSEC", order: 30, owner: SplitTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -187,7 +187,7 @@ SplitTransaction.prototype.getSubAccountSecurityEnum = function() {
 SplitTransaction.prototype.getOldUnits = function() {
   return this.oldUnits;
 };
-Element.add({name: "OLDUNITS", order: 40, owner: SplitTransaction, /*type: Double,*/ fcn: "getOldUnits"});
+Element.add({name: "OLDUNITS", order: 40, owner: SplitTransaction, /*type: Double,*/ readMethod: "getOldUnits", writeMethod: "setOldUnits"});
 
 
 /**
@@ -210,7 +210,7 @@ SplitTransaction.prototype.setOldUnits = function(oldUnits) {
 SplitTransaction.prototype.getNewUnits = function() {
   return this.newUnits;
 };
-Element.add({name: "NEWUNITS", order: 50, owner: SplitTransaction, /*type: Double,*/ fcn: "getNewUnits"});
+Element.add({name: "NEWUNITS", order: 50, owner: SplitTransaction, /*type: Double,*/ readMethod: "getNewUnits", writeMethod: "setNewUnits"});
 
 
 /**
@@ -232,7 +232,7 @@ SplitTransaction.prototype.setNewUnits = function(newUnits) {
 SplitTransaction.prototype.getNumerator = function() {
   return this.numerator;
 };
-Element.add({name: "NUMERATOR", order: 60, owner: SplitTransaction, /*type: Double,*/ fcn: "getNumerator"});
+Element.add({name: "NUMERATOR", order: 60, owner: SplitTransaction, /*type: Double,*/ readMethod: "getNumerator", writeMethod: "setNumerator"});
 
 
 /**
@@ -253,7 +253,7 @@ SplitTransaction.prototype.setNumerator = function(numerator) {
 SplitTransaction.prototype.getDenominator = function() {
   return this.denominator;
 };
-Element.add({name: "DENOMINATOR", order: 70, owner: SplitTransaction, /*type: Double,*/ fcn: "getDenominator"});
+Element.add({name: "DENOMINATOR", order: 70, owner: SplitTransaction, /*type: Double,*/ readMethod: "getDenominator", writeMethod: "setDenominator"});
 
 
 /**
@@ -276,7 +276,7 @@ SplitTransaction.prototype.setDenominator = function(denominator) {
 SplitTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: SplitTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add({name: "CURRENCY", order: 80, owner: SplitTransaction, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -301,7 +301,7 @@ SplitTransaction.prototype.setCurrencyCode = function(/*String*/ currencyCode) {
 SplitTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 90, owner: SplitTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add({name: "ORIGCURRENCY", order: 90, owner: SplitTransaction, /*type: OriginalCurrency,*/ readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -324,7 +324,7 @@ SplitTransaction.prototype.setOriginalCurrencyInfo = function(/*OriginalCurrency
 SplitTransaction.prototype.getCashForFractionalUnits = function() {
   return this.cashForFractionalUnits;
 };
-Element.add({name: "FRACCASH", order: 100, owner: SplitTransaction, /*type: Double,*/ fcn: "getCashForFractionalUnits"});
+Element.add({name: "FRACCASH", order: 100, owner: SplitTransaction, /*type: Double,*/ readMethod: "getCashForFractionalUnits", writeMethod: "setCashForFractionalUnits"});
 
 
 /**
@@ -346,7 +346,7 @@ SplitTransaction.prototype.setCashForFractionalUnits = function(cashForFractiona
 SplitTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 110, owner: SplitTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add({name: "SUBACCTFUND", order: 110, owner: SplitTransaction, /*type: String,*/ readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -381,7 +381,7 @@ SplitTransaction.prototype.getSubAccountFundEnum = function() {
 SplitTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 120, owner: SplitTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add({name: "INV401KSOURCE", order: 120, owner: SplitTransaction, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

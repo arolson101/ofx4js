@@ -49,7 +49,7 @@ Aggregate.add("CCSTMTTRNRS", CreditCardStatementResponseTransaction);
 CreditCardStatementResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: CreditCardStatementResponseTransaction, /*type: CreditCardStatementResponse,*/ fcn: "getMessage"});
+ChildAggregate.add({required: true, order: 30, owner: CreditCardStatementResponseTransaction, /*type: CreditCardStatementResponse,*/ readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

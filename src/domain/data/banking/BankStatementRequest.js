@@ -48,7 +48,7 @@ Aggregate.add("STMTRQ", BankStatementRequest);
 BankStatementRequest.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankStatementRequest, /*type: BankAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankStatementRequest, /*type: BankAccountDetails,*/ readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**

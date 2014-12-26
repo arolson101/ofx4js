@@ -63,7 +63,7 @@ CreditCardV1MessageSetInfo.prototype.getMessageSetType = function() {
 CreditCardV1MessageSetInfo.prototype.getClosingAvail = function() {
   return this.closingAvail;
 };
-Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: CreditCardV1MessageSetInfo, /*type: Boolean,*/ fcn: "getClosingAvail"});
+Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: CreditCardV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getClosingAvail", writeMethod: "setClosingAvail"});
 
 
 CreditCardV1MessageSetInfo.prototype.setClosingAvail = function(/*Boolean*/ closingAvail) {
@@ -78,7 +78,7 @@ CreditCardV1MessageSetInfo.prototype.setClosingAvail = function(/*Boolean*/ clos
 CreditCardV1MessageSetInfo.prototype.getImageProfile = function() {
   return this.imageProfile;
 };
-ChildAggregate.add({name: "IMAGEPROF", order: 10, owner: CreditCardV1MessageSetInfo, /*type: ImageProfile,*/ fcn: "getImageProfile"});
+ChildAggregate.add({name: "IMAGEPROF", order: 10, owner: CreditCardV1MessageSetInfo, /*type: ImageProfile,*/ readMethod: "getImageProfile", writeMethod: "setImageProfile"});
 
 
 CreditCardV1MessageSetInfo.prototype.setImageProfile = function(/*ImageProfile*/ imageProfile) {

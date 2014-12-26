@@ -55,7 +55,7 @@ ProfileResponseMessageSet.prototype.getType = function() {
 ProfileResponseMessageSet.prototype.getProfileResponse = function() {
   return this.profileResponse;
 };
-ChildAggregate.add({required: true, order: 0, owner: ProfileResponseMessageSet, /*type: ProfileResponseTransaction,*/ fcn: "getProfileResponse"});
+ChildAggregate.add({required: true, order: 0, owner: ProfileResponseMessageSet, /*type: ProfileResponseTransaction,*/ readMethod: "getProfileResponse", writeMethod: "setProfileResponse"});
 
 
 /**

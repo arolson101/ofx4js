@@ -43,7 +43,7 @@ Aggregate.add("BANKMSGSET", BankingMessageSetInfo);
 BankingMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: BankingMessageSetInfo, /*type: BankingV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: BankingMessageSetInfo, /*type: BankingV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 BankingMessageSetInfo.prototype.setVersion1Info = function(/*BankingV1MessageSetInfo*/ version1Info) {

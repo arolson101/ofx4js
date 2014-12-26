@@ -158,7 +158,7 @@ Aggregate.add("TAX1099R_V100", Tax1099R);
 Tax1099R.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099R, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099R, /*type: String,*/ readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099R.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -169,7 +169,7 @@ Tax1099R.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099R.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099R, /*type: String,*/ fcn: "getTaxYear"});
+Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099R, /*type: String,*/ readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099R.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -183,7 +183,7 @@ Tax1099R.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099R.prototype.getGrossDist = function() {
   return this.grossDist;
 };
-Element.add({name: "GROSSDIST", required: true, order: 2, owner: Tax1099R, /*type: String,*/ fcn: "getGrossDist"});
+Element.add({name: "GROSSDIST", required: true, order: 2, owner: Tax1099R, /*type: String,*/ readMethod: "getGrossDist", writeMethod: "setGrossDist"});
 
 
 /**
@@ -200,7 +200,7 @@ Tax1099R.prototype.setGrossDist = function(grossDist) {
 Tax1099R.prototype.getTaxAmt = function() {
   return this.taxAmt;
 };
-Element.add({name: "TAXAMT", required: false, order: 3, owner: Tax1099R, /*type: String,*/ fcn: "getTaxAmt"});
+Element.add({name: "TAXAMT", required: false, order: 3, owner: Tax1099R, /*type: String,*/ readMethod: "getTaxAmt", writeMethod: "setTaxAmt"});
 
 
 /**
@@ -217,7 +217,7 @@ Tax1099R.prototype.setTaxAmt = function(taxAmt) {
 Tax1099R.prototype.getTaxAmtNd = function() {
   return this.taxAmtNd;
 };
-Element.add({name: "TAXAMTND", required: false, order: 4, owner: Tax1099R, /*type: String,*/ fcn: "getTaxAmtNd"});
+Element.add({name: "TAXAMTND", required: false, order: 4, owner: Tax1099R, /*type: String,*/ readMethod: "getTaxAmtNd", writeMethod: "setTaxAmtNd"});
 
 
 /**
@@ -234,7 +234,7 @@ Tax1099R.prototype.setTaxAmtNd = function(taxAmtNd) {
 Tax1099R.prototype.getCapGain = function() {
   return this.capGain;
 };
-Element.add({name: "CAPGAIN", required: false, order: 5, owner: Tax1099R, /*type: String,*/ fcn: "getCapGain"});
+Element.add({name: "CAPGAIN", required: false, order: 5, owner: Tax1099R, /*type: String,*/ readMethod: "getCapGain", writeMethod: "setCapGain"});
 
 
 /**
@@ -251,7 +251,7 @@ Tax1099R.prototype.setCapGain = function(capGain) {
 Tax1099R.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH", required: false, order: 6, owner: Tax1099R, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add({name: "FEDTAXWH", required: false, order: 6, owner: Tax1099R, /*type: String,*/ readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -268,7 +268,7 @@ Tax1099R.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099R.prototype.getEmpContins = function() {
   return this.empContins;
 };
-Element.add({name: "EMPCONTINS", required: false, order: 7, owner: Tax1099R, /*type: String,*/ fcn: "getEmpContins"});
+Element.add({name: "EMPCONTINS", required: false, order: 7, owner: Tax1099R, /*type: String,*/ readMethod: "getEmpContins", writeMethod: "setEmpContins"});
 
 
 /**
@@ -285,7 +285,7 @@ Tax1099R.prototype.setEmpContins = function(empContins) {
 Tax1099R.prototype.getNetUnapEmp = function() {
   return this.netUnapEmp;
 };
-Element.add({name: "NETUNAPEMP", required: false, order: 8, owner: Tax1099R, /*type: String,*/ fcn: "getNetUnapEmp"});
+Element.add({name: "NETUNAPEMP", required: false, order: 8, owner: Tax1099R, /*type: String,*/ readMethod: "getNetUnapEmp", writeMethod: "setNetUnapEmp"});
 
 
 /**
@@ -302,7 +302,7 @@ Tax1099R.prototype.setNetUnapEmp = function(netUnapEmp) {
 Tax1099R.prototype.getDistCode = function() {
   return this.distCode;
 };
-Element.add({name: "DISTCODE", required: true, order: 9, owner: Tax1099R, /*type: String,*/ fcn: "getDistCode"});
+Element.add({name: "DISTCODE", required: true, order: 9, owner: Tax1099R, /*type: String,*/ readMethod: "getDistCode", writeMethod: "setDistCode"});
 
 
 /**
@@ -319,7 +319,7 @@ Tax1099R.prototype.setDistCode = function(distCode) {
 Tax1099R.prototype.getIraSepSimp = function() {
   return this.iraSepSimp;
 };
-Element.add({name: "IRASEPSIMP", required: true, order: 10, owner: Tax1099R, /*type: String,*/ fcn: "getIraSepSimp"});
+Element.add({name: "IRASEPSIMP", required: true, order: 10, owner: Tax1099R, /*type: String,*/ readMethod: "getIraSepSimp", writeMethod: "setIraSepSimp"});
 
 
 /**
@@ -336,7 +336,7 @@ Tax1099R.prototype.setIraSepSimp = function(iraSepSimp) {
 Tax1099R.prototype.getAnnCtrctDist = function() {
   return this.annCtrctDist;
 };
-Element.add({name: "ANNCTRCTDIST", required: false, order: 11, owner: Tax1099R, /*type: String,*/ fcn: "getAnnCtrctDist"});
+Element.add({name: "ANNCTRCTDIST", required: false, order: 11, owner: Tax1099R, /*type: String,*/ readMethod: "getAnnCtrctDist", writeMethod: "setAnnCtrctDist"});
 
 
 /**
@@ -353,7 +353,7 @@ Tax1099R.prototype.setAnnCtrctDist = function(annCtrctDist) {
 Tax1099R.prototype.getTotEmpCount = function() {
   return this.totEmpCount;
 };
-Element.add({name: "TOTEMPCONT", required: false, order: 12, owner: Tax1099R, /*type: String,*/ fcn: "getTotEmpCount"});
+Element.add({name: "TOTEMPCONT", required: false, order: 12, owner: Tax1099R, /*type: String,*/ readMethod: "getTotEmpCount", writeMethod: "setTotEmpCount"});
 
 
 /**
@@ -370,7 +370,7 @@ Tax1099R.prototype.setTotEmpCount = function(totEmpCount) {
 Tax1099R.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 13, owner: Tax1099R, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add({required:true, order: 13, owner: Tax1099R, /*type: PayerAddress,*/ readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -387,7 +387,7 @@ Tax1099R.prototype.setPayerAddress = function(payerAddress) {
 Tax1099R.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 14, owner: Tax1099R, /*type: String,*/ fcn: "getPayerId"});
+Element.add({name: "PAYERID", required: true, order: 14, owner: Tax1099R, /*type: String,*/ readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -404,7 +404,7 @@ Tax1099R.prototype.setPayerId = function(payerId) {
 Tax1099R.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 15, owner: Tax1099R, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add({required:true, order: 15, owner: Tax1099R, /*type: RecAddress,*/ readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -421,7 +421,7 @@ Tax1099R.prototype.setRecAddress = function(recAddress) {
 Tax1099R.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 16, owner: Tax1099R, /*type: String,*/ fcn: "getRecId"});
+Element.add({name: "RECID", required: true, order: 16, owner: Tax1099R, /*type: String,*/ readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -438,7 +438,7 @@ Tax1099R.prototype.setRecId = function(recId) {
 Tax1099R.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 17, owner: Tax1099R, /*type: String,*/ fcn: "getRecAcct"});
+Element.add({name: "RECACCT", required: true, order: 17, owner: Tax1099R, /*type: String,*/ readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**

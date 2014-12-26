@@ -50,7 +50,7 @@ Aggregate.add("FI", FinancialInstitution);
 FinancialInstitution.prototype.getId = function() {
   return this.id;
 };
-Element.add({name: "FID", order: 10, owner: FinancialInstitution, /*type: String,*/ fcn: "getId"});
+Element.add({name: "FID", order: 10, owner: FinancialInstitution, /*type: String,*/ readMethod: "getId", writeMethod: "setId"});
 
 
 /**
@@ -71,7 +71,7 @@ FinancialInstitution.prototype.setId = function(id) {
 FinancialInstitution.prototype.getOrganization = function() {
   return this.organization;
 };
-Element.add({name: "ORG", required: true, order: 0, owner: FinancialInstitution, /*type: String,*/ fcn: "getOrganization"});
+Element.add({name: "ORG", required: true, order: 0, owner: FinancialInstitution, /*type: String,*/ readMethod: "getOrganization", writeMethod: "setOrganization"});
 
 
 /**

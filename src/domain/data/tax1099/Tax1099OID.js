@@ -129,7 +129,7 @@ Aggregate.add("TAX1099OID_V100", Tax1099OID);
 Tax1099OID.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099OID, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099OID, /*type: String,*/ readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099OID.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -140,7 +140,7 @@ Tax1099OID.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099OID.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099OID, /*type: String,*/ fcn: "getTaxYear"});
+Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099OID, /*type: String,*/ readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099OID.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -154,7 +154,7 @@ Tax1099OID.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099OID.prototype.getOriginalDisc = function() {
   return this.originalDisc;
 };
-Element.add({name: "ORIGISDISC", required: false, order: 2, owner: Tax1099OID, /*type: String,*/ fcn: "getOriginalDisc"});
+Element.add({name: "ORIGISDISC", required: false, order: 2, owner: Tax1099OID, /*type: String,*/ readMethod: "getOriginalDisc", writeMethod: "setOriginalDisc"});
 
 
 /**
@@ -171,7 +171,7 @@ Tax1099OID.prototype.setOriginalDisc = function(originalDisc) {
 Tax1099OID.prototype.getOtherPerInt = function() {
   return this.otherPerInt;
 };
-Element.add({name: "OTHERPERINT", required: false, order: 3, owner: Tax1099OID, /*type: String,*/ fcn: "getOtherPerInt"});
+Element.add({name: "OTHERPERINT", required: false, order: 3, owner: Tax1099OID, /*type: String,*/ readMethod: "getOtherPerInt", writeMethod: "setOtherPerInt"});
 
 
 /**
@@ -188,7 +188,7 @@ Tax1099OID.prototype.setOtherPerInt = function(otherPerInt) {
 Tax1099OID.prototype.getErlWithPen = function() {
   return this.erlWithPen;
 };
-Element.add({name: "ERLWITHPEN", required: false, order: 4, owner: Tax1099OID, /*type: String,*/ fcn: "getErlWithPen"});
+Element.add({name: "ERLWITHPEN", required: false, order: 4, owner: Tax1099OID, /*type: String,*/ readMethod: "getErlWithPen", writeMethod: "setErlWithPen"});
 
 
 /**
@@ -205,7 +205,7 @@ Tax1099OID.prototype.setErlWithPen = function(erlWithPen) {
 Tax1099OID.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH", required: false, order: 5, owner: Tax1099OID, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add({name: "FEDTAXWH", required: false, order: 5, owner: Tax1099OID, /*type: String,*/ readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -222,7 +222,7 @@ Tax1099OID.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099OID.prototype.getDesc = function() {
   return this.desc;
 };
-Element.add({name: "DESCRIPTION", required: true, order: 6, owner: Tax1099OID, /*type: String,*/ fcn: "getDesc"});
+Element.add({name: "DESCRIPTION", required: true, order: 6, owner: Tax1099OID, /*type: String,*/ readMethod: "getDesc", writeMethod: "setDesc"});
 
 
 /**
@@ -239,7 +239,7 @@ Tax1099OID.prototype.setDesc = function(desc) {
 Tax1099OID.prototype.getOidOnUstres = function() {
   return this.oidOnUstres;
 };
-Element.add({name: "OIDONUSTRES", required: false, order: 7, owner: Tax1099OID, /*type: String,*/ fcn: "getOidOnUstres"});
+Element.add({name: "OIDONUSTRES", required: false, order: 7, owner: Tax1099OID, /*type: String,*/ readMethod: "getOidOnUstres", writeMethod: "setOidOnUstres"});
 
 
 /**
@@ -256,7 +256,7 @@ Tax1099OID.prototype.setOidOnUstres = function(oidOnUstres) {
 Tax1099OID.prototype.getInvestExp = function() {
   return this.investExp;
 };
-Element.add({name: "INVESTEXP", required: false, order: 8, owner: Tax1099OID, /*type: String,*/ fcn: "getInvestExp"});
+Element.add({name: "INVESTEXP", required: false, order: 8, owner: Tax1099OID, /*type: String,*/ readMethod: "getInvestExp", writeMethod: "setInvestExp"});
 
 
 /**
@@ -273,7 +273,7 @@ Tax1099OID.prototype.setInvestExp = function(investExp) {
 Tax1099OID.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 9, owner: Tax1099OID, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add({required:true, order: 9, owner: Tax1099OID, /*type: PayerAddress,*/ readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -290,7 +290,7 @@ Tax1099OID.prototype.setPayerAddress = function(payerAddress) {
 Tax1099OID.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 10, owner: Tax1099OID, /*type: String,*/ fcn: "getPayerId"});
+Element.add({name: "PAYERID", required: true, order: 10, owner: Tax1099OID, /*type: String,*/ readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -307,7 +307,7 @@ Tax1099OID.prototype.setPayerId = function(payerId) {
 Tax1099OID.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 11, owner: Tax1099OID, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add({required:true, order: 11, owner: Tax1099OID, /*type: RecAddress,*/ readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -324,7 +324,7 @@ Tax1099OID.prototype.setRecAddress = function(recAddress) {
 Tax1099OID.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 12, owner: Tax1099OID, /*type: String,*/ fcn: "getRecId"});
+Element.add({name: "RECID", required: true, order: 12, owner: Tax1099OID, /*type: String,*/ readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -341,7 +341,7 @@ Tax1099OID.prototype.setRecId = function(recId) {
 Tax1099OID.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 13, owner: Tax1099OID, /*type: String,*/ fcn: "getRecAcct"});
+Element.add({name: "RECACCT", required: true, order: 13, owner: Tax1099OID, /*type: String,*/ readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**

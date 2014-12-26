@@ -163,7 +163,7 @@ Aggregate.add("SIGNONINFO", SignonInfo);
 SignonInfo.prototype.getRealm = function() {
   return this.realm;
 };
-Element.add({name: "SIGNONREALM", required: true, order: 0, owner: SignonInfo, /*type: String,*/ fcn: "getRealm"});
+Element.add({name: "SIGNONREALM", required: true, order: 0, owner: SignonInfo, /*type: String,*/ readMethod: "getRealm", writeMethod: "setRealm"});
 
 
 /**
@@ -184,7 +184,7 @@ SignonInfo.prototype.setRealm = function(realm) {
 SignonInfo.prototype.getMinPasswordCharacters = function() {
   return this.minPasswordCharacters;
 };
-Element.add({name: "MIN", required: true, order: 10, owner: SignonInfo, /*type: Integer,*/ fcn: "getMinPasswordCharacters"});
+Element.add({name: "MIN", required: true, order: 10, owner: SignonInfo, /*type: Integer,*/ readMethod: "getMinPasswordCharacters", writeMethod: "setMinPasswordCharacters"});
 
 
 /**
@@ -205,7 +205,7 @@ SignonInfo.prototype.setMinPasswordCharacters = function(minPasswordCharacters) 
 SignonInfo.prototype.getMaxPasswordCharacters = function() {
   return this.maxPasswordCharacters;
 };
-Element.add({name: "MAX", required: true, order: 20, owner: SignonInfo, /*type: Integer,*/ fcn: "getMaxPasswordCharacters"});
+Element.add({name: "MAX", required: true, order: 20, owner: SignonInfo, /*type: Integer,*/ readMethod: "getMaxPasswordCharacters", writeMethod: "setMaxPasswordCharacters"});
 
 
 /**
@@ -226,7 +226,7 @@ SignonInfo.prototype.setMaxPasswordCharacters = function(maxPasswordCharacters) 
 SignonInfo.prototype.getPasswordCharacterType = function() {
   return this.passwordCharacterType;
 };
-Element.add({name: "CHARTYPE", required: true, order: 30, owner: SignonInfo, /*type: CharacterType,*/ fcn: "getPasswordCharacterType"});
+Element.add({name: "CHARTYPE", required: true, order: 30, owner: SignonInfo, /*type: CharacterType,*/ readMethod: "getPasswordCharacterType", writeMethod: "setPasswordCharacterType"});
 
 
 /**
@@ -247,7 +247,7 @@ SignonInfo.prototype.setPasswordCharacterType = function(passwordCharacterType) 
 SignonInfo.prototype.getPasswordCaseSensitive = function() {
   return this.passwordCaseSensitive;
 };
-Element.add({name: "CASESEN", required: true, order: 40, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordCaseSensitive"});
+Element.add({name: "CASESEN", required: true, order: 40, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getPasswordCaseSensitive", writeMethod: "setPasswordCaseSensitive"});
 
 
 /**
@@ -268,7 +268,7 @@ SignonInfo.prototype.setPasswordCaseSensitive = function(passwordCaseSensitive) 
 SignonInfo.prototype.getPasswordSpecialCharsAllowed = function() {
   return this.passwordSpecialCharsAllowed;
 };
-Element.add({name: "SPECIAL", required: true, order: 50, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordSpecialCharsAllowed"});
+Element.add({name: "SPECIAL", required: true, order: 50, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getPasswordSpecialCharsAllowed", writeMethod: "setPasswordSpecialCharsAllowed"});
 
 
 /**
@@ -289,7 +289,7 @@ SignonInfo.prototype.setPasswordSpecialCharsAllowed = function(passwordSpecialCh
 SignonInfo.prototype.getPasswordSpacesAllowed = function() {
   return this.passwordSpacesAllowed;
 };
-Element.add({name: "SPACES", required: true, order: 60, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordSpacesAllowed"});
+Element.add({name: "SPACES", required: true, order: 60, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getPasswordSpacesAllowed", writeMethod: "setPasswordSpacesAllowed"});
 
 
 /**
@@ -310,7 +310,7 @@ SignonInfo.prototype.setPasswordSpacesAllowed = function(passwordSpacesAllowed) 
 SignonInfo.prototype.getChangePasswordSupported = function() {
   return this.changePasswordSupported;
 };
-Element.add({name: "PINCH", required: true, order: 70, owner: SignonInfo, /*type: Boolean,*/ fcn: "getChangePasswordSupported"});
+Element.add({name: "PINCH", required: true, order: 70, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getChangePasswordSupported", writeMethod: "setChangePasswordSupported"});
 
 
 /**
@@ -331,7 +331,7 @@ SignonInfo.prototype.setChangePasswordSupported = function(changePasswordSupport
 SignonInfo.prototype.getChangePasswordFirstRequired = function() {
   return this.changePasswordFirstRequired;
 };
-Element.add({name: "CHGPINFIRST", required: true, order: 80, owner: SignonInfo, /*type: Boolean,*/ fcn: "getChangePasswordFirstRequired"});
+Element.add({name: "CHGPINFIRST", required: true, order: 80, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getChangePasswordFirstRequired", writeMethod: "setChangePasswordFirstRequired"});
 
 
 /**
@@ -352,7 +352,7 @@ SignonInfo.prototype.setChangePasswordFirstRequired = function(changePasswordFir
 SignonInfo.prototype.getAdditionalCredientialsLabel1 = function() {
   return this.additionalCredientialsLabel1;
 };
-Element.add({name: "USERCRED1LABEL", order: 90, owner: SignonInfo, /*type: String,*/ fcn: "getAdditionalCredientialsLabel1"});
+Element.add({name: "USERCRED1LABEL", order: 90, owner: SignonInfo, /*type: String,*/ readMethod: "getAdditionalCredientialsLabel1", writeMethod: "setAdditionalCredientialsLabel1"});
 
 
 /**
@@ -373,7 +373,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel1 = function(additionalCredie
 SignonInfo.prototype.getAdditionalCredientialsLabel2 = function() {
   return this.additionalCredientialsLabel2;
 };
-Element.add({name: "USERCRED2LABEL", order: 100, owner: SignonInfo, /*type: String,*/ fcn: "getAdditionalCredientialsLabel2"});
+Element.add({name: "USERCRED2LABEL", order: 100, owner: SignonInfo, /*type: String,*/ readMethod: "getAdditionalCredientialsLabel2", writeMethod: "setAdditionalCredientialsLabel2"});
 
 
 /**
@@ -394,7 +394,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel2 = function(additionalCredie
 SignonInfo.prototype.getClientUIDRequired = function() {
   return this.clientUIDRequired;
 };
-Element.add({name: "CLIENTUIDREQ", order: 110, owner: SignonInfo, /*type: Boolean,*/ fcn: "getClientUIDRequired"});
+Element.add({name: "CLIENTUIDREQ", order: 110, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getClientUIDRequired", writeMethod: "setClientUIDRequired"});
 
 
 /**
@@ -415,7 +415,7 @@ SignonInfo.prototype.setClientUIDRequired = function(clientUIDRequired) {
 SignonInfo.prototype.getAuthTokenRequiredForFirstSignon = function() {
   return this.authTokenRequiredForFirstSignon;
 };
-Element.add({name: "AUTHTOKENFIRST", order: 120, owner: SignonInfo, /*type: Boolean,*/ fcn: "getAuthTokenRequiredForFirstSignon"});
+Element.add({name: "AUTHTOKENFIRST", order: 120, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getAuthTokenRequiredForFirstSignon", writeMethod: "setAuthTokenRequiredForFirstSignon"});
 
 
 /**
@@ -437,7 +437,7 @@ SignonInfo.prototype.setAuthTokenRequiredForFirstSignon = function(authTokenRequ
 SignonInfo.prototype.getAuthTokenLabel = function() {
   return this.authTokenLabel;
 };
-Element.add({name: "AUTHTOKENLABEL", order: 130, owner: SignonInfo, /*type: String,*/ fcn: "getAuthTokenLabel"});
+Element.add({name: "AUTHTOKENLABEL", order: 130, owner: SignonInfo, /*type: String,*/ readMethod: "getAuthTokenLabel", writeMethod: "setAuthTokenLabel"});
 
 
 /**
@@ -458,7 +458,7 @@ SignonInfo.prototype.setAuthTokenLabel = function(authTokenLabel) {
 SignonInfo.prototype.getAuthTokenInfoURL = function() {
   return this.authTokenInfoURL;
 };
-Element.add({name: "AUTHTOKENINFOURL", order: 140, owner: SignonInfo, /*type: String,*/ fcn: "getAuthTokenInfoURL"});
+Element.add({name: "AUTHTOKENINFOURL", order: 140, owner: SignonInfo, /*type: String,*/ readMethod: "getAuthTokenInfoURL", writeMethod: "setAuthTokenInfoURL"});
 
 
 /**
@@ -479,7 +479,7 @@ SignonInfo.prototype.setAuthTokenInfoURL = function(authTokenInfoURL) {
 SignonInfo.prototype.getMfaSupported = function() {
   return this.mfaSupported;
 };
-Element.add({name: "MFACHALLENGESUPT", order: 150, owner: SignonInfo, /*type: Boolean,*/ fcn: "getMfaSupported"});
+Element.add({name: "MFACHALLENGESUPT", order: 150, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getMfaSupported", writeMethod: "setMfaSupported"});
 
 
 /**
@@ -500,7 +500,7 @@ SignonInfo.prototype.setMfaSupported = function(mfaSupported) {
 SignonInfo.prototype.getMfaChallengeRequiredForFirstSignon = function() {
   return this.mfaChallengeRequiredForFirstSignon;
 };
-Element.add({name: "MFACHALLENGEFIRST", order: 160, owner: SignonInfo, /*type: Boolean,*/ fcn: "getMfaChallengeRequiredForFirstSignon"});
+Element.add({name: "MFACHALLENGEFIRST", order: 160, owner: SignonInfo, /*type: Boolean,*/ readMethod: "getMfaChallengeRequiredForFirstSignon", writeMethod: "setMfaChallengeRequiredForFirstSignon"});
 
 
 /**

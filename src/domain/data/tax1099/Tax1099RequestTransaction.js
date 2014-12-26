@@ -48,7 +48,7 @@ Aggregate.add("TAX1099TRNRQ", Tax1099RequestTransaction);
 Tax1099RequestTransaction.prototype.getTax1099Request = function() {
   return this.tax1099Request;
 };
-ChildAggregate.add({required: true, order: 30, owner: Tax1099RequestTransaction, /*type: Tax1099Request,*/ fcn: "getTax1099Request"});
+ChildAggregate.add({required: true, order: 30, owner: Tax1099RequestTransaction, /*type: Tax1099Request,*/ readMethod: "getTax1099Request", writeMethod: "setTax1099Request"});
 
 
 /**

@@ -57,7 +57,7 @@ Aggregate.add("BUYDEBT", BuyDebtTransaction);
 BuyDebtTransaction.prototype.getAccruedInterest = function() {
   return this.accruedInterest;
 };
-Element.add({name: "ACCRDINT", order: 20, owner: BuyDebtTransaction, /*type: Double,*/ fcn: "getAccruedInterest"});
+Element.add({name: "ACCRDINT", order: 20, owner: BuyDebtTransaction, /*type: Double,*/ readMethod: "getAccruedInterest", writeMethod: "setAccruedInterest"});
 
 
 /**

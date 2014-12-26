@@ -89,7 +89,7 @@ Aggregate.add("PAYERADDR", PayerAddress);
 PayerAddress.prototype.getPayerName1 = function() {
   return this.payerName1;
 };
-Element.add({name: "PAYERNAME1",required: true , order: 0, owner: PayerAddress, /*type: String,*/ fcn: "getPayerName1"});
+Element.add({name: "PAYERNAME1",required: true , order: 0, owner: PayerAddress, /*type: String,*/ readMethod: "getPayerName1", writeMethod: "setPayerName1"});
 
 
 /**
@@ -106,7 +106,7 @@ PayerAddress.prototype.setPayerName1 = function(payerName1) {
 PayerAddress.prototype.getPayerName2 = function() {
   return this.payerName2;
 };
-Element.add({name: "PAYERNAME2",required: false , order: 1, owner: PayerAddress, /*type: String,*/ fcn: "getPayerName2"});
+Element.add({name: "PAYERNAME2",required: false , order: 1, owner: PayerAddress, /*type: String,*/ readMethod: "getPayerName2", writeMethod: "setPayerName2"});
 
 
 /**
@@ -123,7 +123,7 @@ PayerAddress.prototype.setPayerName2 = function(payerName2) {
 PayerAddress.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1",required: true , order: 2, owner: PayerAddress, /*type: String,*/ fcn: "getAddress1"});
+Element.add({name: "ADDR1",required: true , order: 2, owner: PayerAddress, /*type: String,*/ readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -140,7 +140,7 @@ PayerAddress.prototype.setAddress1 = function(address1) {
 PayerAddress.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2",required: true , order: 3, owner: PayerAddress, /*type: String,*/ fcn: "getAddress2"});
+Element.add({name: "ADDR2",required: true , order: 3, owner: PayerAddress, /*type: String,*/ readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -157,7 +157,7 @@ PayerAddress.prototype.setAddress2 = function(address2) {
 PayerAddress.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY",required: true , order: 4, owner: PayerAddress, /*type: String,*/ fcn: "getCity"});
+Element.add({name: "CITY",required: true , order: 4, owner: PayerAddress, /*type: String,*/ readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -174,7 +174,7 @@ PayerAddress.prototype.setCity = function(city) {
 PayerAddress.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE",required: true , order: 5, owner: PayerAddress, /*type: String,*/ fcn: "getState"});
+Element.add({name: "STATE",required: true , order: 5, owner: PayerAddress, /*type: String,*/ readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -191,7 +191,7 @@ PayerAddress.prototype.setState = function(state) {
 PayerAddress.prototype.getPostalCode = function() {
   return this.postalCode;
 };
-Element.add({name: "POSTALCODE",required: true , order: 6, owner: PayerAddress, /*type: String,*/ fcn: "getPostalCode"});
+Element.add({name: "POSTALCODE",required: true , order: 6, owner: PayerAddress, /*type: String,*/ readMethod: "getPostalCode", writeMethod: "setPostalCode"});
 
 
 /**
@@ -208,7 +208,7 @@ PayerAddress.prototype.setPostalCode = function(postalCode) {
 PayerAddress.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE",required: false , order: 7, owner: PayerAddress, /*type: String,*/ fcn: "getPhone"});
+Element.add({name: "PHONE",required: false , order: 7, owner: PayerAddress, /*type: String,*/ readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**

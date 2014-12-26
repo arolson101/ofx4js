@@ -99,7 +99,7 @@ Aggregate.add("PAYEE", Payee);
 Payee.prototype.getName = function() {
   return this.name;
 };
-Element.add({name: "NAME", order: 30, owner: Payee, /*type: String,*/ fcn: "getName"});
+Element.add({name: "NAME", order: 30, owner: Payee, /*type: String,*/ readMethod: "getName", writeMethod: "setName"});
 
 
 /**
@@ -120,7 +120,7 @@ Payee.prototype.setName = function(name) {
 Payee.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1", required: true, order: 40, owner: Payee, /*type: String,*/ fcn: "getAddress1"});
+Element.add({name: "ADDR1", required: true, order: 40, owner: Payee, /*type: String,*/ readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -141,7 +141,7 @@ Payee.prototype.setAddress1 = function(address1) {
 Payee.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2", order: 50, owner: Payee, /*type: String,*/ fcn: "getAddress2"});
+Element.add({name: "ADDR2", order: 50, owner: Payee, /*type: String,*/ readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -162,7 +162,7 @@ Payee.prototype.setAddress2 = function(address2) {
 Payee.prototype.getAddress3 = function() {
   return this.address3;
 };
-Element.add({name: "ADDR3", order: 60, owner: Payee, /*type: String,*/ fcn: "getAddress3"});
+Element.add({name: "ADDR3", order: 60, owner: Payee, /*type: String,*/ readMethod: "getAddress3", writeMethod: "setAddress3"});
 
 
 /**
@@ -183,7 +183,7 @@ Payee.prototype.setAddress3 = function(address3) {
 Payee.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY", required: true, order: 70, owner: Payee, /*type: String,*/ fcn: "getCity"});
+Element.add({name: "CITY", required: true, order: 70, owner: Payee, /*type: String,*/ readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -204,7 +204,7 @@ Payee.prototype.setCity = function(city) {
 Payee.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE", required: true, order: 80, owner: Payee, /*type: String,*/ fcn: "getState"});
+Element.add({name: "STATE", required: true, order: 80, owner: Payee, /*type: String,*/ readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -225,7 +225,7 @@ Payee.prototype.setState = function(state) {
 Payee.prototype.getZip = function() {
   return this.zip;
 };
-Element.add({name: "POSTALCODE", required: true, order: 90, owner: Payee, /*type: String,*/ fcn: "getZip"});
+Element.add({name: "POSTALCODE", required: true, order: 90, owner: Payee, /*type: String,*/ readMethod: "getZip", writeMethod: "setZip"});
 
 
 /**
@@ -247,7 +247,7 @@ Payee.prototype.setZip = function(zip) {
 Payee.prototype.getCountry = function() {
   return this.country;
 };
-Element.add({name: "COUNTRY", required: true, order: 100, owner: Payee, /*type: String,*/ fcn: "getCountry"});
+Element.add({name: "COUNTRY", required: true, order: 100, owner: Payee, /*type: String,*/ readMethod: "getCountry", writeMethod: "setCountry"});
 
 
 /**
@@ -268,7 +268,7 @@ Payee.prototype.setCountry = function(country) {
 Payee.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE", order: 110, owner: Payee, /*type: String,*/ fcn: "getPhone"});
+Element.add({name: "PHONE", order: 110, owner: Payee, /*type: String,*/ readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**

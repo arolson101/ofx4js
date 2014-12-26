@@ -53,7 +53,7 @@ Tax1099RequestMessageSet.prototype.getType = function() {
 Tax1099RequestMessageSet.prototype.getTaxRequestTransaction = function() {
   return this.taxRequestTransaction;
 };
-ChildAggregate.add({order: 0, owner: Tax1099RequestMessageSet, /*type: Tax1099RequestTransaction,*/ fcn: "getTaxRequestTransaction"});
+ChildAggregate.add({order: 0, owner: Tax1099RequestMessageSet, /*type: Tax1099RequestTransaction,*/ readMethod: "getTaxRequestTransaction", writeMethod: "setTaxRequestTransaction"});
 
 
 /**

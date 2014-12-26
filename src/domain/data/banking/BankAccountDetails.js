@@ -79,7 +79,7 @@ Aggregate.add("BankAccountDetails", BankAccountDetails);
 BankAccountDetails.prototype.getBankId = function() {
   return this.bankId;
 };
-Element.add({name: "BANKID", required: true, order: 0, owner: BankAccountDetails, /*type: String,*/ fcn: "getBankId"});
+Element.add({name: "BANKID", required: true, order: 0, owner: BankAccountDetails, /*type: String,*/ readMethod: "getBankId", writeMethod: "setBankId"});
 
 
 /**
@@ -120,7 +120,7 @@ BankAccountDetails.prototype.setRoutingNumber = function(routingNumber) {
 BankAccountDetails.prototype.getBranchId = function() {
   return this.branchId;
 };
-Element.add({name: "BRANCHID", order: 10, owner: BankAccountDetails, /*type: String,*/ fcn: "getBranchId"});
+Element.add({name: "BRANCHID", order: 10, owner: BankAccountDetails, /*type: String,*/ readMethod: "getBranchId", writeMethod: "setBranchId"});
 
 
 /**
@@ -141,7 +141,7 @@ BankAccountDetails.prototype.setBranchId = function(branchId) {
 BankAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 20, owner: BankAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
+Element.add({name: "ACCTID", required: true, order: 20, owner: BankAccountDetails, /*type: String,*/ readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -162,7 +162,7 @@ BankAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 BankAccountDetails.prototype.getAccountType = function() {
   return this.accountType;
 };
-Element.add({name: "ACCTTYPE", required: true, order: 30, owner: BankAccountDetails, /*type: AccountType,*/ fcn: "getAccountType"});
+Element.add({name: "ACCTTYPE", required: true, order: 30, owner: BankAccountDetails, /*type: AccountType,*/ readMethod: "getAccountType", writeMethod: "setAccountType"});
 
 
 /**
@@ -183,7 +183,7 @@ BankAccountDetails.prototype.setAccountType = function(accountType) {
 BankAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCTKEY", order: 40, owner: BankAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
+Element.add({name: "ACCTKEY", order: 40, owner: BankAccountDetails, /*type: String,*/ readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**

@@ -162,7 +162,7 @@ Status.KnownCode.prototype.toString = function() {
 Status.prototype.getCode = function() {
   return this.code;
 };
-Element.add({name: "CODE", required: true, order: 0, owner: Status, /*type: StatusCode,*/ fcn: "getCode"});
+Element.add({name: "CODE", required: true, order: 0, owner: Status, /*type: StatusCode,*/ readMethod: "getCode", writeMethod: "setCode"});
 
 
 /**
@@ -186,7 +186,7 @@ Status.prototype.setCode = function(code) {
 Status.prototype.getSeverity = function() {
   return this.severity;
 };
-Element.add({name: "SEVERITY", required: true, order: 10, owner: Status, /*type: Severity,*/ fcn: "getSeverity"});
+Element.add({name: "SEVERITY", required: true, order: 10, owner: Status, /*type: Severity,*/ readMethod: "getSeverity", writeMethod: "setSeverity"});
 
 
 /**
@@ -207,7 +207,7 @@ Status.prototype.setSeverity = function(severity) {
 Status.prototype.getMessage = function() {
   return this.message;
 };
-Element.add({name: "MESSAGE", order: 20, owner: Status, /*type: String,*/ fcn: "getMessage"});
+Element.add({name: "MESSAGE", order: 20, owner: Status, /*type: String,*/ readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

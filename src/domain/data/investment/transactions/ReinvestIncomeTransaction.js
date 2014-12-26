@@ -153,7 +153,7 @@ Aggregate.add("REINVEST", ReinvestIncomeTransaction);
 ReinvestIncomeTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: ReinvestIncomeTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add({required: true, order: 20, owner: ReinvestIncomeTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -179,7 +179,7 @@ ReinvestIncomeTransaction.prototype.setSecurityId = function(securityId) {
 ReinvestIncomeTransaction.prototype.getIncomeType = function() {
   return this.incomeType;
 };
-Element.add({name: "INCOMETYPE", required: true, order: 30, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getIncomeType"});
+Element.add({name: "INCOMETYPE", required: true, order: 30, owner: ReinvestIncomeTransaction, /*type: String,*/ readMethod: "getIncomeType", writeMethod: "setIncomeType"});
 
 
 /**
@@ -214,7 +214,7 @@ ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
 ReinvestIncomeTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 40, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add({name: "TOTAL", required: true, order: 40, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -238,7 +238,7 @@ ReinvestIncomeTransaction.prototype.setTotal = function(total) {
 ReinvestIncomeTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 50, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add({name: "SUBACCTSEC", order: 50, owner: ReinvestIncomeTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -273,7 +273,7 @@ ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 ReinvestIncomeTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 60, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add({name: "UNITS", required: true, order: 60, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -297,7 +297,7 @@ ReinvestIncomeTransaction.prototype.setUnits = function(units) {
 ReinvestIncomeTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 70, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add({name: "UNITPRICE", required: true, order: 70, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -321,7 +321,7 @@ ReinvestIncomeTransaction.prototype.setUnitPrice = function(unitPrice) {
 ReinvestIncomeTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add({name: "COMMISSION", order: 80, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getCommission"});
+Element.add({name: "COMMISSION", order: 80, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -345,7 +345,7 @@ ReinvestIncomeTransaction.prototype.setCommission = function(commission) {
 ReinvestIncomeTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add({name: "TAXES", order: 90, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getTaxes"});
+Element.add({name: "TAXES", order: 90, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -368,7 +368,7 @@ ReinvestIncomeTransaction.prototype.setTaxes = function(taxes) {
 ReinvestIncomeTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add({name: "FEES", order: 100, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getFees"});
+Element.add({name: "FEES", order: 100, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -391,7 +391,7 @@ ReinvestIncomeTransaction.prototype.setFees = function(fees) {
 ReinvestIncomeTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add({name: "LOAD", order: 110, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getLoad"});
+Element.add({name: "LOAD", order: 110, owner: ReinvestIncomeTransaction, /*type: Double,*/ readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -414,7 +414,7 @@ ReinvestIncomeTransaction.prototype.setLoad = function(load) {
 ReinvestIncomeTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add({name: "TAXEXEMPT", order: 120, owner: ReinvestIncomeTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
+Element.add({name: "TAXEXEMPT", order: 120, owner: ReinvestIncomeTransaction, /*type: Boolean,*/ readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -438,7 +438,7 @@ ReinvestIncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 ReinvestIncomeTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 130, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add({name: "CURRENCY", order: 130, owner: ReinvestIncomeTransaction, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -463,7 +463,7 @@ ReinvestIncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 ReinvestIncomeTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 140, owner: ReinvestIncomeTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add({name: "ORIGCURRENCY", order: 140, owner: ReinvestIncomeTransaction, /*type: OriginalCurrency,*/ readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -489,7 +489,7 @@ ReinvestIncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalC
 ReinvestIncomeTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 150, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add({name: "INV401KSOURCE", order: 150, owner: ReinvestIncomeTransaction, /*type: String,*/ readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**

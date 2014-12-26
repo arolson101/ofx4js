@@ -43,7 +43,7 @@ Aggregate.add("CREDITCARDMSGSET", CreditCardMessageSetInfo);
 CreditCardMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: CreditCardMessageSetInfo, /*type: CreditCardV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: CreditCardMessageSetInfo, /*type: CreditCardV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 CreditCardMessageSetInfo.prototype.setVersion1Info = function(/*CreditCardV1MessageSetInfo*/ version1Info) {

@@ -64,7 +64,7 @@ BaseSellInvestmentTransaction.prototype.BaseSellInvestmentTransaction = function
 BaseSellInvestmentTransaction.prototype.getSellInvestment = function() {
   return this.sellInvestment;
 };
-ChildAggregate.add({order: 10, owner: BaseSellInvestmentTransaction, /*type: SellInvestmentTransaction,*/ fcn: "getSellInvestment"});
+ChildAggregate.add({order: 10, owner: BaseSellInvestmentTransaction, /*type: SellInvestmentTransaction,*/ readMethod: "getSellInvestment", writeMethod: "setSellInvestment"});
 
 
 /**

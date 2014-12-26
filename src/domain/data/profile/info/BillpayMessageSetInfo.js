@@ -43,7 +43,7 @@ Aggregate.add("BILLPAYMSGSET", BillpayMessageSetInfo);
 BillpayMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: BillpayMessageSetInfo, /*type: BillpayV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: BillpayMessageSetInfo, /*type: BillpayV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 BillpayMessageSetInfo.prototype.setVersion1Info = function(/*BillpayV1MessageSetInfo*/ version1Info) {

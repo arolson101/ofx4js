@@ -51,7 +51,7 @@ Aggregate.add("SECLISTTRNRS", SecurityListResponseTransaction);
 SecurityListResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: SecurityListResponseTransaction, /*type: SecurityListResponse,*/ fcn: "getMessage"});
+ChildAggregate.add({required: true, order: 30, owner: SecurityListResponseTransaction, /*type: SecurityListResponse,*/ readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

@@ -83,7 +83,7 @@ RequestEnvelope.prototype.RequestEnvelope = function(/*String*/ UID) {
 RequestEnvelope.prototype.getSecurity = function() {
   return this.security;
 };
-Header.add({name: "SECURITY", owner: RequestEnvelope, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
+Header.add({name: "SECURITY", owner: RequestEnvelope, /*type: ApplicationSecurity,*/ readMethod: "getSecurity", writeMethod: "setSecurity"});
 
 
 /**
@@ -106,7 +106,7 @@ RequestEnvelope.prototype.setSecurity = function(security) {
 RequestEnvelope.prototype.getUID = function() {
   return this.UID;
 };
-Header.add({name: "NEWFILEUID", owner: RequestEnvelope, /*type: String,*/ fcn: "getUID"});
+Header.add({name: "NEWFILEUID", owner: RequestEnvelope, /*type: String,*/ readMethod: "getUID", writeMethod: "setUID"});
 
 
 /**
@@ -129,7 +129,7 @@ RequestEnvelope.prototype.setUID = function(UID) {
 RequestEnvelope.prototype.getLastProcessedUID = function() {
   return this.lastProcessedUID;
 };
-Header.add({name: "OLDFILEUID", owner: RequestEnvelope, /*type: String,*/ fcn: "getLastProcessedUID"});
+Header.add({name: "OLDFILEUID", owner: RequestEnvelope, /*type: String,*/ readMethod: "getLastProcessedUID", writeMethod: "setLastProcessedUID"});
 
 
 /**
@@ -152,7 +152,7 @@ RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
 RequestEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
 };
-ChildAggregate.add({order: 1, owner: RequestEnvelope, /*type: SortedSet<RequestMessageSet>,*/ fcn: "getMessageSets"});
+ChildAggregate.add({order: 1, owner: RequestEnvelope, /*type: SortedSet<RequestMessageSet>,*/ readMethod: "getMessageSets", writeMethod: "setMessageSets"});
 
 
 /**

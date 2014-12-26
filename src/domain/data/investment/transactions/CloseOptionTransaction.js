@@ -105,7 +105,7 @@ Aggregate.add("CLOSUREOPT", CloseOptionTransaction);
 CloseOptionTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({order: 20, owner: CloseOptionTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add({order: 20, owner: CloseOptionTransaction, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -129,7 +129,7 @@ CloseOptionTransaction.prototype.setSecurityId = function(securityId) {
 CloseOptionTransaction.prototype.getOptionAction = function() {
   return this.optionAction;
 };
-Element.add({name: "OPTACTION", required: true, order: 30, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getOptionAction"});
+Element.add({name: "OPTACTION", required: true, order: 30, owner: CloseOptionTransaction, /*type: String,*/ readMethod: "getOptionAction", writeMethod: "setOptionAction"});
 
 
 /**
@@ -164,7 +164,7 @@ CloseOptionTransaction.prototype.getOptionActionEnum = function() {
 CloseOptionTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 40, owner: CloseOptionTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add({name: "UNITS", required: true, order: 40, owner: CloseOptionTransaction, /*type: Double,*/ readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -188,7 +188,7 @@ CloseOptionTransaction.prototype.setUnits = function(units) {
 CloseOptionTransaction.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", required: true, order: 50, owner: CloseOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContact"});
+Element.add({name: "SHPERCTRCT", required: true, order: 50, owner: CloseOptionTransaction, /*type: Integer,*/ readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -211,7 +211,7 @@ CloseOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact
 CloseOptionTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", required: true, order: 60, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add({name: "SUBACCTSEC", required: true, order: 60, owner: CloseOptionTransaction, /*type: String,*/ readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -246,7 +246,7 @@ CloseOptionTransaction.prototype.getSubAccountSecurityEnum = function() {
 CloseOptionTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 70, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
+Element.add({name: "RELFITID", order: 70, owner: CloseOptionTransaction, /*type: String,*/ readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**
@@ -271,7 +271,7 @@ CloseOptionTransaction.prototype.setRelatedTransactionId = function(relatedTrans
 CloseOptionTransaction.prototype.getGain = function() {
   return this.gain;
 };
-Element.add({name: "GAIN", order: 80, owner: CloseOptionTransaction, /*type: Double,*/ fcn: "getGain"});
+Element.add({name: "GAIN", order: 80, owner: CloseOptionTransaction, /*type: Double,*/ readMethod: "getGain", writeMethod: "setGain"});
 
 
 /**

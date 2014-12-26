@@ -79,7 +79,7 @@ Aggregate.add("XFERINFO", TransferInfo);
 TransferInfo.prototype.getBankAccountFrom = function() {
   return this.bankAccountFrom;
 };
-ChildAggregate.add({name: "BANKACCTFROM", order: 0, owner: TransferInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccountFrom"});
+ChildAggregate.add({name: "BANKACCTFROM", order: 0, owner: TransferInfo, /*type: BankAccountDetails,*/ readMethod: "getBankAccountFrom", writeMethod: "setBankAccountFrom"});
 
 
 /**
@@ -111,7 +111,7 @@ TransferInfo.prototype.setAccountFrom = function(bankAccountFrom) {
 TransferInfo.prototype.getCreditCardAccountFrom = function() {
   return this.creditCardAccountFrom;
 };
-ChildAggregate.add({name: "CCACCTFROM", order: 10, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountFrom"});
+ChildAggregate.add({name: "CCACCTFROM", order: 10, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ readMethod: "getCreditCardAccountFrom", writeMethod: "setCreditCardAccountFrom"});
 
 
 /**
@@ -143,7 +143,7 @@ TransferInfo.prototype.setAccountFrom = function(creditCardAccountFrom) {
 TransferInfo.prototype.getBankAccountTo = function() {
   return this.bankAccountTo;
 };
-ChildAggregate.add({name: "BANKACCTTO", order: 20, owner: TransferInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccountTo"});
+ChildAggregate.add({name: "BANKACCTTO", order: 20, owner: TransferInfo, /*type: BankAccountDetails,*/ readMethod: "getBankAccountTo", writeMethod: "setBankAccountTo"});
 
 
 /**
@@ -175,7 +175,7 @@ TransferInfo.prototype.setAccountTo = function(bankAccountTo) {
 TransferInfo.prototype.getCreditCardAccountTo = function() {
   return this.creditCardAccountTo;
 };
-ChildAggregate.add({name: "CCACCTTO", order: 30, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountTo"});
+ChildAggregate.add({name: "CCACCTTO", order: 30, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ readMethod: "getCreditCardAccountTo", writeMethod: "setCreditCardAccountTo"});
 
 
 /**
@@ -207,7 +207,7 @@ TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
 TransferInfo.prototype.getAmount = function() {
   return this.amount;
 };
-Element.add({name: "TRNAMT", required: true, order: 40, owner: TransferInfo, /*type: Double,*/ fcn: "getAmount"});
+Element.add({name: "TRNAMT", required: true, order: 40, owner: TransferInfo, /*type: Double,*/ readMethod: "getAmount", writeMethod: "setAmount"});
 
 
 /**
@@ -228,7 +228,7 @@ TransferInfo.prototype.setAmount = function(amount) {
 TransferInfo.prototype.getDue = function() {
   return this.due;
 };
-Element.add({name: "DTDUE", order: 50, owner: TransferInfo, /*type: Date,*/ fcn: "getDue"});
+Element.add({name: "DTDUE", order: 50, owner: TransferInfo, /*type: Date,*/ readMethod: "getDue", writeMethod: "setDue"});
 
 
 /**

@@ -77,7 +77,7 @@ Aggregate.add("CCACCTINFO", CreditCardAccountInfo);
 CreditCardAccountInfo.prototype.getCreditCardAccount = function() {
   return this.creditCardAccount;
 };
-ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardAccountInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccount"});
+ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardAccountInfo, /*type: CreditCardAccountDetails,*/ readMethod: "getCreditCardAccount", writeMethod: "setCreditCardAccount"});
 
 
 /**
@@ -104,7 +104,7 @@ CreditCardAccountInfo.prototype.getAccountDetails = function() {
 CreditCardAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
   return this.supportsTransactionDetailOperations;
 };
-Element.add({name: "SUPTXDL", required: true, order: 10, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransactionDetailOperations"});
+Element.add({name: "SUPTXDL", required: true, order: 10, owner: CreditCardAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
 
 
 /**
@@ -125,7 +125,7 @@ CreditCardAccountInfo.prototype.setSupportsTransactionDetailOperations = functio
 CreditCardAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
   return this.supportsTransferToOtherAccountOperations;
 };
-Element.add({name: "XFERSRC", required: true, order: 20, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferToOtherAccountOperations"});
+Element.add({name: "XFERSRC", required: true, order: 20, owner: CreditCardAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
 
 
 /**
@@ -146,7 +146,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = fu
 CreditCardAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
   return this.supportsTransferFromOtherAccountOperations;
 };
-Element.add({name: "XFERDEST", required: true, order: 30, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferFromOtherAccountOperations"});
+Element.add({name: "XFERDEST", required: true, order: 30, owner: CreditCardAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
 
 
 /**
@@ -167,7 +167,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations = 
 CreditCardAccountInfo.prototype.getStatus = function() {
   return this.status;
 };
-Element.add({name: "SVCSTATUS", required: true, order: 40, owner: CreditCardAccountInfo, /*type: AccountStatus,*/ fcn: "getStatus"});
+Element.add({name: "SVCSTATUS", required: true, order: 40, owner: CreditCardAccountInfo, /*type: AccountStatus,*/ readMethod: "getStatus", writeMethod: "setStatus"});
 
 
 /**

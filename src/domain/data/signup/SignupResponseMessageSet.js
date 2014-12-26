@@ -54,7 +54,7 @@ SignupResponseMessageSet.prototype.getType = function() {
 SignupResponseMessageSet.prototype.getAccountInfoResponse = function() {
   return this.accountInfoResponse;
 };
-ChildAggregate.add({order: 0, owner: SignupResponseMessageSet, /*type: AccountInfoResponseTransaction,*/ fcn: "getAccountInfoResponse"});
+ChildAggregate.add({order: 0, owner: SignupResponseMessageSet, /*type: AccountInfoResponseTransaction,*/ readMethod: "getAccountInfoResponse", writeMethod: "setAccountInfoResponse"});
 
 
 /**

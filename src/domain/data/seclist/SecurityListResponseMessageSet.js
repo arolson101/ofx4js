@@ -63,7 +63,7 @@ SecurityListResponseMessageSet.prototype.getType = function() {
 SecurityListResponseMessageSet.prototype.getSecurityListResponse = function() {
   return this.securityListResponse;
 };
-ChildAggregate.add({order: 0, owner: SecurityListResponseMessageSet, /*type: SecurityListResponseTransaction,*/ fcn: "getSecurityListResponse"});
+ChildAggregate.add({order: 0, owner: SecurityListResponseMessageSet, /*type: SecurityListResponseTransaction,*/ readMethod: "getSecurityListResponse", writeMethod: "setSecurityListResponse"});
 
 
 /**
@@ -79,7 +79,7 @@ SecurityListResponseMessageSet.prototype.setSecurityListResponse = function(secu
 SecurityListResponseMessageSet.prototype.getSecurityList = function() {
   return this.securityList;
 };
-ChildAggregate.add({order: 10, owner: SecurityListResponseMessageSet, /*type: SecurityList,*/ fcn: "getSecurityList"});
+ChildAggregate.add({order: 10, owner: SecurityListResponseMessageSet, /*type: SecurityList,*/ readMethod: "getSecurityList", writeMethod: "setSecurityList"});
 
 
 SecurityListResponseMessageSet.prototype.setSecurityList = function(/*SecurityList*/ securityList) {

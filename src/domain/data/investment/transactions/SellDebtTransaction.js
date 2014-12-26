@@ -63,7 +63,7 @@ Aggregate.add("SELLDEBT", SellDebtTransaction);
 SellDebtTransaction.prototype.getSellReason = function() {
   return this.sellReason;
 };
-Element.add({name: "SELLREASON", order: 30, owner: SellDebtTransaction, /*type: String,*/ fcn: "getSellReason"});
+Element.add({name: "SELLREASON", order: 30, owner: SellDebtTransaction, /*type: String,*/ readMethod: "getSellReason", writeMethod: "setSellReason"});
 
 
 /**
@@ -98,7 +98,7 @@ SellDebtTransaction.prototype.getSellReasonEnum = function() {
 SellDebtTransaction.prototype.getAccruedInterest = function() {
   return this.accruedInterest;
 };
-Element.add({name: "ACCRDINT", order: 40, owner: SellDebtTransaction, /*type: Double,*/ fcn: "getAccruedInterest"});
+Element.add({name: "ACCRDINT", order: 40, owner: SellDebtTransaction, /*type: Double,*/ readMethod: "getAccruedInterest", writeMethod: "setAccruedInterest"});
 
 
 /**

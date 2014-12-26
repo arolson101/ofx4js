@@ -57,7 +57,7 @@ Aggregate.add("CreditCardAccountDetails", CreditCardAccountDetails);
 CreditCardAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 0, owner: CreditCardAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
+Element.add({name: "ACCTID", required: true, order: 0, owner: CreditCardAccountDetails, /*type: String,*/ readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -78,7 +78,7 @@ CreditCardAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 CreditCardAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCKEY", order: 10, owner: CreditCardAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
+Element.add({name: "ACCKEY", order: 10, owner: CreditCardAccountDetails, /*type: String,*/ readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**

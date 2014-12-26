@@ -92,7 +92,7 @@ BankingV1MessageSetInfo.prototype.getMessageSetType = function() {
 BankingV1MessageSetInfo.prototype.getInvalidAccountTypes = function() {
   return this.invalidAccountTypes;
 };
-ChildAggregate.add({order: 10, owner: BankingV1MessageSetInfo, /*type: AccountType[],*/ fcn: "getInvalidAccountTypes"});
+ChildAggregate.add({order: 10, owner: BankingV1MessageSetInfo, /*type: AccountType[],*/ readMethod: "getInvalidAccountTypes", writeMethod: "setInvalidAccountTypes"});
 
 
 /**
@@ -113,7 +113,7 @@ BankingV1MessageSetInfo.prototype.setInvalidAccountTypes = function(invalidAccou
 BankingV1MessageSetInfo.prototype.getClosingAvail = function() {
   return this.closingAvail;
 };
-Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: BankingV1MessageSetInfo, /*type: Boolean,*/ fcn: "getClosingAvail"});
+Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: BankingV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getClosingAvail", writeMethod: "setClosingAvail"});
 
 
 /**
@@ -129,7 +129,7 @@ BankingV1MessageSetInfo.prototype.setClosingAvail = function(closingAvail) {
 BankingV1MessageSetInfo.prototype.getTransferProfile = function() {
   return this.transferProfile;
 };
-ChildAggregate.add({name: "XFERPROF", order: 30, owner: BankingV1MessageSetInfo, /*type: TransferProfile,*/ fcn: "getTransferProfile"});
+ChildAggregate.add({name: "XFERPROF", order: 30, owner: BankingV1MessageSetInfo, /*type: TransferProfile,*/ readMethod: "getTransferProfile", writeMethod: "setTransferProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setTransferProfile = function(/*TransferProfile*/ transferProfile) {
@@ -140,7 +140,7 @@ BankingV1MessageSetInfo.prototype.setTransferProfile = function(/*TransferProfil
 BankingV1MessageSetInfo.prototype.getStopCheckProfile = function() {
   return this.stopCheckProfile;
 };
-ChildAggregate.add({name: "STPCKPROF", order: 40, owner: BankingV1MessageSetInfo, /*type: StopCheckProfile,*/ fcn: "getStopCheckProfile"});
+ChildAggregate.add({name: "STPCKPROF", order: 40, owner: BankingV1MessageSetInfo, /*type: StopCheckProfile,*/ readMethod: "getStopCheckProfile", writeMethod: "setStopCheckProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setStopCheckProfile = function(/*StopCheckProfile*/ stopCheckProfile) {
@@ -151,7 +151,7 @@ BankingV1MessageSetInfo.prototype.setStopCheckProfile = function(/*StopCheckProf
 BankingV1MessageSetInfo.prototype.getEmailProfile = function() {
   return this.emailProfile;
 };
-ChildAggregate.add({name: "EMAILPROF", required: true, order: 50, owner: BankingV1MessageSetInfo, /*type: EmailProfile,*/ fcn: "getEmailProfile"});
+ChildAggregate.add({name: "EMAILPROF", required: true, order: 50, owner: BankingV1MessageSetInfo, /*type: EmailProfile,*/ readMethod: "getEmailProfile", writeMethod: "setEmailProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setEmailProfile = function(/*EmailProfile*/ emailProfile) {
@@ -162,7 +162,7 @@ BankingV1MessageSetInfo.prototype.setEmailProfile = function(/*EmailProfile*/ em
 BankingV1MessageSetInfo.prototype.getImageProfile = function() {
   return this.imageProfile;
 };
-ChildAggregate.add({name: "IMAGEPROF", order: 60, owner: BankingV1MessageSetInfo, /*type: ImageProfile,*/ fcn: "getImageProfile"});
+ChildAggregate.add({name: "IMAGEPROF", order: 60, owner: BankingV1MessageSetInfo, /*type: ImageProfile,*/ readMethod: "getImageProfile", writeMethod: "setImageProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setImageProfile = function(/*ImageProfile*/ imageProfile) {

@@ -43,7 +43,7 @@ Aggregate.add("INVSTMTMSGSET", InvestmentMessageSetInfo);
 InvestmentMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: InvestmentMessageSetInfo, /*type: InvestmentV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: InvestmentMessageSetInfo, /*type: InvestmentV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 InvestmentMessageSetInfo.prototype.setVersion1Info = function(/*InvestmentV1MessageSetInfo*/ version1Info) {

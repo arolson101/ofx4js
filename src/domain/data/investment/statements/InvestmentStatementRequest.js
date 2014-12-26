@@ -73,7 +73,7 @@ Aggregate.add("INVSTMTRQ", InvestmentStatementRequest);
 InvestmentStatementRequest.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentStatementRequest, /*type: InvestmentAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentStatementRequest, /*type: InvestmentAccountDetails,*/ readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -96,7 +96,7 @@ InvestmentStatementRequest.prototype.setAccount = function(account) {
 InvestmentStatementRequest.prototype.getIncludeOpenOrders = function() {
   return this.includeOpenOrders;
 };
-Element.add({name: "INCOO", order: 20, owner: InvestmentStatementRequest, /*type: Boolean,*/ fcn: "getIncludeOpenOrders"});
+Element.add({name: "INCOO", order: 20, owner: InvestmentStatementRequest, /*type: Boolean,*/ readMethod: "getIncludeOpenOrders", writeMethod: "setIncludeOpenOrders"});
 
 
 /**
@@ -119,7 +119,7 @@ InvestmentStatementRequest.prototype.setIncludeOpenOrders = function(includeOpen
 InvestmentStatementRequest.prototype.getIncludePosition = function() {
   return this.includePosition;
 };
-ChildAggregate.add({name: "INCPOS", required: true, order: 30, owner: InvestmentStatementRequest, /*type: IncludePosition,*/ fcn: "getIncludePosition"});
+ChildAggregate.add({name: "INCPOS", required: true, order: 30, owner: InvestmentStatementRequest, /*type: IncludePosition,*/ readMethod: "getIncludePosition", writeMethod: "setIncludePosition"});
 
 
 /**
@@ -141,7 +141,7 @@ InvestmentStatementRequest.prototype.setIncludePosition = function(includePositi
 InvestmentStatementRequest.prototype.getIncludeBalance = function() {
   return this.includeBalance;
 };
-Element.add({name: "INCBAL", required: true, order: 40, owner: InvestmentStatementRequest, /*type: Boolean,*/ fcn: "getIncludeBalance"});
+Element.add({name: "INCBAL", required: true, order: 40, owner: InvestmentStatementRequest, /*type: Boolean,*/ readMethod: "getIncludeBalance", writeMethod: "setIncludeBalance"});
 
 
 /**

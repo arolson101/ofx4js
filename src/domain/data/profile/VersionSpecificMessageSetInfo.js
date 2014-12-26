@@ -48,7 +48,7 @@ inherit(VersionSpecificMessageSetInfo, "implements", MessageSetProfile);
 VersionSpecificMessageSetInfo.prototype.getCore = function() {
   return this.core;
 };
-ChildAggregate.add({order: 0, owner: VersionSpecificMessageSetInfo, /*type: CoreMessageSetInfo,*/ fcn: "getCore"});
+ChildAggregate.add({order: 0, owner: VersionSpecificMessageSetInfo, /*type: CoreMessageSetInfo,*/ readMethod: "getCore", writeMethod: "setCore"});
 
 
 /**

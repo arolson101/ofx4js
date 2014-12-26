@@ -50,7 +50,7 @@ function BasePosition () {
 BasePosition.prototype.getInvestmentPosition = function() {
   return this.investmentPosition;
 };
-ChildAggregate.add({required: true, order: 10, owner: BasePosition, /*type: InvestmentPosition,*/ fcn: "getInvestmentPosition"});
+ChildAggregate.add({required: true, order: 10, owner: BasePosition, /*type: InvestmentPosition,*/ readMethod: "getInvestmentPosition", writeMethod: "setInvestmentPosition"});
 
 
 /**

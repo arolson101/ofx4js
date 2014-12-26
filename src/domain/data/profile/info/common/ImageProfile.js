@@ -49,7 +49,7 @@ Aggregate.add("IMAGEPROF", ImageProfile);
 ImageProfile.prototype.getClosingImageAvailable = function() {
   return this.closingImageAvailable;
 };
-Element.add({name: "CLOSINGIMGAVAIL", required: true, order: 10, owner: ImageProfile, /*type: Boolean,*/ fcn: "getClosingImageAvailable"});
+Element.add({name: "CLOSINGIMGAVAIL", required: true, order: 10, owner: ImageProfile, /*type: Boolean,*/ readMethod: "getClosingImageAvailable", writeMethod: "setClosingImageAvailable"});
 
 
 ImageProfile.prototype.setClosingImageAvailable = function(/*Boolean*/ closingImageAvailable) {
@@ -60,7 +60,7 @@ ImageProfile.prototype.setClosingImageAvailable = function(/*Boolean*/ closingIm
 ImageProfile.prototype.getTransactionImageAvailable = function() {
   return this.transactionImageAvailable;
 };
-Element.add({name: "TRANIMGAVAIL", required: true, order: 20, owner: ImageProfile, /*type: Boolean,*/ fcn: "getTransactionImageAvailable"});
+Element.add({name: "TRANIMGAVAIL", required: true, order: 20, owner: ImageProfile, /*type: Boolean,*/ readMethod: "getTransactionImageAvailable", writeMethod: "setTransactionImageAvailable"});
 
 
 ImageProfile.prototype.setTransactionImageAvailable = function(/*Boolean*/ transactionImageAvailable) {

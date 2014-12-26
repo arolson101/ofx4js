@@ -43,7 +43,7 @@ Aggregate.add("WIREXFERMSGSET", WireTransferMessageSetInfo);
 WireTransferMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: WireTransferMessageSetInfo, /*type: WireTransferV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: WireTransferMessageSetInfo, /*type: WireTransferV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 WireTransferMessageSetInfo.prototype.setVersion1Info = function(/*WireTransferV1MessageSetInfo*/ version1Info) {

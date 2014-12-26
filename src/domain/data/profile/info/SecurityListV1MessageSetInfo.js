@@ -51,7 +51,7 @@ SecurityListV1MessageSetInfo.prototype.getMessageSetType = function() {
 SecurityListV1MessageSetInfo.prototype.getSupportsSecurityListDownload = function() {
   return this.supportsSecurityListDownload;
 };
-Element.add({name: "SECLISTRQDNLD", required:true, order: 10, owner: SecurityListV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsSecurityListDownload"});
+Element.add({name: "SECLISTRQDNLD", required:true, order: 10, owner: SecurityListV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsSecurityListDownload", writeMethod: "setSupportsSecurityListDownload"});
 
 
 SecurityListV1MessageSetInfo.prototype.setSupportsSecurityListDownload = function(/*Boolean*/ supportsSecurityListDownload) {

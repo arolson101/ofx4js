@@ -106,7 +106,7 @@ Aggregate.add("SECINFO", SecurityInfo);
 SecurityInfo.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 10, owner: SecurityInfo, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add({required: true, order: 10, owner: SecurityInfo, /*type: SecurityId,*/ readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -128,7 +128,7 @@ SecurityInfo.prototype.setSecurityId = function(securityId) {
 SecurityInfo.prototype.getSecurityName = function() {
   return this.securityName;
 };
-Element.add({name: "SECNAME", required: true, order: 20, owner: SecurityInfo, /*type: String,*/ fcn: "getSecurityName"});
+Element.add({name: "SECNAME", required: true, order: 20, owner: SecurityInfo, /*type: String,*/ readMethod: "getSecurityName", writeMethod: "setSecurityName"});
 
 
 /**
@@ -149,7 +149,7 @@ SecurityInfo.prototype.setSecurityName = function(securityName) {
 SecurityInfo.prototype.getTickerSymbol = function() {
   return this.tickerSymbol;
 };
-Element.add({name: "TICKER", order: 30, owner: SecurityInfo, /*type: String,*/ fcn: "getTickerSymbol"});
+Element.add({name: "TICKER", order: 30, owner: SecurityInfo, /*type: String,*/ readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
 
 
 /**
@@ -170,7 +170,7 @@ SecurityInfo.prototype.setTickerSymbol = function(tickerSymbol) {
 SecurityInfo.prototype.getFiId = function() {
   return this.fiId;
 };
-Element.add({name: "FIID", order: 40, owner: SecurityInfo, /*type: String,*/ fcn: "getFiId"});
+Element.add({name: "FIID", order: 40, owner: SecurityInfo, /*type: String,*/ readMethod: "getFiId", writeMethod: "setFiId"});
 
 
 /**
@@ -191,7 +191,7 @@ SecurityInfo.prototype.setFiId = function(fiId) {
 SecurityInfo.prototype.getRating = function() {
   return this.rating;
 };
-Element.add({name: "RATING", order: 50, owner: SecurityInfo, /*type: String,*/ fcn: "getRating"});
+Element.add({name: "RATING", order: 50, owner: SecurityInfo, /*type: String,*/ readMethod: "getRating", writeMethod: "setRating"});
 
 
 /**
@@ -215,7 +215,7 @@ SecurityInfo.prototype.setRating = function(rating) {
 SecurityInfo.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", order: 60, owner: SecurityInfo, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add({name: "UNITPRICE", order: 60, owner: SecurityInfo, /*type: Double,*/ readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -239,7 +239,7 @@ SecurityInfo.prototype.setUnitPrice = function(unitPrice) {
 SecurityInfo.prototype.getUnitPriceAsOfDate = function() {
   return this.marketValueDate;
 };
-Element.add({name: "DTASOF", order: 70, owner: SecurityInfo, /*type: Date,*/ fcn: "getUnitPriceAsOfDate"});
+Element.add({name: "DTASOF", order: 70, owner: SecurityInfo, /*type: Date,*/ readMethod: "getUnitPriceAsOfDate", writeMethod: "setUnitPriceAsOfDate"});
 
 
 /**
@@ -261,7 +261,7 @@ SecurityInfo.prototype.setUnitPriceAsOfDate = function(/*Date*/ marketValueDate)
 SecurityInfo.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: SecurityInfo, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add({name: "CURRENCY", order: 80, owner: SecurityInfo, /*type: String,*/ readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -284,7 +284,7 @@ SecurityInfo.prototype.setCurrencyCode = function(currencyCode) {
 SecurityInfo.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 90, owner: SecurityInfo, /*type: String,*/ fcn: "getMemo"});
+Element.add({name: "MEMO", order: 90, owner: SecurityInfo, /*type: String,*/ readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**

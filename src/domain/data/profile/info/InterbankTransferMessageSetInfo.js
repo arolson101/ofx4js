@@ -43,7 +43,7 @@ Aggregate.add("INTERXFERMSGSET", InterbankTransferMessageSetInfo);
 InterbankTransferMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: InterbankTransferMessageSetInfo, /*type: InterbankTransferV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add({order: 0, owner: InterbankTransferMessageSetInfo, /*type: InterbankTransferV1MessageSetInfo,*/ readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 InterbankTransferMessageSetInfo.prototype.setVersion1Info = function(/*InterbankTransferV1MessageSetInfo*/ version1Info) {

@@ -48,7 +48,7 @@ Aggregate.add("TAX1099TRNRS", Tax1099ResponseTransaction);
 Tax1099ResponseTransaction.prototype.getTax1099Response = function() {
   return this.tax1099Response;
 };
-ChildAggregate.add({required:false, order: 2, owner: Tax1099ResponseTransaction, /*type: Tax1099Response,*/ fcn: "getTax1099Response"});
+ChildAggregate.add({required:false, order: 2, owner: Tax1099ResponseTransaction, /*type: Tax1099Response,*/ readMethod: "getTax1099Response", writeMethod: "setTax1099Response"});
 
 
 /**

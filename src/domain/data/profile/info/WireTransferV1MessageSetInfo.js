@@ -79,7 +79,7 @@ WireTransferV1MessageSetInfo.prototype.getMessageSetType = function() {
 WireTransferV1MessageSetInfo.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 10, owner: WireTransferV1MessageSetInfo, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
+Element.add({name: "PROCDAYSOFF", order: 10, owner: WireTransferV1MessageSetInfo, /*type: ProcessorDayOff[],*/ readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 WireTransferV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -90,7 +90,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*Processo
 WireTransferV1MessageSetInfo.prototype.getProcessEndTime = function() {
   return this.processEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 20, owner: WireTransferV1MessageSetInfo, /*type: String,*/ fcn: "getProcessEndTime"});
+Element.add({name: "PROCENDTM", required: true, order: 20, owner: WireTransferV1MessageSetInfo, /*type: String,*/ readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
 
 
 WireTransferV1MessageSetInfo.prototype.setProcessEndTime = function(/*String*/ processEndTime) {
@@ -101,7 +101,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessEndTime = function(/*String*/ p
 WireTransferV1MessageSetInfo.prototype.getSupportsScheduledTransfers = function() {
   return this.supportsScheduledTransfers;
 };
-Element.add({name: "CANSCHED", required: true, order: 30, owner: WireTransferV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsScheduledTransfers"});
+Element.add({name: "CANSCHED", required: true, order: 30, owner: WireTransferV1MessageSetInfo, /*type: Boolean,*/ readMethod: "getSupportsScheduledTransfers", writeMethod: "setSupportsScheduledTransfers"});
 
 
 WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ supportsScheduledTransfers) {
@@ -112,7 +112,7 @@ WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(
 WireTransferV1MessageSetInfo.prototype.getDomesticWireTransferFee = function() {
   return this.domesticWireTransferFee;
 };
-Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getDomesticWireTransferFee"});
+Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ readMethod: "getDomesticWireTransferFee", writeMethod: "setDomesticWireTransferFee"});
 
 
 WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*Double*/ domesticWireTransferFee) {
@@ -123,7 +123,7 @@ WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*D
 WireTransferV1MessageSetInfo.prototype.getInternationalWireTransferFee = function() {
   return this.internationalWireTransferFee;
 };
-Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getInternationalWireTransferFee"});
+Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ readMethod: "getInternationalWireTransferFee", writeMethod: "setInternationalWireTransferFee"});
 
 
 WireTransferV1MessageSetInfo.prototype.setInternationalWireTransferFee = function(/*Double*/ internationalWireTransferFee) {

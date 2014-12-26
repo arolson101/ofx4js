@@ -48,7 +48,7 @@ function BaseSecurityInfo () {
 BaseSecurityInfo.prototype.getSecurityInfo = function() {
   return this.securityInfo;
 };
-ChildAggregate.add({required: true, order: 10, owner: BaseSecurityInfo, /*type: SecurityInfo,*/ fcn: "getSecurityInfo"});
+ChildAggregate.add({required: true, order: 10, owner: BaseSecurityInfo, /*type: SecurityInfo,*/ readMethod: "getSecurityInfo", writeMethod: "setSecurityInfo"});
 
 
 /**

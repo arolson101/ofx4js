@@ -42,7 +42,7 @@ Aggregate.add("TAX1099RQ", Tax1099Request);
 Tax1099Request.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 0, owner: Tax1099Request, /*type: String,*/ fcn: "getTaxYear"});
+Element.add({name: "TAXYEAR", required: true, order: 0, owner: Tax1099Request, /*type: String,*/ readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099Request.prototype.setTaxYear = function(/*String*/ taxYear) {

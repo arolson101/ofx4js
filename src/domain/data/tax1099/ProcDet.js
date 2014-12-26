@@ -96,7 +96,7 @@ Aggregate.add("PROCDET_V100", ProcDet);
 ProcDet.prototype.getDtAqd = function() {
   return this.dtAqd;
 };
-Element.add({name: "DTAQD", required: false, order: 0, owner: ProcDet, /*type: String,*/ fcn: "getDtAqd"});
+Element.add({name: "DTAQD", required: false, order: 0, owner: ProcDet, /*type: String,*/ readMethod: "getDtAqd", writeMethod: "setDtAqd"});
 
 
 /**
@@ -113,7 +113,7 @@ ProcDet.prototype.setDtAqd = function(dtAqd) {
 ProcDet.prototype.getDtSale = function() {
   return this.dtSale;
 };
-Element.add({name: "DTSALE", required: false, order: 2, owner: ProcDet, /*type: String,*/ fcn: "getDtSale"});
+Element.add({name: "DTSALE", required: false, order: 2, owner: ProcDet, /*type: String,*/ readMethod: "getDtSale", writeMethod: "setDtSale"});
 
 
 /**
@@ -130,7 +130,7 @@ ProcDet.prototype.setDtSale = function(dtSale) {
 ProcDet.prototype.getSecName = function() {
   return this.secName;
 };
-Element.add({name: "SECNAME", required: false, order: 3, owner: ProcDet, /*type: String,*/ fcn: "getSecName"});
+Element.add({name: "SECNAME", required: false, order: 3, owner: ProcDet, /*type: String,*/ readMethod: "getSecName", writeMethod: "setSecName"});
 
 
 /**
@@ -147,7 +147,7 @@ ProcDet.prototype.setSecName = function(secName) {
 ProcDet.prototype.getCostBasis = function() {
   return this.costBasis;
 };
-Element.add({name: "COSTBASIS", required: false, order: 4, owner: ProcDet, /*type: String,*/ fcn: "getCostBasis"});
+Element.add({name: "COSTBASIS", required: false, order: 4, owner: ProcDet, /*type: String,*/ readMethod: "getCostBasis", writeMethod: "setCostBasis"});
 
 
 /**
@@ -164,7 +164,7 @@ ProcDet.prototype.setCostBasis = function(costBasis) {
 ProcDet.prototype.getSaleSpr = function() {
   return this.saleSpr;
 };
-Element.add({name: "SALESPR", required: false, order: 5, owner: ProcDet, /*type: String,*/ fcn: "getSaleSpr"});
+Element.add({name: "SALESPR", required: false, order: 5, owner: ProcDet, /*type: String,*/ readMethod: "getSaleSpr", writeMethod: "setSaleSpr"});
 
 
 /**
@@ -181,7 +181,7 @@ ProcDet.prototype.setSaleSpr = function(saleSpr) {
 ProcDet.prototype.getLongShort = function() {
   return this.longShort;
 };
-Element.add({name: "LONGSHORT", required: false, order: 6, owner: ProcDet, /*type: String,*/ fcn: "getLongShort"});
+Element.add({name: "LONGSHORT", required: false, order: 6, owner: ProcDet, /*type: String,*/ readMethod: "getLongShort", writeMethod: "setLongShort"});
 
 
 /**
@@ -198,7 +198,7 @@ ProcDet.prototype.setLongShort = function(longShort) {
 ProcDet.prototype.getWasDisAllowed = function() {
   return this.wasDisAllowed;
 };
-Element.add({name: "WASHSALELOSSDISALLOWED", required: false, order: 7, owner: ProcDet, /*type: String,*/ fcn: "getWasDisAllowed"});
+Element.add({name: "WASHSALELOSSDISALLOWED", required: false, order: 7, owner: ProcDet, /*type: String,*/ readMethod: "getWasDisAllowed", writeMethod: "setWasDisAllowed"});
 
 
 /**
@@ -215,7 +215,7 @@ ProcDet.prototype.setWasDisAllowed = function(wasDisAllowed) {
 ProcDet.prototype.getNoncoveredSec = function() {
   return this.noncoveredSec;
 };
-Element.add({name: "NONCOVEREDSECURITY", required: false, order: 8, owner: ProcDet, /*type: String,*/ fcn: "getNoncoveredSec"});
+Element.add({name: "NONCOVEREDSECURITY", required: false, order: 8, owner: ProcDet, /*type: String,*/ readMethod: "getNoncoveredSec", writeMethod: "setNoncoveredSec"});
 
 
 /**
@@ -232,7 +232,7 @@ ProcDet.prototype.setNoncoveredSec = function(noncoveredSec) {
 ProcDet.prototype.getBasisNotshown = function() {
   return this.basisNotshown;
 };
-Element.add({name: "BASISNOTSHOWN", required: false, order: 9, owner: ProcDet, /*type: String,*/ fcn: "getBasisNotshown"});
+Element.add({name: "BASISNOTSHOWN", required: false, order: 9, owner: ProcDet, /*type: String,*/ readMethod: "getBasisNotshown", writeMethod: "setBasisNotshown"});
 
 
 /**

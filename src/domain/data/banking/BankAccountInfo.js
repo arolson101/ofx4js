@@ -77,7 +77,7 @@ Aggregate.add("BANKACCTINFO", BankAccountInfo);
 BankAccountInfo.prototype.getBankAccount = function() {
   return this.bankAccount;
 };
-ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankAccountInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccount"});
+ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankAccountInfo, /*type: BankAccountDetails,*/ readMethod: "getBankAccount", writeMethod: "setBankAccount"});
 
 
 /**
@@ -104,7 +104,7 @@ BankAccountInfo.prototype.getAccountDetails = function() {
 BankAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
   return this.supportsTransactionDetailOperations;
 };
-Element.add({name: "SUPTXDL", required: true, order: 10, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransactionDetailOperations"});
+Element.add({name: "SUPTXDL", required: true, order: 10, owner: BankAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
 
 
 /**
@@ -125,7 +125,7 @@ BankAccountInfo.prototype.setSupportsTransactionDetailOperations = function(supp
 BankAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
   return this.supportsTransferToOtherAccountOperations;
 };
-Element.add({name: "XFERSRC", required: true, order: 20, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferToOtherAccountOperations"});
+Element.add({name: "XFERSRC", required: true, order: 20, owner: BankAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
 
 
 /**
@@ -146,7 +146,7 @@ BankAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = function
 BankAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
   return this.supportsTransferFromOtherAccountOperations;
 };
-Element.add({name: "XFERDEST", required: true, order: 30, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferFromOtherAccountOperations"});
+Element.add({name: "XFERDEST", required: true, order: 30, owner: BankAccountInfo, /*type: Boolean,*/ readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
 
 
 /**
@@ -167,7 +167,7 @@ BankAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations = functi
 BankAccountInfo.prototype.getStatus = function() {
   return this.status;
 };
-Element.add({name: "SVCSTATUS", required: true, order: 40, owner: BankAccountInfo, /*type: AccountStatus,*/ fcn: "getStatus"});
+Element.add({name: "SVCSTATUS", required: true, order: 40, owner: BankAccountInfo, /*type: AccountStatus,*/ readMethod: "getStatus", writeMethod: "setStatus"});
 
 
 /**

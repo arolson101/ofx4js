@@ -109,7 +109,7 @@ Aggregate.add("MSGSETCORE", CoreMessageSetInfo);
 CoreMessageSetInfo.prototype.getVersion = function() {
   return this.version;
 };
-Element.add({name: "VER", required: true, order: 0, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getVersion"});
+Element.add({name: "VER", required: true, order: 0, owner: CoreMessageSetInfo, /*type: String,*/ readMethod: "getVersion", writeMethod: "setVersion"});
 
 
 /**
@@ -130,7 +130,7 @@ CoreMessageSetInfo.prototype.setVersion = function(version) {
 CoreMessageSetInfo.prototype.getServiceProviderName = function() {
   return this.serviceProviderName;
 };
-Element.add({name: "SPNAME", order: 10, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getServiceProviderName"});
+Element.add({name: "SPNAME", order: 10, owner: CoreMessageSetInfo, /*type: String,*/ readMethod: "getServiceProviderName", writeMethod: "setServiceProviderName"});
 
 
 /**
@@ -151,7 +151,7 @@ CoreMessageSetInfo.prototype.setServiceProviderName = function(serviceProviderNa
 CoreMessageSetInfo.prototype.getUrl = function() {
   return this.url;
 };
-Element.add({name: "URL", required: true, order: 20, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getUrl"});
+Element.add({name: "URL", required: true, order: 20, owner: CoreMessageSetInfo, /*type: String,*/ readMethod: "getUrl", writeMethod: "setUrl"});
 
 
 /**
@@ -172,7 +172,7 @@ CoreMessageSetInfo.prototype.setUrl = function(url) {
 CoreMessageSetInfo.prototype.getSecurity = function() {
   return this.security;
 };
-Element.add({name: "OFXSEC", required: true, order: 30, owner: CoreMessageSetInfo, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
+Element.add({name: "OFXSEC", required: true, order: 30, owner: CoreMessageSetInfo, /*type: ApplicationSecurity,*/ readMethod: "getSecurity", writeMethod: "setSecurity"});
 
 
 /**
@@ -193,7 +193,7 @@ CoreMessageSetInfo.prototype.setSecurity = function(security) {
 CoreMessageSetInfo.prototype.getSslRequired = function() {
   return this.sslRequired;
 };
-Element.add({name: "TRANSPSEC", required: true, order: 40, owner: CoreMessageSetInfo, /*type: Boolean,*/ fcn: "getSslRequired"});
+Element.add({name: "TRANSPSEC", required: true, order: 40, owner: CoreMessageSetInfo, /*type: Boolean,*/ readMethod: "getSslRequired", writeMethod: "setSslRequired"});
 
 
 /**
@@ -214,7 +214,7 @@ CoreMessageSetInfo.prototype.setSslRequired = function(sslRequired) {
 CoreMessageSetInfo.prototype.getRealm = function() {
   return this.realm;
 };
-Element.add({name: "SIGNONREALM", required: true, order: 50, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getRealm"});
+Element.add({name: "SIGNONREALM", required: true, order: 50, owner: CoreMessageSetInfo, /*type: String,*/ readMethod: "getRealm", writeMethod: "setRealm"});
 
 
 /**
@@ -236,7 +236,7 @@ CoreMessageSetInfo.prototype.setRealm = function(realm) {
 CoreMessageSetInfo.prototype.getLanguage = function() {
   return this.language;
 };
-Element.add({name: "LANGUAGE", required: true, order: 60, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getLanguage"});
+Element.add({name: "LANGUAGE", required: true, order: 60, owner: CoreMessageSetInfo, /*type: String,*/ readMethod: "getLanguage", writeMethod: "setLanguage"});
 
 
 /**
@@ -257,7 +257,7 @@ CoreMessageSetInfo.prototype.setLanguage = function(language) {
 CoreMessageSetInfo.prototype.getSyncCapability = function() {
   return this.syncCapability;
 };
-Element.add({name: "SYNCMODE", required: true, order: 70, owner: CoreMessageSetInfo, /*type: SynchronizationCapability,*/ fcn: "getSyncCapability"});
+Element.add({name: "SYNCMODE", required: true, order: 70, owner: CoreMessageSetInfo, /*type: SynchronizationCapability,*/ readMethod: "getSyncCapability", writeMethod: "setSyncCapability"});
 
 
 /**
@@ -278,7 +278,7 @@ CoreMessageSetInfo.prototype.setSyncCapability = function(syncCapability) {
 CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport = function() {
   return this.fileBasedErrorRecoverySupport;
 };
-Element.add({name: "RESPFILEER", required: true, order: 80, owner: CoreMessageSetInfo, /*type: Boolean,*/ fcn: "getFileBasedErrorRecoverySupport"});
+Element.add({name: "RESPFILEER", required: true, order: 80, owner: CoreMessageSetInfo, /*type: Boolean,*/ readMethod: "getFileBasedErrorRecoverySupport", writeMethod: "setFileBasedErrorRecoverySupport"});
 
 
 /**
@@ -300,7 +300,7 @@ CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport = function(fileBas
 CoreMessageSetInfo.prototype.getIntuTimeout = function() {
   return this.timeout;
 };
-Element.add({name: "INTU.TIMEOUT", order: 90, owner: CoreMessageSetInfo, /*type: Integer,*/ fcn: "getIntuTimeout"});
+Element.add({name: "INTU.TIMEOUT", order: 90, owner: CoreMessageSetInfo, /*type: Integer,*/ readMethod: "getIntuTimeout", writeMethod: "setIntuTimeout"});
 
 
 /**

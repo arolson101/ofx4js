@@ -65,7 +65,7 @@ Aggregate.add("POSSTOCK", StockPosition);
 StockPosition.prototype.getUnitsStreet = function() {
   return this.unitsStreet;
 };
-Element.add({name: "UNITSSTREET", order: 20, owner: StockPosition, /*type: Double,*/ fcn: "getUnitsStreet"});
+Element.add({name: "UNITSSTREET", order: 20, owner: StockPosition, /*type: Double,*/ readMethod: "getUnitsStreet", writeMethod: "setUnitsStreet"});
 
 
 /**
@@ -86,7 +86,7 @@ StockPosition.prototype.setUnitsStreet = function(unitsStreet) {
 StockPosition.prototype.getUnitsUser = function() {
   return this.unitsUser;
 };
-Element.add({name: "UNITSUSER", order: 30, owner: StockPosition, /*type: Double,*/ fcn: "getUnitsUser"});
+Element.add({name: "UNITSUSER", order: 30, owner: StockPosition, /*type: Double,*/ readMethod: "getUnitsUser", writeMethod: "setUnitsUser"});
 
 
 /**
@@ -107,7 +107,7 @@ StockPosition.prototype.setUnitsUser = function(unitsUser) {
 StockPosition.prototype.getReinvestDividends = function() {
   return this.reinvestDividends;
 };
-Element.add({name: "REINVDIV", order: 40, owner: StockPosition, /*type: Boolean,*/ fcn: "getReinvestDividends"});
+Element.add({name: "REINVDIV", order: 40, owner: StockPosition, /*type: Boolean,*/ readMethod: "getReinvestDividends", writeMethod: "setReinvestDividends"});
 
 
 /**

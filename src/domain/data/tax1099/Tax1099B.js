@@ -90,7 +90,7 @@ Aggregate.add("TAX1099B_V100", Tax1099B);
 Tax1099B.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099B, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099B, /*type: String,*/ readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099B.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -101,7 +101,7 @@ Tax1099B.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099B.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099B, /*type: String,*/ fcn: "getTaxYear"});
+Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099B, /*type: String,*/ readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099B.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -115,7 +115,7 @@ Tax1099B.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099B.prototype.getExtDBInfo = function() {
   return this.extDBInfo;
 };
-ChildAggregate.add({required:true, order: 2, owner: Tax1099B, /*type: ExtDBInfo,*/ fcn: "getExtDBInfo"});
+ChildAggregate.add({required:true, order: 2, owner: Tax1099B, /*type: ExtDBInfo,*/ readMethod: "getExtDBInfo", writeMethod: "setExtDBInfo"});
 
 
 /**
@@ -132,7 +132,7 @@ Tax1099B.prototype.setExtDBInfo = function(extDBInfo) {
 Tax1099B.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 3, owner: Tax1099B, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add({required:true, order: 3, owner: Tax1099B, /*type: PayerAddress,*/ readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -149,7 +149,7 @@ Tax1099B.prototype.setPayerAddress = function(payerAddress) {
 Tax1099B.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 4, owner: Tax1099B, /*type: String,*/ fcn: "getPayerId"});
+Element.add({name: "PAYERID", required: true, order: 4, owner: Tax1099B, /*type: String,*/ readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -166,7 +166,7 @@ Tax1099B.prototype.setPayerId = function(payerId) {
 Tax1099B.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 5, owner: Tax1099B, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add({required:true, order: 5, owner: Tax1099B, /*type: RecAddress,*/ readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -183,7 +183,7 @@ Tax1099B.prototype.setRecAddress = function(recAddress) {
 Tax1099B.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 6, owner: Tax1099B, /*type: String,*/ fcn: "getRecId"});
+Element.add({name: "RECID", required: true, order: 6, owner: Tax1099B, /*type: String,*/ readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -200,7 +200,7 @@ Tax1099B.prototype.setRecId = function(recId) {
 Tax1099B.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 7, owner: Tax1099B, /*type: String,*/ fcn: "getRecAcct"});
+Element.add({name: "RECACCT", required: true, order: 7, owner: Tax1099B, /*type: String,*/ readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**

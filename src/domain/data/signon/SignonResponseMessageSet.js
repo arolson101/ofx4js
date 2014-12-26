@@ -64,7 +64,7 @@ SignonResponseMessageSet.prototype.getType = function() {
 SignonResponseMessageSet.prototype.getSignonResponse = function() {
   return this.signonResponse;
 };
-ChildAggregate.add({order: 0, owner: SignonResponseMessageSet, /*type: SignonResponse,*/ fcn: "getSignonResponse"});
+ChildAggregate.add({order: 0, owner: SignonResponseMessageSet, /*type: SignonResponse,*/ readMethod: "getSignonResponse", writeMethod: "setSignonResponse"});
 
 
 /**
@@ -85,7 +85,7 @@ SignonResponseMessageSet.prototype.setSignonResponse = function(signonResponse) 
 SignonResponseMessageSet.prototype.getPasswordChangeResponse = function() {
   return this.passwordChangeResponse;
 };
-ChildAggregate.add({order: 10, owner: SignonResponseMessageSet, /*type: PasswordChangeResponseTransaction,*/ fcn: "getPasswordChangeResponse"});
+ChildAggregate.add({order: 10, owner: SignonResponseMessageSet, /*type: PasswordChangeResponseTransaction,*/ readMethod: "getPasswordChangeResponse", writeMethod: "setPasswordChangeResponse"});
 
 
 /**

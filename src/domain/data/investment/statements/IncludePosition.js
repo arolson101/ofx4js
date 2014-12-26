@@ -55,7 +55,7 @@ Aggregate.add("INCPOS", IncludePosition);
 IncludePosition.prototype.getDateSentDown = function() {
   return this.sentDownDate;
 };
-Element.add({name: "DTASOF", order: 0, owner: IncludePosition, /*type: Date,*/ fcn: "getDateSentDown"});
+Element.add({name: "DTASOF", order: 0, owner: IncludePosition, /*type: Date,*/ readMethod: "getDateSentDown", writeMethod: "setDateSentDown"});
 
 
 /**
@@ -77,7 +77,7 @@ IncludePosition.prototype.setDateSentDown = function(sentDownDate) {
 IncludePosition.prototype.getIncludePositions = function() {
   return this.includePositions;
 };
-Element.add({name: "INCLUDE", order: 10, owner: IncludePosition, /*type: Boolean,*/ fcn: "getIncludePositions"});
+Element.add({name: "INCLUDE", order: 10, owner: IncludePosition, /*type: Boolean,*/ readMethod: "getIncludePositions", writeMethod: "setIncludePositions"});
 
 
 /**

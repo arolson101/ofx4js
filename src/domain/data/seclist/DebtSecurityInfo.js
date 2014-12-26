@@ -147,7 +147,7 @@ Aggregate.add("DEBTINFO", DebtSecurityInfo);
 DebtSecurityInfo.prototype.getParValue = function() {
   return this.parValue;
 };
-Element.add({name: "PARVALUE", required:true, order: 20, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getParValue"});
+Element.add({name: "PARVALUE", required:true, order: 20, owner: DebtSecurityInfo, /*type: Double,*/ readMethod: "getParValue", writeMethod: "setParValue"});
 
 
 /**
@@ -169,7 +169,7 @@ DebtSecurityInfo.prototype.setParValue = function(parValue) {
 DebtSecurityInfo.prototype.getDebtType = function() {
   return this.debtType;
 };
-Element.add({name: "DEBTTYPE", required:true, order: 30, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtType"});
+Element.add({name: "DEBTTYPE", required:true, order: 30, owner: DebtSecurityInfo, /*type: String,*/ readMethod: "getDebtType", writeMethod: "setDebtType"});
 
 
 /**
@@ -202,7 +202,7 @@ DebtSecurityInfo.prototype.getDebtTypeEnum = function() {
 DebtSecurityInfo.prototype.getDebtClass = function() {
   return this.debtClass;
 };
-Element.add({name: "DEBTCLASS", order: 40, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtClass"});
+Element.add({name: "DEBTCLASS", order: 40, owner: DebtSecurityInfo, /*type: String,*/ readMethod: "getDebtClass", writeMethod: "setDebtClass"});
 
 
 /**
@@ -235,7 +235,7 @@ DebtSecurityInfo.prototype.getDebtClassEnum = function() {
 DebtSecurityInfo.prototype.getCouponRate = function() {
   return this.couponRate;
 };
-Element.add({name: "COUPONRT", order: 50, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCouponRate"});
+Element.add({name: "COUPONRT", order: 50, owner: DebtSecurityInfo, /*type: Double,*/ readMethod: "getCouponRate", writeMethod: "setCouponRate"});
 
 
 /**
@@ -258,7 +258,7 @@ DebtSecurityInfo.prototype.setCouponRate = function(couponRate) {
 DebtSecurityInfo.prototype.getNextMaturityDate = function() {
   return this.nextMaturityDate;
 };
-Element.add({name: "DTCOUPON", order: 60, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextMaturityDate"});
+Element.add({name: "DTCOUPON", order: 60, owner: DebtSecurityInfo, /*type: Date,*/ readMethod: "getNextMaturityDate", writeMethod: "setNextMaturityDate"});
 
 
 /**
@@ -281,7 +281,7 @@ DebtSecurityInfo.prototype.setNextMaturityDate = function(nextMaturityDate) {
 DebtSecurityInfo.prototype.getCouponFrequency = function() {
   return this.couponFrequency;
 };
-Element.add({name: "COUPONFREQ", order: 70, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCouponFrequency"});
+Element.add({name: "COUPONFREQ", order: 70, owner: DebtSecurityInfo, /*type: String,*/ readMethod: "getCouponFrequency", writeMethod: "setCouponFrequency"});
 
 
 /**
@@ -313,7 +313,7 @@ DebtSecurityInfo.prototype.getCouponFrequencyEnum = function() {
 DebtSecurityInfo.prototype.getCallPrice = function() {
   return this.callPrice;
 };
-Element.add({name: "CALLPRICE", order: 80, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCallPrice"});
+Element.add({name: "CALLPRICE", order: 80, owner: DebtSecurityInfo, /*type: Double,*/ readMethod: "getCallPrice", writeMethod: "setCallPrice"});
 
 
 /**
@@ -334,7 +334,7 @@ DebtSecurityInfo.prototype.setCallPrice = function(callPrice) {
 DebtSecurityInfo.prototype.getYieldToCall = function() {
   return this.yieldToCall;
 };
-Element.add({name: "YIELDTOCALL", order: 90, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToCall"});
+Element.add({name: "YIELDTOCALL", order: 90, owner: DebtSecurityInfo, /*type: Double,*/ readMethod: "getYieldToCall", writeMethod: "setYieldToCall"});
 
 
 /**
@@ -355,7 +355,7 @@ DebtSecurityInfo.prototype.setYieldToCall = function(yieldToCall) {
 DebtSecurityInfo.prototype.getNextCallDate = function() {
   return this.nextCallDate;
 };
-Element.add({name: "DTCALL", order: 100, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextCallDate"});
+Element.add({name: "DTCALL", order: 100, owner: DebtSecurityInfo, /*type: Date,*/ readMethod: "getNextCallDate", writeMethod: "setNextCallDate"});
 
 
 /**
@@ -376,7 +376,7 @@ DebtSecurityInfo.prototype.setNextCallDate = function(nextCallDate) {
 DebtSecurityInfo.prototype.getCallType = function() {
   return this.callType;
 };
-Element.add({name: "CALLTYPE", order: 110, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCallType"});
+Element.add({name: "CALLTYPE", order: 110, owner: DebtSecurityInfo, /*type: String,*/ readMethod: "getCallType", writeMethod: "setCallType"});
 
 
 /**
@@ -407,7 +407,7 @@ DebtSecurityInfo.prototype.getCallTypeEnum = function() {
 DebtSecurityInfo.prototype.getYieldToMaturity = function() {
   return this.yieldToMaturity;
 };
-Element.add({name: "YIELDTOMAT", order: 120, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToMaturity"});
+Element.add({name: "YIELDTOMAT", order: 120, owner: DebtSecurityInfo, /*type: Double,*/ readMethod: "getYieldToMaturity", writeMethod: "setYieldToMaturity"});
 
 
 /**
@@ -428,7 +428,7 @@ DebtSecurityInfo.prototype.setYieldToMaturity = function(yieldToMaturity) {
 DebtSecurityInfo.prototype.getDebtMaturityDate = function() {
   return this.debtMaturityDate;
 };
-Element.add({name: "DTMAT", order: 130, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getDebtMaturityDate"});
+Element.add({name: "DTMAT", order: 130, owner: DebtSecurityInfo, /*type: Date,*/ readMethod: "getDebtMaturityDate", writeMethod: "setDebtMaturityDate"});
 
 
 /**
@@ -449,7 +449,7 @@ DebtSecurityInfo.prototype.setDebtMaturityDate = function(debtMaturityDate) {
 DebtSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 140, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add({name: "ASSETCLASS", order: 140, owner: DebtSecurityInfo, /*type: String,*/ readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -481,7 +481,7 @@ DebtSecurityInfo.prototype.getAssetClassEnum = function() {
 DebtSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 150, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add({name: "FIASSETCLASS", order: 150, owner: DebtSecurityInfo, /*type: String,*/ readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**

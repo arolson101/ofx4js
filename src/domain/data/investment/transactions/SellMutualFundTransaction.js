@@ -69,7 +69,7 @@ Aggregate.add("SELLMF", SellMutualFundTransaction);
 SellMutualFundTransaction.prototype.getSellType = function() {
   return this.sellType;
 };
-Element.add({name: "SELLTYPE", order: 20, owner: SellMutualFundTransaction, /*type: String,*/ fcn: "getSellType"});
+Element.add({name: "SELLTYPE", order: 20, owner: SellMutualFundTransaction, /*type: String,*/ readMethod: "getSellType", writeMethod: "setSellType"});
 
 
 /**
@@ -102,7 +102,7 @@ SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
 SellMutualFundTransaction.prototype.getAverageCostBasis = function() {
   return this.averageCostBasis;
 };
-Element.add({name: "AVGCOSTBASIS", order: 30, owner: SellMutualFundTransaction, /*type: Double,*/ fcn: "getAverageCostBasis"});
+Element.add({name: "AVGCOSTBASIS", order: 30, owner: SellMutualFundTransaction, /*type: Double,*/ readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
 
 
 /**
@@ -126,7 +126,7 @@ SellMutualFundTransaction.prototype.setAverageCostBasis = function(averageCostBa
 SellMutualFundTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 40, owner: SellMutualFundTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
+Element.add({name: "RELFITID", order: 40, owner: SellMutualFundTransaction, /*type: String,*/ readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**

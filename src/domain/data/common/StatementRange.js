@@ -57,7 +57,7 @@ Aggregate.add("INCTRAN", StatementRange);
 StatementRange.prototype.getStart = function() {
   return this.start;
 };
-Element.add({name: "DTSTART", order: 0, owner: StatementRange, /*type: Date,*/ fcn: "getStart"});
+Element.add({name: "DTSTART", order: 0, owner: StatementRange, /*type: Date,*/ readMethod: "getStart", writeMethod: "setStart"});
 
 
 /**
@@ -78,7 +78,7 @@ StatementRange.prototype.setStart = function(start) {
 StatementRange.prototype.getEnd = function() {
   return this.end;
 };
-Element.add({name: "DTEND", order: 10, owner: StatementRange, /*type: Date,*/ fcn: "getEnd"});
+Element.add({name: "DTEND", order: 10, owner: StatementRange, /*type: Date,*/ readMethod: "getEnd", writeMethod: "setEnd"});
 
 
 /**
@@ -99,7 +99,7 @@ StatementRange.prototype.setEnd = function(end) {
 StatementRange.prototype.getIncludeTransactions = function() {
   return this.includeTransactions;
 };
-Element.add({name: "INCLUDE", required: true, order: 20, owner: StatementRange, /*type: Boolean,*/ fcn: "getIncludeTransactions"});
+Element.add({name: "INCLUDE", required: true, order: 20, owner: StatementRange, /*type: Boolean,*/ readMethod: "getIncludeTransactions", writeMethod: "setIncludeTransactions"});
 
 
 /**

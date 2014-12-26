@@ -61,7 +61,7 @@ AccountInfoResponse.prototype.getResponseMessageName = function() {
 AccountInfoResponse.prototype.getLastUpdated = function() {
   return this.lastUpdated;
 };
-Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoResponse, /*type: Date,*/ fcn: "getLastUpdated"});
+Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoResponse, /*type: Date,*/ readMethod: "getLastUpdated", writeMethod: "setLastUpdated"});
 
 
 /**
@@ -82,7 +82,7 @@ AccountInfoResponse.prototype.setLastUpdated = function(lastUpdated) {
 AccountInfoResponse.prototype.getAccounts = function() {
   return this.accounts;
 };
-ChildAggregate.add({order: 10, owner: AccountInfoResponse, /*type: Collection<AccountProfile>,*/ fcn: "getAccounts"});
+ChildAggregate.add({order: 10, owner: AccountInfoResponse, /*type: Collection<AccountProfile>,*/ readMethod: "getAccounts", writeMethod: "setAccounts"});
 
 
 /**

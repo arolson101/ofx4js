@@ -57,7 +57,7 @@ InvestmentStatementRequestMessageSet.prototype.getType = function() {
 InvestmentStatementRequestMessageSet.prototype.getStatementRequest = function() {
   return this.statementRequest;
 };
-ChildAggregate.add({order: 0, owner: InvestmentStatementRequestMessageSet, /*type: InvestmentStatementRequestTransaction,*/ fcn: "getStatementRequest"});
+ChildAggregate.add({order: 0, owner: InvestmentStatementRequestMessageSet, /*type: InvestmentStatementRequestTransaction,*/ readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
 
 
 /**

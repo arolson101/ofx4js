@@ -82,7 +82,7 @@ Aggregate.add("STOCKINFO", StockSecurityInfo);
 StockSecurityInfo.prototype.getType = function() {
   return this.stockType;
 };
-Element.add({name: "STOCKTYPE", order: 20, owner: StockSecurityInfo, /*type: String,*/ fcn: "getType"});
+Element.add({name: "STOCKTYPE", order: 20, owner: StockSecurityInfo, /*type: String,*/ readMethod: "getType", writeMethod: "setType"});
 
 
 /**
@@ -115,7 +115,7 @@ StockSecurityInfo.prototype.getTypeEnum = function() {
 StockSecurityInfo.prototype.getYield = function() {
   return this.yield;
 };
-Element.add({name: "YIELD", order: 30, owner: StockSecurityInfo, /*type: Double,*/ fcn: "getYield"});
+Element.add({name: "YIELD", order: 30, owner: StockSecurityInfo, /*type: Double,*/ readMethod: "getYield", writeMethod: "setYield"});
 
 
 /**
@@ -137,7 +137,7 @@ StockSecurityInfo.prototype.setYield = function(yield_) {
 StockSecurityInfo.prototype.getDateYieldAsOf = function() {
   return this.dateYieldAsOf;
 };
-Element.add({name: "DTYIELDASOF", order: 40, owner: StockSecurityInfo, /*type: Date,*/ fcn: "getDateYieldAsOf"});
+Element.add({name: "DTYIELDASOF", order: 40, owner: StockSecurityInfo, /*type: Date,*/ readMethod: "getDateYieldAsOf", writeMethod: "setDateYieldAsOf"});
 
 
 /**
@@ -158,7 +158,7 @@ StockSecurityInfo.prototype.setDateYieldAsOf = function(dateYieldAsOf) {
 StockSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 50, owner: StockSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add({name: "ASSETCLASS", order: 50, owner: StockSecurityInfo, /*type: String,*/ readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -190,7 +190,7 @@ StockSecurityInfo.prototype.getAssetClassEnum = function() {
 StockSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 60, owner: StockSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add({name: "FIASSETCLASS", order: 60, owner: StockSecurityInfo, /*type: String,*/ readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**

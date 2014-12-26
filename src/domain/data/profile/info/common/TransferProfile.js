@@ -124,7 +124,7 @@ Aggregate.add("XFERPROF", TransferProfile);
 TransferProfile.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 0, owner: TransferProfile, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
+Element.add({name: "PROCDAYSOFF", order: 0, owner: TransferProfile, /*type: ProcessorDayOff[],*/ readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 TransferProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -143,7 +143,7 @@ TransferProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ p
 TransferProfile.prototype.getProcessEndTime = function() {
   return this.processEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 10, owner: TransferProfile, /*type: String,*/ fcn: "getProcessEndTime"});
+Element.add({name: "PROCENDTM", required: true, order: 10, owner: TransferProfile, /*type: String,*/ readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
 
 
 /**
@@ -163,7 +163,7 @@ TransferProfile.prototype.setProcessEndTime = function(processEndTime) {
 TransferProfile.prototype.getSupportsScheduledTransfers = function() {
   return this.supportsScheduledTransfers;
 };
-Element.add({name: "CANSCHED", required: true, order: 20, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsScheduledTransfers"});
+Element.add({name: "CANSCHED", required: true, order: 20, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsScheduledTransfers", writeMethod: "setSupportsScheduledTransfers"});
 
 
 TransferProfile.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ supportsScheduledTransfers) {
@@ -178,7 +178,7 @@ TransferProfile.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ s
 TransferProfile.prototype.getSupportsRecurringTransfers = function() {
   return this.supportsRecurringTransfers;
 };
-Element.add({name: "CANRECUR", required: true, order: 30, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsRecurringTransfers"});
+Element.add({name: "CANRECUR", required: true, order: 30, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsRecurringTransfers", writeMethod: "setSupportsRecurringTransfers"});
 
 
 TransferProfile.prototype.setSupportsRecurringTransfers = function(/*Boolean*/ supportsRecurringTransfers) {
@@ -193,7 +193,7 @@ TransferProfile.prototype.setSupportsRecurringTransfers = function(/*Boolean*/ s
 TransferProfile.prototype.getSupportsLoanTransfers = function() {
   return this.supportsLoanTransfers;
 };
-Element.add({name: "CANLOAN", order: 40, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsLoanTransfers"});
+Element.add({name: "CANLOAN", order: 40, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsLoanTransfers", writeMethod: "setSupportsLoanTransfers"});
 
 
 TransferProfile.prototype.setSupportsLoanTransfers = function(/*Boolean*/ supportsLoanTransfers) {
@@ -204,7 +204,7 @@ TransferProfile.prototype.setSupportsLoanTransfers = function(/*Boolean*/ suppor
 TransferProfile.prototype.getSupportsScheduledLoanTransfers = function() {
   return this.supportsScheduledLoanTransfers;
 };
-Element.add({name: "CANSCHEDLOAN", order: 50, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsScheduledLoanTransfers"});
+Element.add({name: "CANSCHEDLOAN", order: 50, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsScheduledLoanTransfers", writeMethod: "setSupportsScheduledLoanTransfers"});
 
 
 TransferProfile.prototype.setSupportsScheduledLoanTransfers = function(/*Boolean*/ supportsScheduledLoanTransfers) {
@@ -215,7 +215,7 @@ TransferProfile.prototype.setSupportsScheduledLoanTransfers = function(/*Boolean
 TransferProfile.prototype.getSupportsRecurringLoanTransfers = function() {
   return this.supportsRecurringLoanTransfers;
 };
-Element.add({name: "CANRECURLOAN", order: 60, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsRecurringLoanTransfers"});
+Element.add({name: "CANRECURLOAN", order: 60, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsRecurringLoanTransfers", writeMethod: "setSupportsRecurringLoanTransfers"});
 
 
 TransferProfile.prototype.setSupportsRecurringLoanTransfers = function(/*Boolean*/ supportsRecurringLoanTransfers) {
@@ -226,7 +226,7 @@ TransferProfile.prototype.setSupportsRecurringLoanTransfers = function(/*Boolean
 TransferProfile.prototype.getSupportsTransferModification = function() {
   return this.supportsTransferModification;
 };
-Element.add({name: "CANMODXFERS", required: true, order: 70, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsTransferModification"});
+Element.add({name: "CANMODXFERS", required: true, order: 70, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsTransferModification", writeMethod: "setSupportsTransferModification"});
 
 
 TransferProfile.prototype.setSupportsTransferModification = function(/*Boolean*/ supportsTransferModification) {
@@ -237,7 +237,7 @@ TransferProfile.prototype.setSupportsTransferModification = function(/*Boolean*/
 TransferProfile.prototype.getSupportsModelModification = function() {
   return this.supportsModelModification;
 };
-Element.add({name: "CANMODMDLS", required: true, order: 80, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsModelModification"});
+Element.add({name: "CANMODMDLS", required: true, order: 80, owner: TransferProfile, /*type: Boolean,*/ readMethod: "getSupportsModelModification", writeMethod: "setSupportsModelModification"});
 
 
 TransferProfile.prototype.setSupportsModelModification = function(/*Boolean*/ supportsModelModification) {
@@ -254,7 +254,7 @@ TransferProfile.prototype.setSupportsModelModification = function(/*Boolean*/ su
 TransferProfile.prototype.getModelWindow = function() {
   return this.modelWindow;
 };
-Element.add({name: "MODELWND", required: true, order: 90, owner: TransferProfile, /*type: Integer,*/ fcn: "getModelWindow"});
+Element.add({name: "MODELWND", required: true, order: 90, owner: TransferProfile, /*type: Integer,*/ readMethod: "getModelWindow", writeMethod: "setModelWindow"});
 
 
 TransferProfile.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
@@ -269,7 +269,7 @@ TransferProfile.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
 TransferProfile.prototype.getWithdrawnDays = function() {
   return this.withdrawnDays;
 };
-Element.add({name: "DAYSWITH", required: true, order: 100, owner: TransferProfile, /*type: Integer,*/ fcn: "getWithdrawnDays"});
+Element.add({name: "DAYSWITH", required: true, order: 100, owner: TransferProfile, /*type: Integer,*/ readMethod: "getWithdrawnDays", writeMethod: "setWithdrawnDays"});
 
 
 TransferProfile.prototype.setWithdrawnDays = function(/*Integer*/ withdrawnDays) {
@@ -284,7 +284,7 @@ TransferProfile.prototype.setWithdrawnDays = function(/*Integer*/ withdrawnDays)
 TransferProfile.prototype.getDefaultDaysToPay = function() {
   return this.defaultDaysToPay;
 };
-Element.add({name: "DFLTDAYSTOPAY", required: true, order: 110, owner: TransferProfile, /*type: Integer,*/ fcn: "getDefaultDaysToPay"});
+Element.add({name: "DFLTDAYSTOPAY", required: true, order: 110, owner: TransferProfile, /*type: Integer,*/ readMethod: "getDefaultDaysToPay", writeMethod: "setDefaultDaysToPay"});
 
 
 TransferProfile.prototype.setDefaultDaysToPay = function(/*Integer*/ defaultDaysToPay) {

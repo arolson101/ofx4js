@@ -52,7 +52,7 @@ Aggregate.add("SECLISTTRNRQ", SecurityListRequestTransaction);
 SecurityListRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: SecurityListRequestTransaction, /*type: SecurityListRequest,*/ fcn: "getMessage"});
+ChildAggregate.add({required: true, order: 30, owner: SecurityListRequestTransaction, /*type: SecurityListRequest,*/ readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**

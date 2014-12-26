@@ -50,7 +50,7 @@ Aggregate.add("BalanceInfo", BalanceInfo);
 BalanceInfo.prototype.getAmount = function() {
   return this.amount;
 };
-Element.add({name: "BALAMT", required: true, order: 0, owner: BalanceInfo, /*type: double,*/ fcn: "getAmount"});
+Element.add({name: "BALAMT", required: true, order: 0, owner: BalanceInfo, /*type: double,*/ readMethod: "getAmount", writeMethod: "setAmount"});
 
 
 /**
@@ -71,7 +71,7 @@ BalanceInfo.prototype.setAmount = function(amount) {
 BalanceInfo.prototype.getAsOfDate = function() {
   return this.asOfDate;
 };
-Element.add({name: "DTASOF", required: true, order: 10, owner: BalanceInfo, /*type: Date,*/ fcn: "getAsOfDate"});
+Element.add({name: "DTASOF", required: true, order: 10, owner: BalanceInfo, /*type: Date,*/ readMethod: "getAsOfDate", writeMethod: "setAsOfDate"});
 
 
 /**

@@ -47,7 +47,7 @@ Aggregate.add("OTHERENROLL", OtherEnrollment);
 OtherEnrollment.prototype.getMessage = function() {
   return this.message;
 };
-Element.add({name: "MESSAGE", required: true, order: 0, owner: OtherEnrollment, /*type: String,*/ fcn: "getMessage"});
+Element.add({name: "MESSAGE", required: true, order: 0, owner: OtherEnrollment, /*type: String,*/ readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 OtherEnrollment.prototype.setMessage = function(/*String*/ message) {

@@ -89,7 +89,7 @@ Aggregate.add("RECADDR", RecAddress);
 RecAddress.prototype.getRecName1 = function() {
   return this.recName1;
 };
-Element.add({name: "RECNAME1",required: true , order: 0, owner: RecAddress, /*type: String,*/ fcn: "getRecName1"});
+Element.add({name: "RECNAME1",required: true , order: 0, owner: RecAddress, /*type: String,*/ readMethod: "getRecName1", writeMethod: "setRecName1"});
 
 
 /**
@@ -106,7 +106,7 @@ RecAddress.prototype.setRecName1 = function(recName1) {
 RecAddress.prototype.getRecName2 = function() {
   return this.recName2;
 };
-Element.add({name: "RECNAME2",required: false , order: 1, owner: RecAddress, /*type: String,*/ fcn: "getRecName2"});
+Element.add({name: "RECNAME2",required: false , order: 1, owner: RecAddress, /*type: String,*/ readMethod: "getRecName2", writeMethod: "setRecName2"});
 
 
 /**
@@ -123,7 +123,7 @@ RecAddress.prototype.setRecName2 = function(recName2) {
 RecAddress.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1",required: true , order: 2, owner: RecAddress, /*type: String,*/ fcn: "getAddress1"});
+Element.add({name: "ADDR1",required: true , order: 2, owner: RecAddress, /*type: String,*/ readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -140,7 +140,7 @@ RecAddress.prototype.setAddress1 = function(address1) {
 RecAddress.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2",required: true , order: 3, owner: RecAddress, /*type: String,*/ fcn: "getAddress2"});
+Element.add({name: "ADDR2",required: true , order: 3, owner: RecAddress, /*type: String,*/ readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -157,7 +157,7 @@ RecAddress.prototype.setAddress2 = function(address2) {
 RecAddress.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY",required: true , order: 4, owner: RecAddress, /*type: String,*/ fcn: "getCity"});
+Element.add({name: "CITY",required: true , order: 4, owner: RecAddress, /*type: String,*/ readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -174,7 +174,7 @@ RecAddress.prototype.setCity = function(city) {
 RecAddress.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE",required: true , order: 5, owner: RecAddress, /*type: String,*/ fcn: "getState"});
+Element.add({name: "STATE",required: true , order: 5, owner: RecAddress, /*type: String,*/ readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -191,7 +191,7 @@ RecAddress.prototype.setState = function(state) {
 RecAddress.prototype.getPostalCode = function() {
   return this.postalCode;
 };
-Element.add({name: "POSTALCODE",required: true , order: 6, owner: RecAddress, /*type: String,*/ fcn: "getPostalCode"});
+Element.add({name: "POSTALCODE",required: true , order: 6, owner: RecAddress, /*type: String,*/ readMethod: "getPostalCode", writeMethod: "setPostalCode"});
 
 
 /**
@@ -208,7 +208,7 @@ RecAddress.prototype.setPostalCode = function(postalCode) {
 RecAddress.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE",required: false , order: 7, owner: RecAddress, /*type: String,*/ fcn: "getPhone"});
+Element.add({name: "PHONE",required: false , order: 7, owner: RecAddress, /*type: String,*/ readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**

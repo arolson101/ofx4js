@@ -92,7 +92,7 @@ BalanceRecord.Type = {
 BalanceRecord.prototype.getName = function() {
   return this.name;
 };
-Element.add({name: "NAME", required: true, order: 0, owner: BalanceRecord, /*type: String,*/ fcn: "getName"});
+Element.add({name: "NAME", required: true, order: 0, owner: BalanceRecord, /*type: String,*/ readMethod: "getName", writeMethod: "setName"});
 
 
 /**
@@ -113,7 +113,7 @@ BalanceRecord.prototype.setName = function(name) {
 BalanceRecord.prototype.getDescription = function() {
   return this.description;
 };
-Element.add({name: "DESC", required: true, order: 10, owner: BalanceRecord, /*type: String,*/ fcn: "getDescription"});
+Element.add({name: "DESC", required: true, order: 10, owner: BalanceRecord, /*type: String,*/ readMethod: "getDescription", writeMethod: "setDescription"});
 
 
 /**
@@ -134,7 +134,7 @@ BalanceRecord.prototype.setDescription = function(description) {
 BalanceRecord.prototype.getType = function() {
   return this.type;
 };
-Element.add({name: "BALTYPE", required: true, order: 20, owner: BalanceRecord, /*type: Type,*/ fcn: "getType"});
+Element.add({name: "BALTYPE", required: true, order: 20, owner: BalanceRecord, /*type: Type,*/ readMethod: "getType", writeMethod: "setType"});
 
 
 /**
@@ -155,7 +155,7 @@ BalanceRecord.prototype.setType = function(type) {
 BalanceRecord.prototype.getValue = function() {
   return this.value;
 };
-Element.add({name: "VALUE", required: true, order: 30, owner: BalanceRecord, /*type: String,*/ fcn: "getValue"});
+Element.add({name: "VALUE", required: true, order: 30, owner: BalanceRecord, /*type: String,*/ readMethod: "getValue", writeMethod: "setValue"});
 
 
 /**
@@ -176,7 +176,7 @@ BalanceRecord.prototype.setValue = function(value) {
 BalanceRecord.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTASOF", order: 40, owner: BalanceRecord, /*type: Date,*/ fcn: "getTimestamp"});
+Element.add({name: "DTASOF", order: 40, owner: BalanceRecord, /*type: Date,*/ readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -197,7 +197,7 @@ BalanceRecord.prototype.setTimestamp = function(timestamp) {
 BalanceRecord.prototype.getCurrency = function() {
   return this.currency;
 };
-ChildAggregate.add({order: 50, owner: BalanceRecord, /*type: Currency,*/ fcn: "getCurrency"});
+ChildAggregate.add({order: 50, owner: BalanceRecord, /*type: Currency,*/ readMethod: "getCurrency", writeMethod: "setCurrency"});
 
 
 /**
