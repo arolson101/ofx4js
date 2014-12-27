@@ -19,6 +19,7 @@ var inherit = require("../../../util/inherit");
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var AccountDetails = require("../common/AccountDetails");
+var AccountType = require("./AccountType");
 
 /**
  * Base bank account details.

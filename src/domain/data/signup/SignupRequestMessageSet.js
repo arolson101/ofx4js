@@ -20,6 +20,7 @@ var RequestMessageSet = require("../RequestMessageSet");
 var MessageSetType = require("../MessageSetType");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var AccountInfoRequestTransaction = require("./AccountInfoRequestTransaction");
 
 /**
  * @class

@@ -1,6 +1,4 @@
 /*
- * Copyright 2008 Web Cohesion
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,25 +12,17 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.io;
+"use strict";
+
+var inherit = require("../util/inherit");
+
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
+
+//import java.util.Stack;
 
 /**
+ * Content handler that manages the aggregate using a stack-based implementation.
+ *
  * @author Ryan Heaton
  */
-public class OFXSyntaxException extends OFXParseException {
-
-  public OFXSyntaxException() {
-  }
-
-  public OFXSyntaxException(String message) {
-    super(message);
-  }
-
-  public OFXSyntaxException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public OFXSyntaxException(Throwable cause) {
-    super(cause);
-  }
-}

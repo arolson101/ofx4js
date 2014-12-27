@@ -72,7 +72,7 @@ Aggregate.add("POSMF", MutualFundPosition);
 MutualFundPosition.prototype.getUnitsStreet = function() {
   return this.unitsStreet;
 };
-Element.add(MutualFundPosition, {name: "UNITSSTREET", order: 20, attributeType: Double, readMethod: "getUnitsStreet", writeMethod: "setUnitsStreet"});
+Element.add(MutualFundPosition, {name: "UNITSSTREET", order: 20, attributeType: Number, readMethod: "getUnitsStreet", writeMethod: "setUnitsStreet"});
 
 
 /**
@@ -93,7 +93,7 @@ MutualFundPosition.prototype.setUnitsStreet = function(unitsStreet) {
 MutualFundPosition.prototype.getUnitsUser = function() {
   return this.unitsUser;
 };
-Element.add(MutualFundPosition, {name: "UNITSUSER", order: 30, attributeType: Double, readMethod: "getUnitsUser", writeMethod: "setUnitsUser"});
+Element.add(MutualFundPosition, {name: "UNITSUSER", order: 30, attributeType: Number, readMethod: "getUnitsUser", writeMethod: "setUnitsUser"});
 
 
 /**
@@ -114,7 +114,7 @@ MutualFundPosition.prototype.setUnitsUser = function(unitsUser) {
 MutualFundPosition.prototype.getReinvestDividends = function() {
   return this.reinvestDividends;
 };
-Element.add(MutualFundPosition, {name: "REINVDIV", order: 50, attributeType: bool, readMethod: "getReinvestDividends", writeMethod: "setReinvestDividends"});
+Element.add(MutualFundPosition, {name: "REINVDIV", order: 50, attributeType: Boolean, readMethod: "getReinvestDividends", writeMethod: "setReinvestDividends"});
 
 
 /**
@@ -135,7 +135,7 @@ MutualFundPosition.prototype.setReinvestDividends = function(reinvestDividends) 
 MutualFundPosition.prototype.getReinvestCapitalGains = function() {
   return this.reinvestCapitalGains;
 };
-Element.add(MutualFundPosition, {name: "REINVCG", order: 60, attributeType: bool, readMethod: "getReinvestCapitalGains", writeMethod: "setReinvestCapitalGains"});
+Element.add(MutualFundPosition, {name: "REINVCG", order: 60, attributeType: Boolean, readMethod: "getReinvestCapitalGains", writeMethod: "setReinvestCapitalGains"});
 
 
 /**

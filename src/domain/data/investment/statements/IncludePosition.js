@@ -77,7 +77,7 @@ IncludePosition.prototype.setDateSentDown = function(sentDownDate) {
 IncludePosition.prototype.getIncludePositions = function() {
   return this.includePositions;
 };
-Element.add(IncludePosition, {name: "INCLUDE", order: 10, attributeType: bool, readMethod: "getIncludePositions", writeMethod: "setIncludePositions"});
+Element.add(IncludePosition, {name: "INCLUDE", order: 10, attributeType: Boolean, readMethod: "getIncludePositions", writeMethod: "setIncludePositions"});
 
 
 /**

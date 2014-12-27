@@ -20,6 +20,8 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var SignonResponse = require("./SignonResponse");
+var PasswordChangeResponseTransaction = require("./PasswordChangeResponseTransaction");
 
 /**
  * The sign-on response message set.

@@ -102,7 +102,7 @@ SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
 SellMutualFundTransaction.prototype.getAverageCostBasis = function() {
   return this.averageCostBasis;
 };
-Element.add(SellMutualFundTransaction, {name: "AVGCOSTBASIS", order: 30, attributeType: Double, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
+Element.add(SellMutualFundTransaction, {name: "AVGCOSTBASIS", order: 30, attributeType: Number, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
 
 
 /**

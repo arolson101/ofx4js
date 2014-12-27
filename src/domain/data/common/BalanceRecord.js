@@ -17,6 +17,7 @@
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var Currency = require("./Currency");
 
 /**
  * @class
@@ -75,7 +76,7 @@ Aggregate.add("BAL", BalanceRecord);
 /**
  * @enum
  */
-BalanceRecord.Type = {
+var Type = BalanceRecord.Type = {
 
   DOLLAR: 0,
 

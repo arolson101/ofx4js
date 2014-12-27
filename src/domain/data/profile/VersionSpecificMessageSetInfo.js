@@ -18,6 +18,7 @@ var inherit = require("../../../util/inherit");
 
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var MessageSetProfile = require("../MessageSetProfile");
+var CoreMessageSetInfo = require("./CoreMessageSetInfo");
 
 /**
  * Information specific to a version of a message set.

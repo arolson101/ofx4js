@@ -18,6 +18,12 @@ var inherit = require("../../../util/inherit");
 var T1099Response = require("../common/T1099Response");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Tax1099DIV = require("./Tax1099DIV");
+var Tax1099INT = require("./Tax1099INT");
+var Tax1099R = require("./Tax1099R");
+var Tax1099B = require("./Tax1099B");
+var Tax1099MISC = require("./Tax1099MISC");
+var Tax1099OID = require("./Tax1099OID");
 
 /**
  * @class

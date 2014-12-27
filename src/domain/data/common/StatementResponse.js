@@ -20,6 +20,8 @@ var ResponseMessage = require("../ResponseMessage");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var AccountStatement = require("../../../client/AccountStatement");
+var TransactionList = require("./TransactionList");
+var BalanceInfo = require("./BalanceInfo");
 
 /**
  * @class

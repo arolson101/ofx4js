@@ -19,6 +19,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var WireTransferV1MessageSetInfo = require("./WireTransferV1MessageSetInfo");
 
 /**
  * @class

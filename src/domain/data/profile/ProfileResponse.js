@@ -21,6 +21,8 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var FinancialInstitutionProfile = require("../../../client/FinancialInstitutionProfile");
+var MessageSetInfoList = require("./MessageSetInfoList");
+var SignonInfoList = require("./SignonInfoList");
 
 /**
  * @class

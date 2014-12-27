@@ -15,7 +15,7 @@
 "use strict";
 
 var inherit = require("../../../util/inherit");
-
+var AccountProfile = require("./AccountProfile");
 var ResponseMessage = require("../ResponseMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
@@ -82,7 +82,7 @@ AccountInfoResponse.prototype.setLastUpdated = function(lastUpdated) {
 AccountInfoResponse.prototype.getAccounts = function() {
   return this.accounts;
 };
-ChildAggregate.add(AccountInfoResponse, {order: 10, attributeType: Collection<AccountProfile>, readMethod: "getAccounts", writeMethod: "setAccounts"});
+ChildAggregate.add(AccountInfoResponse, {order: 10, attributeType: Array, collectionEntryType: AccountProfile, readMethod: "getAccounts", writeMethod: "setAccounts"});
 
 
 /**

@@ -19,6 +19,9 @@ var Inv401KSource = require("../positions/Inv401KSource");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
+var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Sell investment transaction aggregate ("INVSELL").
@@ -239,7 +242,7 @@ SellInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 SellInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add(SellInvestmentTransaction, {name: "UNITS", required: true, order: 30, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(SellInvestmentTransaction, {name: "UNITS", required: true, order: 30, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -267,7 +270,7 @@ SellInvestmentTransaction.prototype.setUnits = function(units) {
 SellInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add(SellInvestmentTransaction, {name: "UNITPRICE", required: true, order: 40, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(SellInvestmentTransaction, {name: "UNITPRICE", required: true, order: 40, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -293,7 +296,7 @@ SellInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 SellInvestmentTransaction.prototype.getMarkdown = function() {
   return this.markdown;
 };
-Element.add(SellInvestmentTransaction, {name: "MARKDOWN", order: 50, attributeType: Double, readMethod: "getMarkdown", writeMethod: "setMarkdown"});
+Element.add(SellInvestmentTransaction, {name: "MARKDOWN", order: 50, attributeType: Number, readMethod: "getMarkdown", writeMethod: "setMarkdown"});
 
 
 /**
@@ -318,7 +321,7 @@ SellInvestmentTransaction.prototype.setMarkdown = function(markdown) {
 SellInvestmentTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add(SellInvestmentTransaction, {name: "COMMISSION", order: 60, attributeType: Double, readMethod: "getCommission", writeMethod: "setCommission"});
+Element.add(SellInvestmentTransaction, {name: "COMMISSION", order: 60, attributeType: Number, readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -342,7 +345,7 @@ SellInvestmentTransaction.prototype.setCommission = function(commission) {
 SellInvestmentTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add(SellInvestmentTransaction, {name: "TAXES", order: 70, attributeType: Double, readMethod: "getTaxes", writeMethod: "setTaxes"});
+Element.add(SellInvestmentTransaction, {name: "TAXES", order: 70, attributeType: Number, readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -365,7 +368,7 @@ SellInvestmentTransaction.prototype.setTaxes = function(taxes) {
 SellInvestmentTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add(SellInvestmentTransaction, {name: "FEES", order: 80, attributeType: Double, readMethod: "getFees", writeMethod: "setFees"});
+Element.add(SellInvestmentTransaction, {name: "FEES", order: 80, attributeType: Number, readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -388,7 +391,7 @@ SellInvestmentTransaction.prototype.setFees = function(fees) {
 SellInvestmentTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add(SellInvestmentTransaction, {name: "LOAD", order: 90, attributeType: Double, readMethod: "getLoad", writeMethod: "setLoad"});
+Element.add(SellInvestmentTransaction, {name: "LOAD", order: 90, attributeType: Number, readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -411,7 +414,7 @@ SellInvestmentTransaction.prototype.setLoad = function(load) {
 SellInvestmentTransaction.prototype.getWithholding = function() {
   return this.withholding;
 };
-Element.add(SellInvestmentTransaction, {name: "WITHHOLDING", order: 93, attributeType: Double, readMethod: "getWithholding", writeMethod: "setWithholding"});
+Element.add(SellInvestmentTransaction, {name: "WITHHOLDING", order: 93, attributeType: Number, readMethod: "getWithholding", writeMethod: "setWithholding"});
 
 
 /**
@@ -434,7 +437,7 @@ SellInvestmentTransaction.prototype.setWithholding = function(withholding) {
 SellInvestmentTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add(SellInvestmentTransaction, {name: "TAXEXEMPT", order: 97, attributeType: bool, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
+Element.add(SellInvestmentTransaction, {name: "TAXEXEMPT", order: 97, attributeType: Boolean, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -460,7 +463,7 @@ SellInvestmentTransaction.prototype.setTaxExempt = function(taxExempt) {
 SellInvestmentTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(SellInvestmentTransaction, {name: "TOTAL", required: true, order: 100, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(SellInvestmentTransaction, {name: "TOTAL", required: true, order: 100, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -486,7 +489,7 @@ SellInvestmentTransaction.prototype.setTotal = function(total) {
 SellInvestmentTransaction.prototype.getGain = function() {
   return this.gain;
 };
-Element.add(SellInvestmentTransaction, {name: "GAIN", order: 105, attributeType: Double, readMethod: "getGain", writeMethod: "setGain"});
+Element.add(SellInvestmentTransaction, {name: "GAIN", order: 105, attributeType: Number, readMethod: "getGain", writeMethod: "setGain"});
 
 
 /**
@@ -652,7 +655,7 @@ SellInvestmentTransaction.prototype.setLoanId = function(loanId) {
 SellInvestmentTransaction.prototype.getStateWithholding = function() {
   return this.stateWithholding;
 };
-Element.add(SellInvestmentTransaction, {name: "STATEWITHHOLDING", order: 160, attributeType: Double, readMethod: "getStateWithholding", writeMethod: "setStateWithholding"});
+Element.add(SellInvestmentTransaction, {name: "STATEWITHHOLDING", order: 160, attributeType: Number, readMethod: "getStateWithholding", writeMethod: "setStateWithholding"});
 
 
 /**
@@ -675,7 +678,7 @@ SellInvestmentTransaction.prototype.setStateWithholding = function(stateWithhold
 SellInvestmentTransaction.prototype.getPenalty = function() {
   return this.penalty;
 };
-Element.add(SellInvestmentTransaction, {name: "PENALTY", order: 170, attributeType: Double, readMethod: "getPenalty", writeMethod: "setPenalty"});
+Element.add(SellInvestmentTransaction, {name: "PENALTY", order: 170, attributeType: Number, readMethod: "getPenalty", writeMethod: "setPenalty"});
 
 
 /**

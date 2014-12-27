@@ -16,10 +16,12 @@
 
 var inherit = require("../../../util/inherit");
 
-var AccountInfo = require("../common/AccountInfo");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var AccountInfo = require("../common/AccountInfo");
+var AccountStatus = require("../common/AccountStatus");
+var CreditCardAccountDetails = require("./CreditCardAccountDetails");
 
 /**
  * @class
@@ -104,7 +106,7 @@ CreditCardAccountInfo.prototype.getAccountDetails = function() {
 CreditCardAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
   return this.supportsTransactionDetailOperations;
 };
-Element.add(CreditCardAccountInfo, {name: "SUPTXDL", required: true, order: 10, attributeType: bool, readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
+Element.add(CreditCardAccountInfo, {name: "SUPTXDL", required: true, order: 10, attributeType: Boolean, readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
 
 
 /**
@@ -125,7 +127,7 @@ CreditCardAccountInfo.prototype.setSupportsTransactionDetailOperations = functio
 CreditCardAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
   return this.supportsTransferToOtherAccountOperations;
 };
-Element.add(CreditCardAccountInfo, {name: "XFERSRC", required: true, order: 20, attributeType: bool, readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
+Element.add(CreditCardAccountInfo, {name: "XFERSRC", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
 
 
 /**
@@ -146,7 +148,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = fu
 CreditCardAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
   return this.supportsTransferFromOtherAccountOperations;
 };
-Element.add(CreditCardAccountInfo, {name: "XFERDEST", required: true, order: 30, attributeType: bool, readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
+Element.add(CreditCardAccountInfo, {name: "XFERDEST", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
 
 
 /**

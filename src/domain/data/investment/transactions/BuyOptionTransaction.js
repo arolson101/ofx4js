@@ -98,7 +98,7 @@ BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
 BuyOptionTransaction.prototype.getSharesPerContract = function() {
   return this.sharesPerContact;
 };
-Element.add(BuyOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Integer, readMethod: "getSharesPerContract", writeMethod: "setSharesPerContract"});
+Element.add(BuyOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Number, readMethod: "getSharesPerContract", writeMethod: "setSharesPerContract"});
 
 
 /**

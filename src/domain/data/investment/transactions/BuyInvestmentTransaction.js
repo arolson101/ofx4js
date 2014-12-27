@@ -18,6 +18,9 @@ var SubAccountType = require("../accounts/SubAccountType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
+var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Buy investment transaction aggregate ("INVBUY").
@@ -189,7 +192,7 @@ BuyInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 BuyInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add(BuyInvestmentTransaction, {name: "UNITS", required: true, order: 30, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(BuyInvestmentTransaction, {name: "UNITS", required: true, order: 30, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -217,7 +220,7 @@ BuyInvestmentTransaction.prototype.setUnits = function(units) {
 BuyInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add(BuyInvestmentTransaction, {name: "UNITPRICE", required: true, order: 40, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(BuyInvestmentTransaction, {name: "UNITPRICE", required: true, order: 40, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -243,7 +246,7 @@ BuyInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 BuyInvestmentTransaction.prototype.getMarkup = function() {
   return this.markup;
 };
-Element.add(BuyInvestmentTransaction, {name: "MARKUP", order: 50, attributeType: Double, readMethod: "getMarkup", writeMethod: "setMarkup"});
+Element.add(BuyInvestmentTransaction, {name: "MARKUP", order: 50, attributeType: Number, readMethod: "getMarkup", writeMethod: "setMarkup"});
 
 
 /**
@@ -268,7 +271,7 @@ BuyInvestmentTransaction.prototype.setMarkup = function(markup) {
 BuyInvestmentTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add(BuyInvestmentTransaction, {name: "COMMISSION", order: 60, attributeType: Double, readMethod: "getCommission", writeMethod: "setCommission"});
+Element.add(BuyInvestmentTransaction, {name: "COMMISSION", order: 60, attributeType: Number, readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -292,7 +295,7 @@ BuyInvestmentTransaction.prototype.setCommission = function(commission) {
 BuyInvestmentTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add(BuyInvestmentTransaction, {name: "TAXES", order: 70, attributeType: Double, readMethod: "getTaxes", writeMethod: "setTaxes"});
+Element.add(BuyInvestmentTransaction, {name: "TAXES", order: 70, attributeType: Number, readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -315,7 +318,7 @@ BuyInvestmentTransaction.prototype.setTaxes = function(taxes) {
 BuyInvestmentTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add(BuyInvestmentTransaction, {name: "FEES", order: 80, attributeType: Double, readMethod: "getFees", writeMethod: "setFees"});
+Element.add(BuyInvestmentTransaction, {name: "FEES", order: 80, attributeType: Number, readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -338,7 +341,7 @@ BuyInvestmentTransaction.prototype.setFees = function(fees) {
 BuyInvestmentTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add(BuyInvestmentTransaction, {name: "LOAD", order: 90, attributeType: Double, readMethod: "getLoad", writeMethod: "setLoad"});
+Element.add(BuyInvestmentTransaction, {name: "LOAD", order: 90, attributeType: Number, readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -363,7 +366,7 @@ BuyInvestmentTransaction.prototype.setLoad = function(load) {
 BuyInvestmentTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(BuyInvestmentTransaction, {name: "TOTAL", required: true, order: 100, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(BuyInvestmentTransaction, {name: "TOTAL", required: true, order: 100, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

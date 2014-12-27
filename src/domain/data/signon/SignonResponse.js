@@ -21,6 +21,8 @@ var ResponseMessage = require("../ResponseMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var Status = require("../common/Status");
+var FinancialInstitution = require("./FinancialInstitution");
 
 /**
  * The signon response message.

@@ -24,6 +24,7 @@ var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction")
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
 var CloseOptionAction = require("./CloseOptionAction");
+var SecurityId = require("../../seclist/SecurityId");
 
 
 /**
@@ -164,7 +165,7 @@ CloseOptionTransaction.prototype.getOptionActionEnum = function() {
 CloseOptionTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add(CloseOptionTransaction, {name: "UNITS", required: true, order: 40, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(CloseOptionTransaction, {name: "UNITS", required: true, order: 40, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -188,7 +189,7 @@ CloseOptionTransaction.prototype.setUnits = function(units) {
 CloseOptionTransaction.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add(CloseOptionTransaction, {name: "SHPERCTRCT", required: true, order: 50, attributeType: Integer, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
+Element.add(CloseOptionTransaction, {name: "SHPERCTRCT", required: true, order: 50, attributeType: Number, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -271,7 +272,7 @@ CloseOptionTransaction.prototype.setRelatedTransactionId = function(relatedTrans
 CloseOptionTransaction.prototype.getGain = function() {
   return this.gain;
 };
-Element.add(CloseOptionTransaction, {name: "GAIN", order: 80, attributeType: Double, readMethod: "getGain", writeMethod: "setGain"});
+Element.add(CloseOptionTransaction, {name: "GAIN", order: 80, attributeType: Number, readMethod: "getGain", writeMethod: "setGain"});
 
 
 /**

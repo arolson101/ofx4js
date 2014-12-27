@@ -50,7 +50,7 @@ Aggregate.add("BalanceInfo", BalanceInfo);
 BalanceInfo.prototype.getAmount = function() {
   return this.amount;
 };
-Element.add(BalanceInfo, {name: "BALAMT", required: true, order: 0, attributeType: double, readMethod: "getAmount", writeMethod: "setAmount"});
+Element.add(BalanceInfo, {name: "BALAMT", required: true, order: 0, attributeType: Number, readMethod: "getAmount", writeMethod: "setAmount"});
 
 
 /**

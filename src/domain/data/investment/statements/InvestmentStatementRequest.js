@@ -20,6 +20,8 @@ var StatementRequest = require("../../common/StatementRequest");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var InvestmentAccountDetails = require("../accounts/InvestmentAccountDetails");
+var IncludePosition = require("./IncludePosition");
 
 /**
  * Aggregate for the investment statement download request.
@@ -96,7 +98,7 @@ InvestmentStatementRequest.prototype.setAccount = function(account) {
 InvestmentStatementRequest.prototype.getIncludeOpenOrders = function() {
   return this.includeOpenOrders;
 };
-Element.add(InvestmentStatementRequest, {name: "INCOO", order: 20, attributeType: bool, readMethod: "getIncludeOpenOrders", writeMethod: "setIncludeOpenOrders"});
+Element.add(InvestmentStatementRequest, {name: "INCOO", order: 20, attributeType: Boolean, readMethod: "getIncludeOpenOrders", writeMethod: "setIncludeOpenOrders"});
 
 
 /**
@@ -141,7 +143,7 @@ InvestmentStatementRequest.prototype.setIncludePosition = function(includePositi
 InvestmentStatementRequest.prototype.getIncludeBalance = function() {
   return this.includeBalance;
 };
-Element.add(InvestmentStatementRequest, {name: "INCBAL", required: true, order: 40, attributeType: bool, readMethod: "getIncludeBalance", writeMethod: "setIncludeBalance"});
+Element.add(InvestmentStatementRequest, {name: "INCBAL", required: true, order: 40, attributeType: Boolean, readMethod: "getIncludeBalance", writeMethod: "setIncludeBalance"});
 
 
 /**

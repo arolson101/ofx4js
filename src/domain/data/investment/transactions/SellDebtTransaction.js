@@ -98,7 +98,7 @@ SellDebtTransaction.prototype.getSellReasonEnum = function() {
 SellDebtTransaction.prototype.getAccruedInterest = function() {
   return this.accruedInterest;
 };
-Element.add(SellDebtTransaction, {name: "ACCRDINT", order: 40, attributeType: Double, readMethod: "getAccruedInterest", writeMethod: "setAccruedInterest"});
+Element.add(SellDebtTransaction, {name: "ACCRDINT", order: 40, attributeType: Number, readMethod: "getAccruedInterest", writeMethod: "setAccruedInterest"});
 
 
 /**

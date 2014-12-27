@@ -25,6 +25,8 @@ var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction")
 var TransactionType = require("./TransactionType");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var IncomeType = require("./IncomeType");
+var OriginalCurrency = require("./OriginalCurrency");
+var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for reinvestment transactions.
@@ -214,7 +216,7 @@ ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
 ReinvestIncomeTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(ReinvestIncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(ReinvestIncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -273,7 +275,7 @@ ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 ReinvestIncomeTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add(ReinvestIncomeTransaction, {name: "UNITS", required: true, order: 60, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(ReinvestIncomeTransaction, {name: "UNITS", required: true, order: 60, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -297,7 +299,7 @@ ReinvestIncomeTransaction.prototype.setUnits = function(units) {
 ReinvestIncomeTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add(ReinvestIncomeTransaction, {name: "UNITPRICE", required: true, order: 70, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(ReinvestIncomeTransaction, {name: "UNITPRICE", required: true, order: 70, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -321,7 +323,7 @@ ReinvestIncomeTransaction.prototype.setUnitPrice = function(unitPrice) {
 ReinvestIncomeTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add(ReinvestIncomeTransaction, {name: "COMMISSION", order: 80, attributeType: Double, readMethod: "getCommission", writeMethod: "setCommission"});
+Element.add(ReinvestIncomeTransaction, {name: "COMMISSION", order: 80, attributeType: Number, readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -345,7 +347,7 @@ ReinvestIncomeTransaction.prototype.setCommission = function(commission) {
 ReinvestIncomeTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add(ReinvestIncomeTransaction, {name: "TAXES", order: 90, attributeType: Double, readMethod: "getTaxes", writeMethod: "setTaxes"});
+Element.add(ReinvestIncomeTransaction, {name: "TAXES", order: 90, attributeType: Number, readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -368,7 +370,7 @@ ReinvestIncomeTransaction.prototype.setTaxes = function(taxes) {
 ReinvestIncomeTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add(ReinvestIncomeTransaction, {name: "FEES", order: 100, attributeType: Double, readMethod: "getFees", writeMethod: "setFees"});
+Element.add(ReinvestIncomeTransaction, {name: "FEES", order: 100, attributeType: Number, readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -391,7 +393,7 @@ ReinvestIncomeTransaction.prototype.setFees = function(fees) {
 ReinvestIncomeTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add(ReinvestIncomeTransaction, {name: "LOAD", order: 110, attributeType: Double, readMethod: "getLoad", writeMethod: "setLoad"});
+Element.add(ReinvestIncomeTransaction, {name: "LOAD", order: 110, attributeType: Number, readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -414,7 +416,7 @@ ReinvestIncomeTransaction.prototype.setLoad = function(load) {
 ReinvestIncomeTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add(ReinvestIncomeTransaction, {name: "TAXEXEMPT", order: 120, attributeType: bool, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
+Element.add(ReinvestIncomeTransaction, {name: "TAXEXEMPT", order: 120, attributeType: Boolean, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**

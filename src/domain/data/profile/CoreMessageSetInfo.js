@@ -16,6 +16,8 @@
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
+var ApplicationSecurity = require("../ApplicationSecurity");
+var SynchronizationCapability = require("./SynchronizationCapability");
 
 /**
  * Core information about a specific version of a specific message set.
@@ -193,7 +195,7 @@ CoreMessageSetInfo.prototype.setSecurity = function(security) {
 CoreMessageSetInfo.prototype.getSslRequired = function() {
   return this.sslRequired;
 };
-Element.add(CoreMessageSetInfo, {name: "TRANSPSEC", required: true, order: 40, attributeType: bool, readMethod: "getSslRequired", writeMethod: "setSslRequired"});
+Element.add(CoreMessageSetInfo, {name: "TRANSPSEC", required: true, order: 40, attributeType: Boolean, readMethod: "getSslRequired", writeMethod: "setSslRequired"});
 
 
 /**
@@ -278,7 +280,7 @@ CoreMessageSetInfo.prototype.setSyncCapability = function(syncCapability) {
 CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport = function() {
   return this.fileBasedErrorRecoverySupport;
 };
-Element.add(CoreMessageSetInfo, {name: "RESPFILEER", required: true, order: 80, attributeType: bool, readMethod: "getFileBasedErrorRecoverySupport", writeMethod: "setFileBasedErrorRecoverySupport"});
+Element.add(CoreMessageSetInfo, {name: "RESPFILEER", required: true, order: 80, attributeType: Boolean, readMethod: "getFileBasedErrorRecoverySupport", writeMethod: "setFileBasedErrorRecoverySupport"});
 
 
 /**
@@ -300,7 +302,7 @@ CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport = function(fileBas
 CoreMessageSetInfo.prototype.getIntuTimeout = function() {
   return this.timeout;
 };
-Element.add(CoreMessageSetInfo, {name: "INTU.TIMEOUT", order: 90, attributeType: Integer, readMethod: "getIntuTimeout", writeMethod: "setIntuTimeout"});
+Element.add(CoreMessageSetInfo, {name: "INTU.TIMEOUT", order: 90, attributeType: Number, readMethod: "getIntuTimeout", writeMethod: "setIntuTimeout"});
 
 
 /**

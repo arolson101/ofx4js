@@ -1,6 +1,4 @@
 /*
- * Copyright 2008 Web Cohesion
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,29 +12,40 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.io;
+"use strict";
 
-import net.sf.ofx4j.OFXRuntimeException;
+var inherit = require("../util/inherit");
+var OFXHandler = require("./OFXHandler");
 
 /**
- * Thrown when a required attribute of an aggregate is null or empty.
+ * Default (no-op) implementation of an OFX handler.
  *
- * @author Ryan Heaton
+ * @class
  */
-public class RequiredAttributeException extends OFXRuntimeException {
-
-  public RequiredAttributeException() {
-  }
-
-  public RequiredAttributeException(String message) {
-    super(message);
-  }
-
-  public RequiredAttributeException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public RequiredAttributeException(Throwable cause) {
-    super(cause);
-  }
+function DefaultHandler () {
 }
+
+inherit(DefaultHandler, "implements", OFXHandler);
+
+
+
+
+DefaultHandler.prototype.onHeader = function(/*name, value*/) {
+};
+
+
+DefaultHandler.prototype.onElement = function(/*name, value*/) {
+};
+
+
+DefaultHandler.prototype.startAggregate = function(/*aggregateName*/) {
+};
+
+
+DefaultHandler.prototype.endAggregate = function(/*aggregateName*/) {
+};
+
+
+
+
+module.exports = DefaultHandler;

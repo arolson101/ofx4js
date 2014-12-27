@@ -17,6 +17,7 @@
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Transaction = require("./Transaction");
 
 /**
  * @class

@@ -17,6 +17,12 @@
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var TransactionType = require("./TransactionType");
+var CorrectionAction = require("./CorrectionAction");
+var Payee = require("./Payee");
+var BankAccountDetails = require("../banking/BankAccountDetails");
+var CreditCardAccountDetails = require("../creditcard/CreditCardAccountDetails");
+var Currency = require("./Currency");
 
 /**
  * @class
@@ -281,7 +287,7 @@ Transaction.prototype.setAmount = function(amount) {
 Transaction.prototype.getBigDecimalAmount = function() {
   return this.amount;
 };
-Element.add(Transaction, {name: "TRNAMT", required: true, order: 40, attributeType: BigDecimal, readMethod: "getBigDecimalAmount", writeMethod: "setBigDecimalAmount"});
+Element.add(Transaction, {name: "TRNAMT", required: true, order: 40, attributeType: Number, readMethod: "getBigDecimalAmount", writeMethod: "setBigDecimalAmount"});
 
 
 /**

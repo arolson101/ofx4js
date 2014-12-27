@@ -141,7 +141,7 @@ JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
 JournalFundTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(JournalFundTransaction, {name: "TOTAL", order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(JournalFundTransaction, {name: "TOTAL", order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

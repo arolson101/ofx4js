@@ -1,6 +1,4 @@
 /*
- * Copyright 2008 Web Cohesion
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,35 +12,31 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.io;
+"use strict";
+
+var inherit = require("../util/inherit");
 
 /**
- * An event during OFX parsing.
+ * Basic interface for reading an OFX document.
  *
  * @author Ryan Heaton
  */
-public class OFXParseEvent {
-
-  public static enum Type {
-
-    CHARACTERS,
-
-    ELEMENT
-  }
-
-  private final Type eventType;
-  private final String eventValue;
-
-  public OFXParseEvent(Type eventType, String eventValue) {
-    this.eventType = eventType;
-    this.eventValue = eventValue;
-  }
-
-  public Type getEventType() {
-    return eventType;
-  }
-
-  public String getEventValue() {
-    return eventValue;
-  }
+function OFXReader() {
 }
+
+/**
+ * Set the handler for this OFX reader.
+ *
+ * @param {OFXHandler} handler The handler.
+ */
+OFXReader.prototype.setContentHandler = function(handler) { throw new Error("not implemented"); };
+
+/**
+ * Parse a stream.
+ *
+ * @param {InputStream or Reader} stream The stream or reader to parse.
+ */
+OFXReader.prototype.parse = function(stream) { throw new Error("not implemented"); };
+
+
+module.exports = OFXReader;

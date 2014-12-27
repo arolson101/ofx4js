@@ -18,6 +18,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var PositionType = require("./PositionType");
 var Inv401KSource = require("./Inv401KSource");
+var InvestmentPosition = require("./InvestmentPosition");
 
 /**
  * Base class for the various types of positions.

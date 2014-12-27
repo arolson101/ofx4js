@@ -17,7 +17,9 @@
 var Aggregate = require("../../meta/Aggregate");
 var ChildAggregate = require("../../meta/ChildAggregate");
 var Header = require("../../meta/Header");
+var ApplicationSecurity = require("./ApplicationSecurity");
 var MessageSetType = require("./MessageSetType");
+var ResponseMessageSet = require("./ResponseMessageSet");
 
 /**
  * Envelope for enclosing an OFX response.
@@ -43,7 +45,7 @@ function ResponseEnvelope () {
 
   /**
    * @name ResponseEnvelope#messageSets
-   * @type SortedSet<ResponseMessageSet>
+   * @type ResponseMessageSet[]
    * @access private
    */
   this.messageSets = null;
@@ -103,19 +105,19 @@ ResponseEnvelope.prototype.setUID = function(UID) {
 /**
  * The message sets that make up the content of this response.
  *
- * @return {SortedSet<ResponseMessageSet>} The message sets that make up the content of this response.
+ * @return {ResponseMessageSet[]} The message sets that make up the content of this response.
  * @see "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
 };
-ChildAggregate.add(ResponseEnvelope, {order: 1, attributeType: SortedSet<ResponseMessageSet>, readMethod: "getMessageSets", writeMethod: "setMessageSets"});
+ChildAggregate.add(ResponseEnvelope, {order: 1, attributeType: Array, collectionEntryType: ResponseMessageSet, readMethod: "getMessageSets", writeMethod: "setMessageSets"});
 
 
 /**
  * The message sets that make up the content of this response.
  *
- * @param {SortedSet<ResponseMessageSet>} messageSets The message sets that make up the content of this response.
+ * @param {ResponseMessageSet[]} messageSets The message sets that make up the content of this response.
  * @see "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.setMessageSets = function(messageSets) {

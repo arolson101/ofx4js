@@ -119,7 +119,7 @@ SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
 SellOptionTransaction.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add(SellOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Integer, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
+Element.add(SellOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Number, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**

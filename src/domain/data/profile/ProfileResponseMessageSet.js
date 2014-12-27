@@ -20,6 +20,7 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var ProfileResponseTransaction = require("./ProfileResponseTransaction");
 
 /**
  * @class

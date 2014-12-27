@@ -15,6 +15,7 @@
 "use strict";
 
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var VersionSpecificMessageSetInfo = require("./VersionSpecificMessageSetInfo");
 
 /**
  * Information about a message set.

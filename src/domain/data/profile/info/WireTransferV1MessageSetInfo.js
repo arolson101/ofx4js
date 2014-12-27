@@ -20,6 +20,7 @@ var VersionSpecificMessageSetInfo = require("../../profile/VersionSpecificMessag
 var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
+var ProcessorDayOff = require("../../common/ProcessorDayOff");
 
 /**
  * Wire Transfer Message Set Profile
@@ -101,7 +102,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessEndTime = function(/*String*/ p
 WireTransferV1MessageSetInfo.prototype.getSupportsScheduledTransfers = function() {
   return this.supportsScheduledTransfers;
 };
-Element.add(WireTransferV1MessageSetInfo, {name: "CANSCHED", required: true, order: 30, attributeType: bool, readMethod: "getSupportsScheduledTransfers", writeMethod: "setSupportsScheduledTransfers"});
+Element.add(WireTransferV1MessageSetInfo, {name: "CANSCHED", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsScheduledTransfers", writeMethod: "setSupportsScheduledTransfers"});
 
 
 WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ supportsScheduledTransfers) {
@@ -112,7 +113,7 @@ WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(
 WireTransferV1MessageSetInfo.prototype.getDomesticWireTransferFee = function() {
   return this.domesticWireTransferFee;
 };
-Element.add(WireTransferV1MessageSetInfo, {name: "DOMXFERFEE", required: true, order: 40, attributeType: Double, readMethod: "getDomesticWireTransferFee", writeMethod: "setDomesticWireTransferFee"});
+Element.add(WireTransferV1MessageSetInfo, {name: "DOMXFERFEE", required: true, order: 40, attributeType: Number, readMethod: "getDomesticWireTransferFee", writeMethod: "setDomesticWireTransferFee"});
 
 
 WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*Double*/ domesticWireTransferFee) {
@@ -123,7 +124,7 @@ WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*D
 WireTransferV1MessageSetInfo.prototype.getInternationalWireTransferFee = function() {
   return this.internationalWireTransferFee;
 };
-Element.add(WireTransferV1MessageSetInfo, {name: "INTLXFERFEE", required: true, order: 50, attributeType: Double, readMethod: "getInternationalWireTransferFee", writeMethod: "setInternationalWireTransferFee"});
+Element.add(WireTransferV1MessageSetInfo, {name: "INTLXFERFEE", required: true, order: 50, attributeType: Number, readMethod: "getInternationalWireTransferFee", writeMethod: "setInternationalWireTransferFee"});
 
 
 WireTransferV1MessageSetInfo.prototype.setInternationalWireTransferFee = function(/*Double*/ internationalWireTransferFee) {

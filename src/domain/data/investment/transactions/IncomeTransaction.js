@@ -25,6 +25,8 @@ var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction")
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
 var IncomeType = require("./IncomeType");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
@@ -185,7 +187,7 @@ IncomeTransaction.prototype.getIncomeTypeEnum = function() {
 IncomeTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(IncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(IncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -274,7 +276,7 @@ IncomeTransaction.prototype.getSubAccountFundEnum = function() {
 IncomeTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add(IncomeTransaction, {name: "TAXEXEMPT", order: 70, attributeType: bool, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
+Element.add(IncomeTransaction, {name: "TAXEXEMPT", order: 70, attributeType: Boolean, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -297,7 +299,7 @@ IncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 IncomeTransaction.prototype.getWithholding = function() {
   return this.withholding;
 };
-Element.add(IncomeTransaction, {name: "WITHHOLDING", order: 80, attributeType: Double, readMethod: "getWithholding", writeMethod: "setWithholding"});
+Element.add(IncomeTransaction, {name: "WITHHOLDING", order: 80, attributeType: Number, readMethod: "getWithholding", writeMethod: "setWithholding"});
 
 
 /**

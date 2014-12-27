@@ -46,7 +46,7 @@ Aggregate.add("CLIENTENROLL", ClientEnrollment);
 ClientEnrollment.prototype.getAccountRequired = function() {
   return this.accountRequired;
 };
-Element.add(ClientEnrollment, {name: "ACCTREQUIRED", required: true, order: 0, attributeType: bool, readMethod: "getAccountRequired", writeMethod: "setAccountRequired"});
+Element.add(ClientEnrollment, {name: "ACCTREQUIRED", required: true, order: 0, attributeType: Boolean, readMethod: "getAccountRequired", writeMethod: "setAccountRequired"});
 
 
 ClientEnrollment.prototype.setAccountRequired = function(/*Boolean*/ accountRequired) {

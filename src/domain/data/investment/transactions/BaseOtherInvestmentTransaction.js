@@ -18,6 +18,7 @@ var inherit = require("../../../../util/inherit");
 
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
+var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Base class for investment transactions that aren't buys or sales..

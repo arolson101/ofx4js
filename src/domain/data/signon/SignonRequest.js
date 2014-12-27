@@ -20,6 +20,7 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var RequestMessage = require("../RequestMessage");
+var FinancialInstitution = require("../../../client/FinancialInstitution");
 
 /**
  * Sign-on request
@@ -240,7 +241,7 @@ SignonRequest.prototype.setUserKey = function(userKey) {
 SignonRequest.prototype.getGenerateUserKey = function() {
   return this.generateUserKey;
 };
-Element.add(SignonRequest, {name: "GENUSERKEY", order: 40, attributeType: bool, readMethod: "getGenerateUserKey", writeMethod: "setGenerateUserKey"});
+Element.add(SignonRequest, {name: "GENUSERKEY", order: 40, attributeType: Boolean, readMethod: "getGenerateUserKey", writeMethod: "setGenerateUserKey"});
 
 
 /**

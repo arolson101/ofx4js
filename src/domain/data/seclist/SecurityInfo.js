@@ -17,6 +17,7 @@
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var SecurityId = require("./SecurityId");
 
 //import java.util.Date;
 
@@ -215,7 +216,7 @@ SecurityInfo.prototype.setRating = function(rating) {
 SecurityInfo.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add(SecurityInfo, {name: "UNITPRICE", order: 60, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(SecurityInfo, {name: "UNITPRICE", order: 60, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**

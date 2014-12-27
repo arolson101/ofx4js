@@ -73,7 +73,7 @@ Currency.prototype.setCode = function(code) {
 Currency.prototype.getExchangeRate = function() {
   return this.exchangeRate;
 };
-Element.add(Currency, {name: "CURRATE", required: true, order: 10, attributeType: Float, readMethod: "getExchangeRate", writeMethod: "setExchangeRate"});
+Element.add(Currency, {name: "CURRATE", required: true, order: 10, attributeType: Number, readMethod: "getExchangeRate", writeMethod: "setExchangeRate"});
 
 
 /**

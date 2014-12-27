@@ -16,8 +16,7 @@
 
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
-
-//import java.util.List;
+var SignonInfo = require("./SignonInfo");
 
 /**
  * List of signon information.

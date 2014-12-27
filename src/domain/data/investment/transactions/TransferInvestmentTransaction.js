@@ -25,6 +25,7 @@ var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
 var TransferAction = require("./TransferAction");
+var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for transfers.
@@ -177,7 +178,7 @@ TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 TransferInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add(TransferInvestmentTransaction, {name: "UNITS", required: true, order: 40, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(TransferInvestmentTransaction, {name: "UNITS", required: true, order: 40, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -269,7 +270,7 @@ TransferInvestmentTransaction.prototype.getPositionTypeEnum = function() {
 TransferInvestmentTransaction.prototype.getAverageCostBasis = function() {
   return this.averageCostBasis;
 };
-Element.add(TransferInvestmentTransaction, {name: "AVGCOSTBASIS", order: 70, attributeType: Double, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
+Element.add(TransferInvestmentTransaction, {name: "AVGCOSTBASIS", order: 70, attributeType: Number, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
 
 
 /**
@@ -294,7 +295,7 @@ TransferInvestmentTransaction.prototype.setAverageCostBasis = function(averageCo
 TransferInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add(TransferInvestmentTransaction, {name: "UNITPRICE", required: true, order: 80, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(TransferInvestmentTransaction, {name: "UNITPRICE", required: true, order: 80, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**

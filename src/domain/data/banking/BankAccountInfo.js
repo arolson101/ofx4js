@@ -20,6 +20,8 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var Aggregate = require("../../../meta/Aggregate");
 var AccountInfo = require("../common/AccountInfo");
+var AccountStatus = require("../common/AccountStatus");
+var BankAccountDetails = require("./BankAccountDetails");
 
 /**
  * @class
@@ -104,7 +106,7 @@ BankAccountInfo.prototype.getAccountDetails = function() {
 BankAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
   return this.supportsTransactionDetailOperations;
 };
-Element.add(BankAccountInfo, {name: "SUPTXDL", required: true, order: 10, attributeType: bool, readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
+Element.add(BankAccountInfo, {name: "SUPTXDL", required: true, order: 10, attributeType: Boolean, readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
 
 
 /**
@@ -125,7 +127,7 @@ BankAccountInfo.prototype.setSupportsTransactionDetailOperations = function(supp
 BankAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
   return this.supportsTransferToOtherAccountOperations;
 };
-Element.add(BankAccountInfo, {name: "XFERSRC", required: true, order: 20, attributeType: bool, readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
+Element.add(BankAccountInfo, {name: "XFERSRC", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
 
 
 /**
@@ -146,7 +148,7 @@ BankAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = function
 BankAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
   return this.supportsTransferFromOtherAccountOperations;
 };
-Element.add(BankAccountInfo, {name: "XFERDEST", required: true, order: 30, attributeType: bool, readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
+Element.add(BankAccountInfo, {name: "XFERDEST", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
 
 
 /**

@@ -21,6 +21,9 @@ var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var ClientEnrollment = require("./signup/ClientEnrollment");
+var WebEnrollment = require("./signup/WebEnrollment");
+var OtherEnrollment = require("./signup/OtherEnrollment");
 
 /**
  * Servers use the Signup Message Set Profile Information to define how enrollment should proceed.
@@ -128,7 +131,7 @@ SignupV1MessageSetInfo.prototype.setOtherEnrollment = function(/*OtherEnrollment
 SignupV1MessageSetInfo.prototype.getSupportsClientUserInfoChanges = function() {
   return this.supportsClientUserInfoChanges;
 };
-Element.add(SignupV1MessageSetInfo, {name: "CHGUSERINFO", required: true, order: 40, attributeType: bool, readMethod: "getSupportsClientUserInfoChanges", writeMethod: "setSupportsClientUserInfoChanges"});
+Element.add(SignupV1MessageSetInfo, {name: "CHGUSERINFO", required: true, order: 40, attributeType: Boolean, readMethod: "getSupportsClientUserInfoChanges", writeMethod: "setSupportsClientUserInfoChanges"});
 
 
 SignupV1MessageSetInfo.prototype.setSupportsClientUserInfoChanges = function(/*Boolean*/ supportsClientUserInfoChanges) {
@@ -144,7 +147,7 @@ SignupV1MessageSetInfo.prototype.setSupportsClientUserInfoChanges = function(/*B
 SignupV1MessageSetInfo.prototype.getSupportsAvailableAccounts = function() {
   return this.supportsAvailableAccounts;
 };
-Element.add(SignupV1MessageSetInfo, {name: "AVAILACCTS", required: true, order: 50, attributeType: bool, readMethod: "getSupportsAvailableAccounts", writeMethod: "setSupportsAvailableAccounts"});
+Element.add(SignupV1MessageSetInfo, {name: "AVAILACCTS", required: true, order: 50, attributeType: Boolean, readMethod: "getSupportsAvailableAccounts", writeMethod: "setSupportsAvailableAccounts"});
 
 
 SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts = function(/*Boolean*/ supportsAvailableAccounts) {
@@ -161,7 +164,7 @@ SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts = function(/*Boole
 SignupV1MessageSetInfo.prototype.getSupportsClientServiceActivationRequests = function() {
   return this.supportsClientServiceActivationRequests;
 };
-Element.add(SignupV1MessageSetInfo, {name: "CLIENTACTREQ", required: true, order: 60, attributeType: bool, readMethod: "getSupportsClientServiceActivationRequests", writeMethod: "setSupportsClientServiceActivationRequests"});
+Element.add(SignupV1MessageSetInfo, {name: "CLIENTACTREQ", required: true, order: 60, attributeType: Boolean, readMethod: "getSupportsClientServiceActivationRequests", writeMethod: "setSupportsClientServiceActivationRequests"});
 
 
 SignupV1MessageSetInfo.prototype.setSupportsClientServiceActivationRequests = function(/*Boolean*/ supportsClientServiceActivationRequests) {

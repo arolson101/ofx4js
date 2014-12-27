@@ -42,8 +42,8 @@ sub processDir
         next if($js =~ /TransactionWrappedRequestMessage/i);
         next if($js =~ /TransactionWrappedResponseMessage/i);
 
-        #next if($js =~ /OFXHomeFIDataStore/i);
-        next if($js =~ /DownloadAccountInfo/i);
+        next if($js =~ /AggregateIntrospector/i);
+        next if($js =~ /AggregateStackContentHandler/i);
         next if($js =~ /DownloadStatement/i);
         
         convert($java, $js);
@@ -128,7 +128,7 @@ sub convert
         print $hdst "//$line";
       }
     }
-    elsif($line =~ m/public enum (\w+)/)
+    elsif($line =~ m/public(?: static)? enum (\w+)/)
     {
       my $sym = $1;
       print $hdst "var $sym = {\n";
@@ -511,7 +511,7 @@ sub convert
           $methods .= $statics;
           $methods .= "\n";
         }
-        elsif($line =~ m/public enum (\w+)/)
+        elsif($line =~ m/public(?: static)? enum (\w+)/)
         {
           my $sym = $1;
           $methods .= "var $sym = $class.$sym = {\n";

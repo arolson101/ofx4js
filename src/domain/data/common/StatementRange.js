@@ -99,7 +99,7 @@ StatementRange.prototype.setEnd = function(end) {
 StatementRange.prototype.getIncludeTransactions = function() {
   return this.includeTransactions;
 };
-Element.add(StatementRange, {name: "INCLUDE", required: true, order: 20, attributeType: bool, readMethod: "getIncludeTransactions", writeMethod: "setIncludeTransactions"});
+Element.add(StatementRange, {name: "INCLUDE", required: true, order: 20, attributeType: Boolean, readMethod: "getIncludeTransactions", writeMethod: "setIncludeTransactions"});
 
 
 /**

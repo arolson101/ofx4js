@@ -11,7 +11,7 @@
     "strict": true,
     "trailing": true,
     "smarttabs": true,
-    "esnext": true,
+    "sub": true,
     "predef": [
       "Promise",
       "window"

@@ -147,7 +147,7 @@ Aggregate.add("DEBTINFO", DebtSecurityInfo);
 DebtSecurityInfo.prototype.getParValue = function() {
   return this.parValue;
 };
-Element.add(DebtSecurityInfo, {name: "PARVALUE", required:true, order: 20, attributeType: Double, readMethod: "getParValue", writeMethod: "setParValue"});
+Element.add(DebtSecurityInfo, {name: "PARVALUE", required:true, order: 20, attributeType: Number, readMethod: "getParValue", writeMethod: "setParValue"});
 
 
 /**
@@ -235,7 +235,7 @@ DebtSecurityInfo.prototype.getDebtClassEnum = function() {
 DebtSecurityInfo.prototype.getCouponRate = function() {
   return this.couponRate;
 };
-Element.add(DebtSecurityInfo, {name: "COUPONRT", order: 50, attributeType: Double, readMethod: "getCouponRate", writeMethod: "setCouponRate"});
+Element.add(DebtSecurityInfo, {name: "COUPONRT", order: 50, attributeType: Number, readMethod: "getCouponRate", writeMethod: "setCouponRate"});
 
 
 /**
@@ -313,7 +313,7 @@ DebtSecurityInfo.prototype.getCouponFrequencyEnum = function() {
 DebtSecurityInfo.prototype.getCallPrice = function() {
   return this.callPrice;
 };
-Element.add(DebtSecurityInfo, {name: "CALLPRICE", order: 80, attributeType: Double, readMethod: "getCallPrice", writeMethod: "setCallPrice"});
+Element.add(DebtSecurityInfo, {name: "CALLPRICE", order: 80, attributeType: Number, readMethod: "getCallPrice", writeMethod: "setCallPrice"});
 
 
 /**
@@ -334,7 +334,7 @@ DebtSecurityInfo.prototype.setCallPrice = function(callPrice) {
 DebtSecurityInfo.prototype.getYieldToCall = function() {
   return this.yieldToCall;
 };
-Element.add(DebtSecurityInfo, {name: "YIELDTOCALL", order: 90, attributeType: Double, readMethod: "getYieldToCall", writeMethod: "setYieldToCall"});
+Element.add(DebtSecurityInfo, {name: "YIELDTOCALL", order: 90, attributeType: Number, readMethod: "getYieldToCall", writeMethod: "setYieldToCall"});
 
 
 /**
@@ -407,7 +407,7 @@ DebtSecurityInfo.prototype.getCallTypeEnum = function() {
 DebtSecurityInfo.prototype.getYieldToMaturity = function() {
   return this.yieldToMaturity;
 };
-Element.add(DebtSecurityInfo, {name: "YIELDTOMAT", order: 120, attributeType: Double, readMethod: "getYieldToMaturity", writeMethod: "setYieldToMaturity"});
+Element.add(DebtSecurityInfo, {name: "YIELDTOMAT", order: 120, attributeType: Number, readMethod: "getYieldToMaturity", writeMethod: "setYieldToMaturity"});
 
 
 /**

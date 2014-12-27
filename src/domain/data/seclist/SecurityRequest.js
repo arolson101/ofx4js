@@ -16,6 +16,7 @@
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
+var SecurityId = require("./SecurityId");
 
 /**
  * Security request aggregate.

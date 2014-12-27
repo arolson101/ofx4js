@@ -19,6 +19,7 @@ var inherit = require("../../../util/inherit");
 var RequestMessage = require("../RequestMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var StatementRange = require("./StatementRange");
 
 /**
  * @class

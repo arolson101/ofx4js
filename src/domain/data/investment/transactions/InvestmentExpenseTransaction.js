@@ -23,6 +23,8 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for an investment expense
@@ -125,7 +127,7 @@ InvestmentExpenseTransaction.prototype.setSecurityId = function(securityId) {
 InvestmentExpenseTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(InvestmentExpenseTransaction, {name: "TOTAL", required: true, order: 30, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(InvestmentExpenseTransaction, {name: "TOTAL", required: true, order: 30, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

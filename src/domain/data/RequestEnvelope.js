@@ -18,6 +18,7 @@ var Aggregate = require("../../meta/Aggregate");
 var ChildAggregate = require("../../meta/ChildAggregate");
 var Header = require("../../meta/Header");
 var ApplicationSecurity = require("./ApplicationSecurity");
+var RequestMessageSet = require("./RequestMessageSet");
 var UUID = require("uuid");
 
 /**
@@ -51,7 +52,7 @@ function RequestEnvelope () {
 
   /**
    * @name RequestEnvelope#messageSets
-   * @type SortedSet<RequestMessageSet>
+   * @type RequestMessageSet[]
    * @access private
    */
   this.messageSets = null;
@@ -146,19 +147,19 @@ RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
 /**
  * The message sets that make up the content of this request.
  *
- * @return {SortedSet<RequestMessageSet>} The message sets that make up the content of this request.
+ * @return {RequestMessageSet[]} The message sets that make up the content of this request.
  * @see "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
 };
-ChildAggregate.add(RequestEnvelope, {order: 1, attributeType: SortedSet<RequestMessageSet>, readMethod: "getMessageSets", writeMethod: "setMessageSets"});
+ChildAggregate.add(RequestEnvelope, {order: 1, attributeType: Array, collectionEntryType: RequestMessageSet, readMethod: "getMessageSets", writeMethod: "setMessageSets"});
 
 
 /**
  * The message sets that make up the content of this request.
  *
- * @param {SortedSet<RequestMessageSet>} messageSets The message sets that make up the content of this request.
+ * @param {RequestMessageSet[]} messageSets The message sets that make up the content of this request.
  * @see "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.setMessageSets = function(messageSets) {

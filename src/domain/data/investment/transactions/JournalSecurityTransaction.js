@@ -23,6 +23,7 @@ var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
+var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -173,7 +174,7 @@ JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
 JournalSecurityTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(JournalSecurityTransaction, {name: "TOTAL", order: 50, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(JournalSecurityTransaction, {name: "TOTAL", order: 50, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

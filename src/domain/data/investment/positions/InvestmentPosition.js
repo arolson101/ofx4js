@@ -18,6 +18,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
 var PositionType = require("./PositionType");
 var Inv401KSource = require("./Inv401KSource");
 
@@ -212,7 +213,7 @@ InvestmentPosition.prototype.getPositionTypeEnum = function() {
 InvestmentPosition.prototype.getUnits = function() {
   return this.units;
 };
-Element.add(InvestmentPosition, {name: "UNITS", required: true, order: 40, attributeType: Double, readMethod: "getUnits", writeMethod: "setUnits"});
+Element.add(InvestmentPosition, {name: "UNITS", required: true, order: 40, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -239,7 +240,7 @@ InvestmentPosition.prototype.setUnits = function(units) {
 InvestmentPosition.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add(InvestmentPosition, {name: "UNITPRICE", required: true, order: 50, attributeType: Double, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
+Element.add(InvestmentPosition, {name: "UNITPRICE", required: true, order: 50, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -264,7 +265,7 @@ InvestmentPosition.prototype.setUnitPrice = function(unitPrice) {
 InvestmentPosition.prototype.getMarketValue = function() {
   return this.marketValue;
 };
-Element.add(InvestmentPosition, {name: "MKTVAL", required: true, order: 60, attributeType: Double, readMethod: "getMarketValue", writeMethod: "setMarketValue"});
+Element.add(InvestmentPosition, {name: "MKTVAL", required: true, order: 60, attributeType: Number, readMethod: "getMarketValue", writeMethod: "setMarketValue"});
 
 
 /**

@@ -19,6 +19,7 @@ var inherit = require("../../../util/inherit");
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var SignonProfile = require("../SignonProfile");
+var CharacterType = require("./CharacterType");
 
 /**
  * Sign-on information
@@ -184,7 +185,7 @@ SignonInfo.prototype.setRealm = function(realm) {
 SignonInfo.prototype.getMinPasswordCharacters = function() {
   return this.minPasswordCharacters;
 };
-Element.add(SignonInfo, {name: "MIN", required: true, order: 10, attributeType: Integer, readMethod: "getMinPasswordCharacters", writeMethod: "setMinPasswordCharacters"});
+Element.add(SignonInfo, {name: "MIN", required: true, order: 10, attributeType: Number, readMethod: "getMinPasswordCharacters", writeMethod: "setMinPasswordCharacters"});
 
 
 /**
@@ -205,7 +206,7 @@ SignonInfo.prototype.setMinPasswordCharacters = function(minPasswordCharacters) 
 SignonInfo.prototype.getMaxPasswordCharacters = function() {
   return this.maxPasswordCharacters;
 };
-Element.add(SignonInfo, {name: "MAX", required: true, order: 20, attributeType: Integer, readMethod: "getMaxPasswordCharacters", writeMethod: "setMaxPasswordCharacters"});
+Element.add(SignonInfo, {name: "MAX", required: true, order: 20, attributeType: Number, readMethod: "getMaxPasswordCharacters", writeMethod: "setMaxPasswordCharacters"});
 
 
 /**
@@ -247,7 +248,7 @@ SignonInfo.prototype.setPasswordCharacterType = function(passwordCharacterType) 
 SignonInfo.prototype.getPasswordCaseSensitive = function() {
   return this.passwordCaseSensitive;
 };
-Element.add(SignonInfo, {name: "CASESEN", required: true, order: 40, attributeType: bool, readMethod: "getPasswordCaseSensitive", writeMethod: "setPasswordCaseSensitive"});
+Element.add(SignonInfo, {name: "CASESEN", required: true, order: 40, attributeType: Boolean, readMethod: "getPasswordCaseSensitive", writeMethod: "setPasswordCaseSensitive"});
 
 
 /**
@@ -268,7 +269,7 @@ SignonInfo.prototype.setPasswordCaseSensitive = function(passwordCaseSensitive) 
 SignonInfo.prototype.getPasswordSpecialCharsAllowed = function() {
   return this.passwordSpecialCharsAllowed;
 };
-Element.add(SignonInfo, {name: "SPECIAL", required: true, order: 50, attributeType: bool, readMethod: "getPasswordSpecialCharsAllowed", writeMethod: "setPasswordSpecialCharsAllowed"});
+Element.add(SignonInfo, {name: "SPECIAL", required: true, order: 50, attributeType: Boolean, readMethod: "getPasswordSpecialCharsAllowed", writeMethod: "setPasswordSpecialCharsAllowed"});
 
 
 /**
@@ -289,7 +290,7 @@ SignonInfo.prototype.setPasswordSpecialCharsAllowed = function(passwordSpecialCh
 SignonInfo.prototype.getPasswordSpacesAllowed = function() {
   return this.passwordSpacesAllowed;
 };
-Element.add(SignonInfo, {name: "SPACES", required: true, order: 60, attributeType: bool, readMethod: "getPasswordSpacesAllowed", writeMethod: "setPasswordSpacesAllowed"});
+Element.add(SignonInfo, {name: "SPACES", required: true, order: 60, attributeType: Boolean, readMethod: "getPasswordSpacesAllowed", writeMethod: "setPasswordSpacesAllowed"});
 
 
 /**
@@ -310,7 +311,7 @@ SignonInfo.prototype.setPasswordSpacesAllowed = function(passwordSpacesAllowed) 
 SignonInfo.prototype.getChangePasswordSupported = function() {
   return this.changePasswordSupported;
 };
-Element.add(SignonInfo, {name: "PINCH", required: true, order: 70, attributeType: bool, readMethod: "getChangePasswordSupported", writeMethod: "setChangePasswordSupported"});
+Element.add(SignonInfo, {name: "PINCH", required: true, order: 70, attributeType: Boolean, readMethod: "getChangePasswordSupported", writeMethod: "setChangePasswordSupported"});
 
 
 /**
@@ -331,7 +332,7 @@ SignonInfo.prototype.setChangePasswordSupported = function(changePasswordSupport
 SignonInfo.prototype.getChangePasswordFirstRequired = function() {
   return this.changePasswordFirstRequired;
 };
-Element.add(SignonInfo, {name: "CHGPINFIRST", required: true, order: 80, attributeType: bool, readMethod: "getChangePasswordFirstRequired", writeMethod: "setChangePasswordFirstRequired"});
+Element.add(SignonInfo, {name: "CHGPINFIRST", required: true, order: 80, attributeType: Boolean, readMethod: "getChangePasswordFirstRequired", writeMethod: "setChangePasswordFirstRequired"});
 
 
 /**
@@ -394,7 +395,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel2 = function(additionalCredie
 SignonInfo.prototype.getClientUIDRequired = function() {
   return this.clientUIDRequired;
 };
-Element.add(SignonInfo, {name: "CLIENTUIDREQ", order: 110, attributeType: bool, readMethod: "getClientUIDRequired", writeMethod: "setClientUIDRequired"});
+Element.add(SignonInfo, {name: "CLIENTUIDREQ", order: 110, attributeType: Boolean, readMethod: "getClientUIDRequired", writeMethod: "setClientUIDRequired"});
 
 
 /**
@@ -415,7 +416,7 @@ SignonInfo.prototype.setClientUIDRequired = function(clientUIDRequired) {
 SignonInfo.prototype.getAuthTokenRequiredForFirstSignon = function() {
   return this.authTokenRequiredForFirstSignon;
 };
-Element.add(SignonInfo, {name: "AUTHTOKENFIRST", order: 120, attributeType: bool, readMethod: "getAuthTokenRequiredForFirstSignon", writeMethod: "setAuthTokenRequiredForFirstSignon"});
+Element.add(SignonInfo, {name: "AUTHTOKENFIRST", order: 120, attributeType: Boolean, readMethod: "getAuthTokenRequiredForFirstSignon", writeMethod: "setAuthTokenRequiredForFirstSignon"});
 
 
 /**
@@ -479,7 +480,7 @@ SignonInfo.prototype.setAuthTokenInfoURL = function(authTokenInfoURL) {
 SignonInfo.prototype.getMfaSupported = function() {
   return this.mfaSupported;
 };
-Element.add(SignonInfo, {name: "MFACHALLENGESUPT", order: 150, attributeType: bool, readMethod: "getMfaSupported", writeMethod: "setMfaSupported"});
+Element.add(SignonInfo, {name: "MFACHALLENGESUPT", order: 150, attributeType: Boolean, readMethod: "getMfaSupported", writeMethod: "setMfaSupported"});
 
 
 /**
@@ -500,7 +501,7 @@ SignonInfo.prototype.setMfaSupported = function(mfaSupported) {
 SignonInfo.prototype.getMfaChallengeRequiredForFirstSignon = function() {
   return this.mfaChallengeRequiredForFirstSignon;
 };
-Element.add(SignonInfo, {name: "MFACHALLENGEFIRST", order: 160, attributeType: bool, readMethod: "getMfaChallengeRequiredForFirstSignon", writeMethod: "setMfaChallengeRequiredForFirstSignon"});
+Element.add(SignonInfo, {name: "MFACHALLENGEFIRST", order: 160, attributeType: Boolean, readMethod: "getMfaChallengeRequiredForFirstSignon", writeMethod: "setMfaChallengeRequiredForFirstSignon"});
 
 
 /**

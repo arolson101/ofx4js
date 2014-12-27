@@ -17,6 +17,8 @@
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
+var InvestmentBankTransaction = require("./InvestmentBankTransaction");
 
 /**
  * The transaction list aggregate.

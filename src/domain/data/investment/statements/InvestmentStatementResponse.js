@@ -20,6 +20,11 @@ var StatementResponse = require("../../common/StatementResponse");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var InvestmentAccountDetails = require("../accounts/InvestmentAccountDetails");
+var InvestmentTransactionList = require("../transactions/InvestmentTransactionList");
+var InvestmentPositionList = require("../positions/InvestmentPositionList");
+var InvestmentBalance = require("./InvestmentBalance");
+
 
 /**
  * Aggregate for the investment statement download response.

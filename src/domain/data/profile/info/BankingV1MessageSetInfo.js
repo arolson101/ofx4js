@@ -21,6 +21,11 @@ var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var AccountType = require("../../banking/AccountType");
+var TransferProfile = require("./common/TransferProfile");
+var StopCheckProfile = require("./banking/StopCheckProfile");
+var EmailProfile = require("./banking/EmailProfile");
+var ImageProfile = require("./common/ImageProfile");
 
 /**
  * Banking Message Set Profile
@@ -113,7 +118,7 @@ BankingV1MessageSetInfo.prototype.setInvalidAccountTypes = function(invalidAccou
 BankingV1MessageSetInfo.prototype.getClosingAvail = function() {
   return this.closingAvail;
 };
-Element.add(BankingV1MessageSetInfo, {name: "CLOSINGAVAIL", required: true, order: 20, attributeType: bool, readMethod: "getClosingAvail", writeMethod: "setClosingAvail"});
+Element.add(BankingV1MessageSetInfo, {name: "CLOSINGAVAIL", required: true, order: 20, attributeType: Boolean, readMethod: "getClosingAvail", writeMethod: "setClosingAvail"});
 
 
 /**

@@ -21,9 +21,11 @@ var Inv401KSource = require("../positions/Inv401KSource");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for return of capital transactions.
@@ -127,7 +129,7 @@ ReturnOfCapitalTransaction.prototype.setSecurityId = function(securityId) {
 ReturnOfCapitalTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(ReturnOfCapitalTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(ReturnOfCapitalTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

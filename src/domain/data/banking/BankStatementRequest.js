@@ -19,6 +19,7 @@ var inherit = require("../../../util/inherit");
 var StatementRequest = require("../common/StatementRequest");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var BankAccountDetails = require("./BankAccountDetails");
 
 /**
  * @class

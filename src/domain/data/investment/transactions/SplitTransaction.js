@@ -23,6 +23,8 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for a stock split.
@@ -187,7 +189,7 @@ SplitTransaction.prototype.getSubAccountSecurityEnum = function() {
 SplitTransaction.prototype.getOldUnits = function() {
   return this.oldUnits;
 };
-Element.add(SplitTransaction, {name: "OLDUNITS", order: 40, attributeType: Double, readMethod: "getOldUnits", writeMethod: "setOldUnits"});
+Element.add(SplitTransaction, {name: "OLDUNITS", order: 40, attributeType: Number, readMethod: "getOldUnits", writeMethod: "setOldUnits"});
 
 
 /**
@@ -210,7 +212,7 @@ SplitTransaction.prototype.setOldUnits = function(oldUnits) {
 SplitTransaction.prototype.getNewUnits = function() {
   return this.newUnits;
 };
-Element.add(SplitTransaction, {name: "NEWUNITS", order: 50, attributeType: Double, readMethod: "getNewUnits", writeMethod: "setNewUnits"});
+Element.add(SplitTransaction, {name: "NEWUNITS", order: 50, attributeType: Number, readMethod: "getNewUnits", writeMethod: "setNewUnits"});
 
 
 /**
@@ -232,7 +234,7 @@ SplitTransaction.prototype.setNewUnits = function(newUnits) {
 SplitTransaction.prototype.getNumerator = function() {
   return this.numerator;
 };
-Element.add(SplitTransaction, {name: "NUMERATOR", order: 60, attributeType: Double, readMethod: "getNumerator", writeMethod: "setNumerator"});
+Element.add(SplitTransaction, {name: "NUMERATOR", order: 60, attributeType: Number, readMethod: "getNumerator", writeMethod: "setNumerator"});
 
 
 /**
@@ -253,7 +255,7 @@ SplitTransaction.prototype.setNumerator = function(numerator) {
 SplitTransaction.prototype.getDenominator = function() {
   return this.denominator;
 };
-Element.add(SplitTransaction, {name: "DENOMINATOR", order: 70, attributeType: Double, readMethod: "getDenominator", writeMethod: "setDenominator"});
+Element.add(SplitTransaction, {name: "DENOMINATOR", order: 70, attributeType: Number, readMethod: "getDenominator", writeMethod: "setDenominator"});
 
 
 /**
@@ -324,7 +326,7 @@ SplitTransaction.prototype.setOriginalCurrencyInfo = function(/*OriginalCurrency
 SplitTransaction.prototype.getCashForFractionalUnits = function() {
   return this.cashForFractionalUnits;
 };
-Element.add(SplitTransaction, {name: "FRACCASH", order: 100, attributeType: Double, readMethod: "getCashForFractionalUnits", writeMethod: "setCashForFractionalUnits"});
+Element.add(SplitTransaction, {name: "FRACCASH", order: 100, attributeType: Number, readMethod: "getCashForFractionalUnits", writeMethod: "setCashForFractionalUnits"});
 
 
 /**

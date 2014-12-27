@@ -18,6 +18,7 @@ var inherit = require("../../../util/inherit");
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
+var SecurityId = require("./SecurityId");
 var BaseSecurityInfo = require("./BaseSecurityInfo");
 var OptionType = require("./OptionType");
 var AssetClass = require("./AssetClass");
@@ -128,7 +129,7 @@ OptionSecurityInfo.prototype.getOptionTypeEnum = function() {
 OptionSecurityInfo.prototype.getStrikePrice = function() {
   return this.strikePrice;
 };
-Element.add(OptionSecurityInfo, {name: "STRIKEPRICE", order: 30, attributeType: Double, readMethod: "getStrikePrice", writeMethod: "setStrikePrice"});
+Element.add(OptionSecurityInfo, {name: "STRIKEPRICE", order: 30, attributeType: Number, readMethod: "getStrikePrice", writeMethod: "setStrikePrice"});
 
 
 /**
@@ -171,7 +172,7 @@ OptionSecurityInfo.prototype.setExpirationDate = function(expirationDate) {
 OptionSecurityInfo.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add(OptionSecurityInfo, {name: "SHPERCTRCT", order: 50, attributeType: Integer, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
+Element.add(OptionSecurityInfo, {name: "SHPERCTRCT", order: 50, attributeType: Number, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**

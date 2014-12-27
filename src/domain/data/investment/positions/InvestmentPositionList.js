@@ -16,6 +16,7 @@
 
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var BasePosition = require("./BasePosition");
 
 /**
  * Aggregate for a list of invesment positions.

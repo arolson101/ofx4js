@@ -17,8 +17,8 @@ var PayerAddress = require("./PayerAddress");
 var RecAddress = require("./RecAddress");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
-
 var Element = require("../../../meta/Element");
+var ExtDBInfo = require("./ExtDBInfo");
 
 /**
  * @class

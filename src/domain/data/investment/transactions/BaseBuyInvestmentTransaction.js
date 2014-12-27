@@ -20,6 +20,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
+var BuyInvestmentTransaction = require("./BuyInvestmentTransaction");
 
 
 /**

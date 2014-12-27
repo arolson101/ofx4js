@@ -17,6 +17,8 @@
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var BankAccountDetails = require("../banking/BankAccountDetails");
+var CreditCardAccountDetails = require("../creditcard/CreditCardAccountDetails");
 
 /**
  * @class
@@ -207,7 +209,7 @@ TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
 TransferInfo.prototype.getAmount = function() {
   return this.amount;
 };
-Element.add(TransferInfo, {name: "TRNAMT", required: true, order: 40, attributeType: Double, readMethod: "getAmount", writeMethod: "setAmount"});
+Element.add(TransferInfo, {name: "TRNAMT", required: true, order: 40, attributeType: Number, readMethod: "getAmount", writeMethod: "setAmount"});
 
 
 /**

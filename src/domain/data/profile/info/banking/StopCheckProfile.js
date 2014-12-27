@@ -18,6 +18,7 @@
 
 var Aggregate = require("../../../../../meta/Aggregate");
 var Element = require("../../../../../meta/Element");
+var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 
 /**
  * Stop Check Profile
@@ -114,7 +115,7 @@ StopCheckProfile.prototype.setProcessEndTime = function(processEndTime) {
 StopCheckProfile.prototype.getCanUseRange = function() {
   return this.canUseRange;
 };
-Element.add(StopCheckProfile, {name: "CANUSERANGE", required: true, order: 20, attributeType: bool, readMethod: "getCanUseRange", writeMethod: "setCanUseRange"});
+Element.add(StopCheckProfile, {name: "CANUSERANGE", required: true, order: 20, attributeType: Boolean, readMethod: "getCanUseRange", writeMethod: "setCanUseRange"});
 
 
 StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
@@ -125,7 +126,7 @@ StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
 StopCheckProfile.prototype.getCanUseDescription = function() {
   return this.canUseDescription;
 };
-Element.add(StopCheckProfile, {name: "CANUSEDESC", required: true, order: 30, attributeType: bool, readMethod: "getCanUseDescription", writeMethod: "setCanUseDescription"});
+Element.add(StopCheckProfile, {name: "CANUSEDESC", required: true, order: 30, attributeType: Boolean, readMethod: "getCanUseDescription", writeMethod: "setCanUseDescription"});
 
 
 StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDescription) {
@@ -136,7 +137,7 @@ StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDes
 StopCheckProfile.prototype.getStopCheckFee = function() {
   return this.stopCheckFee;
 };
-Element.add(StopCheckProfile, {name: "STPCHKFEE", required: true, order: 40, attributeType: Double, readMethod: "getStopCheckFee", writeMethod: "setStopCheckFee"});
+Element.add(StopCheckProfile, {name: "STPCHKFEE", required: true, order: 40, attributeType: Number, readMethod: "getStopCheckFee", writeMethod: "setStopCheckFee"});
 
 
 StopCheckProfile.prototype.setStopCheckFee = function(/*Double*/ stopCheckFee) {

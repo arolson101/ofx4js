@@ -115,7 +115,7 @@ StockSecurityInfo.prototype.getTypeEnum = function() {
 StockSecurityInfo.prototype.getYield = function() {
   return this.yield;
 };
-Element.add(StockSecurityInfo, {name: "YIELD", order: 30, attributeType: Double, readMethod: "getYield", writeMethod: "setYield"});
+Element.add(StockSecurityInfo, {name: "YIELD", order: 30, attributeType: Number, readMethod: "getYield", writeMethod: "setYield"});
 
 
 /**

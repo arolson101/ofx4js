@@ -17,6 +17,7 @@
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var BalanceList = require("./BalanceList");
 
 /**
  * Aggregate for the investment balance.
@@ -76,7 +77,7 @@ Aggregate.add("INVBAL", InvestmentBalance);
 InvestmentBalance.prototype.getAvailableCash = function() {
   return this.availableCash;
 };
-Element.add(InvestmentBalance, {name: "AVAILCASH", required: true, order: 10, attributeType: Double, readMethod: "getAvailableCash", writeMethod: "setAvailableCash"});
+Element.add(InvestmentBalance, {name: "AVAILCASH", required: true, order: 10, attributeType: Number, readMethod: "getAvailableCash", writeMethod: "setAvailableCash"});
 
 
 /**
@@ -100,7 +101,7 @@ InvestmentBalance.prototype.setAvailableCash = function(availableCash) {
 InvestmentBalance.prototype.getMarginBalance = function() {
   return this.marginBalance;
 };
-Element.add(InvestmentBalance, {name: "MARGINBALANCE", required: true, order: 20, attributeType: Double, readMethod: "getMarginBalance", writeMethod: "setMarginBalance"});
+Element.add(InvestmentBalance, {name: "MARGINBALANCE", required: true, order: 20, attributeType: Number, readMethod: "getMarginBalance", writeMethod: "setMarginBalance"});
 
 
 /**
@@ -124,7 +125,7 @@ InvestmentBalance.prototype.setMarginBalance = function(marginBalance) {
 InvestmentBalance.prototype.getShortBalance = function() {
   return this.shortBalance;
 };
-Element.add(InvestmentBalance, {name: "SHORTBALANCE", required: true, order: 30, attributeType: Double, readMethod: "getShortBalance", writeMethod: "setShortBalance"});
+Element.add(InvestmentBalance, {name: "SHORTBALANCE", required: true, order: 30, attributeType: Number, readMethod: "getShortBalance", writeMethod: "setShortBalance"});
 
 
 /**
@@ -146,7 +147,7 @@ InvestmentBalance.prototype.setShortBalance = function(shortBalance) {
 InvestmentBalance.prototype.getBuyingPower = function() {
   return this.buyingPower;
 };
-Element.add(InvestmentBalance, {name: "BUYPOWER", order: 40, attributeType: Double, readMethod: "getBuyingPower", writeMethod: "setBuyingPower"});
+Element.add(InvestmentBalance, {name: "BUYPOWER", order: 40, attributeType: Number, readMethod: "getBuyingPower", writeMethod: "setBuyingPower"});
 
 
 /**

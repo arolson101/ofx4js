@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../../util/inherit");
-
 /**
  * A message applicable to a request message set.
  *
@@ -23,11 +21,6 @@ var inherit = require("../../util/inherit");
  */
 function RequestMessage () {
 }
-
-
-
-
-
 
 
 module.exports = RequestMessage;

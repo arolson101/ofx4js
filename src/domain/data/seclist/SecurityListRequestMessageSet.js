@@ -21,6 +21,7 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var SecurityListRequestTransaction = require("./SecurityListRequestTransaction");
 
 /**
  * Security list request message set.

@@ -23,6 +23,7 @@ var Element = require("../../../../meta/Element");
 var UnitedStatesAccountType = require("./UnitedStatesAccountType");
 var ActivationStatus = require("./ActivationStatus");
 var AccountType = require("./AccountType");
+var InvestmentAccountDetails = require("./InvestmentAccountDetails");
 
 /**
  * Aggregate for the info about a brokerage account.
@@ -152,7 +153,7 @@ InvestmentAccountInfo.prototype.getUnitedStatesAccountTypeEnum = function() {
 InvestmentAccountInfo.prototype.getSupportsChecking = function() {
   return this.supportsChecking;
 };
-Element.add(InvestmentAccountInfo, {name: "CHECKING", required: true, order: 20, attributeType: bool, readMethod: "getSupportsChecking", writeMethod: "setSupportsChecking"});
+Element.add(InvestmentAccountInfo, {name: "CHECKING", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsChecking", writeMethod: "setSupportsChecking"});
 
 
 /**

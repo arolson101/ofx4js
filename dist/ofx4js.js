@@ -4,10 +4,5622 @@
 module.exports = {
   client: require("./client/index"),
   domain: require("./domain/index"),
+  io: require("./io/index"),
   meta: require("./meta/index"),
 };
 
-},{"./client/index":"/Users/aolson/Developer/ofx4js/src/client/index.js","./domain/index":"/Users/aolson/Developer/ofx4js/src/domain/index.js","./meta/index":"/Users/aolson/Developer/ofx4js/src/meta/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/uuid/rng-browser.js":[function(require,module,exports){
+},{"./client/index":"/Users/aolson/Developer/ofx4js/src/client/index.js","./domain/index":"/Users/aolson/Developer/ofx4js/src/domain/index.js","./io/index":"/Users/aolson/Developer/ofx4js/src/io/index.js","./meta/index":"/Users/aolson/Developer/ofx4js/src/meta/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+
+var base64 = require('base64-js')
+var ieee754 = require('ieee754')
+var isArray = require('is-array')
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+Buffer.poolSize = 8192 // not used by this implementation
+
+var kMaxLength = 0x3fffffff
+var rootParent = {}
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Note:
+ *
+ * - Implementation must support adding new properties to `Uint8Array` instances.
+ *   Firefox 4-29 lacked support, fixed in Firefox 30+.
+ *   See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *  - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *  - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *    incorrect length in some situations.
+ *
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they will
+ * get the Object implementation, which is slower but will work correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = (function () {
+  try {
+    var buf = new ArrayBuffer(0)
+    var arr = new Uint8Array(buf)
+    arr.foo = function () { return 42 }
+    return 42 === arr.foo() && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        new Uint8Array(1).subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+})()
+
+/**
+ * Class: Buffer
+ * =============
+ *
+ * The Buffer constructor returns instances of `Uint8Array` that are augmented
+ * with function properties for all the node `Buffer` API functions. We use
+ * `Uint8Array` so that square bracket notation works as expected -- it returns
+ * a single octet.
+ *
+ * By augmenting the instances, we can avoid modifying the `Uint8Array`
+ * prototype.
+ */
+function Buffer (subject, encoding, noZero) {
+  if (!(this instanceof Buffer))
+    return new Buffer(subject, encoding, noZero)
+
+  var type = typeof subject
+
+  // Find the length
+  var length
+  if (type === 'number')
+    length = subject > 0 ? subject >>> 0 : 0
+  else if (type === 'string') {
+    length = Buffer.byteLength(subject, encoding)
+  } else if (type === 'object' && subject !== null) { // assume object is array-like
+    if (subject.type === 'Buffer' && isArray(subject.data))
+      subject = subject.data
+    length = +subject.length > 0 ? Math.floor(+subject.length) : 0
+  } else
+    throw new TypeError('must start with number, buffer, array or string')
+
+  if (length > kMaxLength)
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+      'size: 0x' + kMaxLength.toString(16) + ' bytes')
+
+  var buf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Preferred: Return an augmented `Uint8Array` instance for best performance
+    buf = Buffer._augment(new Uint8Array(length))
+  } else {
+    // Fallback: Return THIS instance of Buffer (created by `new`)
+    buf = this
+    buf.length = length
+    buf._isBuffer = true
+  }
+
+  var i
+  if (Buffer.TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
+    // Speed optimization -- use set if we're copying from a typed array
+    buf._set(subject)
+  } else if (isArrayish(subject)) {
+    // Treat array-ish objects as a byte array
+    if (Buffer.isBuffer(subject)) {
+      for (i = 0; i < length; i++)
+        buf[i] = subject.readUInt8(i)
+    } else {
+      for (i = 0; i < length; i++)
+        buf[i] = ((subject[i] % 256) + 256) % 256
+    }
+  } else if (type === 'string') {
+    buf.write(subject, 0, encoding)
+  } else if (type === 'number' && !Buffer.TYPED_ARRAY_SUPPORT && !noZero) {
+    for (i = 0; i < length; i++) {
+      buf[i] = 0
+    }
+  }
+
+  if (length > 0 && length <= Buffer.poolSize)
+    buf.parent = rootParent
+
+  return buf
+}
+
+function SlowBuffer(subject, encoding, noZero) {
+  if (!(this instanceof SlowBuffer))
+    return new SlowBuffer(subject, encoding, noZero)
+
+  var buf = new Buffer(subject, encoding, noZero)
+  delete buf.parent
+  return buf
+}
+
+Buffer.isBuffer = function (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b))
+    throw new TypeError('Arguments must be Buffers')
+
+  var x = a.length
+  var y = b.length
+  for (var i = 0, len = Math.min(x, y); i < len && a[i] === b[i]; i++) {}
+  if (i !== len) {
+    x = a[i]
+    y = b[i]
+  }
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'binary':
+    case 'base64':
+    case 'raw':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function (list, totalLength) {
+  if (!isArray(list)) throw new TypeError('Usage: Buffer.concat(list[, length])')
+
+  if (list.length === 0) {
+    return new Buffer(0)
+  } else if (list.length === 1) {
+    return list[0]
+  }
+
+  var i
+  if (totalLength === undefined) {
+    totalLength = 0
+    for (i = 0; i < list.length; i++) {
+      totalLength += list[i].length
+    }
+  }
+
+  var buf = new Buffer(totalLength)
+  var pos = 0
+  for (i = 0; i < list.length; i++) {
+    var item = list[i]
+    item.copy(buf, pos)
+    pos += item.length
+  }
+  return buf
+}
+
+Buffer.byteLength = function (str, encoding) {
+  var ret
+  str = str + ''
+  switch (encoding || 'utf8') {
+    case 'ascii':
+    case 'binary':
+    case 'raw':
+      ret = str.length
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = str.length * 2
+      break
+    case 'hex':
+      ret = str.length >>> 1
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = utf8ToBytes(str).length
+      break
+    case 'base64':
+      ret = base64ToBytes(str).length
+      break
+    default:
+      ret = str.length
+  }
+  return ret
+}
+
+// pre-set for values that may exist in the future
+Buffer.prototype.length = undefined
+Buffer.prototype.parent = undefined
+
+// toString(encoding, start=0, end=buffer.length)
+Buffer.prototype.toString = function (encoding, start, end) {
+  var loweredCase = false
+
+  start = start >>> 0
+  end = end === undefined || end === Infinity ? this.length : end >>> 0
+
+  if (!encoding) encoding = 'utf8'
+  if (start < 0) start = 0
+  if (end > this.length) end = this.length
+  if (end <= start) return ''
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'binary':
+        return binarySlice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase)
+          throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.equals = function (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max)
+      str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  return Buffer.compare(this, b)
+}
+
+// `get` will be removed in Node 0.13+
+Buffer.prototype.get = function (offset) {
+  console.log('.get() is deprecated. Access using array indexes instead.')
+  return this.readUInt8(offset)
+}
+
+// `set` will be removed in Node 0.13+
+Buffer.prototype.set = function (v, offset) {
+  console.log('.set() is deprecated. Access using array indexes instead.')
+  return this.writeUInt8(v, offset)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; i++) {
+    var byte = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(byte)) throw new Error('Invalid hex string')
+    buf[offset + i] = byte
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  var charsWritten = blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+  return charsWritten
+}
+
+function asciiWrite (buf, string, offset, length) {
+  var charsWritten = blitBuffer(asciiToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function binaryWrite (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  var charsWritten = blitBuffer(base64ToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function utf16leWrite (buf, string, offset, length) {
+  var charsWritten = blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length, 2)
+  return charsWritten
+}
+
+Buffer.prototype.write = function (string, offset, length, encoding) {
+  // Support both (string, offset, length, encoding)
+  // and the legacy (string, encoding, offset, length)
+  if (isFinite(offset)) {
+    if (!isFinite(length)) {
+      encoding = length
+      length = undefined
+    }
+  } else {  // legacy
+    var swap = encoding
+    encoding = offset
+    offset = length
+    length = swap
+  }
+
+  offset = Number(offset) || 0
+
+  if (length < 0 || offset < 0 || offset > this.length)
+    throw new RangeError('attempt to write outside buffer bounds');
+
+  var remaining = this.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+  encoding = String(encoding || 'utf8').toLowerCase()
+
+  var ret
+  switch (encoding) {
+    case 'hex':
+      ret = hexWrite(this, string, offset, length)
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = utf8Write(this, string, offset, length)
+      break
+    case 'ascii':
+      ret = asciiWrite(this, string, offset, length)
+      break
+    case 'binary':
+      ret = binaryWrite(this, string, offset, length)
+      break
+    case 'base64':
+      ret = base64Write(this, string, offset, length)
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = utf16leWrite(this, string, offset, length)
+      break
+    default:
+      throw new TypeError('Unknown encoding: ' + encoding)
+  }
+  return ret
+}
+
+Buffer.prototype.toJSON = function () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  var res = ''
+  var tmp = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    if (buf[i] <= 0x7F) {
+      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
+      tmp = ''
+    } else {
+      tmp += '%' + buf[i].toString(16)
+    }
+  }
+
+  return res + decodeUtf8Char(tmp)
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function binarySlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; i++) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len;
+    if (start < 0)
+      start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0)
+      end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start)
+    end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = Buffer._augment(this.subarray(start, end))
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined, true)
+    for (var i = 0; i < sliceLen; i++) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  if (newBuf.length)
+    newBuf.parent = this.parent || this
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0)
+    throw new RangeError('offset is not uint')
+  if (offset + ext > length)
+    throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100))
+    val += this[offset + i] * mul
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100))
+    val += this[offset + --byteLength] * mul;
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+      ((this[offset + 1] << 16) |
+      (this[offset + 2] << 8) |
+      this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100))
+    val += this[offset + i] * mul
+  mul *= 0x80
+
+  if (val >= mul)
+    val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100))
+    val += this[offset + --i] * mul
+  mul *= 0x80
+
+  if (val >= mul)
+    val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80))
+    return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16) |
+      (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+      (this[offset + 1] << 16) |
+      (this[offset + 2] << 8) |
+      (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function (offset, noAssert) {
+  if (!noAssert)
+    checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100))
+    this[offset + i] = (value / mul) >>> 0 & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100))
+    this[offset + i] = (value / mul) >>> 0 & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = value
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+  } else objectWriteUInt16(this, value, offset, true)
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = value
+  } else objectWriteUInt16(this, value, offset, false)
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = value
+  } else objectWriteUInt32(this, value, offset, true)
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = value
+  } else objectWriteUInt32(this, value, offset, false)
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    checkInt(this,
+             value,
+             offset,
+             byteLength,
+             Math.pow(2, 8 * byteLength - 1) - 1,
+             -Math.pow(2, 8 * byteLength - 1))
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = value < 0 ? 1 : 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100))
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    checkInt(this,
+             value,
+             offset,
+             byteLength,
+             Math.pow(2, 8 * byteLength - 1) - 1,
+             -Math.pow(2, 8 * byteLength - 1))
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = value < 0 ? 1 : 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100))
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = value
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+  } else objectWriteUInt16(this, value, offset, true)
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = value
+  } else objectWriteUInt16(this, value, offset, false)
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else objectWriteUInt32(this, value, offset, true)
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = value
+  } else objectWriteUInt32(this, value, offset, false)
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (value > max || value < min) throw new RangeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('index out of range')
+  if (offset < 0) throw new RangeError('index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert)
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert)
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function (target, target_start, start, end) {
+  var source = this
+
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (target_start >= target.length) target_start = target.length
+  if (!target_start) target_start = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || source.length === 0) return 0
+
+  // Fatal error conditions
+  if (target_start < 0)
+    throw new RangeError('targetStart out of bounds')
+  if (start < 0 || start >= source.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length)
+    end = this.length
+  if (target.length - target_start < end - start)
+    end = target.length - target_start + start
+
+  var len = end - start
+
+  if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < len; i++) {
+      target[i + target_start] = this[i + start]
+    }
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
+
+  return len
+}
+
+// fill(value, start=0, end=buffer.length)
+Buffer.prototype.fill = function (value, start, end) {
+  if (!value) value = 0
+  if (!start) start = 0
+  if (!end) end = this.length
+
+  if (end < start) throw new RangeError('end < start')
+
+  // Fill 0 bytes; we're done
+  if (end === start) return
+  if (this.length === 0) return
+
+  if (start < 0 || start >= this.length) throw new RangeError('start out of bounds')
+  if (end < 0 || end > this.length) throw new RangeError('end out of bounds')
+
+  var i
+  if (typeof value === 'number') {
+    for (i = start; i < end; i++) {
+      this[i] = value
+    }
+  } else {
+    var bytes = utf8ToBytes(value.toString())
+    var len = bytes.length
+    for (i = start; i < end; i++) {
+      this[i] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+/**
+ * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+ * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
+ */
+Buffer.prototype.toArrayBuffer = function () {
+  if (typeof Uint8Array !== 'undefined') {
+    if (Buffer.TYPED_ARRAY_SUPPORT) {
+      return (new Buffer(this)).buffer
+    } else {
+      var buf = new Uint8Array(this.length)
+      for (var i = 0, len = buf.length; i < len; i += 1) {
+        buf[i] = this[i]
+      }
+      return buf.buffer
+    }
+  } else {
+    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
+  }
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var BP = Buffer.prototype
+
+/**
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
+ */
+Buffer._augment = function (arr) {
+  arr.constructor = Buffer
+  arr._isBuffer = true
+
+  // save reference to original Uint8Array get/set methods before overwriting
+  arr._get = arr.get
+  arr._set = arr.set
+
+  // deprecated, will be removed in node 0.13+
+  arr.get = BP.get
+  arr.set = BP.set
+
+  arr.write = BP.write
+  arr.toString = BP.toString
+  arr.toLocaleString = BP.toString
+  arr.toJSON = BP.toJSON
+  arr.equals = BP.equals
+  arr.compare = BP.compare
+  arr.copy = BP.copy
+  arr.slice = BP.slice
+  arr.readUIntLE = BP.readUIntLE
+  arr.readUIntBE = BP.readUIntBE
+  arr.readUInt8 = BP.readUInt8
+  arr.readUInt16LE = BP.readUInt16LE
+  arr.readUInt16BE = BP.readUInt16BE
+  arr.readUInt32LE = BP.readUInt32LE
+  arr.readUInt32BE = BP.readUInt32BE
+  arr.readIntLE = BP.readIntLE
+  arr.readIntBE = BP.readIntBE
+  arr.readInt8 = BP.readInt8
+  arr.readInt16LE = BP.readInt16LE
+  arr.readInt16BE = BP.readInt16BE
+  arr.readInt32LE = BP.readInt32LE
+  arr.readInt32BE = BP.readInt32BE
+  arr.readFloatLE = BP.readFloatLE
+  arr.readFloatBE = BP.readFloatBE
+  arr.readDoubleLE = BP.readDoubleLE
+  arr.readDoubleBE = BP.readDoubleBE
+  arr.writeUInt8 = BP.writeUInt8
+  arr.writeUIntLE = BP.writeUIntLE
+  arr.writeUIntBE = BP.writeUIntBE
+  arr.writeUInt16LE = BP.writeUInt16LE
+  arr.writeUInt16BE = BP.writeUInt16BE
+  arr.writeUInt32LE = BP.writeUInt32LE
+  arr.writeUInt32BE = BP.writeUInt32BE
+  arr.writeIntLE = BP.writeIntLE
+  arr.writeIntBE = BP.writeIntBE
+  arr.writeInt8 = BP.writeInt8
+  arr.writeInt16LE = BP.writeInt16LE
+  arr.writeInt16BE = BP.writeInt16BE
+  arr.writeInt32LE = BP.writeInt32LE
+  arr.writeInt32BE = BP.writeInt32BE
+  arr.writeFloatLE = BP.writeFloatLE
+  arr.writeFloatBE = BP.writeFloatBE
+  arr.writeDoubleLE = BP.writeDoubleLE
+  arr.writeDoubleBE = BP.writeDoubleBE
+  arr.fill = BP.fill
+  arr.inspect = BP.inspect
+  arr.toArrayBuffer = BP.toArrayBuffer
+
+  return arr
+}
+
+var INVALID_BASE64_RE = /[^+\/0-9A-z\-]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // replace url-safe space and slash
+  str = str.replace(/-/g, '+').replace(/_/g, '/')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function isArrayish (subject) {
+  return isArray(subject) || Buffer.isBuffer(subject) ||
+      subject && typeof subject === 'object' &&
+      typeof subject.length === 'number'
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes(string, units) {
+  var codePoint, length = string.length
+  var leadSurrogate = null
+  units = units || Infinity
+  var bytes = []
+  var i = 0
+
+  for (; i<length; i++) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+
+      // last char was a lead
+      if (leadSurrogate) {
+
+        // 2 leads in a row
+        if (codePoint < 0xDC00) {
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          leadSurrogate = codePoint
+          continue
+        }
+
+        // valid surrogate pair
+        else {
+          codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
+          leadSurrogate = null
+        }
+      }
+
+      // no lead yet
+      else {
+
+        // unexpected trail
+        if (codePoint > 0xDBFF) {
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // unpaired lead
+        else if (i + 1 === length) {
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        else {
+          leadSurrogate = codePoint
+          continue
+        }
+      }
+    }
+
+    // valid bmp char, but last char was a lead
+    else if (leadSurrogate) {
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+      leadSurrogate = null
+    }
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    }
+    else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      );
+    }
+    else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      );
+    }
+    else if (codePoint < 0x200000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      );
+    }
+    else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length, unitSize) {
+  if (unitSize) length -= length % unitSize;
+  for (var i = 0; i < length; i++) {
+    if ((i + offset >= dst.length) || (i >= src.length))
+      break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function decodeUtf8Char (str) {
+  try {
+    return decodeURIComponent(str)
+  } catch (err) {
+    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
+  }
+}
+
+},{"base64-js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js","ieee754":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js","is-array":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/node_modules/is-array/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js":[function(require,module,exports){
+var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+;(function (exports) {
+	'use strict';
+
+  var Arr = (typeof Uint8Array !== 'undefined')
+    ? Uint8Array
+    : Array
+
+	var PLUS   = '+'.charCodeAt(0)
+	var SLASH  = '/'.charCodeAt(0)
+	var NUMBER = '0'.charCodeAt(0)
+	var LOWER  = 'a'.charCodeAt(0)
+	var UPPER  = 'A'.charCodeAt(0)
+
+	function decode (elt) {
+		var code = elt.charCodeAt(0)
+		if (code === PLUS)
+			return 62 // '+'
+		if (code === SLASH)
+			return 63 // '/'
+		if (code < NUMBER)
+			return -1 //no match
+		if (code < NUMBER + 10)
+			return code - NUMBER + 26 + 26
+		if (code < UPPER + 26)
+			return code - UPPER
+		if (code < LOWER + 26)
+			return code - LOWER + 26
+	}
+
+	function b64ToByteArray (b64) {
+		var i, j, l, tmp, placeHolders, arr
+
+		if (b64.length % 4 > 0) {
+			throw new Error('Invalid string. Length must be a multiple of 4')
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		var len = b64.length
+		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = new Arr(b64.length * 3 / 4 - placeHolders)
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length
+
+		var L = 0
+
+		function push (v) {
+			arr[L++] = v
+		}
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+			push((tmp & 0xFF0000) >> 16)
+			push((tmp & 0xFF00) >> 8)
+			push(tmp & 0xFF)
+		}
+
+		if (placeHolders === 2) {
+			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+			push(tmp & 0xFF)
+		} else if (placeHolders === 1) {
+			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+			push((tmp >> 8) & 0xFF)
+			push(tmp & 0xFF)
+		}
+
+		return arr
+	}
+
+	function uint8ToBase64 (uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length
+
+		function encode (num) {
+			return lookup.charAt(num)
+		}
+
+		function tripletToBase64 (num) {
+			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+		}
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+			output += tripletToBase64(temp)
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1]
+				output += encode(temp >> 2)
+				output += encode((temp << 4) & 0x3F)
+				output += '=='
+				break
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+				output += encode(temp >> 10)
+				output += encode((temp >> 4) & 0x3F)
+				output += encode((temp << 2) & 0x3F)
+				output += '='
+				break
+		}
+
+		return output
+	}
+
+	exports.toByteArray = b64ToByteArray
+	exports.fromByteArray = uint8ToBase64
+}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js":[function(require,module,exports){
+exports.read = function(buffer, offset, isLE, mLen, nBytes) {
+  var e, m,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      nBits = -7,
+      i = isLE ? (nBytes - 1) : 0,
+      d = isLE ? -1 : 1,
+      s = buffer[offset + i];
+
+  i += d;
+
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity);
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+};
+
+exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+      i = isLE ? 0 : (nBytes - 1),
+      d = isLE ? 1 : -1,
+      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+  value = Math.abs(value);
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
+    } else {
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+      e = 0;
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+
+  buffer[offset + i - d] |= s * 128;
+};
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/node_modules/is-array/index.js":[function(require,module,exports){
+
+/**
+ * isArray
+ */
+
+var isArray = Array.isArray;
+
+/**
+ * toString
+ */
+
+var str = Object.prototype.toString;
+
+/**
+ * Whether or not the given `val`
+ * is an array.
+ *
+ * example:
+ *
+ *        isArray([]);
+ *        // > true
+ *        isArray(arguments);
+ *        // > false
+ *        isArray('');
+ *        // > false
+ *
+ * @param {mixed} val
+ * @return {bool}
+ */
+
+module.exports = isArray || function (val) {
+  return !! val && '[object Array]' == str.call(val);
+};
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      }
+      throw TypeError('Uncaught, unspecified "error" event.');
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        len = arguments.length;
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    len = arguments.length;
+    args = new Array(len - 1);
+    for (i = 1; i < len; i++)
+      args[i - 1] = arguments[i];
+
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    var m;
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  var ret;
+  if (!emitter._events || !emitter._events[type])
+    ret = 0;
+  else if (isFunction(emitter._events[type]))
+    ret = 1;
+  else
+    ret = emitter._events[type].length;
+  return ret;
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/isarray/index.js":[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/duplex.js":[function(require,module,exports){
+module.exports = require("./lib/_stream_duplex.js")
+
+},{"./lib/_stream_duplex.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js":[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// a duplex stream is just a stream that is both readable and writable.
+// Since JS doesn't have multiple prototypal inheritance, this class
+// prototypally inherits from Readable, and then parasitically from
+// Writable.
+
+module.exports = Duplex;
+
+/*<replacement>*/
+var objectKeys = Object.keys || function (obj) {
+  var keys = [];
+  for (var key in obj) keys.push(key);
+  return keys;
+}
+/*</replacement>*/
+
+
+/*<replacement>*/
+var util = require('core-util-is');
+util.inherits = require('inherits');
+/*</replacement>*/
+
+var Readable = require('./_stream_readable');
+var Writable = require('./_stream_writable');
+
+util.inherits(Duplex, Readable);
+
+forEach(objectKeys(Writable.prototype), function(method) {
+  if (!Duplex.prototype[method])
+    Duplex.prototype[method] = Writable.prototype[method];
+});
+
+function Duplex(options) {
+  if (!(this instanceof Duplex))
+    return new Duplex(options);
+
+  Readable.call(this, options);
+  Writable.call(this, options);
+
+  if (options && options.readable === false)
+    this.readable = false;
+
+  if (options && options.writable === false)
+    this.writable = false;
+
+  this.allowHalfOpen = true;
+  if (options && options.allowHalfOpen === false)
+    this.allowHalfOpen = false;
+
+  this.once('end', onend);
+}
+
+// the no-half-open enforcer
+function onend() {
+  // if we allow half-open state, or if the writable side ended,
+  // then we're ok.
+  if (this.allowHalfOpen || this._writableState.ended)
+    return;
+
+  // no more data can be written.
+  // But allow more writes to happen in this tick.
+  process.nextTick(this.end.bind(this));
+}
+
+function forEach (xs, f) {
+  for (var i = 0, l = xs.length; i < l; i++) {
+    f(xs[i], i);
+  }
+}
+
+}).call(this,require('_process'))
+},{"./_stream_readable":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js","_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// a passthrough stream.
+// basically just the most minimal sort of Transform stream.
+// Every written chunk gets output as-is.
+
+module.exports = PassThrough;
+
+var Transform = require('./_stream_transform');
+
+/*<replacement>*/
+var util = require('core-util-is');
+util.inherits = require('inherits');
+/*</replacement>*/
+
+util.inherits(PassThrough, Transform);
+
+function PassThrough(options) {
+  if (!(this instanceof PassThrough))
+    return new PassThrough(options);
+
+  Transform.call(this, options);
+}
+
+PassThrough.prototype._transform = function(chunk, encoding, cb) {
+  cb(null, chunk);
+};
+
+},{"./_stream_transform":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+module.exports = Readable;
+
+/*<replacement>*/
+var isArray = require('isarray');
+/*</replacement>*/
+
+
+/*<replacement>*/
+var Buffer = require('buffer').Buffer;
+/*</replacement>*/
+
+Readable.ReadableState = ReadableState;
+
+var EE = require('events').EventEmitter;
+
+/*<replacement>*/
+if (!EE.listenerCount) EE.listenerCount = function(emitter, type) {
+  return emitter.listeners(type).length;
+};
+/*</replacement>*/
+
+var Stream = require('stream');
+
+/*<replacement>*/
+var util = require('core-util-is');
+util.inherits = require('inherits');
+/*</replacement>*/
+
+var StringDecoder;
+
+util.inherits(Readable, Stream);
+
+function ReadableState(options, stream) {
+  options = options || {};
+
+  // the point at which it stops calling _read() to fill the buffer
+  // Note: 0 is a valid value, means "don't call _read preemptively ever"
+  var hwm = options.highWaterMark;
+  this.highWaterMark = (hwm || hwm === 0) ? hwm : 16 * 1024;
+
+  // cast to ints.
+  this.highWaterMark = ~~this.highWaterMark;
+
+  this.buffer = [];
+  this.length = 0;
+  this.pipes = null;
+  this.pipesCount = 0;
+  this.flowing = false;
+  this.ended = false;
+  this.endEmitted = false;
+  this.reading = false;
+
+  // In streams that never have any data, and do push(null) right away,
+  // the consumer can miss the 'end' event if they do some I/O before
+  // consuming the stream.  So, we don't emit('end') until some reading
+  // happens.
+  this.calledRead = false;
+
+  // a flag to be able to tell if the onwrite cb is called immediately,
+  // or on a later tick.  We set this to true at first, becuase any
+  // actions that shouldn't happen until "later" should generally also
+  // not happen before the first write call.
+  this.sync = true;
+
+  // whenever we return null, then we set a flag to say
+  // that we're awaiting a 'readable' event emission.
+  this.needReadable = false;
+  this.emittedReadable = false;
+  this.readableListening = false;
+
+
+  // object stream flag. Used to make read(n) ignore n and to
+  // make all the buffer merging and length checks go away
+  this.objectMode = !!options.objectMode;
+
+  // Crypto is kind of old and crusty.  Historically, its default string
+  // encoding is 'binary' so we have to make this configurable.
+  // Everything else in the universe uses 'utf8', though.
+  this.defaultEncoding = options.defaultEncoding || 'utf8';
+
+  // when piping, we only care about 'readable' events that happen
+  // after read()ing all the bytes and not getting any pushback.
+  this.ranOut = false;
+
+  // the number of writers that are awaiting a drain event in .pipe()s
+  this.awaitDrain = 0;
+
+  // if true, a maybeReadMore has been scheduled
+  this.readingMore = false;
+
+  this.decoder = null;
+  this.encoding = null;
+  if (options.encoding) {
+    if (!StringDecoder)
+      StringDecoder = require('string_decoder/').StringDecoder;
+    this.decoder = new StringDecoder(options.encoding);
+    this.encoding = options.encoding;
+  }
+}
+
+function Readable(options) {
+  if (!(this instanceof Readable))
+    return new Readable(options);
+
+  this._readableState = new ReadableState(options, this);
+
+  // legacy
+  this.readable = true;
+
+  Stream.call(this);
+}
+
+// Manually shove something into the read() buffer.
+// This returns true if the highWaterMark has not been hit yet,
+// similar to how Writable.write() returns true if you should
+// write() some more.
+Readable.prototype.push = function(chunk, encoding) {
+  var state = this._readableState;
+
+  if (typeof chunk === 'string' && !state.objectMode) {
+    encoding = encoding || state.defaultEncoding;
+    if (encoding !== state.encoding) {
+      chunk = new Buffer(chunk, encoding);
+      encoding = '';
+    }
+  }
+
+  return readableAddChunk(this, state, chunk, encoding, false);
+};
+
+// Unshift should *always* be something directly out of read()
+Readable.prototype.unshift = function(chunk) {
+  var state = this._readableState;
+  return readableAddChunk(this, state, chunk, '', true);
+};
+
+function readableAddChunk(stream, state, chunk, encoding, addToFront) {
+  var er = chunkInvalid(state, chunk);
+  if (er) {
+    stream.emit('error', er);
+  } else if (chunk === null || chunk === undefined) {
+    state.reading = false;
+    if (!state.ended)
+      onEofChunk(stream, state);
+  } else if (state.objectMode || chunk && chunk.length > 0) {
+    if (state.ended && !addToFront) {
+      var e = new Error('stream.push() after EOF');
+      stream.emit('error', e);
+    } else if (state.endEmitted && addToFront) {
+      var e = new Error('stream.unshift() after end event');
+      stream.emit('error', e);
+    } else {
+      if (state.decoder && !addToFront && !encoding)
+        chunk = state.decoder.write(chunk);
+
+      // update the buffer info.
+      state.length += state.objectMode ? 1 : chunk.length;
+      if (addToFront) {
+        state.buffer.unshift(chunk);
+      } else {
+        state.reading = false;
+        state.buffer.push(chunk);
+      }
+
+      if (state.needReadable)
+        emitReadable(stream);
+
+      maybeReadMore(stream, state);
+    }
+  } else if (!addToFront) {
+    state.reading = false;
+  }
+
+  return needMoreData(state);
+}
+
+
+
+// if it's past the high water mark, we can push in some more.
+// Also, if we have no data yet, we can stand some
+// more bytes.  This is to work around cases where hwm=0,
+// such as the repl.  Also, if the push() triggered a
+// readable event, and the user called read(largeNumber) such that
+// needReadable was set, then we ought to push more, so that another
+// 'readable' event will be triggered.
+function needMoreData(state) {
+  return !state.ended &&
+         (state.needReadable ||
+          state.length < state.highWaterMark ||
+          state.length === 0);
+}
+
+// backwards compatibility.
+Readable.prototype.setEncoding = function(enc) {
+  if (!StringDecoder)
+    StringDecoder = require('string_decoder/').StringDecoder;
+  this._readableState.decoder = new StringDecoder(enc);
+  this._readableState.encoding = enc;
+};
+
+// Don't raise the hwm > 128MB
+var MAX_HWM = 0x800000;
+function roundUpToNextPowerOf2(n) {
+  if (n >= MAX_HWM) {
+    n = MAX_HWM;
+  } else {
+    // Get the next highest power of 2
+    n--;
+    for (var p = 1; p < 32; p <<= 1) n |= n >> p;
+    n++;
+  }
+  return n;
+}
+
+function howMuchToRead(n, state) {
+  if (state.length === 0 && state.ended)
+    return 0;
+
+  if (state.objectMode)
+    return n === 0 ? 0 : 1;
+
+  if (n === null || isNaN(n)) {
+    // only flow one buffer at a time
+    if (state.flowing && state.buffer.length)
+      return state.buffer[0].length;
+    else
+      return state.length;
+  }
+
+  if (n <= 0)
+    return 0;
+
+  // If we're asking for more than the target buffer level,
+  // then raise the water mark.  Bump up to the next highest
+  // power of 2, to prevent increasing it excessively in tiny
+  // amounts.
+  if (n > state.highWaterMark)
+    state.highWaterMark = roundUpToNextPowerOf2(n);
+
+  // don't have that much.  return null, unless we've ended.
+  if (n > state.length) {
+    if (!state.ended) {
+      state.needReadable = true;
+      return 0;
+    } else
+      return state.length;
+  }
+
+  return n;
+}
+
+// you can override either this method, or the async _read(n) below.
+Readable.prototype.read = function(n) {
+  var state = this._readableState;
+  state.calledRead = true;
+  var nOrig = n;
+  var ret;
+
+  if (typeof n !== 'number' || n > 0)
+    state.emittedReadable = false;
+
+  // if we're doing read(0) to trigger a readable event, but we
+  // already have a bunch of data in the buffer, then just trigger
+  // the 'readable' event and move on.
+  if (n === 0 &&
+      state.needReadable &&
+      (state.length >= state.highWaterMark || state.ended)) {
+    emitReadable(this);
+    return null;
+  }
+
+  n = howMuchToRead(n, state);
+
+  // if we've ended, and we're now clear, then finish it up.
+  if (n === 0 && state.ended) {
+    ret = null;
+
+    // In cases where the decoder did not receive enough data
+    // to produce a full chunk, then immediately received an
+    // EOF, state.buffer will contain [<Buffer >, <Buffer 00 ...>].
+    // howMuchToRead will see this and coerce the amount to
+    // read to zero (because it's looking at the length of the
+    // first <Buffer > in state.buffer), and we'll end up here.
+    //
+    // This can only happen via state.decoder -- no other venue
+    // exists for pushing a zero-length chunk into state.buffer
+    // and triggering this behavior. In this case, we return our
+    // remaining data and end the stream, if appropriate.
+    if (state.length > 0 && state.decoder) {
+      ret = fromList(n, state);
+      state.length -= ret.length;
+    }
+
+    if (state.length === 0)
+      endReadable(this);
+
+    return ret;
+  }
+
+  // All the actual chunk generation logic needs to be
+  // *below* the call to _read.  The reason is that in certain
+  // synthetic stream cases, such as passthrough streams, _read
+  // may be a completely synchronous operation which may change
+  // the state of the read buffer, providing enough data when
+  // before there was *not* enough.
+  //
+  // So, the steps are:
+  // 1. Figure out what the state of things will be after we do
+  // a read from the buffer.
+  //
+  // 2. If that resulting state will trigger a _read, then call _read.
+  // Note that this may be asynchronous, or synchronous.  Yes, it is
+  // deeply ugly to write APIs this way, but that still doesn't mean
+  // that the Readable class should behave improperly, as streams are
+  // designed to be sync/async agnostic.
+  // Take note if the _read call is sync or async (ie, if the read call
+  // has returned yet), so that we know whether or not it's safe to emit
+  // 'readable' etc.
+  //
+  // 3. Actually pull the requested chunks out of the buffer and return.
+
+  // if we need a readable event, then we need to do some reading.
+  var doRead = state.needReadable;
+
+  // if we currently have less than the highWaterMark, then also read some
+  if (state.length - n <= state.highWaterMark)
+    doRead = true;
+
+  // however, if we've ended, then there's no point, and if we're already
+  // reading, then it's unnecessary.
+  if (state.ended || state.reading)
+    doRead = false;
+
+  if (doRead) {
+    state.reading = true;
+    state.sync = true;
+    // if the length is currently zero, then we *need* a readable event.
+    if (state.length === 0)
+      state.needReadable = true;
+    // call internal read method
+    this._read(state.highWaterMark);
+    state.sync = false;
+  }
+
+  // If _read called its callback synchronously, then `reading`
+  // will be false, and we need to re-evaluate how much data we
+  // can return to the user.
+  if (doRead && !state.reading)
+    n = howMuchToRead(nOrig, state);
+
+  if (n > 0)
+    ret = fromList(n, state);
+  else
+    ret = null;
+
+  if (ret === null) {
+    state.needReadable = true;
+    n = 0;
+  }
+
+  state.length -= n;
+
+  // If we have nothing in the buffer, then we want to know
+  // as soon as we *do* get something into the buffer.
+  if (state.length === 0 && !state.ended)
+    state.needReadable = true;
+
+  // If we happened to read() exactly the remaining amount in the
+  // buffer, and the EOF has been seen at this point, then make sure
+  // that we emit 'end' on the very next tick.
+  if (state.ended && !state.endEmitted && state.length === 0)
+    endReadable(this);
+
+  return ret;
+};
+
+function chunkInvalid(state, chunk) {
+  var er = null;
+  if (!Buffer.isBuffer(chunk) &&
+      'string' !== typeof chunk &&
+      chunk !== null &&
+      chunk !== undefined &&
+      !state.objectMode) {
+    er = new TypeError('Invalid non-string/buffer chunk');
+  }
+  return er;
+}
+
+
+function onEofChunk(stream, state) {
+  if (state.decoder && !state.ended) {
+    var chunk = state.decoder.end();
+    if (chunk && chunk.length) {
+      state.buffer.push(chunk);
+      state.length += state.objectMode ? 1 : chunk.length;
+    }
+  }
+  state.ended = true;
+
+  // if we've ended and we have some data left, then emit
+  // 'readable' now to make sure it gets picked up.
+  if (state.length > 0)
+    emitReadable(stream);
+  else
+    endReadable(stream);
+}
+
+// Don't emit readable right away in sync mode, because this can trigger
+// another read() call => stack overflow.  This way, it might trigger
+// a nextTick recursion warning, but that's not so bad.
+function emitReadable(stream) {
+  var state = stream._readableState;
+  state.needReadable = false;
+  if (state.emittedReadable)
+    return;
+
+  state.emittedReadable = true;
+  if (state.sync)
+    process.nextTick(function() {
+      emitReadable_(stream);
+    });
+  else
+    emitReadable_(stream);
+}
+
+function emitReadable_(stream) {
+  stream.emit('readable');
+}
+
+
+// at this point, the user has presumably seen the 'readable' event,
+// and called read() to consume some data.  that may have triggered
+// in turn another _read(n) call, in which case reading = true if
+// it's in progress.
+// However, if we're not ended, or reading, and the length < hwm,
+// then go ahead and try to read some more preemptively.
+function maybeReadMore(stream, state) {
+  if (!state.readingMore) {
+    state.readingMore = true;
+    process.nextTick(function() {
+      maybeReadMore_(stream, state);
+    });
+  }
+}
+
+function maybeReadMore_(stream, state) {
+  var len = state.length;
+  while (!state.reading && !state.flowing && !state.ended &&
+         state.length < state.highWaterMark) {
+    stream.read(0);
+    if (len === state.length)
+      // didn't get any data, stop spinning.
+      break;
+    else
+      len = state.length;
+  }
+  state.readingMore = false;
+}
+
+// abstract method.  to be overridden in specific implementation classes.
+// call cb(er, data) where data is <= n in length.
+// for virtual (non-string, non-buffer) streams, "length" is somewhat
+// arbitrary, and perhaps not very meaningful.
+Readable.prototype._read = function(n) {
+  this.emit('error', new Error('not implemented'));
+};
+
+Readable.prototype.pipe = function(dest, pipeOpts) {
+  var src = this;
+  var state = this._readableState;
+
+  switch (state.pipesCount) {
+    case 0:
+      state.pipes = dest;
+      break;
+    case 1:
+      state.pipes = [state.pipes, dest];
+      break;
+    default:
+      state.pipes.push(dest);
+      break;
+  }
+  state.pipesCount += 1;
+
+  var doEnd = (!pipeOpts || pipeOpts.end !== false) &&
+              dest !== process.stdout &&
+              dest !== process.stderr;
+
+  var endFn = doEnd ? onend : cleanup;
+  if (state.endEmitted)
+    process.nextTick(endFn);
+  else
+    src.once('end', endFn);
+
+  dest.on('unpipe', onunpipe);
+  function onunpipe(readable) {
+    if (readable !== src) return;
+    cleanup();
+  }
+
+  function onend() {
+    dest.end();
+  }
+
+  // when the dest drains, it reduces the awaitDrain counter
+  // on the source.  This would be more elegant with a .once()
+  // handler in flow(), but adding and removing repeatedly is
+  // too slow.
+  var ondrain = pipeOnDrain(src);
+  dest.on('drain', ondrain);
+
+  function cleanup() {
+    // cleanup event handlers once the pipe is broken
+    dest.removeListener('close', onclose);
+    dest.removeListener('finish', onfinish);
+    dest.removeListener('drain', ondrain);
+    dest.removeListener('error', onerror);
+    dest.removeListener('unpipe', onunpipe);
+    src.removeListener('end', onend);
+    src.removeListener('end', cleanup);
+
+    // if the reader is waiting for a drain event from this
+    // specific writer, then it would cause it to never start
+    // flowing again.
+    // So, if this is awaiting a drain, then we just call it now.
+    // If we don't know, then assume that we are waiting for one.
+    if (!dest._writableState || dest._writableState.needDrain)
+      ondrain();
+  }
+
+  // if the dest has an error, then stop piping into it.
+  // however, don't suppress the throwing behavior for this.
+  function onerror(er) {
+    unpipe();
+    dest.removeListener('error', onerror);
+    if (EE.listenerCount(dest, 'error') === 0)
+      dest.emit('error', er);
+  }
+  // This is a brutally ugly hack to make sure that our error handler
+  // is attached before any userland ones.  NEVER DO THIS.
+  if (!dest._events || !dest._events.error)
+    dest.on('error', onerror);
+  else if (isArray(dest._events.error))
+    dest._events.error.unshift(onerror);
+  else
+    dest._events.error = [onerror, dest._events.error];
+
+
+
+  // Both close and finish should trigger unpipe, but only once.
+  function onclose() {
+    dest.removeListener('finish', onfinish);
+    unpipe();
+  }
+  dest.once('close', onclose);
+  function onfinish() {
+    dest.removeListener('close', onclose);
+    unpipe();
+  }
+  dest.once('finish', onfinish);
+
+  function unpipe() {
+    src.unpipe(dest);
+  }
+
+  // tell the dest that it's being piped to
+  dest.emit('pipe', src);
+
+  // start the flow if it hasn't been started already.
+  if (!state.flowing) {
+    // the handler that waits for readable events after all
+    // the data gets sucked out in flow.
+    // This would be easier to follow with a .once() handler
+    // in flow(), but that is too slow.
+    this.on('readable', pipeOnReadable);
+
+    state.flowing = true;
+    process.nextTick(function() {
+      flow(src);
+    });
+  }
+
+  return dest;
+};
+
+function pipeOnDrain(src) {
+  return function() {
+    var dest = this;
+    var state = src._readableState;
+    state.awaitDrain--;
+    if (state.awaitDrain === 0)
+      flow(src);
+  };
+}
+
+function flow(src) {
+  var state = src._readableState;
+  var chunk;
+  state.awaitDrain = 0;
+
+  function write(dest, i, list) {
+    var written = dest.write(chunk);
+    if (false === written) {
+      state.awaitDrain++;
+    }
+  }
+
+  while (state.pipesCount && null !== (chunk = src.read())) {
+
+    if (state.pipesCount === 1)
+      write(state.pipes, 0, null);
+    else
+      forEach(state.pipes, write);
+
+    src.emit('data', chunk);
+
+    // if anyone needs a drain, then we have to wait for that.
+    if (state.awaitDrain > 0)
+      return;
+  }
+
+  // if every destination was unpiped, either before entering this
+  // function, or in the while loop, then stop flowing.
+  //
+  // NB: This is a pretty rare edge case.
+  if (state.pipesCount === 0) {
+    state.flowing = false;
+
+    // if there were data event listeners added, then switch to old mode.
+    if (EE.listenerCount(src, 'data') > 0)
+      emitDataEvents(src);
+    return;
+  }
+
+  // at this point, no one needed a drain, so we just ran out of data
+  // on the next readable event, start it over again.
+  state.ranOut = true;
+}
+
+function pipeOnReadable() {
+  if (this._readableState.ranOut) {
+    this._readableState.ranOut = false;
+    flow(this);
+  }
+}
+
+
+Readable.prototype.unpipe = function(dest) {
+  var state = this._readableState;
+
+  // if we're not piping anywhere, then do nothing.
+  if (state.pipesCount === 0)
+    return this;
+
+  // just one destination.  most common case.
+  if (state.pipesCount === 1) {
+    // passed in one, but it's not the right one.
+    if (dest && dest !== state.pipes)
+      return this;
+
+    if (!dest)
+      dest = state.pipes;
+
+    // got a match.
+    state.pipes = null;
+    state.pipesCount = 0;
+    this.removeListener('readable', pipeOnReadable);
+    state.flowing = false;
+    if (dest)
+      dest.emit('unpipe', this);
+    return this;
+  }
+
+  // slow case. multiple pipe destinations.
+
+  if (!dest) {
+    // remove all.
+    var dests = state.pipes;
+    var len = state.pipesCount;
+    state.pipes = null;
+    state.pipesCount = 0;
+    this.removeListener('readable', pipeOnReadable);
+    state.flowing = false;
+
+    for (var i = 0; i < len; i++)
+      dests[i].emit('unpipe', this);
+    return this;
+  }
+
+  // try to find the right one.
+  var i = indexOf(state.pipes, dest);
+  if (i === -1)
+    return this;
+
+  state.pipes.splice(i, 1);
+  state.pipesCount -= 1;
+  if (state.pipesCount === 1)
+    state.pipes = state.pipes[0];
+
+  dest.emit('unpipe', this);
+
+  return this;
+};
+
+// set up data events if they are asked for
+// Ensure readable listeners eventually get something
+Readable.prototype.on = function(ev, fn) {
+  var res = Stream.prototype.on.call(this, ev, fn);
+
+  if (ev === 'data' && !this._readableState.flowing)
+    emitDataEvents(this);
+
+  if (ev === 'readable' && this.readable) {
+    var state = this._readableState;
+    if (!state.readableListening) {
+      state.readableListening = true;
+      state.emittedReadable = false;
+      state.needReadable = true;
+      if (!state.reading) {
+        this.read(0);
+      } else if (state.length) {
+        emitReadable(this, state);
+      }
+    }
+  }
+
+  return res;
+};
+Readable.prototype.addListener = Readable.prototype.on;
+
+// pause() and resume() are remnants of the legacy readable stream API
+// If the user uses them, then switch into old mode.
+Readable.prototype.resume = function() {
+  emitDataEvents(this);
+  this.read(0);
+  this.emit('resume');
+};
+
+Readable.prototype.pause = function() {
+  emitDataEvents(this, true);
+  this.emit('pause');
+};
+
+function emitDataEvents(stream, startPaused) {
+  var state = stream._readableState;
+
+  if (state.flowing) {
+    // https://github.com/isaacs/readable-stream/issues/16
+    throw new Error('Cannot switch to old mode now.');
+  }
+
+  var paused = startPaused || false;
+  var readable = false;
+
+  // convert to an old-style stream.
+  stream.readable = true;
+  stream.pipe = Stream.prototype.pipe;
+  stream.on = stream.addListener = Stream.prototype.on;
+
+  stream.on('readable', function() {
+    readable = true;
+
+    var c;
+    while (!paused && (null !== (c = stream.read())))
+      stream.emit('data', c);
+
+    if (c === null) {
+      readable = false;
+      stream._readableState.needReadable = true;
+    }
+  });
+
+  stream.pause = function() {
+    paused = true;
+    this.emit('pause');
+  };
+
+  stream.resume = function() {
+    paused = false;
+    if (readable)
+      process.nextTick(function() {
+        stream.emit('readable');
+      });
+    else
+      this.read(0);
+    this.emit('resume');
+  };
+
+  // now make it start, just in case it hadn't already.
+  stream.emit('readable');
+}
+
+// wrap an old-style stream as the async data source.
+// This is *not* part of the readable stream interface.
+// It is an ugly unfortunate mess of history.
+Readable.prototype.wrap = function(stream) {
+  var state = this._readableState;
+  var paused = false;
+
+  var self = this;
+  stream.on('end', function() {
+    if (state.decoder && !state.ended) {
+      var chunk = state.decoder.end();
+      if (chunk && chunk.length)
+        self.push(chunk);
+    }
+
+    self.push(null);
+  });
+
+  stream.on('data', function(chunk) {
+    if (state.decoder)
+      chunk = state.decoder.write(chunk);
+
+    // don't skip over falsy values in objectMode
+    //if (state.objectMode && util.isNullOrUndefined(chunk))
+    if (state.objectMode && (chunk === null || chunk === undefined))
+      return;
+    else if (!state.objectMode && (!chunk || !chunk.length))
+      return;
+
+    var ret = self.push(chunk);
+    if (!ret) {
+      paused = true;
+      stream.pause();
+    }
+  });
+
+  // proxy all the other methods.
+  // important when wrapping filters and duplexes.
+  for (var i in stream) {
+    if (typeof stream[i] === 'function' &&
+        typeof this[i] === 'undefined') {
+      this[i] = function(method) { return function() {
+        return stream[method].apply(stream, arguments);
+      }}(i);
+    }
+  }
+
+  // proxy certain important events.
+  var events = ['error', 'close', 'destroy', 'pause', 'resume'];
+  forEach(events, function(ev) {
+    stream.on(ev, self.emit.bind(self, ev));
+  });
+
+  // when we try to consume some more bytes, simply unpause the
+  // underlying stream.
+  self._read = function(n) {
+    if (paused) {
+      paused = false;
+      stream.resume();
+    }
+  };
+
+  return self;
+};
+
+
+
+// exposed for testing purposes only.
+Readable._fromList = fromList;
+
+// Pluck off n bytes from an array of buffers.
+// Length is the combined lengths of all the buffers in the list.
+function fromList(n, state) {
+  var list = state.buffer;
+  var length = state.length;
+  var stringMode = !!state.decoder;
+  var objectMode = !!state.objectMode;
+  var ret;
+
+  // nothing in the list, definitely empty.
+  if (list.length === 0)
+    return null;
+
+  if (length === 0)
+    ret = null;
+  else if (objectMode)
+    ret = list.shift();
+  else if (!n || n >= length) {
+    // read it all, truncate the array.
+    if (stringMode)
+      ret = list.join('');
+    else
+      ret = Buffer.concat(list, length);
+    list.length = 0;
+  } else {
+    // read just some of it.
+    if (n < list[0].length) {
+      // just take a part of the first list item.
+      // slice is the same for buffers and strings.
+      var buf = list[0];
+      ret = buf.slice(0, n);
+      list[0] = buf.slice(n);
+    } else if (n === list[0].length) {
+      // first list is a perfect match
+      ret = list.shift();
+    } else {
+      // complex case.
+      // we have enough to cover it, but it spans past the first buffer.
+      if (stringMode)
+        ret = '';
+      else
+        ret = new Buffer(n);
+
+      var c = 0;
+      for (var i = 0, l = list.length; i < l && c < n; i++) {
+        var buf = list[0];
+        var cpy = Math.min(n - c, buf.length);
+
+        if (stringMode)
+          ret += buf.slice(0, cpy);
+        else
+          buf.copy(ret, c, 0, cpy);
+
+        if (cpy < buf.length)
+          list[0] = buf.slice(cpy);
+        else
+          list.shift();
+
+        c += cpy;
+      }
+    }
+  }
+
+  return ret;
+}
+
+function endReadable(stream) {
+  var state = stream._readableState;
+
+  // If we get here before consuming all the bytes, then that is a
+  // bug in node.  Should never happen.
+  if (state.length > 0)
+    throw new Error('endReadable called on non-empty stream');
+
+  if (!state.endEmitted && state.calledRead) {
+    state.ended = true;
+    process.nextTick(function() {
+      // Check that we didn't get one last unshift.
+      if (!state.endEmitted && state.length === 0) {
+        state.endEmitted = true;
+        stream.readable = false;
+        stream.emit('end');
+      }
+    });
+  }
+}
+
+function forEach (xs, f) {
+  for (var i = 0, l = xs.length; i < l; i++) {
+    f(xs[i], i);
+  }
+}
+
+function indexOf (xs, x) {
+  for (var i = 0, l = xs.length; i < l; i++) {
+    if (xs[i] === x) return i;
+  }
+  return -1;
+}
+
+}).call(this,require('_process'))
+},{"_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","events":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js","isarray":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/isarray/index.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js","string_decoder/":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+// a transform stream is a readable/writable stream where you do
+// something with the data.  Sometimes it's called a "filter",
+// but that's not a great name for it, since that implies a thing where
+// some bits pass through, and others are simply ignored.  (That would
+// be a valid example of a transform, of course.)
+//
+// While the output is causally related to the input, it's not a
+// necessarily symmetric or synchronous transformation.  For example,
+// a zlib stream might take multiple plain-text writes(), and then
+// emit a single compressed chunk some time in the future.
+//
+// Here's how this works:
+//
+// The Transform stream has all the aspects of the readable and writable
+// stream classes.  When you write(chunk), that calls _write(chunk,cb)
+// internally, and returns false if there's a lot of pending writes
+// buffered up.  When you call read(), that calls _read(n) until
+// there's enough pending readable data buffered up.
+//
+// In a transform stream, the written data is placed in a buffer.  When
+// _read(n) is called, it transforms the queued up data, calling the
+// buffered _write cb's as it consumes chunks.  If consuming a single
+// written chunk would result in multiple output chunks, then the first
+// outputted bit calls the readcb, and subsequent chunks just go into
+// the read buffer, and will cause it to emit 'readable' if necessary.
+//
+// This way, back-pressure is actually determined by the reading side,
+// since _read has to be called to start processing a new chunk.  However,
+// a pathological inflate type of transform can cause excessive buffering
+// here.  For example, imagine a stream where every byte of input is
+// interpreted as an integer from 0-255, and then results in that many
+// bytes of output.  Writing the 4 bytes {ff,ff,ff,ff} would result in
+// 1kb of data being output.  In this case, you could write a very small
+// amount of input, and end up with a very large amount of output.  In
+// such a pathological inflating mechanism, there'd be no way to tell
+// the system to stop doing the transform.  A single 4MB write could
+// cause the system to run out of memory.
+//
+// However, even in such a pathological case, only a single written chunk
+// would be consumed, and then the rest would wait (un-transformed) until
+// the results of the previous transformed chunk were consumed.
+
+module.exports = Transform;
+
+var Duplex = require('./_stream_duplex');
+
+/*<replacement>*/
+var util = require('core-util-is');
+util.inherits = require('inherits');
+/*</replacement>*/
+
+util.inherits(Transform, Duplex);
+
+
+function TransformState(options, stream) {
+  this.afterTransform = function(er, data) {
+    return afterTransform(stream, er, data);
+  };
+
+  this.needTransform = false;
+  this.transforming = false;
+  this.writecb = null;
+  this.writechunk = null;
+}
+
+function afterTransform(stream, er, data) {
+  var ts = stream._transformState;
+  ts.transforming = false;
+
+  var cb = ts.writecb;
+
+  if (!cb)
+    return stream.emit('error', new Error('no writecb in Transform class'));
+
+  ts.writechunk = null;
+  ts.writecb = null;
+
+  if (data !== null && data !== undefined)
+    stream.push(data);
+
+  if (cb)
+    cb(er);
+
+  var rs = stream._readableState;
+  rs.reading = false;
+  if (rs.needReadable || rs.length < rs.highWaterMark) {
+    stream._read(rs.highWaterMark);
+  }
+}
+
+
+function Transform(options) {
+  if (!(this instanceof Transform))
+    return new Transform(options);
+
+  Duplex.call(this, options);
+
+  var ts = this._transformState = new TransformState(options, this);
+
+  // when the writable side finishes, then flush out anything remaining.
+  var stream = this;
+
+  // start out asking for a readable event once data is transformed.
+  this._readableState.needReadable = true;
+
+  // we have implemented the _read method, and done the other things
+  // that Readable wants before the first _read call, so unset the
+  // sync guard flag.
+  this._readableState.sync = false;
+
+  this.once('finish', function() {
+    if ('function' === typeof this._flush)
+      this._flush(function(er) {
+        done(stream, er);
+      });
+    else
+      done(stream);
+  });
+}
+
+Transform.prototype.push = function(chunk, encoding) {
+  this._transformState.needTransform = false;
+  return Duplex.prototype.push.call(this, chunk, encoding);
+};
+
+// This is the part where you do stuff!
+// override this function in implementation classes.
+// 'chunk' is an input chunk.
+//
+// Call `push(newChunk)` to pass along transformed output
+// to the readable side.  You may call 'push' zero or more times.
+//
+// Call `cb(err)` when you are done with this chunk.  If you pass
+// an error, then that'll put the hurt on the whole operation.  If you
+// never call cb(), then you'll never get another chunk.
+Transform.prototype._transform = function(chunk, encoding, cb) {
+  throw new Error('not implemented');
+};
+
+Transform.prototype._write = function(chunk, encoding, cb) {
+  var ts = this._transformState;
+  ts.writecb = cb;
+  ts.writechunk = chunk;
+  ts.writeencoding = encoding;
+  if (!ts.transforming) {
+    var rs = this._readableState;
+    if (ts.needTransform ||
+        rs.needReadable ||
+        rs.length < rs.highWaterMark)
+      this._read(rs.highWaterMark);
+  }
+};
+
+// Doesn't matter what the args are here.
+// _transform does all the work.
+// That we got here means that the readable side wants more data.
+Transform.prototype._read = function(n) {
+  var ts = this._transformState;
+
+  if (ts.writechunk !== null && ts.writecb && !ts.transforming) {
+    ts.transforming = true;
+    this._transform(ts.writechunk, ts.writeencoding, ts.afterTransform);
+  } else {
+    // mark that we need a transform, so that any data that comes in
+    // will get processed, now that we've asked for it.
+    ts.needTransform = true;
+  }
+};
+
+
+function done(stream, er) {
+  if (er)
+    return stream.emit('error', er);
+
+  // if there's nothing in the write buffer, then that means
+  // that nothing more will ever be provided
+  var ws = stream._writableState;
+  var rs = stream._readableState;
+  var ts = stream._transformState;
+
+  if (ws.length)
+    throw new Error('calling transform done when ws.length != 0');
+
+  if (ts.transforming)
+    throw new Error('calling transform done when still transforming');
+
+  return stream.push(null);
+}
+
+},{"./_stream_duplex":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// A bit simpler than readable streams.
+// Implement an async ._write(chunk, cb), and it'll handle all
+// the drain event emission and buffering.
+
+module.exports = Writable;
+
+/*<replacement>*/
+var Buffer = require('buffer').Buffer;
+/*</replacement>*/
+
+Writable.WritableState = WritableState;
+
+
+/*<replacement>*/
+var util = require('core-util-is');
+util.inherits = require('inherits');
+/*</replacement>*/
+
+var Stream = require('stream');
+
+util.inherits(Writable, Stream);
+
+function WriteReq(chunk, encoding, cb) {
+  this.chunk = chunk;
+  this.encoding = encoding;
+  this.callback = cb;
+}
+
+function WritableState(options, stream) {
+  options = options || {};
+
+  // the point at which write() starts returning false
+  // Note: 0 is a valid value, means that we always return false if
+  // the entire buffer is not flushed immediately on write()
+  var hwm = options.highWaterMark;
+  this.highWaterMark = (hwm || hwm === 0) ? hwm : 16 * 1024;
+
+  // object stream flag to indicate whether or not this stream
+  // contains buffers or objects.
+  this.objectMode = !!options.objectMode;
+
+  // cast to ints.
+  this.highWaterMark = ~~this.highWaterMark;
+
+  this.needDrain = false;
+  // at the start of calling end()
+  this.ending = false;
+  // when end() has been called, and returned
+  this.ended = false;
+  // when 'finish' is emitted
+  this.finished = false;
+
+  // should we decode strings into buffers before passing to _write?
+  // this is here so that some node-core streams can optimize string
+  // handling at a lower level.
+  var noDecode = options.decodeStrings === false;
+  this.decodeStrings = !noDecode;
+
+  // Crypto is kind of old and crusty.  Historically, its default string
+  // encoding is 'binary' so we have to make this configurable.
+  // Everything else in the universe uses 'utf8', though.
+  this.defaultEncoding = options.defaultEncoding || 'utf8';
+
+  // not an actual buffer we keep track of, but a measurement
+  // of how much we're waiting to get pushed to some underlying
+  // socket or file.
+  this.length = 0;
+
+  // a flag to see when we're in the middle of a write.
+  this.writing = false;
+
+  // a flag to be able to tell if the onwrite cb is called immediately,
+  // or on a later tick.  We set this to true at first, becuase any
+  // actions that shouldn't happen until "later" should generally also
+  // not happen before the first write call.
+  this.sync = true;
+
+  // a flag to know if we're processing previously buffered items, which
+  // may call the _write() callback in the same tick, so that we don't
+  // end up in an overlapped onwrite situation.
+  this.bufferProcessing = false;
+
+  // the callback that's passed to _write(chunk,cb)
+  this.onwrite = function(er) {
+    onwrite(stream, er);
+  };
+
+  // the callback that the user supplies to write(chunk,encoding,cb)
+  this.writecb = null;
+
+  // the amount that is being written when _write is called.
+  this.writelen = 0;
+
+  this.buffer = [];
+
+  // True if the error was already emitted and should not be thrown again
+  this.errorEmitted = false;
+}
+
+function Writable(options) {
+  var Duplex = require('./_stream_duplex');
+
+  // Writable ctor is applied to Duplexes, though they're not
+  // instanceof Writable, they're instanceof Readable.
+  if (!(this instanceof Writable) && !(this instanceof Duplex))
+    return new Writable(options);
+
+  this._writableState = new WritableState(options, this);
+
+  // legacy.
+  this.writable = true;
+
+  Stream.call(this);
+}
+
+// Otherwise people can pipe Writable streams, which is just wrong.
+Writable.prototype.pipe = function() {
+  this.emit('error', new Error('Cannot pipe. Not readable.'));
+};
+
+
+function writeAfterEnd(stream, state, cb) {
+  var er = new Error('write after end');
+  // TODO: defer error events consistently everywhere, not just the cb
+  stream.emit('error', er);
+  process.nextTick(function() {
+    cb(er);
+  });
+}
+
+// If we get something that is not a buffer, string, null, or undefined,
+// and we're not in objectMode, then that's an error.
+// Otherwise stream chunks are all considered to be of length=1, and the
+// watermarks determine how many objects to keep in the buffer, rather than
+// how many bytes or characters.
+function validChunk(stream, state, chunk, cb) {
+  var valid = true;
+  if (!Buffer.isBuffer(chunk) &&
+      'string' !== typeof chunk &&
+      chunk !== null &&
+      chunk !== undefined &&
+      !state.objectMode) {
+    var er = new TypeError('Invalid non-string/buffer chunk');
+    stream.emit('error', er);
+    process.nextTick(function() {
+      cb(er);
+    });
+    valid = false;
+  }
+  return valid;
+}
+
+Writable.prototype.write = function(chunk, encoding, cb) {
+  var state = this._writableState;
+  var ret = false;
+
+  if (typeof encoding === 'function') {
+    cb = encoding;
+    encoding = null;
+  }
+
+  if (Buffer.isBuffer(chunk))
+    encoding = 'buffer';
+  else if (!encoding)
+    encoding = state.defaultEncoding;
+
+  if (typeof cb !== 'function')
+    cb = function() {};
+
+  if (state.ended)
+    writeAfterEnd(this, state, cb);
+  else if (validChunk(this, state, chunk, cb))
+    ret = writeOrBuffer(this, state, chunk, encoding, cb);
+
+  return ret;
+};
+
+function decodeChunk(state, chunk, encoding) {
+  if (!state.objectMode &&
+      state.decodeStrings !== false &&
+      typeof chunk === 'string') {
+    chunk = new Buffer(chunk, encoding);
+  }
+  return chunk;
+}
+
+// if we're already writing something, then just put this
+// in the queue, and wait our turn.  Otherwise, call _write
+// If we return false, then we need a drain event, so set that flag.
+function writeOrBuffer(stream, state, chunk, encoding, cb) {
+  chunk = decodeChunk(state, chunk, encoding);
+  if (Buffer.isBuffer(chunk))
+    encoding = 'buffer';
+  var len = state.objectMode ? 1 : chunk.length;
+
+  state.length += len;
+
+  var ret = state.length < state.highWaterMark;
+  // we must ensure that previous needDrain will not be reset to false.
+  if (!ret)
+    state.needDrain = true;
+
+  if (state.writing)
+    state.buffer.push(new WriteReq(chunk, encoding, cb));
+  else
+    doWrite(stream, state, len, chunk, encoding, cb);
+
+  return ret;
+}
+
+function doWrite(stream, state, len, chunk, encoding, cb) {
+  state.writelen = len;
+  state.writecb = cb;
+  state.writing = true;
+  state.sync = true;
+  stream._write(chunk, encoding, state.onwrite);
+  state.sync = false;
+}
+
+function onwriteError(stream, state, sync, er, cb) {
+  if (sync)
+    process.nextTick(function() {
+      cb(er);
+    });
+  else
+    cb(er);
+
+  stream._writableState.errorEmitted = true;
+  stream.emit('error', er);
+}
+
+function onwriteStateUpdate(state) {
+  state.writing = false;
+  state.writecb = null;
+  state.length -= state.writelen;
+  state.writelen = 0;
+}
+
+function onwrite(stream, er) {
+  var state = stream._writableState;
+  var sync = state.sync;
+  var cb = state.writecb;
+
+  onwriteStateUpdate(state);
+
+  if (er)
+    onwriteError(stream, state, sync, er, cb);
+  else {
+    // Check if we're actually ready to finish, but don't emit yet
+    var finished = needFinish(stream, state);
+
+    if (!finished && !state.bufferProcessing && state.buffer.length)
+      clearBuffer(stream, state);
+
+    if (sync) {
+      process.nextTick(function() {
+        afterWrite(stream, state, finished, cb);
+      });
+    } else {
+      afterWrite(stream, state, finished, cb);
+    }
+  }
+}
+
+function afterWrite(stream, state, finished, cb) {
+  if (!finished)
+    onwriteDrain(stream, state);
+  cb();
+  if (finished)
+    finishMaybe(stream, state);
+}
+
+// Must force callback to be called on nextTick, so that we don't
+// emit 'drain' before the write() consumer gets the 'false' return
+// value, and has a chance to attach a 'drain' listener.
+function onwriteDrain(stream, state) {
+  if (state.length === 0 && state.needDrain) {
+    state.needDrain = false;
+    stream.emit('drain');
+  }
+}
+
+
+// if there's something in the buffer waiting, then process it
+function clearBuffer(stream, state) {
+  state.bufferProcessing = true;
+
+  for (var c = 0; c < state.buffer.length; c++) {
+    var entry = state.buffer[c];
+    var chunk = entry.chunk;
+    var encoding = entry.encoding;
+    var cb = entry.callback;
+    var len = state.objectMode ? 1 : chunk.length;
+
+    doWrite(stream, state, len, chunk, encoding, cb);
+
+    // if we didn't call the onwrite immediately, then
+    // it means that we need to wait until it does.
+    // also, that means that the chunk and cb are currently
+    // being processed, so move the buffer counter past them.
+    if (state.writing) {
+      c++;
+      break;
+    }
+  }
+
+  state.bufferProcessing = false;
+  if (c < state.buffer.length)
+    state.buffer = state.buffer.slice(c);
+  else
+    state.buffer.length = 0;
+}
+
+Writable.prototype._write = function(chunk, encoding, cb) {
+  cb(new Error('not implemented'));
+};
+
+Writable.prototype.end = function(chunk, encoding, cb) {
+  var state = this._writableState;
+
+  if (typeof chunk === 'function') {
+    cb = chunk;
+    chunk = null;
+    encoding = null;
+  } else if (typeof encoding === 'function') {
+    cb = encoding;
+    encoding = null;
+  }
+
+  if (typeof chunk !== 'undefined' && chunk !== null)
+    this.write(chunk, encoding);
+
+  // ignore unnecessary end() calls.
+  if (!state.ending && !state.finished)
+    endWritable(this, state, cb);
+};
+
+
+function needFinish(stream, state) {
+  return (state.ending &&
+          state.length === 0 &&
+          !state.finished &&
+          !state.writing);
+}
+
+function finishMaybe(stream, state) {
+  var need = needFinish(stream, state);
+  if (need) {
+    state.finished = true;
+    stream.emit('finish');
+  }
+  return need;
+}
+
+function endWritable(stream, state, cb) {
+  state.ending = true;
+  finishMaybe(stream, state);
+  if (cb) {
+    if (state.finished)
+      process.nextTick(cb);
+    else
+      stream.once('finish', cb);
+  }
+  state.ended = true;
+}
+
+}).call(this,require('_process'))
+},{"./_stream_duplex":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
+(function (Buffer){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+function isBuffer(arg) {
+  return Buffer.isBuffer(arg);
+}
+exports.isBuffer = isBuffer;
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+}).call(this,require("buffer").Buffer)
+},{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/passthrough.js":[function(require,module,exports){
+module.exports = require("./lib/_stream_passthrough.js")
+
+},{"./lib/_stream_passthrough.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_passthrough.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/readable.js":[function(require,module,exports){
+var Stream = require('stream'); // hack to fix a circular dependency issue when used with browserify
+exports = module.exports = require('./lib/_stream_readable.js');
+exports.Stream = Stream;
+exports.Readable = exports;
+exports.Writable = require('./lib/_stream_writable.js');
+exports.Duplex = require('./lib/_stream_duplex.js');
+exports.Transform = require('./lib/_stream_transform.js');
+exports.PassThrough = require('./lib/_stream_passthrough.js');
+
+},{"./lib/_stream_duplex.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","./lib/_stream_passthrough.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_passthrough.js","./lib/_stream_readable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js","./lib/_stream_transform.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js","./lib/_stream_writable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/transform.js":[function(require,module,exports){
+module.exports = require("./lib/_stream_transform.js")
+
+},{"./lib/_stream_transform.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/writable.js":[function(require,module,exports){
+module.exports = require("./lib/_stream_writable.js")
+
+},{"./lib/_stream_writable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+module.exports = Stream;
+
+var EE = require('events').EventEmitter;
+var inherits = require('inherits');
+
+inherits(Stream, EE);
+Stream.Readable = require('readable-stream/readable.js');
+Stream.Writable = require('readable-stream/writable.js');
+Stream.Duplex = require('readable-stream/duplex.js');
+Stream.Transform = require('readable-stream/transform.js');
+Stream.PassThrough = require('readable-stream/passthrough.js');
+
+// Backwards-compat with node 0.4.x
+Stream.Stream = Stream;
+
+
+
+// old-style streams.  Note that the pipe method (the only relevant
+// part of this class) is overridden in the Readable class.
+
+function Stream() {
+  EE.call(this);
+}
+
+Stream.prototype.pipe = function(dest, options) {
+  var source = this;
+
+  function ondata(chunk) {
+    if (dest.writable) {
+      if (false === dest.write(chunk) && source.pause) {
+        source.pause();
+      }
+    }
+  }
+
+  source.on('data', ondata);
+
+  function ondrain() {
+    if (source.readable && source.resume) {
+      source.resume();
+    }
+  }
+
+  dest.on('drain', ondrain);
+
+  // If the 'end' option is not supplied, dest.end() will be called when
+  // source gets the 'end' or 'close' events.  Only dest.end() once.
+  if (!dest._isStdio && (!options || options.end !== false)) {
+    source.on('end', onend);
+    source.on('close', onclose);
+  }
+
+  var didOnEnd = false;
+  function onend() {
+    if (didOnEnd) return;
+    didOnEnd = true;
+
+    dest.end();
+  }
+
+
+  function onclose() {
+    if (didOnEnd) return;
+    didOnEnd = true;
+
+    if (typeof dest.destroy === 'function') dest.destroy();
+  }
+
+  // don't leave dangling pipes when there are errors.
+  function onerror(er) {
+    cleanup();
+    if (EE.listenerCount(this, 'error') === 0) {
+      throw er; // Unhandled stream error in pipe.
+    }
+  }
+
+  source.on('error', onerror);
+  dest.on('error', onerror);
+
+  // remove all the event listeners that were added.
+  function cleanup() {
+    source.removeListener('data', ondata);
+    dest.removeListener('drain', ondrain);
+
+    source.removeListener('end', onend);
+    source.removeListener('close', onclose);
+
+    source.removeListener('error', onerror);
+    dest.removeListener('error', onerror);
+
+    source.removeListener('end', cleanup);
+    source.removeListener('close', cleanup);
+
+    dest.removeListener('close', cleanup);
+  }
+
+  source.on('end', cleanup);
+  source.on('close', cleanup);
+
+  dest.on('close', cleanup);
+
+  dest.emit('pipe', source);
+
+  // Allow for unix-like usage: A.pipe(B).pipe(C)
+  return dest;
+};
+
+},{"events":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js","readable-stream/duplex.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/duplex.js","readable-stream/passthrough.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/passthrough.js","readable-stream/readable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/readable.js","readable-stream/transform.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/transform.js","readable-stream/writable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/writable.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var Buffer = require('buffer').Buffer;
+
+var isBufferEncoding = Buffer.isEncoding
+  || function(encoding) {
+       switch (encoding && encoding.toLowerCase()) {
+         case 'hex': case 'utf8': case 'utf-8': case 'ascii': case 'binary': case 'base64': case 'ucs2': case 'ucs-2': case 'utf16le': case 'utf-16le': case 'raw': return true;
+         default: return false;
+       }
+     }
+
+
+function assertEncoding(encoding) {
+  if (encoding && !isBufferEncoding(encoding)) {
+    throw new Error('Unknown encoding: ' + encoding);
+  }
+}
+
+// StringDecoder provides an interface for efficiently splitting a series of
+// buffers into a series of JS strings without breaking apart multi-byte
+// characters. CESU-8 is handled as part of the UTF-8 encoding.
+//
+// @TODO Handling all encodings inside a single object makes it very difficult
+// to reason about this code, so it should be split up in the future.
+// @TODO There should be a utf8-strict encoding that rejects invalid UTF-8 code
+// points as used by CESU-8.
+var StringDecoder = exports.StringDecoder = function(encoding) {
+  this.encoding = (encoding || 'utf8').toLowerCase().replace(/[-_]/, '');
+  assertEncoding(encoding);
+  switch (this.encoding) {
+    case 'utf8':
+      // CESU-8 represents each of Surrogate Pair by 3-bytes
+      this.surrogateSize = 3;
+      break;
+    case 'ucs2':
+    case 'utf16le':
+      // UTF-16 represents each of Surrogate Pair by 2-bytes
+      this.surrogateSize = 2;
+      this.detectIncompleteChar = utf16DetectIncompleteChar;
+      break;
+    case 'base64':
+      // Base-64 stores 3 bytes in 4 chars, and pads the remainder.
+      this.surrogateSize = 3;
+      this.detectIncompleteChar = base64DetectIncompleteChar;
+      break;
+    default:
+      this.write = passThroughWrite;
+      return;
+  }
+
+  // Enough space to store all bytes of a single character. UTF-8 needs 4
+  // bytes, but CESU-8 may require up to 6 (3 bytes per surrogate).
+  this.charBuffer = new Buffer(6);
+  // Number of bytes received for the current incomplete multi-byte character.
+  this.charReceived = 0;
+  // Number of bytes expected for the current incomplete multi-byte character.
+  this.charLength = 0;
+};
+
+
+// write decodes the given buffer and returns it as JS string that is
+// guaranteed to not contain any partial multi-byte characters. Any partial
+// character found at the end of the buffer is buffered up, and will be
+// returned when calling write again with the remaining bytes.
+//
+// Note: Converting a Buffer containing an orphan surrogate to a String
+// currently works, but converting a String to a Buffer (via `new Buffer`, or
+// Buffer#write) will replace incomplete surrogates with the unicode
+// replacement character. See https://codereview.chromium.org/121173009/ .
+StringDecoder.prototype.write = function(buffer) {
+  var charStr = '';
+  // if our last write ended with an incomplete multibyte character
+  while (this.charLength) {
+    // determine how many remaining bytes this buffer has to offer for this char
+    var available = (buffer.length >= this.charLength - this.charReceived) ?
+        this.charLength - this.charReceived :
+        buffer.length;
+
+    // add the new bytes to the char buffer
+    buffer.copy(this.charBuffer, this.charReceived, 0, available);
+    this.charReceived += available;
+
+    if (this.charReceived < this.charLength) {
+      // still not enough chars in this buffer? wait for more ...
+      return '';
+    }
+
+    // remove bytes belonging to the current character from the buffer
+    buffer = buffer.slice(available, buffer.length);
+
+    // get the character that was split
+    charStr = this.charBuffer.slice(0, this.charLength).toString(this.encoding);
+
+    // CESU-8: lead surrogate (D800-DBFF) is also the incomplete character
+    var charCode = charStr.charCodeAt(charStr.length - 1);
+    if (charCode >= 0xD800 && charCode <= 0xDBFF) {
+      this.charLength += this.surrogateSize;
+      charStr = '';
+      continue;
+    }
+    this.charReceived = this.charLength = 0;
+
+    // if there are no more bytes in this buffer, just emit our char
+    if (buffer.length === 0) {
+      return charStr;
+    }
+    break;
+  }
+
+  // determine and set charLength / charReceived
+  this.detectIncompleteChar(buffer);
+
+  var end = buffer.length;
+  if (this.charLength) {
+    // buffer the incomplete character bytes we got
+    buffer.copy(this.charBuffer, 0, buffer.length - this.charReceived, end);
+    end -= this.charReceived;
+  }
+
+  charStr += buffer.toString(this.encoding, 0, end);
+
+  var end = charStr.length - 1;
+  var charCode = charStr.charCodeAt(end);
+  // CESU-8: lead surrogate (D800-DBFF) is also the incomplete character
+  if (charCode >= 0xD800 && charCode <= 0xDBFF) {
+    var size = this.surrogateSize;
+    this.charLength += size;
+    this.charReceived += size;
+    this.charBuffer.copy(this.charBuffer, size, 0, size);
+    buffer.copy(this.charBuffer, 0, 0, size);
+    return charStr.substring(0, end);
+  }
+
+  // or just emit the charStr
+  return charStr;
+};
+
+// detectIncompleteChar determines if there is an incomplete UTF-8 character at
+// the end of the given buffer. If so, it sets this.charLength to the byte
+// length that character, and sets this.charReceived to the number of bytes
+// that are available for this character.
+StringDecoder.prototype.detectIncompleteChar = function(buffer) {
+  // determine how many bytes we have to check at the end of this buffer
+  var i = (buffer.length >= 3) ? 3 : buffer.length;
+
+  // Figure out if one of the last i bytes of our buffer announces an
+  // incomplete char.
+  for (; i > 0; i--) {
+    var c = buffer[buffer.length - i];
+
+    // See http://en.wikipedia.org/wiki/UTF-8#Description
+
+    // 110XXXXX
+    if (i == 1 && c >> 5 == 0x06) {
+      this.charLength = 2;
+      break;
+    }
+
+    // 1110XXXX
+    if (i <= 2 && c >> 4 == 0x0E) {
+      this.charLength = 3;
+      break;
+    }
+
+    // 11110XXX
+    if (i <= 3 && c >> 3 == 0x1E) {
+      this.charLength = 4;
+      break;
+    }
+  }
+  this.charReceived = i;
+};
+
+StringDecoder.prototype.end = function(buffer) {
+  var res = '';
+  if (buffer && buffer.length)
+    res = this.write(buffer);
+
+  if (this.charReceived) {
+    var cr = this.charReceived;
+    var buf = this.charBuffer;
+    var enc = this.encoding;
+    res += buf.slice(0, cr).toString(enc);
+  }
+
+  return res;
+};
+
+function passThroughWrite(buffer) {
+  return buffer.toString(this.encoding);
+}
+
+function utf16DetectIncompleteChar(buffer) {
+  this.charReceived = buffer.length % 2;
+  this.charLength = this.charReceived ? 2 : 0;
+}
+
+function base64DetectIncompleteChar(buffer) {
+  this.charReceived = buffer.length % 3;
+  this.charLength = this.charReceived ? 3 : 0;
+}
+
+},{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js":[function(require,module,exports){
+(function (Buffer){
+// wrapper for non-node envs
+;(function (sax) {
+
+sax.parser = function (strict, opt) { return new SAXParser(strict, opt) }
+sax.SAXParser = SAXParser
+sax.SAXStream = SAXStream
+sax.createStream = createStream
+
+// When we pass the MAX_BUFFER_LENGTH position, start checking for buffer overruns.
+// When we check, schedule the next check for MAX_BUFFER_LENGTH - (max(buffer lengths)),
+// since that's the earliest that a buffer overrun could occur.  This way, checks are
+// as rare as required, but as often as necessary to ensure never crossing this bound.
+// Furthermore, buffers are only tested at most once per write(), so passing a very
+// large string into write() might have undesirable effects, but this is manageable by
+// the caller, so it is assumed to be safe.  Thus, a call to write() may, in the extreme
+// edge case, result in creating at most one complete copy of the string passed in.
+// Set to Infinity to have unlimited buffers.
+sax.MAX_BUFFER_LENGTH = 64 * 1024
+
+var buffers = [
+  "comment", "sgmlDecl", "textNode", "tagName", "doctype",
+  "procInstName", "procInstBody", "entity", "attribName",
+  "attribValue", "cdata", "script"
+]
+
+sax.EVENTS = // for discoverability.
+  [ "text"
+  , "processinginstruction"
+  , "sgmldeclaration"
+  , "doctype"
+  , "comment"
+  , "attribute"
+  , "opentag"
+  , "closetag"
+  , "opencdata"
+  , "cdata"
+  , "closecdata"
+  , "error"
+  , "end"
+  , "ready"
+  , "script"
+  , "opennamespace"
+  , "closenamespace"
+  ]
+
+function SAXParser (strict, opt) {
+  if (!(this instanceof SAXParser)) return new SAXParser(strict, opt)
+
+  var parser = this
+  clearBuffers(parser)
+  parser.q = parser.c = ""
+  parser.bufferCheckPosition = sax.MAX_BUFFER_LENGTH
+  parser.opt = opt || {}
+  parser.opt.lowercase = parser.opt.lowercase || parser.opt.lowercasetags
+  parser.looseCase = parser.opt.lowercase ? "toLowerCase" : "toUpperCase"
+  parser.tags = []
+  parser.closed = parser.closedRoot = parser.sawRoot = false
+  parser.tag = parser.error = null
+  parser.strict = !!strict
+  parser.noscript = !!(strict || parser.opt.noscript)
+  parser.state = S.BEGIN
+  parser.ENTITIES = Object.create(sax.ENTITIES)
+  parser.attribList = []
+
+  // namespaces form a prototype chain.
+  // it always points at the current tag,
+  // which protos to its parent tag.
+  if (parser.opt.xmlns) parser.ns = Object.create(rootNS)
+
+  // mostly just for error reporting
+  parser.trackPosition = parser.opt.position !== false
+  if (parser.trackPosition) {
+    parser.position = parser.line = parser.column = 0
+  }
+  emit(parser, "onready")
+}
+
+if (!Object.create) Object.create = function (o) {
+  function f () { this.__proto__ = o }
+  f.prototype = o
+  return new f
+}
+
+if (!Object.getPrototypeOf) Object.getPrototypeOf = function (o) {
+  return o.__proto__
+}
+
+if (!Object.keys) Object.keys = function (o) {
+  var a = []
+  for (var i in o) if (o.hasOwnProperty(i)) a.push(i)
+  return a
+}
+
+function checkBufferLength (parser) {
+  var maxAllowed = Math.max(sax.MAX_BUFFER_LENGTH, 10)
+    , maxActual = 0
+  for (var i = 0, l = buffers.length; i < l; i ++) {
+    var len = parser[buffers[i]].length
+    if (len > maxAllowed) {
+      // Text/cdata nodes can get big, and since they're buffered,
+      // we can get here under normal conditions.
+      // Avoid issues by emitting the text node now,
+      // so at least it won't get any bigger.
+      switch (buffers[i]) {
+        case "textNode":
+          closeText(parser)
+        break
+
+        case "cdata":
+          emitNode(parser, "oncdata", parser.cdata)
+          parser.cdata = ""
+        break
+
+        case "script":
+          emitNode(parser, "onscript", parser.script)
+          parser.script = ""
+        break
+
+        default:
+          error(parser, "Max buffer length exceeded: "+buffers[i])
+      }
+    }
+    maxActual = Math.max(maxActual, len)
+  }
+  // schedule the next check for the earliest possible buffer overrun.
+  parser.bufferCheckPosition = (sax.MAX_BUFFER_LENGTH - maxActual)
+                             + parser.position
+}
+
+function clearBuffers (parser) {
+  for (var i = 0, l = buffers.length; i < l; i ++) {
+    parser[buffers[i]] = ""
+  }
+}
+
+function flushBuffers (parser) {
+  closeText(parser)
+  if (parser.cdata !== "") {
+    emitNode(parser, "oncdata", parser.cdata)
+    parser.cdata = ""
+  }
+  if (parser.script !== "") {
+    emitNode(parser, "onscript", parser.script)
+    parser.script = ""
+  }
+}
+
+SAXParser.prototype =
+  { end: function () { end(this) }
+  , write: write
+  , resume: function () { this.error = null; return this }
+  , close: function () { return this.write(null) }
+  , flush: function () { flushBuffers(this) }
+  }
+
+try {
+  var Stream = require("stream").Stream
+} catch (ex) {
+  var Stream = function () {}
+}
+
+
+var streamWraps = sax.EVENTS.filter(function (ev) {
+  return ev !== "error" && ev !== "end"
+})
+
+function createStream (strict, opt) {
+  return new SAXStream(strict, opt)
+}
+
+function SAXStream (strict, opt) {
+  if (!(this instanceof SAXStream)) return new SAXStream(strict, opt)
+
+  Stream.apply(this)
+
+  this._parser = new SAXParser(strict, opt)
+  this.writable = true
+  this.readable = true
+
+
+  var me = this
+
+  this._parser.onend = function () {
+    me.emit("end")
+  }
+
+  this._parser.onerror = function (er) {
+    me.emit("error", er)
+
+    // if didn't throw, then means error was handled.
+    // go ahead and clear error, so we can write again.
+    me._parser.error = null
+  }
+
+  this._decoder = null;
+
+  streamWraps.forEach(function (ev) {
+    Object.defineProperty(me, "on" + ev, {
+      get: function () { return me._parser["on" + ev] },
+      set: function (h) {
+        if (!h) {
+          me.removeAllListeners(ev)
+          return me._parser["on"+ev] = h
+        }
+        me.on(ev, h)
+      },
+      enumerable: true,
+      configurable: false
+    })
+  })
+}
+
+SAXStream.prototype = Object.create(Stream.prototype,
+  { constructor: { value: SAXStream } })
+
+SAXStream.prototype.write = function (data) {
+  if (typeof Buffer === 'function' &&
+      typeof Buffer.isBuffer === 'function' &&
+      Buffer.isBuffer(data)) {
+    if (!this._decoder) {
+      var SD = require('string_decoder').StringDecoder
+      this._decoder = new SD('utf8')
+    }
+    data = this._decoder.write(data);
+  }
+
+  this._parser.write(data.toString())
+  this.emit("data", data)
+  return true
+}
+
+SAXStream.prototype.end = function (chunk) {
+  if (chunk && chunk.length) this.write(chunk)
+  this._parser.end()
+  return true
+}
+
+SAXStream.prototype.on = function (ev, handler) {
+  var me = this
+  if (!me._parser["on"+ev] && streamWraps.indexOf(ev) !== -1) {
+    me._parser["on"+ev] = function () {
+      var args = arguments.length === 1 ? [arguments[0]]
+               : Array.apply(null, arguments)
+      args.splice(0, 0, ev)
+      me.emit.apply(me, args)
+    }
+  }
+
+  return Stream.prototype.on.call(me, ev, handler)
+}
+
+
+
+// character classes and tokens
+var whitespace = "\r\n\t "
+  // this really needs to be replaced with character classes.
+  // XML allows all manner of ridiculous numbers and digits.
+  , number = "0124356789"
+  , letter = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  // (Letter | "_" | ":")
+  , quote = "'\""
+  , entity = number+letter+"#"
+  , attribEnd = whitespace + ">"
+  , CDATA = "[CDATA["
+  , DOCTYPE = "DOCTYPE"
+  , XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
+  , XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/"
+  , rootNS = { xml: XML_NAMESPACE, xmlns: XMLNS_NAMESPACE }
+
+// turn all the string character sets into character class objects.
+whitespace = charClass(whitespace)
+number = charClass(number)
+letter = charClass(letter)
+
+// http://www.w3.org/TR/REC-xml/#NT-NameStartChar
+// This implementation works on strings, a single character at a time
+// as such, it cannot ever support astral-plane characters (10000-EFFFF)
+// without a significant breaking change to either this  parser, or the
+// JavaScript language.  Implementation of an emoji-capable xml parser
+// is left as an exercise for the reader.
+var nameStart = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/
+
+var nameBody = /[:_A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u00B7\u0300-\u036F\u203F-\u2040\.\d-]/
+
+quote = charClass(quote)
+entity = charClass(entity)
+attribEnd = charClass(attribEnd)
+
+function charClass (str) {
+  return str.split("").reduce(function (s, c) {
+    s[c] = true
+    return s
+  }, {})
+}
+
+function isRegExp (c) {
+  return Object.prototype.toString.call(c) === '[object RegExp]'
+}
+
+function is (charclass, c) {
+  return isRegExp(charclass) ? !!c.match(charclass) : charclass[c]
+}
+
+function not (charclass, c) {
+  return !is(charclass, c)
+}
+
+var S = 0
+sax.STATE =
+{ BEGIN                     : S++
+, TEXT                      : S++ // general stuff
+, TEXT_ENTITY               : S++ // &amp and such.
+, OPEN_WAKA                 : S++ // <
+, SGML_DECL                 : S++ // <!BLARG
+, SGML_DECL_QUOTED          : S++ // <!BLARG foo "bar
+, DOCTYPE                   : S++ // <!DOCTYPE
+, DOCTYPE_QUOTED            : S++ // <!DOCTYPE "//blah
+, DOCTYPE_DTD               : S++ // <!DOCTYPE "//blah" [ ...
+, DOCTYPE_DTD_QUOTED        : S++ // <!DOCTYPE "//blah" [ "foo
+, COMMENT_STARTING          : S++ // <!-
+, COMMENT                   : S++ // <!--
+, COMMENT_ENDING            : S++ // <!-- blah -
+, COMMENT_ENDED             : S++ // <!-- blah --
+, CDATA                     : S++ // <![CDATA[ something
+, CDATA_ENDING              : S++ // ]
+, CDATA_ENDING_2            : S++ // ]]
+, PROC_INST                 : S++ // <?hi
+, PROC_INST_BODY            : S++ // <?hi there
+, PROC_INST_ENDING          : S++ // <?hi "there" ?
+, OPEN_TAG                  : S++ // <strong
+, OPEN_TAG_SLASH            : S++ // <strong /
+, ATTRIB                    : S++ // <a
+, ATTRIB_NAME               : S++ // <a foo
+, ATTRIB_NAME_SAW_WHITE     : S++ // <a foo _
+, ATTRIB_VALUE              : S++ // <a foo=
+, ATTRIB_VALUE_QUOTED       : S++ // <a foo="bar
+, ATTRIB_VALUE_CLOSED       : S++ // <a foo="bar"
+, ATTRIB_VALUE_UNQUOTED     : S++ // <a foo=bar
+, ATTRIB_VALUE_ENTITY_Q     : S++ // <foo bar="&quot;"
+, ATTRIB_VALUE_ENTITY_U     : S++ // <foo bar=&quot;
+, CLOSE_TAG                 : S++ // </a
+, CLOSE_TAG_SAW_WHITE       : S++ // </a   >
+, SCRIPT                    : S++ // <script> ...
+, SCRIPT_ENDING             : S++ // <script> ... <
+}
+
+sax.ENTITIES =
+{ "amp" : "&"
+, "gt" : ">"
+, "lt" : "<"
+, "quot" : "\""
+, "apos" : "'"
+, "AElig" : 198
+, "Aacute" : 193
+, "Acirc" : 194
+, "Agrave" : 192
+, "Aring" : 197
+, "Atilde" : 195
+, "Auml" : 196
+, "Ccedil" : 199
+, "ETH" : 208
+, "Eacute" : 201
+, "Ecirc" : 202
+, "Egrave" : 200
+, "Euml" : 203
+, "Iacute" : 205
+, "Icirc" : 206
+, "Igrave" : 204
+, "Iuml" : 207
+, "Ntilde" : 209
+, "Oacute" : 211
+, "Ocirc" : 212
+, "Ograve" : 210
+, "Oslash" : 216
+, "Otilde" : 213
+, "Ouml" : 214
+, "THORN" : 222
+, "Uacute" : 218
+, "Ucirc" : 219
+, "Ugrave" : 217
+, "Uuml" : 220
+, "Yacute" : 221
+, "aacute" : 225
+, "acirc" : 226
+, "aelig" : 230
+, "agrave" : 224
+, "aring" : 229
+, "atilde" : 227
+, "auml" : 228
+, "ccedil" : 231
+, "eacute" : 233
+, "ecirc" : 234
+, "egrave" : 232
+, "eth" : 240
+, "euml" : 235
+, "iacute" : 237
+, "icirc" : 238
+, "igrave" : 236
+, "iuml" : 239
+, "ntilde" : 241
+, "oacute" : 243
+, "ocirc" : 244
+, "ograve" : 242
+, "oslash" : 248
+, "otilde" : 245
+, "ouml" : 246
+, "szlig" : 223
+, "thorn" : 254
+, "uacute" : 250
+, "ucirc" : 251
+, "ugrave" : 249
+, "uuml" : 252
+, "yacute" : 253
+, "yuml" : 255
+, "copy" : 169
+, "reg" : 174
+, "nbsp" : 160
+, "iexcl" : 161
+, "cent" : 162
+, "pound" : 163
+, "curren" : 164
+, "yen" : 165
+, "brvbar" : 166
+, "sect" : 167
+, "uml" : 168
+, "ordf" : 170
+, "laquo" : 171
+, "not" : 172
+, "shy" : 173
+, "macr" : 175
+, "deg" : 176
+, "plusmn" : 177
+, "sup1" : 185
+, "sup2" : 178
+, "sup3" : 179
+, "acute" : 180
+, "micro" : 181
+, "para" : 182
+, "middot" : 183
+, "cedil" : 184
+, "ordm" : 186
+, "raquo" : 187
+, "frac14" : 188
+, "frac12" : 189
+, "frac34" : 190
+, "iquest" : 191
+, "times" : 215
+, "divide" : 247
+, "OElig" : 338
+, "oelig" : 339
+, "Scaron" : 352
+, "scaron" : 353
+, "Yuml" : 376
+, "fnof" : 402
+, "circ" : 710
+, "tilde" : 732
+, "Alpha" : 913
+, "Beta" : 914
+, "Gamma" : 915
+, "Delta" : 916
+, "Epsilon" : 917
+, "Zeta" : 918
+, "Eta" : 919
+, "Theta" : 920
+, "Iota" : 921
+, "Kappa" : 922
+, "Lambda" : 923
+, "Mu" : 924
+, "Nu" : 925
+, "Xi" : 926
+, "Omicron" : 927
+, "Pi" : 928
+, "Rho" : 929
+, "Sigma" : 931
+, "Tau" : 932
+, "Upsilon" : 933
+, "Phi" : 934
+, "Chi" : 935
+, "Psi" : 936
+, "Omega" : 937
+, "alpha" : 945
+, "beta" : 946
+, "gamma" : 947
+, "delta" : 948
+, "epsilon" : 949
+, "zeta" : 950
+, "eta" : 951
+, "theta" : 952
+, "iota" : 953
+, "kappa" : 954
+, "lambda" : 955
+, "mu" : 956
+, "nu" : 957
+, "xi" : 958
+, "omicron" : 959
+, "pi" : 960
+, "rho" : 961
+, "sigmaf" : 962
+, "sigma" : 963
+, "tau" : 964
+, "upsilon" : 965
+, "phi" : 966
+, "chi" : 967
+, "psi" : 968
+, "omega" : 969
+, "thetasym" : 977
+, "upsih" : 978
+, "piv" : 982
+, "ensp" : 8194
+, "emsp" : 8195
+, "thinsp" : 8201
+, "zwnj" : 8204
+, "zwj" : 8205
+, "lrm" : 8206
+, "rlm" : 8207
+, "ndash" : 8211
+, "mdash" : 8212
+, "lsquo" : 8216
+, "rsquo" : 8217
+, "sbquo" : 8218
+, "ldquo" : 8220
+, "rdquo" : 8221
+, "bdquo" : 8222
+, "dagger" : 8224
+, "Dagger" : 8225
+, "bull" : 8226
+, "hellip" : 8230
+, "permil" : 8240
+, "prime" : 8242
+, "Prime" : 8243
+, "lsaquo" : 8249
+, "rsaquo" : 8250
+, "oline" : 8254
+, "frasl" : 8260
+, "euro" : 8364
+, "image" : 8465
+, "weierp" : 8472
+, "real" : 8476
+, "trade" : 8482
+, "alefsym" : 8501
+, "larr" : 8592
+, "uarr" : 8593
+, "rarr" : 8594
+, "darr" : 8595
+, "harr" : 8596
+, "crarr" : 8629
+, "lArr" : 8656
+, "uArr" : 8657
+, "rArr" : 8658
+, "dArr" : 8659
+, "hArr" : 8660
+, "forall" : 8704
+, "part" : 8706
+, "exist" : 8707
+, "empty" : 8709
+, "nabla" : 8711
+, "isin" : 8712
+, "notin" : 8713
+, "ni" : 8715
+, "prod" : 8719
+, "sum" : 8721
+, "minus" : 8722
+, "lowast" : 8727
+, "radic" : 8730
+, "prop" : 8733
+, "infin" : 8734
+, "ang" : 8736
+, "and" : 8743
+, "or" : 8744
+, "cap" : 8745
+, "cup" : 8746
+, "int" : 8747
+, "there4" : 8756
+, "sim" : 8764
+, "cong" : 8773
+, "asymp" : 8776
+, "ne" : 8800
+, "equiv" : 8801
+, "le" : 8804
+, "ge" : 8805
+, "sub" : 8834
+, "sup" : 8835
+, "nsub" : 8836
+, "sube" : 8838
+, "supe" : 8839
+, "oplus" : 8853
+, "otimes" : 8855
+, "perp" : 8869
+, "sdot" : 8901
+, "lceil" : 8968
+, "rceil" : 8969
+, "lfloor" : 8970
+, "rfloor" : 8971
+, "lang" : 9001
+, "rang" : 9002
+, "loz" : 9674
+, "spades" : 9824
+, "clubs" : 9827
+, "hearts" : 9829
+, "diams" : 9830
+}
+
+Object.keys(sax.ENTITIES).forEach(function (key) {
+    var e = sax.ENTITIES[key]
+    var s = typeof e === 'number' ? String.fromCharCode(e) : e
+    sax.ENTITIES[key] = s
+})
+
+for (var S in sax.STATE) sax.STATE[sax.STATE[S]] = S
+
+// shorthand
+S = sax.STATE
+
+function emit (parser, event, data) {
+  parser[event] && parser[event](data)
+}
+
+function emitNode (parser, nodeType, data) {
+  if (parser.textNode) closeText(parser)
+  emit(parser, nodeType, data)
+}
+
+function closeText (parser) {
+  parser.textNode = textopts(parser.opt, parser.textNode)
+  if (parser.textNode) emit(parser, "ontext", parser.textNode)
+  parser.textNode = ""
+}
+
+function textopts (opt, text) {
+  if (opt.trim) text = text.trim()
+  if (opt.normalize) text = text.replace(/\s+/g, " ")
+  return text
+}
+
+function error (parser, er) {
+  closeText(parser)
+  if (parser.trackPosition) {
+    er += "\nLine: "+parser.line+
+          "\nColumn: "+parser.column+
+          "\nChar: "+parser.c
+  }
+  er = new Error(er)
+  parser.error = er
+  emit(parser, "onerror", er)
+  return parser
+}
+
+function end (parser) {
+  if (!parser.closedRoot) strictFail(parser, "Unclosed root tag")
+  if ((parser.state !== S.BEGIN) && (parser.state !== S.TEXT)) error(parser, "Unexpected end")
+  closeText(parser)
+  parser.c = ""
+  parser.closed = true
+  emit(parser, "onend")
+  SAXParser.call(parser, parser.strict, parser.opt)
+  return parser
+}
+
+function strictFail (parser, message) {
+  if (typeof parser !== 'object' || !(parser instanceof SAXParser))
+    throw new Error('bad call to strictFail');
+  if (parser.strict) error(parser, message)
+}
+
+function newTag (parser) {
+  if (!parser.strict) parser.tagName = parser.tagName[parser.looseCase]()
+  var parent = parser.tags[parser.tags.length - 1] || parser
+    , tag = parser.tag = { name : parser.tagName, attributes : {} }
+
+  // will be overridden if tag contails an xmlns="foo" or xmlns:foo="bar"
+  if (parser.opt.xmlns) tag.ns = parent.ns
+  parser.attribList.length = 0
+}
+
+function qname (name, attribute) {
+  var i = name.indexOf(":")
+    , qualName = i < 0 ? [ "", name ] : name.split(":")
+    , prefix = qualName[0]
+    , local = qualName[1]
+
+  // <x "xmlns"="http://foo">
+  if (attribute && name === "xmlns") {
+    prefix = "xmlns"
+    local = ""
+  }
+
+  return { prefix: prefix, local: local }
+}
+
+function attrib (parser) {
+  if (!parser.strict) parser.attribName = parser.attribName[parser.looseCase]()
+
+  if (parser.attribList.indexOf(parser.attribName) !== -1 ||
+      parser.tag.attributes.hasOwnProperty(parser.attribName)) {
+    return parser.attribName = parser.attribValue = ""
+  }
+
+  if (parser.opt.xmlns) {
+    var qn = qname(parser.attribName, true)
+      , prefix = qn.prefix
+      , local = qn.local
+
+    if (prefix === "xmlns") {
+      // namespace binding attribute; push the binding into scope
+      if (local === "xml" && parser.attribValue !== XML_NAMESPACE) {
+        strictFail( parser
+                  , "xml: prefix must be bound to " + XML_NAMESPACE + "\n"
+                  + "Actual: " + parser.attribValue )
+      } else if (local === "xmlns" && parser.attribValue !== XMLNS_NAMESPACE) {
+        strictFail( parser
+                  , "xmlns: prefix must be bound to " + XMLNS_NAMESPACE + "\n"
+                  + "Actual: " + parser.attribValue )
+      } else {
+        var tag = parser.tag
+          , parent = parser.tags[parser.tags.length - 1] || parser
+        if (tag.ns === parent.ns) {
+          tag.ns = Object.create(parent.ns)
+        }
+        tag.ns[local] = parser.attribValue
+      }
+    }
+
+    // defer onattribute events until all attributes have been seen
+    // so any new bindings can take effect; preserve attribute order
+    // so deferred events can be emitted in document order
+    parser.attribList.push([parser.attribName, parser.attribValue])
+  } else {
+    // in non-xmlns mode, we can emit the event right away
+    parser.tag.attributes[parser.attribName] = parser.attribValue
+    emitNode( parser
+            , "onattribute"
+            , { name: parser.attribName
+              , value: parser.attribValue } )
+  }
+
+  parser.attribName = parser.attribValue = ""
+}
+
+function openTag (parser, selfClosing) {
+  if (parser.opt.xmlns) {
+    // emit namespace binding events
+    var tag = parser.tag
+
+    // add namespace info to tag
+    var qn = qname(parser.tagName)
+    tag.prefix = qn.prefix
+    tag.local = qn.local
+    tag.uri = tag.ns[qn.prefix] || ""
+
+    if (tag.prefix && !tag.uri) {
+      strictFail(parser, "Unbound namespace prefix: "
+                       + JSON.stringify(parser.tagName))
+      tag.uri = qn.prefix
+    }
+
+    var parent = parser.tags[parser.tags.length - 1] || parser
+    if (tag.ns && parent.ns !== tag.ns) {
+      Object.keys(tag.ns).forEach(function (p) {
+        emitNode( parser
+                , "onopennamespace"
+                , { prefix: p , uri: tag.ns[p] } )
+      })
+    }
+
+    // handle deferred onattribute events
+    // Note: do not apply default ns to attributes:
+    //   http://www.w3.org/TR/REC-xml-names/#defaulting
+    for (var i = 0, l = parser.attribList.length; i < l; i ++) {
+      var nv = parser.attribList[i]
+      var name = nv[0]
+        , value = nv[1]
+        , qualName = qname(name, true)
+        , prefix = qualName.prefix
+        , local = qualName.local
+        , uri = prefix == "" ? "" : (tag.ns[prefix] || "")
+        , a = { name: name
+              , value: value
+              , prefix: prefix
+              , local: local
+              , uri: uri
+              }
+
+      // if there's any attributes with an undefined namespace,
+      // then fail on them now.
+      if (prefix && prefix != "xmlns" && !uri) {
+        strictFail(parser, "Unbound namespace prefix: "
+                         + JSON.stringify(prefix))
+        a.uri = prefix
+      }
+      parser.tag.attributes[name] = a
+      emitNode(parser, "onattribute", a)
+    }
+    parser.attribList.length = 0
+  }
+
+  parser.tag.isSelfClosing = !!selfClosing
+
+  // process the tag
+  parser.sawRoot = true
+  parser.tags.push(parser.tag)
+  emitNode(parser, "onopentag", parser.tag)
+  if (!selfClosing) {
+    // special case for <script> in non-strict mode.
+    if (!parser.noscript && parser.tagName.toLowerCase() === "script") {
+      parser.state = S.SCRIPT
+    } else {
+      parser.state = S.TEXT
+    }
+    parser.tag = null
+    parser.tagName = ""
+  }
+  parser.attribName = parser.attribValue = ""
+  parser.attribList.length = 0
+}
+
+function closeTag (parser) {
+  if (!parser.tagName) {
+    strictFail(parser, "Weird empty close tag.")
+    parser.textNode += "</>"
+    parser.state = S.TEXT
+    return
+  }
+
+  if (parser.script) {
+    if (parser.tagName !== "script") {
+      parser.script += "</" + parser.tagName + ">"
+      parser.tagName = ""
+      parser.state = S.SCRIPT
+      return
+    }
+    emitNode(parser, "onscript", parser.script)
+    parser.script = ""
+  }
+
+  // first make sure that the closing tag actually exists.
+  // <a><b></c></b></a> will close everything, otherwise.
+  var t = parser.tags.length
+  var tagName = parser.tagName
+  if (!parser.strict) tagName = tagName[parser.looseCase]()
+  var closeTo = tagName
+  while (t --) {
+    var close = parser.tags[t]
+    if (close.name !== closeTo) {
+      // fail the first time in strict mode
+      strictFail(parser, "Unexpected close tag")
+    } else break
+  }
+
+  // didn't find it.  we already failed for strict, so just abort.
+  if (t < 0) {
+    strictFail(parser, "Unmatched closing tag: "+parser.tagName)
+    parser.textNode += "</" + parser.tagName + ">"
+    parser.state = S.TEXT
+    return
+  }
+  parser.tagName = tagName
+  var s = parser.tags.length
+  while (s --> t) {
+    var tag = parser.tag = parser.tags.pop()
+    parser.tagName = parser.tag.name
+    emitNode(parser, "onclosetag", parser.tagName)
+
+    var x = {}
+    for (var i in tag.ns) x[i] = tag.ns[i]
+
+    var parent = parser.tags[parser.tags.length - 1] || parser
+    if (parser.opt.xmlns && tag.ns !== parent.ns) {
+      // remove namespace bindings introduced by tag
+      Object.keys(tag.ns).forEach(function (p) {
+        var n = tag.ns[p]
+        emitNode(parser, "onclosenamespace", { prefix: p, uri: n })
+      })
+    }
+  }
+  if (t === 0) parser.closedRoot = true
+  parser.tagName = parser.attribValue = parser.attribName = ""
+  parser.attribList.length = 0
+  parser.state = S.TEXT
+}
+
+function parseEntity (parser) {
+  var entity = parser.entity
+    , entityLC = entity.toLowerCase()
+    , num
+    , numStr = ""
+  if (parser.ENTITIES[entity])
+    return parser.ENTITIES[entity]
+  if (parser.ENTITIES[entityLC])
+    return parser.ENTITIES[entityLC]
+  entity = entityLC
+  if (entity.charAt(0) === "#") {
+    if (entity.charAt(1) === "x") {
+      entity = entity.slice(2)
+      num = parseInt(entity, 16)
+      numStr = num.toString(16)
+    } else {
+      entity = entity.slice(1)
+      num = parseInt(entity, 10)
+      numStr = num.toString(10)
+    }
+  }
+  entity = entity.replace(/^0+/, "")
+  if (numStr.toLowerCase() !== entity) {
+    strictFail(parser, "Invalid character entity")
+    return "&"+parser.entity + ";"
+  }
+
+  return String.fromCodePoint(num)
+}
+
+function write (chunk) {
+  var parser = this
+  if (this.error) throw this.error
+  if (parser.closed) return error(parser,
+    "Cannot write after close. Assign an onready handler.")
+  if (chunk === null) return end(parser)
+  var i = 0, c = ""
+  while (parser.c = c = chunk.charAt(i++)) {
+    if (parser.trackPosition) {
+      parser.position ++
+      if (c === "\n") {
+        parser.line ++
+        parser.column = 0
+      } else parser.column ++
+    }
+    switch (parser.state) {
+
+      case S.BEGIN:
+        if (c === "<") {
+          parser.state = S.OPEN_WAKA
+          parser.startTagPosition = parser.position
+        } else if (not(whitespace,c)) {
+          // have to process this as a text node.
+          // weird, but happens.
+          strictFail(parser, "Non-whitespace before first tag.")
+          parser.textNode = c
+          parser.state = S.TEXT
+        }
+      continue
+
+      case S.TEXT:
+        if (parser.sawRoot && !parser.closedRoot) {
+          var starti = i-1
+          while (c && c!=="<" && c!=="&") {
+            c = chunk.charAt(i++)
+            if (c && parser.trackPosition) {
+              parser.position ++
+              if (c === "\n") {
+                parser.line ++
+                parser.column = 0
+              } else parser.column ++
+            }
+          }
+          parser.textNode += chunk.substring(starti, i-1)
+        }
+        if (c === "<") {
+          parser.state = S.OPEN_WAKA
+          parser.startTagPosition = parser.position
+        } else {
+          if (not(whitespace, c) && (!parser.sawRoot || parser.closedRoot))
+            strictFail(parser, "Text data outside of root node.")
+          if (c === "&") parser.state = S.TEXT_ENTITY
+          else parser.textNode += c
+        }
+      continue
+
+      case S.SCRIPT:
+        // only non-strict
+        if (c === "<") {
+          parser.state = S.SCRIPT_ENDING
+        } else parser.script += c
+      continue
+
+      case S.SCRIPT_ENDING:
+        if (c === "/") {
+          parser.state = S.CLOSE_TAG
+        } else {
+          parser.script += "<" + c
+          parser.state = S.SCRIPT
+        }
+      continue
+
+      case S.OPEN_WAKA:
+        // either a /, ?, !, or text is coming next.
+        if (c === "!") {
+          parser.state = S.SGML_DECL
+          parser.sgmlDecl = ""
+        } else if (is(whitespace, c)) {
+          // wait for it...
+        } else if (is(nameStart,c)) {
+          parser.state = S.OPEN_TAG
+          parser.tagName = c
+        } else if (c === "/") {
+          parser.state = S.CLOSE_TAG
+          parser.tagName = ""
+        } else if (c === "?") {
+          parser.state = S.PROC_INST
+          parser.procInstName = parser.procInstBody = ""
+        } else {
+          strictFail(parser, "Unencoded <")
+          // if there was some whitespace, then add that in.
+          if (parser.startTagPosition + 1 < parser.position) {
+            var pad = parser.position - parser.startTagPosition
+            c = new Array(pad).join(" ") + c
+          }
+          parser.textNode += "<" + c
+          parser.state = S.TEXT
+        }
+      continue
+
+      case S.SGML_DECL:
+        if ((parser.sgmlDecl+c).toUpperCase() === CDATA) {
+          emitNode(parser, "onopencdata")
+          parser.state = S.CDATA
+          parser.sgmlDecl = ""
+          parser.cdata = ""
+        } else if (parser.sgmlDecl+c === "--") {
+          parser.state = S.COMMENT
+          parser.comment = ""
+          parser.sgmlDecl = ""
+        } else if ((parser.sgmlDecl+c).toUpperCase() === DOCTYPE) {
+          parser.state = S.DOCTYPE
+          if (parser.doctype || parser.sawRoot) strictFail(parser,
+            "Inappropriately located doctype declaration")
+          parser.doctype = ""
+          parser.sgmlDecl = ""
+        } else if (c === ">") {
+          emitNode(parser, "onsgmldeclaration", parser.sgmlDecl)
+          parser.sgmlDecl = ""
+          parser.state = S.TEXT
+        } else if (is(quote, c)) {
+          parser.state = S.SGML_DECL_QUOTED
+          parser.sgmlDecl += c
+        } else parser.sgmlDecl += c
+      continue
+
+      case S.SGML_DECL_QUOTED:
+        if (c === parser.q) {
+          parser.state = S.SGML_DECL
+          parser.q = ""
+        }
+        parser.sgmlDecl += c
+      continue
+
+      case S.DOCTYPE:
+        if (c === ">") {
+          parser.state = S.TEXT
+          emitNode(parser, "ondoctype", parser.doctype)
+          parser.doctype = true // just remember that we saw it.
+        } else {
+          parser.doctype += c
+          if (c === "[") parser.state = S.DOCTYPE_DTD
+          else if (is(quote, c)) {
+            parser.state = S.DOCTYPE_QUOTED
+            parser.q = c
+          }
+        }
+      continue
+
+      case S.DOCTYPE_QUOTED:
+        parser.doctype += c
+        if (c === parser.q) {
+          parser.q = ""
+          parser.state = S.DOCTYPE
+        }
+      continue
+
+      case S.DOCTYPE_DTD:
+        parser.doctype += c
+        if (c === "]") parser.state = S.DOCTYPE
+        else if (is(quote,c)) {
+          parser.state = S.DOCTYPE_DTD_QUOTED
+          parser.q = c
+        }
+      continue
+
+      case S.DOCTYPE_DTD_QUOTED:
+        parser.doctype += c
+        if (c === parser.q) {
+          parser.state = S.DOCTYPE_DTD
+          parser.q = ""
+        }
+      continue
+
+      case S.COMMENT:
+        if (c === "-") parser.state = S.COMMENT_ENDING
+        else parser.comment += c
+      continue
+
+      case S.COMMENT_ENDING:
+        if (c === "-") {
+          parser.state = S.COMMENT_ENDED
+          parser.comment = textopts(parser.opt, parser.comment)
+          if (parser.comment) emitNode(parser, "oncomment", parser.comment)
+          parser.comment = ""
+        } else {
+          parser.comment += "-" + c
+          parser.state = S.COMMENT
+        }
+      continue
+
+      case S.COMMENT_ENDED:
+        if (c !== ">") {
+          strictFail(parser, "Malformed comment")
+          // allow <!-- blah -- bloo --> in non-strict mode,
+          // which is a comment of " blah -- bloo "
+          parser.comment += "--" + c
+          parser.state = S.COMMENT
+        } else parser.state = S.TEXT
+      continue
+
+      case S.CDATA:
+        if (c === "]") parser.state = S.CDATA_ENDING
+        else parser.cdata += c
+      continue
+
+      case S.CDATA_ENDING:
+        if (c === "]") parser.state = S.CDATA_ENDING_2
+        else {
+          parser.cdata += "]" + c
+          parser.state = S.CDATA
+        }
+      continue
+
+      case S.CDATA_ENDING_2:
+        if (c === ">") {
+          if (parser.cdata) emitNode(parser, "oncdata", parser.cdata)
+          emitNode(parser, "onclosecdata")
+          parser.cdata = ""
+          parser.state = S.TEXT
+        } else if (c === "]") {
+          parser.cdata += "]"
+        } else {
+          parser.cdata += "]]" + c
+          parser.state = S.CDATA
+        }
+      continue
+
+      case S.PROC_INST:
+        if (c === "?") parser.state = S.PROC_INST_ENDING
+        else if (is(whitespace, c)) parser.state = S.PROC_INST_BODY
+        else parser.procInstName += c
+      continue
+
+      case S.PROC_INST_BODY:
+        if (!parser.procInstBody && is(whitespace, c)) continue
+        else if (c === "?") parser.state = S.PROC_INST_ENDING
+        else parser.procInstBody += c
+      continue
+
+      case S.PROC_INST_ENDING:
+        if (c === ">") {
+          emitNode(parser, "onprocessinginstruction", {
+            name : parser.procInstName,
+            body : parser.procInstBody
+          })
+          parser.procInstName = parser.procInstBody = ""
+          parser.state = S.TEXT
+        } else {
+          parser.procInstBody += "?" + c
+          parser.state = S.PROC_INST_BODY
+        }
+      continue
+
+      case S.OPEN_TAG:
+        if (is(nameBody, c)) parser.tagName += c
+        else {
+          newTag(parser)
+          if (c === ">") openTag(parser)
+          else if (c === "/") parser.state = S.OPEN_TAG_SLASH
+          else {
+            if (not(whitespace, c)) strictFail(
+              parser, "Invalid character in tag name")
+            parser.state = S.ATTRIB
+          }
+        }
+      continue
+
+      case S.OPEN_TAG_SLASH:
+        if (c === ">") {
+          openTag(parser, true)
+          closeTag(parser)
+        } else {
+          strictFail(parser, "Forward-slash in opening tag not followed by >")
+          parser.state = S.ATTRIB
+        }
+      continue
+
+      case S.ATTRIB:
+        // haven't read the attribute name yet.
+        if (is(whitespace, c)) continue
+        else if (c === ">") openTag(parser)
+        else if (c === "/") parser.state = S.OPEN_TAG_SLASH
+        else if (is(nameStart, c)) {
+          parser.attribName = c
+          parser.attribValue = ""
+          parser.state = S.ATTRIB_NAME
+        } else strictFail(parser, "Invalid attribute name")
+      continue
+
+      case S.ATTRIB_NAME:
+        if (c === "=") parser.state = S.ATTRIB_VALUE
+        else if (c === ">") {
+          strictFail(parser, "Attribute without value")
+          parser.attribValue = parser.attribName
+          attrib(parser)
+          openTag(parser)
+        }
+        else if (is(whitespace, c)) parser.state = S.ATTRIB_NAME_SAW_WHITE
+        else if (is(nameBody, c)) parser.attribName += c
+        else strictFail(parser, "Invalid attribute name")
+      continue
+
+      case S.ATTRIB_NAME_SAW_WHITE:
+        if (c === "=") parser.state = S.ATTRIB_VALUE
+        else if (is(whitespace, c)) continue
+        else {
+          strictFail(parser, "Attribute without value")
+          parser.tag.attributes[parser.attribName] = ""
+          parser.attribValue = ""
+          emitNode(parser, "onattribute",
+                   { name : parser.attribName, value : "" })
+          parser.attribName = ""
+          if (c === ">") openTag(parser)
+          else if (is(nameStart, c)) {
+            parser.attribName = c
+            parser.state = S.ATTRIB_NAME
+          } else {
+            strictFail(parser, "Invalid attribute name")
+            parser.state = S.ATTRIB
+          }
+        }
+      continue
+
+      case S.ATTRIB_VALUE:
+        if (is(whitespace, c)) continue
+        else if (is(quote, c)) {
+          parser.q = c
+          parser.state = S.ATTRIB_VALUE_QUOTED
+        } else {
+          strictFail(parser, "Unquoted attribute value")
+          parser.state = S.ATTRIB_VALUE_UNQUOTED
+          parser.attribValue = c
+        }
+      continue
+
+      case S.ATTRIB_VALUE_QUOTED:
+        if (c !== parser.q) {
+          if (c === "&") parser.state = S.ATTRIB_VALUE_ENTITY_Q
+          else parser.attribValue += c
+          continue
+        }
+        attrib(parser)
+        parser.q = ""
+        parser.state = S.ATTRIB_VALUE_CLOSED
+      continue
+
+      case S.ATTRIB_VALUE_CLOSED:
+        if (is(whitespace, c)) {
+          parser.state = S.ATTRIB
+        } else if (c === ">") openTag(parser)
+        else if (c === "/") parser.state = S.OPEN_TAG_SLASH
+        else if (is(nameStart, c)) {
+          strictFail(parser, "No whitespace between attributes")
+          parser.attribName = c
+          parser.attribValue = ""
+          parser.state = S.ATTRIB_NAME
+        } else strictFail(parser, "Invalid attribute name")
+      continue
+
+      case S.ATTRIB_VALUE_UNQUOTED:
+        if (not(attribEnd,c)) {
+          if (c === "&") parser.state = S.ATTRIB_VALUE_ENTITY_U
+          else parser.attribValue += c
+          continue
+        }
+        attrib(parser)
+        if (c === ">") openTag(parser)
+        else parser.state = S.ATTRIB
+      continue
+
+      case S.CLOSE_TAG:
+        if (!parser.tagName) {
+          if (is(whitespace, c)) continue
+          else if (not(nameStart, c)) {
+            if (parser.script) {
+              parser.script += "</" + c
+              parser.state = S.SCRIPT
+            } else {
+              strictFail(parser, "Invalid tagname in closing tag.")
+            }
+          } else parser.tagName = c
+        }
+        else if (c === ">") closeTag(parser)
+        else if (is(nameBody, c)) parser.tagName += c
+        else if (parser.script) {
+          parser.script += "</" + parser.tagName
+          parser.tagName = ""
+          parser.state = S.SCRIPT
+        } else {
+          if (not(whitespace, c)) strictFail(parser,
+            "Invalid tagname in closing tag")
+          parser.state = S.CLOSE_TAG_SAW_WHITE
+        }
+      continue
+
+      case S.CLOSE_TAG_SAW_WHITE:
+        if (is(whitespace, c)) continue
+        if (c === ">") closeTag(parser)
+        else strictFail(parser, "Invalid characters in closing tag")
+      continue
+
+      case S.TEXT_ENTITY:
+      case S.ATTRIB_VALUE_ENTITY_Q:
+      case S.ATTRIB_VALUE_ENTITY_U:
+        switch(parser.state) {
+          case S.TEXT_ENTITY:
+            var returnState = S.TEXT, buffer = "textNode"
+          break
+
+          case S.ATTRIB_VALUE_ENTITY_Q:
+            var returnState = S.ATTRIB_VALUE_QUOTED, buffer = "attribValue"
+          break
+
+          case S.ATTRIB_VALUE_ENTITY_U:
+            var returnState = S.ATTRIB_VALUE_UNQUOTED, buffer = "attribValue"
+          break
+        }
+        if (c === ";") {
+          parser[buffer] += parseEntity(parser)
+          parser.entity = ""
+          parser.state = returnState
+        }
+        else if (is(entity, c)) parser.entity += c
+        else {
+          strictFail(parser, "Invalid character entity")
+          parser[buffer] += "&" + parser.entity + c
+          parser.entity = ""
+          parser.state = returnState
+        }
+      continue
+
+      default:
+        throw new Error(parser, "Unknown state: " + parser.state)
+    }
+  } // while
+  // cdata blocks can get very big under normal conditions. emit and move on.
+  // if (parser.state === S.CDATA && parser.cdata) {
+  //   emitNode(parser, "oncdata", parser.cdata)
+  //   parser.cdata = ""
+  // }
+  if (parser.position >= parser.bufferCheckPosition) checkBufferLength(parser)
+  return parser
+}
+
+/*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
+if (!String.fromCodePoint) {
+        (function() {
+                var stringFromCharCode = String.fromCharCode;
+                var floor = Math.floor;
+                var fromCodePoint = function() {
+                        var MAX_SIZE = 0x4000;
+                        var codeUnits = [];
+                        var highSurrogate;
+                        var lowSurrogate;
+                        var index = -1;
+                        var length = arguments.length;
+                        if (!length) {
+                                return '';
+                        }
+                        var result = '';
+                        while (++index < length) {
+                                var codePoint = Number(arguments[index]);
+                                if (
+                                        !isFinite(codePoint) || // `NaN`, `+Infinity`, or `-Infinity`
+                                        codePoint < 0 || // not a valid Unicode code point
+                                        codePoint > 0x10FFFF || // not a valid Unicode code point
+                                        floor(codePoint) != codePoint // not an integer
+                                ) {
+                                        throw RangeError('Invalid code point: ' + codePoint);
+                                }
+                                if (codePoint <= 0xFFFF) { // BMP code point
+                                        codeUnits.push(codePoint);
+                                } else { // Astral code point; split in surrogate halves
+                                        // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+                                        codePoint -= 0x10000;
+                                        highSurrogate = (codePoint >> 10) + 0xD800;
+                                        lowSurrogate = (codePoint % 0x400) + 0xDC00;
+                                        codeUnits.push(highSurrogate, lowSurrogate);
+                                }
+                                if (index + 1 == length || codeUnits.length > MAX_SIZE) {
+                                        result += stringFromCharCode.apply(null, codeUnits);
+                                        codeUnits.length = 0;
+                                }
+                        }
+                        return result;
+                };
+                if (Object.defineProperty) {
+                        Object.defineProperty(String, 'fromCodePoint', {
+                                'value': fromCodePoint,
+                                'configurable': true,
+                                'writable': true
+                        });
+                } else {
+                        String.fromCodePoint = fromCodePoint;
+                }
+        }());
+}
+
+})(typeof exports === "undefined" ? sax = {} : exports);
+
+}).call(this,require("buffer").Buffer)
+},{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js","string_decoder":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/uuid/rng-browser.js":[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -3148,6 +8760,7 @@ var Aggregate = require("../../meta/Aggregate");
 var ChildAggregate = require("../../meta/ChildAggregate");
 var Header = require("../../meta/Header");
 var ApplicationSecurity = require("./ApplicationSecurity");
+var RequestMessageSet = require("./RequestMessageSet");
 var UUID = require("uuid");
 
 /**
@@ -3181,7 +8794,7 @@ function RequestEnvelope () {
 
   /**
    * @name RequestEnvelope#messageSets
-   * @type SortedSet<RequestMessageSet>
+   * @type RequestMessageSet[]
    * @access private
    */
   this.messageSets = null;
@@ -3213,7 +8826,7 @@ RequestEnvelope.prototype.RequestEnvelope = function(/*String*/ UID) {
 RequestEnvelope.prototype.getSecurity = function() {
   return this.security;
 };
-Header.add({name: "SECURITY", owner: RequestEnvelope, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
+Header.add(RequestEnvelope, {name: "SECURITY", attributeType: ApplicationSecurity, readMethod: "getSecurity", writeMethod: "setSecurity"});
 
 
 /**
@@ -3236,7 +8849,7 @@ RequestEnvelope.prototype.setSecurity = function(security) {
 RequestEnvelope.prototype.getUID = function() {
   return this.UID;
 };
-Header.add({name: "NEWFILEUID", owner: RequestEnvelope, /*type: String,*/ fcn: "getUID"});
+Header.add(RequestEnvelope, {name: "NEWFILEUID", attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
 
 
 /**
@@ -3259,7 +8872,7 @@ RequestEnvelope.prototype.setUID = function(UID) {
 RequestEnvelope.prototype.getLastProcessedUID = function() {
   return this.lastProcessedUID;
 };
-Header.add({name: "OLDFILEUID", owner: RequestEnvelope, /*type: String,*/ fcn: "getLastProcessedUID"});
+Header.add(RequestEnvelope, {name: "OLDFILEUID", attributeType: String, readMethod: "getLastProcessedUID", writeMethod: "setLastProcessedUID"});
 
 
 /**
@@ -3276,19 +8889,19 @@ RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
 /**
  * The message sets that make up the content of this request.
  *
- * @return {SortedSet<RequestMessageSet>} The message sets that make up the content of this request.
+ * @return {RequestMessageSet[]} The message sets that make up the content of this request.
  * @see "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
 };
-ChildAggregate.add({order: 1, owner: RequestEnvelope, /*type: SortedSet<RequestMessageSet>,*/ fcn: "getMessageSets"});
+ChildAggregate.add(RequestEnvelope, {order: 1, attributeType: Array, collectionEntryType: RequestMessageSet, readMethod: "getMessageSets", writeMethod: "setMessageSets"});
 
 
 /**
  * The message sets that make up the content of this request.
  *
- * @param {SortedSet<RequestMessageSet>} messageSets The message sets that make up the content of this request.
+ * @param {RequestMessageSet[]} messageSets The message sets that make up the content of this request.
  * @see "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.setMessageSets = function(messageSets) {
@@ -3300,7 +8913,7 @@ RequestEnvelope.prototype.setMessageSets = function(messageSets) {
 
 module.exports = RequestEnvelope;
 
-},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js","./ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","uuid":"/Users/aolson/Developer/ofx4js/node_modules/uuid/uuid.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js":[function(require,module,exports){
+},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js","./ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","./RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","uuid":"/Users/aolson/Developer/ofx4js/node_modules/uuid/uuid.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3317,8 +8930,6 @@ module.exports = RequestEnvelope;
 
 "use strict";
 
-var inherit = require("../../util/inherit");
-
 /**
  * A message applicable to a request message set.
  *
@@ -3328,14 +8939,9 @@ function RequestMessage () {
 }
 
 
-
-
-
-
-
 module.exports = RequestMessage;
 
-},{"../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js":[function(require,module,exports){
+},{}],"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3425,7 +9031,9 @@ module.exports = RequestMessageSet;
 var Aggregate = require("../../meta/Aggregate");
 var ChildAggregate = require("../../meta/ChildAggregate");
 var Header = require("../../meta/Header");
+var ApplicationSecurity = require("./ApplicationSecurity");
 var MessageSetType = require("./MessageSetType");
+var ResponseMessageSet = require("./ResponseMessageSet");
 
 /**
  * Envelope for enclosing an OFX response.
@@ -3451,7 +9059,7 @@ function ResponseEnvelope () {
 
   /**
    * @name ResponseEnvelope#messageSets
-   * @type SortedSet<ResponseMessageSet>
+   * @type ResponseMessageSet[]
    * @access private
    */
   this.messageSets = null;
@@ -3471,7 +9079,7 @@ Aggregate.add("OFX", ResponseEnvelope);
 ResponseEnvelope.prototype.getSecurity = function() {
   return this.security;
 };
-Header.add({name: "SECURITY", owner: ResponseEnvelope, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
+Header.add(ResponseEnvelope, {name: "SECURITY", attributeType: ApplicationSecurity, readMethod: "getSecurity", writeMethod: "setSecurity"});
 
 
 /**
@@ -3494,7 +9102,7 @@ ResponseEnvelope.prototype.setSecurity = function(security) {
 ResponseEnvelope.prototype.getUID = function() {
   return this.UID;
 };
-Header.add({name: "NEWFILEUID", owner: ResponseEnvelope, /*type: String,*/ fcn: "getUID"});
+Header.add(ResponseEnvelope, {name: "NEWFILEUID", attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
 
 
 /**
@@ -3511,19 +9119,19 @@ ResponseEnvelope.prototype.setUID = function(UID) {
 /**
  * The message sets that make up the content of this response.
  *
- * @return {SortedSet<ResponseMessageSet>} The message sets that make up the content of this response.
+ * @return {ResponseMessageSet[]} The message sets that make up the content of this response.
  * @see "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
 };
-ChildAggregate.add({order: 1, owner: ResponseEnvelope, /*type: SortedSet<ResponseMessageSet>,*/ fcn: "getMessageSets"});
+ChildAggregate.add(ResponseEnvelope, {order: 1, attributeType: Array, collectionEntryType: ResponseMessageSet, readMethod: "getMessageSets", writeMethod: "setMessageSets"});
 
 
 /**
  * The message sets that make up the content of this response.
  *
- * @param {SortedSet<ResponseMessageSet>} messageSets The message sets that make up the content of this response.
+ * @param {ResponseMessageSet[]} messageSets The message sets that make up the content of this response.
  * @see "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.setMessageSets = function(messageSets) {
@@ -3573,7 +9181,7 @@ ResponseEnvelope.prototype.getMessageSet = function(type) {
 
 module.exports = ResponseEnvelope;
 
-},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js","./MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js":[function(require,module,exports){
+},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js","./ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","./MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","./ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3896,7 +9504,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   c.prototype.getUID = function() {
     return this.UID;
   };
-  Element.add({name: "TRNUID", required: true, order: 0, owner: c, /*type: String,*/ fcn: "getUID"});
+  Element.add(c, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
 
 
   /**
@@ -3916,7 +9524,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   c.prototype.getClientCookie = function() {
     return this.clientCookie;
   };
-  Element.add({name: "CLTCOOKIE", order: 10, owner: c, /*type: String,*/ fcn: "getClientCookie"});
+  Element.add(c, {name: "CLTCOOKIE", order: 10, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
 
   /**
    * Client cookie (echoed back by the response).
@@ -3935,7 +9543,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   c.prototype.getTransactionAuthorizationNumber = function() {
     return this.transactionAuthorizationNumber;
   };
-  Element.add({name: "TAN", order: 20, owner: c, /*type: String,*/ fcn: "getTransactionAuthorizationNumber"});
+  Element.add(c, {name: "TAN", order: 20, attributeType: String, readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
 
   /**
    * The transaction authorization number.
@@ -3985,122 +9593,122 @@ var ChildAggregate = require("../../meta/ChildAggregate");
 var Element = require("../../meta/Element");
 var Aggregate = require("../../meta/Aggregate");
 var ResponseMessage = require("./ResponseMessage");
+var Status = require("./common/Status");
 
 /**
  * A response message wrapped in a transaction.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
+ * @augments StatusHolder
  * @see "Section 2.4.6, OFX Spec"
  */
 function TransactionWrappedResponseMessage(/*M*/) {
-
-  var c = function() {
-    /**
-     * @type String
-     */
-    this.UID = null;
-
-    /**
-     * @type String
-     */
-    this.clientCookie = null;
-
-    /**
-     * @type Status
-     */
-    this.status = null;
-  };
+  /**
+   * @type String
+   */
+  this.UID = null;
 
   /**
-   * UID of this transaction.
-   *
-   * @return {String} UID of this transaction.
+   * @type String
    */
-  c.prototype.getUID = function() {
-    return this.UID;
-  };
-  Element.add({name: "TRNUID", required: true, order: 0, owner: c, /*type: String,*/ fcn: "getUID"});
+  this.clientCookie = null;
 
   /**
-   * UID of this transaction.
-   *
-   * @param {String} UID UID of this transaction.
+   * @type Status
    */
-  c.prototype.setUID = function(UID) {
-    this.UID = UID;
-  };
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @return {String} Client cookie (echoed back by the response).
-   */
-  c.prototype.getClientCookie = function() {
-    return this.clientCookie;
-  };
-  Element.add({name: "CLTCOOKIE", order: 20, owner: c, /*type: String,*/ fcn: "getClientCookie"});
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @param {String} clientCookie Client cookie (echoed back by the response).
-   */
-  c.prototype.setClientCookie = function(clientCookie) {
-    this.clientCookie = clientCookie;
-  };
-
-  // Inherited.
-  c.prototype.getStatusHolderName = function() {
-    return this.getResponseMessageName();
-  };
-
-  // Inherited.
-  c.prototype.getResponseMessageName = function() {
-    var name = "transaction response";
-    if (this.getWrappedMessage() !== null) {
-      name = this.getWrappedMessage().getResponseMessageName() + " transaction";
-    }
-    else if (this.getClass().isAnnotationPresent(Aggregate.class)) {
-      name = this.getClass().getAnnotation(Aggregate.class).value() + " transaction";
-    }
-
-    return name;
-  };
-
-  /**
-   * Status of the transaction.
-   *
-   * @return {Status} Status of the transaction.
-   */
-  c.prototype.getStatus = function() {
-    return this.status;
-  };
-  ChildAggregate.add({required: true, order: 10, owner: c, /*type: Status,*/ fcn: "getStatus"});
-
-  /**
-   * Status of the transaction.
-   *
-   * @param {Status} status Status of the transaction.
-   */
-  c.prototype.setStatus = function(status) {
-    this.status = status;
-  };
-
-  /**
-   * Get the wrapped message.
-   *
-   * @return The wrapped message.
-   */
-  c.prototype.getWrappedMessage = function() { throw new Error("not implemented"); };
-
-  inherit(c, 'extends', ResponseMessage);
-  inherit(c, 'implements', StatusHolder);
-  return c;
+  this.status = null;
 }
+
+inherit(TransactionWrappedResponseMessage, 'extends', ResponseMessage);
+inherit(TransactionWrappedResponseMessage, 'implements', StatusHolder);
+
+
+/**
+ * UID of this transaction.
+ *
+ * @return {String} UID of this transaction.
+ */
+TransactionWrappedResponseMessage.prototype.getUID = function() {
+  return this.UID;
+};
+Element.add(TransactionWrappedResponseMessage, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
+
+/**
+ * UID of this transaction.
+ *
+ * @param {String} UID UID of this transaction.
+ */
+TransactionWrappedResponseMessage.prototype.setUID = function(UID) {
+  this.UID = UID;
+};
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @return {String} Client cookie (echoed back by the response).
+ */
+TransactionWrappedResponseMessage.prototype.getClientCookie = function() {
+  return this.clientCookie;
+};
+Element.add(TransactionWrappedResponseMessage, {name: "CLTCOOKIE", order: 20, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @param {String} clientCookie Client cookie (echoed back by the response).
+ */
+TransactionWrappedResponseMessage.prototype.setClientCookie = function(clientCookie) {
+  this.clientCookie = clientCookie;
+};
+
+// Inherited.
+TransactionWrappedResponseMessage.prototype.getStatusHolderName = function() {
+  return this.getResponseMessageName();
+};
+
+// Inherited.
+TransactionWrappedResponseMessage.prototype.getResponseMessageName = function() {
+  var name = "transaction response";
+  if (this.getWrappedMessage() !== null) {
+    name = this.getWrappedMessage().getResponseMessageName() + " transaction";
+  }
+  else if (this.getClass().isAnnotationPresent(Aggregate.class)) {
+    name = this.getClass().getAnnotation(Aggregate.class).value() + " transaction";
+  }
+
+  return name;
+};
+
+/**
+ * Status of the transaction.
+ *
+ * @return {Status} Status of the transaction.
+ */
+TransactionWrappedResponseMessage.prototype.getStatus = function() {
+  return this.status;
+};
+ChildAggregate.add(TransactionWrappedResponseMessage, {required: true, order: 10, attributeType: Status, readMethod: "getStatus", writeMethod: "setStatus"});
+
+/**
+ * Status of the transaction.
+ *
+ * @param {Status} status Status of the transaction.
+ */
+TransactionWrappedResponseMessage.prototype.setStatus = function(status) {
+  this.status = status;
+};
+
+/**
+ * Get the wrapped message.
+ *
+ * @return The wrapped message.
+ */
+TransactionWrappedResponseMessage.prototype.getWrappedMessage = function() { throw new Error("not implemented"); };
 
 module.exports = TransactionWrappedResponseMessage;
 
-},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/AccountType.js":[function(require,module,exports){
+},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","./common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/AccountType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4158,6 +9766,7 @@ var inherit = require("../../../util/inherit");
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var AccountDetails = require("../common/AccountDetails");
+var AccountType = require("./AccountType");
 
 /**
  * Base bank account details.
@@ -4218,7 +9827,7 @@ Aggregate.add("BankAccountDetails", BankAccountDetails);
 BankAccountDetails.prototype.getBankId = function() {
   return this.bankId;
 };
-Element.add({name: "BANKID", required: true, order: 0, owner: BankAccountDetails, /*type: String,*/ fcn: "getBankId"});
+Element.add(BankAccountDetails, {name: "BANKID", required: true, order: 0, attributeType: String, readMethod: "getBankId", writeMethod: "setBankId"});
 
 
 /**
@@ -4259,7 +9868,7 @@ BankAccountDetails.prototype.setRoutingNumber = function(routingNumber) {
 BankAccountDetails.prototype.getBranchId = function() {
   return this.branchId;
 };
-Element.add({name: "BRANCHID", order: 10, owner: BankAccountDetails, /*type: String,*/ fcn: "getBranchId"});
+Element.add(BankAccountDetails, {name: "BRANCHID", order: 10, attributeType: String, readMethod: "getBranchId", writeMethod: "setBranchId"});
 
 
 /**
@@ -4280,7 +9889,7 @@ BankAccountDetails.prototype.setBranchId = function(branchId) {
 BankAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 20, owner: BankAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
+Element.add(BankAccountDetails, {name: "ACCTID", required: true, order: 20, attributeType: String, readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -4301,7 +9910,7 @@ BankAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 BankAccountDetails.prototype.getAccountType = function() {
   return this.accountType;
 };
-Element.add({name: "ACCTTYPE", required: true, order: 30, owner: BankAccountDetails, /*type: AccountType,*/ fcn: "getAccountType"});
+Element.add(BankAccountDetails, {name: "ACCTTYPE", required: true, order: 30, attributeType: AccountType, readMethod: "getAccountType", writeMethod: "setAccountType"});
 
 
 /**
@@ -4322,7 +9931,7 @@ BankAccountDetails.prototype.setAccountType = function(accountType) {
 BankAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCTKEY", order: 40, owner: BankAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
+Element.add(BankAccountDetails, {name: "ACCTKEY", order: 40, attributeType: String, readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**
@@ -4339,7 +9948,7 @@ BankAccountDetails.prototype.setAccountKey = function(accountKey) {
 
 module.exports = BankAccountDetails;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/AccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountInfo.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/AccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountDetails.js","./AccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/AccountType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4362,6 +9971,8 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var Aggregate = require("../../../meta/Aggregate");
 var AccountInfo = require("../common/AccountInfo");
+var AccountStatus = require("../common/AccountStatus");
+var BankAccountDetails = require("./BankAccountDetails");
 
 /**
  * @class
@@ -4419,7 +10030,7 @@ Aggregate.add("BANKACCTINFO", BankAccountInfo);
 BankAccountInfo.prototype.getBankAccount = function() {
   return this.bankAccount;
 };
-ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankAccountInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccount"});
+ChildAggregate.add(BankAccountInfo, {name: "BANKACCTFROM", required: true, order: 0, attributeType: BankAccountDetails, readMethod: "getBankAccount", writeMethod: "setBankAccount"});
 
 
 /**
@@ -4446,7 +10057,7 @@ BankAccountInfo.prototype.getAccountDetails = function() {
 BankAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
   return this.supportsTransactionDetailOperations;
 };
-Element.add({name: "SUPTXDL", required: true, order: 10, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransactionDetailOperations"});
+Element.add(BankAccountInfo, {name: "SUPTXDL", required: true, order: 10, attributeType: Boolean, readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
 
 
 /**
@@ -4467,7 +10078,7 @@ BankAccountInfo.prototype.setSupportsTransactionDetailOperations = function(supp
 BankAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
   return this.supportsTransferToOtherAccountOperations;
 };
-Element.add({name: "XFERSRC", required: true, order: 20, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferToOtherAccountOperations"});
+Element.add(BankAccountInfo, {name: "XFERSRC", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
 
 
 /**
@@ -4488,7 +10099,7 @@ BankAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = function
 BankAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
   return this.supportsTransferFromOtherAccountOperations;
 };
-Element.add({name: "XFERDEST", required: true, order: 30, owner: BankAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferFromOtherAccountOperations"});
+Element.add(BankAccountInfo, {name: "XFERDEST", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
 
 
 /**
@@ -4509,7 +10120,7 @@ BankAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations = functi
 BankAccountInfo.prototype.getStatus = function() {
   return this.status;
 };
-Element.add({name: "SVCSTATUS", required: true, order: 40, owner: BankAccountInfo, /*type: AccountStatus,*/ fcn: "getStatus"});
+Element.add(BankAccountInfo, {name: "SVCSTATUS", required: true, order: 40, attributeType: AccountStatus, readMethod: "getStatus", writeMethod: "setStatus"});
 
 
 /**
@@ -4526,7 +10137,7 @@ BankAccountInfo.prototype.setStatus = function(status) {
 
 module.exports = BankAccountInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/AccountInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementRequest.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/AccountInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountInfo.js","../common/AccountStatus":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountStatus.js","./BankAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementRequest.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4548,6 +10159,7 @@ var inherit = require("../../../util/inherit");
 var StatementRequest = require("../common/StatementRequest");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var BankAccountDetails = require("./BankAccountDetails");
 
 /**
  * @class
@@ -4577,7 +10189,7 @@ Aggregate.add("STMTRQ", BankStatementRequest);
 BankStatementRequest.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name: "BANKACCTFROM", required: true, order: 0, owner: BankStatementRequest, /*type: BankAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add(BankStatementRequest, {name: "BANKACCTFROM", required: true, order: 0, attributeType: BankAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -4594,7 +10206,7 @@ BankStatementRequest.prototype.setAccount = function(account) {
 
 module.exports = BankStatementRequest;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRequest.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementRequestTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRequest.js","./BankAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementRequestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4646,7 +10258,7 @@ Aggregate.add("STMTTRNRQ", BankStatementRequestTransaction);
 BankStatementRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: BankStatementRequestTransaction, /*type: BankStatementRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(BankStatementRequestTransaction, {required: true, order: 30, attributeType: BankStatementRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -4692,6 +10304,7 @@ var inherit = require("../../../util/inherit");
 var StatementResponse = require("../common/StatementResponse");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var BankAccountDetails = require("./BankAccountDetails");
 
 /**
  * @class
@@ -4726,7 +10339,7 @@ BankStatementResponse.prototype.getResponseMessageName = function() {
 BankStatementResponse.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name:"BANKACCTFROM", order: 10, owner: BankStatementResponse, /*type: BankAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add(BankStatementResponse, {name:"BANKACCTFROM", order: 10, attributeType: BankAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -4743,7 +10356,7 @@ BankStatementResponse.prototype.setAccount = function(account) {
 
 module.exports = BankStatementResponse;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementResponseTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js","./BankAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4795,7 +10408,7 @@ Aggregate.add("STMTTRNRS", BankStatementResponseTransaction);
 BankStatementResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: BankStatementResponseTransaction, /*type: BankStatementResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(BankStatementResponseTransaction, {required: true, order: 30, attributeType: BankStatementResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -4841,6 +10454,7 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var BankStatementRequestTransaction = require("./BankStatementRequestTransaction");
 
 /**
  * @class
@@ -4875,7 +10489,7 @@ BankingRequestMessageSet.prototype.getType = function() {
 BankingRequestMessageSet.prototype.getStatementRequest = function() {
   return this.statementRequest;
 };
-ChildAggregate.add({order: 0, owner: BankingRequestMessageSet, /*type: BankStatementRequestTransaction,*/ fcn: "getStatementRequest"});
+ChildAggregate.add(BankingRequestMessageSet, {order: 0, attributeType: BankStatementRequestTransaction, readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
 
 
 /**
@@ -4902,7 +10516,7 @@ BankingRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = BankingRequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankingResponseMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./BankStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementRequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankingResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4925,6 +10539,7 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var BankStatementResponseTransaction = require("./BankStatementResponseTransaction");
 
 /**
  * @class
@@ -4963,7 +10578,7 @@ BankingResponseMessageSet.prototype.getType = function() {
 BankingResponseMessageSet.prototype.getStatementResponses = function() {
   return this.statementResponses;
 };
-ChildAggregate.add({order: 0, owner: BankingResponseMessageSet, /*type: BankStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
+ChildAggregate.add(BankingResponseMessageSet, {order: 0, attributeType: Array, collectionEntryType: BankStatementResponseTransaction, readMethod: "getStatementResponses", writeMethod: "setStatementResponses"});
 
 
 /**
@@ -5002,7 +10617,7 @@ BankingResponseMessageSet.prototype.setStatementResponse = function(/*BankStatem
 
 module.exports = BankingResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/index.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./BankStatementResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankStatementResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -5189,7 +10804,7 @@ Aggregate.add("BalanceInfo", BalanceInfo);
 BalanceInfo.prototype.getAmount = function() {
   return this.amount;
 };
-Element.add({name: "BALAMT", required: true, order: 0, owner: BalanceInfo, /*type: double,*/ fcn: "getAmount"});
+Element.add(BalanceInfo, {name: "BALAMT", required: true, order: 0, attributeType: Number, readMethod: "getAmount", writeMethod: "setAmount"});
 
 
 /**
@@ -5210,7 +10825,7 @@ BalanceInfo.prototype.setAmount = function(amount) {
 BalanceInfo.prototype.getAsOfDate = function() {
   return this.asOfDate;
 };
-Element.add({name: "DTASOF", required: true, order: 10, owner: BalanceInfo, /*type: Date,*/ fcn: "getAsOfDate"});
+Element.add(BalanceInfo, {name: "DTASOF", required: true, order: 10, attributeType: Date, readMethod: "getAsOfDate", writeMethod: "setAsOfDate"});
 
 
 /**
@@ -5247,6 +10862,7 @@ module.exports = BalanceInfo;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var Currency = require("./Currency");
 
 /**
  * @class
@@ -5305,7 +10921,7 @@ Aggregate.add("BAL", BalanceRecord);
 /**
  * @enum
  */
-BalanceRecord.Type = {
+var Type = BalanceRecord.Type = {
 
   DOLLAR: 0,
 
@@ -5322,7 +10938,7 @@ BalanceRecord.Type = {
 BalanceRecord.prototype.getName = function() {
   return this.name;
 };
-Element.add({name: "NAME", required: true, order: 0, owner: BalanceRecord, /*type: String,*/ fcn: "getName"});
+Element.add(BalanceRecord, {name: "NAME", required: true, order: 0, attributeType: String, readMethod: "getName", writeMethod: "setName"});
 
 
 /**
@@ -5343,7 +10959,7 @@ BalanceRecord.prototype.setName = function(name) {
 BalanceRecord.prototype.getDescription = function() {
   return this.description;
 };
-Element.add({name: "DESC", required: true, order: 10, owner: BalanceRecord, /*type: String,*/ fcn: "getDescription"});
+Element.add(BalanceRecord, {name: "DESC", required: true, order: 10, attributeType: String, readMethod: "getDescription", writeMethod: "setDescription"});
 
 
 /**
@@ -5364,7 +10980,7 @@ BalanceRecord.prototype.setDescription = function(description) {
 BalanceRecord.prototype.getType = function() {
   return this.type;
 };
-Element.add({name: "BALTYPE", required: true, order: 20, owner: BalanceRecord, /*type: Type,*/ fcn: "getType"});
+Element.add(BalanceRecord, {name: "BALTYPE", required: true, order: 20, attributeType: Type, readMethod: "getType", writeMethod: "setType"});
 
 
 /**
@@ -5385,7 +11001,7 @@ BalanceRecord.prototype.setType = function(type) {
 BalanceRecord.prototype.getValue = function() {
   return this.value;
 };
-Element.add({name: "VALUE", required: true, order: 30, owner: BalanceRecord, /*type: String,*/ fcn: "getValue"});
+Element.add(BalanceRecord, {name: "VALUE", required: true, order: 30, attributeType: String, readMethod: "getValue", writeMethod: "setValue"});
 
 
 /**
@@ -5406,7 +11022,7 @@ BalanceRecord.prototype.setValue = function(value) {
 BalanceRecord.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTASOF", order: 40, owner: BalanceRecord, /*type: Date,*/ fcn: "getTimestamp"});
+Element.add(BalanceRecord, {name: "DTASOF", order: 40, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -5427,7 +11043,7 @@ BalanceRecord.prototype.setTimestamp = function(timestamp) {
 BalanceRecord.prototype.getCurrency = function() {
   return this.currency;
 };
-ChildAggregate.add({order: 50, owner: BalanceRecord, /*type: Currency,*/ fcn: "getCurrency"});
+ChildAggregate.add(BalanceRecord, {order: 50, attributeType: Currency, readMethod: "getCurrency", writeMethod: "setCurrency"});
 
 
 /**
@@ -5444,7 +11060,7 @@ BalanceRecord.prototype.setCurrency = function(currency) {
 
 module.exports = BalanceRecord;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/CorrectionAction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./Currency":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Currency.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/CorrectionAction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -5529,7 +11145,7 @@ Aggregate.add("CURRENCY", Currency);
 Currency.prototype.getCode = function() {
   return this.code;
 };
-Element.add({name: "CURSYM", required: true, order: 0, owner: Currency, /*type: String,*/ fcn: "getCode"});
+Element.add(Currency, {name: "CURSYM", required: true, order: 0, attributeType: String, readMethod: "getCode", writeMethod: "setCode"});
 
 
 /**
@@ -5550,7 +11166,7 @@ Currency.prototype.setCode = function(code) {
 Currency.prototype.getExchangeRate = function() {
   return this.exchangeRate;
 };
-Element.add({name: "CURRATE", required: true, order: 10, owner: Currency, /*type: Float,*/ fcn: "getExchangeRate"});
+Element.add(Currency, {name: "CURRATE", required: true, order: 10, attributeType: Number, readMethod: "getExchangeRate", writeMethod: "setExchangeRate"});
 
 
 /**
@@ -5669,7 +11285,7 @@ Aggregate.add("PAYEE", Payee);
 Payee.prototype.getName = function() {
   return this.name;
 };
-Element.add({name: "NAME", order: 30, owner: Payee, /*type: String,*/ fcn: "getName"});
+Element.add(Payee, {name: "NAME", order: 30, attributeType: String, readMethod: "getName", writeMethod: "setName"});
 
 
 /**
@@ -5690,7 +11306,7 @@ Payee.prototype.setName = function(name) {
 Payee.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1", required: true, order: 40, owner: Payee, /*type: String,*/ fcn: "getAddress1"});
+Element.add(Payee, {name: "ADDR1", required: true, order: 40, attributeType: String, readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -5711,7 +11327,7 @@ Payee.prototype.setAddress1 = function(address1) {
 Payee.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2", order: 50, owner: Payee, /*type: String,*/ fcn: "getAddress2"});
+Element.add(Payee, {name: "ADDR2", order: 50, attributeType: String, readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -5732,7 +11348,7 @@ Payee.prototype.setAddress2 = function(address2) {
 Payee.prototype.getAddress3 = function() {
   return this.address3;
 };
-Element.add({name: "ADDR3", order: 60, owner: Payee, /*type: String,*/ fcn: "getAddress3"});
+Element.add(Payee, {name: "ADDR3", order: 60, attributeType: String, readMethod: "getAddress3", writeMethod: "setAddress3"});
 
 
 /**
@@ -5753,7 +11369,7 @@ Payee.prototype.setAddress3 = function(address3) {
 Payee.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY", required: true, order: 70, owner: Payee, /*type: String,*/ fcn: "getCity"});
+Element.add(Payee, {name: "CITY", required: true, order: 70, attributeType: String, readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -5774,7 +11390,7 @@ Payee.prototype.setCity = function(city) {
 Payee.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE", required: true, order: 80, owner: Payee, /*type: String,*/ fcn: "getState"});
+Element.add(Payee, {name: "STATE", required: true, order: 80, attributeType: String, readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -5795,7 +11411,7 @@ Payee.prototype.setState = function(state) {
 Payee.prototype.getZip = function() {
   return this.zip;
 };
-Element.add({name: "POSTALCODE", required: true, order: 90, owner: Payee, /*type: String,*/ fcn: "getZip"});
+Element.add(Payee, {name: "POSTALCODE", required: true, order: 90, attributeType: String, readMethod: "getZip", writeMethod: "setZip"});
 
 
 /**
@@ -5817,7 +11433,7 @@ Payee.prototype.setZip = function(zip) {
 Payee.prototype.getCountry = function() {
   return this.country;
 };
-Element.add({name: "COUNTRY", required: true, order: 100, owner: Payee, /*type: String,*/ fcn: "getCountry"});
+Element.add(Payee, {name: "COUNTRY", required: true, order: 100, attributeType: String, readMethod: "getCountry", writeMethod: "setCountry"});
 
 
 /**
@@ -5838,7 +11454,7 @@ Payee.prototype.setCountry = function(country) {
 Payee.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE", order: 110, owner: Payee, /*type: String,*/ fcn: "getPhone"});
+Element.add(Payee, {name: "PHONE", order: 110, attributeType: String, readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**
@@ -5973,7 +11589,7 @@ Aggregate.add("INCTRAN", StatementRange);
 StatementRange.prototype.getStart = function() {
   return this.start;
 };
-Element.add({name: "DTSTART", order: 0, owner: StatementRange, /*type: Date,*/ fcn: "getStart"});
+Element.add(StatementRange, {name: "DTSTART", order: 0, attributeType: Date, readMethod: "getStart", writeMethod: "setStart"});
 
 
 /**
@@ -5994,7 +11610,7 @@ StatementRange.prototype.setStart = function(start) {
 StatementRange.prototype.getEnd = function() {
   return this.end;
 };
-Element.add({name: "DTEND", order: 10, owner: StatementRange, /*type: Date,*/ fcn: "getEnd"});
+Element.add(StatementRange, {name: "DTEND", order: 10, attributeType: Date, readMethod: "getEnd", writeMethod: "setEnd"});
 
 
 /**
@@ -6015,7 +11631,7 @@ StatementRange.prototype.setEnd = function(end) {
 StatementRange.prototype.getIncludeTransactions = function() {
   return this.includeTransactions;
 };
-Element.add({name: "INCLUDE", required: true, order: 20, owner: StatementRange, /*type: Boolean,*/ fcn: "getIncludeTransactions"});
+Element.add(StatementRange, {name: "INCLUDE", required: true, order: 20, attributeType: Boolean, readMethod: "getIncludeTransactions", writeMethod: "setIncludeTransactions"});
 
 
 /**
@@ -6054,6 +11670,7 @@ var inherit = require("../../../util/inherit");
 var RequestMessage = require("../RequestMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var StatementRange = require("./StatementRange");
 
 /**
  * @class
@@ -6083,7 +11700,7 @@ Aggregate.add("STMTRQ", StatementRequest);
 StatementRequest.prototype.getStatementRange = function() {
   return this.statementRange;
 };
-ChildAggregate.add({name: "INCTRAN", required: false, order: 10, owner: StatementRequest, /*type: StatementRange,*/ fcn: "getStatementRange"});
+ChildAggregate.add(StatementRequest, {name: "INCTRAN", required: false, order: 10, attributeType: StatementRange, readMethod: "getStatementRange", writeMethod: "setStatementRange"});
 
 
 /**
@@ -6100,7 +11717,7 @@ StatementRequest.prototype.setStatementRange = function(statementRange) {
 
 module.exports = StatementRequest;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js","./StatementRange":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRange.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6123,6 +11740,8 @@ var ResponseMessage = require("../ResponseMessage");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var AccountStatement = require("../../../client/AccountStatement");
+var TransactionList = require("./TransactionList");
+var BalanceInfo = require("./BalanceInfo");
 
 /**
  * @class
@@ -6182,7 +11801,7 @@ inherit(StatementResponse, "implements", AccountStatement);
 StatementResponse.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURDEF", required: true, order: 0, owner: StatementResponse, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(StatementResponse, {name: "CURDEF", required: true, order: 0, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -6203,7 +11822,7 @@ StatementResponse.prototype.setCurrencyCode = function(currencyCode) {
 StatementResponse.prototype.getTransactionList = function() {
   return this.transactionList;
 };
-ChildAggregate.add({order: 20, owner: StatementResponse, /*type: TransactionList,*/ fcn: "getTransactionList"});
+ChildAggregate.add(StatementResponse, {order: 20, attributeType: TransactionList, readMethod: "getTransactionList", writeMethod: "setTransactionList"});
 
 
 /**
@@ -6224,7 +11843,7 @@ StatementResponse.prototype.setTransactionList = function(transactionList) {
 StatementResponse.prototype.getLedgerBalance = function() {
   return this.ledgerBalance;
 };
-ChildAggregate.add({name: "LEDGERBAL", order: 30, owner: StatementResponse, /*type: BalanceInfo,*/ fcn: "getLedgerBalance"});
+ChildAggregate.add(StatementResponse, {name: "LEDGERBAL", order: 30, attributeType: BalanceInfo, readMethod: "getLedgerBalance", writeMethod: "setLedgerBalance"});
 
 
 /**
@@ -6245,7 +11864,7 @@ StatementResponse.prototype.setLedgerBalance = function(ledgerBalance) {
 StatementResponse.prototype.getAvailableBalance = function() {
   return this.availableBalance;
 };
-ChildAggregate.add({name: "AVAILBAL", order: 40, owner: StatementResponse, /*type: BalanceInfo,*/ fcn: "getAvailableBalance"});
+ChildAggregate.add(StatementResponse, {name: "AVAILBAL", order: 40, attributeType: BalanceInfo, readMethod: "getAvailableBalance", writeMethod: "setAvailableBalance"});
 
 
 /**
@@ -6266,7 +11885,7 @@ StatementResponse.prototype.setAvailableBalance = function(availableBalance) {
 StatementResponse.prototype.getMarketingInfo = function() {
   return this.marketingInfo;
 };
-Element.add({name: "MKTGINFO", order: 50, owner: StatementResponse, /*type: String,*/ fcn: "getMarketingInfo"});
+Element.add(StatementResponse, {name: "MKTGINFO", order: 50, attributeType: String, readMethod: "getMarketingInfo", writeMethod: "setMarketingInfo"});
 
 
 /**
@@ -6283,7 +11902,7 @@ StatementResponse.prototype.setMarketingInfo = function(marketingInfo) {
 
 module.exports = StatementResponse;
 
-},{"../../../client/AccountStatement":"/Users/aolson/Developer/ofx4js/src/client/AccountStatement.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js":[function(require,module,exports){
+},{"../../../client/AccountStatement":"/Users/aolson/Developer/ofx4js/src/client/AccountStatement.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./BalanceInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/BalanceInfo.js","./TransactionList":"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransactionList.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6448,7 +12067,7 @@ Status.KnownCode.prototype.toString = function() {
 Status.prototype.getCode = function() {
   return this.code;
 };
-Element.add({name: "CODE", required: true, order: 0, owner: Status, /*type: StatusCode,*/ fcn: "getCode"});
+Element.add(Status, {name: "CODE", required: true, order: 0, attributeType: StatusCode, readMethod: "getCode", writeMethod: "setCode"});
 
 
 /**
@@ -6472,7 +12091,7 @@ Status.prototype.setCode = function(code) {
 Status.prototype.getSeverity = function() {
   return this.severity;
 };
-Element.add({name: "SEVERITY", required: true, order: 10, owner: Status, /*type: Severity,*/ fcn: "getSeverity"});
+Element.add(Status, {name: "SEVERITY", required: true, order: 10, attributeType: Severity, readMethod: "getSeverity", writeMethod: "setSeverity"});
 
 
 /**
@@ -6493,7 +12112,7 @@ Status.prototype.setSeverity = function(severity) {
 Status.prototype.getMessage = function() {
   return this.message;
 };
-Element.add({name: "MESSAGE", order: 20, owner: Status, /*type: String,*/ fcn: "getMessage"});
+Element.add(Status, {name: "MESSAGE", order: 20, attributeType: String, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -6559,8 +12178,6 @@ module.exports = StatusCode;
 
 "use strict";
 
-var inherit = require("../../../util/inherit");
-
 /**
  * A status holder (usually applied to a response).
  *
@@ -6586,7 +12203,7 @@ StatusHolder.prototype.getStatus = function() { throw new Error("not implemented
 
 module.exports = StatusHolder;
 
-},{"../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/T1099Request.js":[function(require,module,exports){
+},{}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/T1099Request.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6682,6 +12299,12 @@ module.exports = T1099Response;
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var TransactionType = require("./TransactionType");
+var CorrectionAction = require("./CorrectionAction");
+var Payee = require("./Payee");
+var BankAccountDetails = require("../banking/BankAccountDetails");
+var CreditCardAccountDetails = require("../creditcard/CreditCardAccountDetails");
+var Currency = require("./Currency");
 
 /**
  * @class
@@ -6842,7 +12465,7 @@ Aggregate.add("STMTTRN", Transaction);
 Transaction.prototype.getTransactionType = function() {
   return this.transactionType;
 };
-Element.add({name: "TRNTYPE", required: true, order: 0, owner: Transaction, /*type: TransactionType,*/ fcn: "getTransactionType"});
+Element.add(Transaction, {name: "TRNTYPE", required: true, order: 0, attributeType: TransactionType, readMethod: "getTransactionType", writeMethod: "setTransactionType"});
 
 
 /**
@@ -6863,7 +12486,7 @@ Transaction.prototype.setTransactionType = function(transactionType) {
 Transaction.prototype.getDatePosted = function() {
   return this.datePosted;
 };
-Element.add({name: "DTPOSTED", required: true, order: 10, owner: Transaction, /*type: Date,*/ fcn: "getDatePosted"});
+Element.add(Transaction, {name: "DTPOSTED", required: true, order: 10, attributeType: Date, readMethod: "getDatePosted", writeMethod: "setDatePosted"});
 
 
 /**
@@ -6884,7 +12507,7 @@ Transaction.prototype.setDatePosted = function(datePosted) {
 Transaction.prototype.getDateInitiated = function() {
   return this.dateInitiated;
 };
-Element.add({name: "DTUSER", order: 20, owner: Transaction, /*type: Date,*/ fcn: "getDateInitiated"});
+Element.add(Transaction, {name: "DTUSER", order: 20, attributeType: Date, readMethod: "getDateInitiated", writeMethod: "setDateInitiated"});
 
 
 /**
@@ -6905,7 +12528,7 @@ Transaction.prototype.setDateInitiated = function(dateInitiated) {
 Transaction.prototype.getDateAvailable = function() {
   return this.dateAvailable;
 };
-Element.add({name: "DTAVAIL", order: 30, owner: Transaction, /*type: Date,*/ fcn: "getDateAvailable"});
+Element.add(Transaction, {name: "DTAVAIL", order: 30, attributeType: Date, readMethod: "getDateAvailable", writeMethod: "setDateAvailable"});
 
 
 /**
@@ -6946,7 +12569,7 @@ Transaction.prototype.setAmount = function(amount) {
 Transaction.prototype.getBigDecimalAmount = function() {
   return this.amount;
 };
-Element.add({name: "TRNAMT", required: true, order: 40, owner: Transaction, /*type: BigDecimal,*/ fcn: "getBigDecimalAmount"});
+Element.add(Transaction, {name: "TRNAMT", required: true, order: 40, attributeType: Number, readMethod: "getBigDecimalAmount", writeMethod: "setBigDecimalAmount"});
 
 
 /**
@@ -6967,7 +12590,7 @@ Transaction.prototype.setBigDecimalAmount = function(amount) {
 Transaction.prototype.getId = function() {
   return this.id;
 };
-Element.add({name: "FITID", required: true, order: 50, owner: Transaction, /*type: String,*/ fcn: "getId"});
+Element.add(Transaction, {name: "FITID", required: true, order: 50, attributeType: String, readMethod: "getId", writeMethod: "setId"});
 
 
 /**
@@ -6988,7 +12611,7 @@ Transaction.prototype.setId = function(id) {
 Transaction.prototype.getCorrectionId = function() {
   return this.correctionId;
 };
-Element.add({name: "CORRECTFITID", order: 60, owner: Transaction, /*type: String,*/ fcn: "getCorrectionId"});
+Element.add(Transaction, {name: "CORRECTFITID", order: 60, attributeType: String, readMethod: "getCorrectionId", writeMethod: "setCorrectionId"});
 
 
 /**
@@ -7009,7 +12632,7 @@ Transaction.prototype.setCorrectionId = function(correctionId) {
 Transaction.prototype.getCorrectionAction = function() {
   return this.correctionAction;
 };
-Element.add({name: "CORRECTACTION", order: 70, owner: Transaction, /*type: CorrectionAction,*/ fcn: "getCorrectionAction"});
+Element.add(Transaction, {name: "CORRECTACTION", order: 70, attributeType: CorrectionAction, readMethod: "getCorrectionAction", writeMethod: "setCorrectionAction"});
 
 
 /**
@@ -7030,7 +12653,7 @@ Transaction.prototype.setCorrectionAction = function(correctionAction) {
 Transaction.prototype.getTempId = function() {
   return this.tempId;
 };
-Element.add({name: "SRVRTID", order: 80, owner: Transaction, /*type: String,*/ fcn: "getTempId"});
+Element.add(Transaction, {name: "SRVRTID", order: 80, attributeType: String, readMethod: "getTempId", writeMethod: "setTempId"});
 
 
 /**
@@ -7051,7 +12674,7 @@ Transaction.prototype.setTempId = function(tempId) {
 Transaction.prototype.getCheckNumber = function() {
   return this.checkNumber;
 };
-Element.add({name: "CHECKNUM", order: 90, owner: Transaction, /*type: String,*/ fcn: "getCheckNumber"});
+Element.add(Transaction, {name: "CHECKNUM", order: 90, attributeType: String, readMethod: "getCheckNumber", writeMethod: "setCheckNumber"});
 
 
 /**
@@ -7072,7 +12695,7 @@ Transaction.prototype.setCheckNumber = function(checkNumber) {
 Transaction.prototype.getReferenceNumber = function() {
   return this.referenceNumber;
 };
-Element.add({name: "REFNUM", order: 100, owner: Transaction, /*type: String,*/ fcn: "getReferenceNumber"});
+Element.add(Transaction, {name: "REFNUM", order: 100, attributeType: String, readMethod: "getReferenceNumber", writeMethod: "setReferenceNumber"});
 
 
 /**
@@ -7093,7 +12716,7 @@ Transaction.prototype.setReferenceNumber = function(referenceNumber) {
 Transaction.prototype.getStandardIndustrialCode = function() {
   return this.standardIndustrialCode;
 };
-Element.add({name: "SIC", order: 110, owner: Transaction, /*type: String,*/ fcn: "getStandardIndustrialCode"});
+Element.add(Transaction, {name: "SIC", order: 110, attributeType: String, readMethod: "getStandardIndustrialCode", writeMethod: "setStandardIndustrialCode"});
 
 
 /**
@@ -7114,7 +12737,7 @@ Transaction.prototype.setStandardIndustrialCode = function(standardIndustrialCod
 Transaction.prototype.getPayeeId = function() {
   return this.payeeId;
 };
-Element.add({name: "PAYEEID", order: 120, owner: Transaction, /*type: String,*/ fcn: "getPayeeId"});
+Element.add(Transaction, {name: "PAYEEID", order: 120, attributeType: String, readMethod: "getPayeeId", writeMethod: "setPayeeId"});
 
 
 /**
@@ -7135,7 +12758,7 @@ Transaction.prototype.setPayeeId = function(payeeId) {
 Transaction.prototype.getName = function() {
   return this.name;
 };
-Element.add({name: "NAME", order: 130, owner: Transaction, /*type: String,*/ fcn: "getName"});
+Element.add(Transaction, {name: "NAME", order: 130, attributeType: String, readMethod: "getName", writeMethod: "setName"});
 
 
 /**
@@ -7156,7 +12779,7 @@ Transaction.prototype.setName = function(name) {
 Transaction.prototype.getPayee = function() {
   return this.payee;
 };
-ChildAggregate.add({order: 140, owner: Transaction, /*type: Payee,*/ fcn: "getPayee"});
+ChildAggregate.add(Transaction, {order: 140, attributeType: Payee, readMethod: "getPayee", writeMethod: "setPayee"});
 
 
 /**
@@ -7177,7 +12800,7 @@ Transaction.prototype.setPayee = function(payee) {
 Transaction.prototype.getBankAccountTo = function() {
   return this.bankAccountTo;
 };
-ChildAggregate.add({name: "BANKACCTTO", order: 150, owner: Transaction, /*type: BankAccountDetails,*/ fcn: "getBankAccountTo"});
+ChildAggregate.add(Transaction, {name: "BANKACCTTO", order: 150, attributeType: BankAccountDetails, readMethod: "getBankAccountTo", writeMethod: "setBankAccountTo"});
 
 
 /**
@@ -7198,7 +12821,7 @@ Transaction.prototype.setBankAccountTo = function(bankAccountTo) {
 Transaction.prototype.getCreditCardAccountTo = function() {
   return this.creditCardAccountTo;
 };
-ChildAggregate.add({name: "CCACCTTO", order: 160, owner: Transaction, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountTo"});
+ChildAggregate.add(Transaction, {name: "CCACCTTO", order: 160, attributeType: CreditCardAccountDetails, readMethod: "getCreditCardAccountTo", writeMethod: "setCreditCardAccountTo"});
 
 
 /**
@@ -7219,7 +12842,7 @@ Transaction.prototype.setCreditCardAccountTo = function(creditCardAccountTo) {
 Transaction.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 170, owner: Transaction, /*type: String,*/ fcn: "getMemo"});
+Element.add(Transaction, {name: "MEMO", order: 170, attributeType: String, readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**
@@ -7240,7 +12863,7 @@ Transaction.prototype.setMemo = function(memo) {
 Transaction.prototype.getCurrency = function() {
   return this.currency;
 };
-ChildAggregate.add({order: 180, owner: Transaction, /*type: Currency,*/ fcn: "getCurrency"});
+ChildAggregate.add(Transaction, {order: 180, attributeType: Currency, readMethod: "getCurrency", writeMethod: "setCurrency"});
 
 
 /**
@@ -7261,7 +12884,7 @@ Transaction.prototype.setCurrency = function(currency) {
 Transaction.prototype.getOriginalCurrency = function() {
   return this.originalCurrency;
 };
-ChildAggregate.add({name: "ORIGCURRENCY", order: 190, owner: Transaction, /*type: Currency,*/ fcn: "getOriginalCurrency"});
+ChildAggregate.add(Transaction, {name: "ORIGCURRENCY", order: 190, attributeType: Currency, readMethod: "getOriginalCurrency", writeMethod: "setOriginalCurrency"});
 
 
 /**
@@ -7278,7 +12901,7 @@ Transaction.prototype.setOriginalCurrency = function(originalCurrency) {
 
 module.exports = Transaction;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransactionList.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../banking/BankAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountDetails.js","../creditcard/CreditCardAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardAccountDetails.js","./CorrectionAction":"/Users/aolson/Developer/ofx4js/src/domain/data/common/CorrectionAction.js","./Currency":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Currency.js","./Payee":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Payee.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransactionList.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7298,6 +12921,7 @@ module.exports = Transaction;
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Transaction = require("./Transaction");
 
 /**
  * @class
@@ -7339,7 +12963,7 @@ Aggregate.add("BANKTRANLIST", TransactionList);
 TransactionList.prototype.getStart = function() {
   return this.start;
 };
-Element.add({name: "DTSTART", required: true, order: 0, owner: TransactionList, /*type: Date,*/ fcn: "getStart"});
+Element.add(TransactionList, {name: "DTSTART", required: true, order: 0, attributeType: Date, readMethod: "getStart", writeMethod: "setStart"});
 
 
 /**
@@ -7360,7 +12984,7 @@ TransactionList.prototype.setStart = function(start) {
 TransactionList.prototype.getEnd = function() {
   return this.end;
 };
-Element.add({name: "DTEND", required: true, order: 10, owner: TransactionList, /*type: Date,*/ fcn: "getEnd"});
+Element.add(TransactionList, {name: "DTEND", required: true, order: 10, attributeType: Date, readMethod: "getEnd", writeMethod: "setEnd"});
 
 
 /**
@@ -7381,7 +13005,7 @@ TransactionList.prototype.setEnd = function(end) {
 TransactionList.prototype.getTransactions = function() {
   return this.transactions;
 };
-ChildAggregate.add({order: 20, owner: TransactionList, /*type: Transaction[],*/ fcn: "getTransactions"});
+ChildAggregate.add(TransactionList, {order: 20, attributeType: Array, collectionEntryType: Transaction, readMethod: "getTransactions", writeMethod: "setTransactions"});
 
 
 /**
@@ -7398,7 +13022,7 @@ TransactionList.prototype.setTransactions = function(transactions) {
 
 module.exports = TransactionList;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransactionType.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./Transaction":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Transaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransactionType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7529,6 +13153,8 @@ module.exports = TransactionType;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var BankAccountDetails = require("../banking/BankAccountDetails");
+var CreditCardAccountDetails = require("../creditcard/CreditCardAccountDetails");
 
 /**
  * @class
@@ -7591,7 +13217,7 @@ Aggregate.add("XFERINFO", TransferInfo);
 TransferInfo.prototype.getBankAccountFrom = function() {
   return this.bankAccountFrom;
 };
-ChildAggregate.add({name: "BANKACCTFROM", order: 0, owner: TransferInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccountFrom"});
+ChildAggregate.add(TransferInfo, {name: "BANKACCTFROM", order: 0, attributeType: BankAccountDetails, readMethod: "getBankAccountFrom", writeMethod: "setBankAccountFrom"});
 
 
 /**
@@ -7623,7 +13249,7 @@ TransferInfo.prototype.setAccountFrom = function(bankAccountFrom) {
 TransferInfo.prototype.getCreditCardAccountFrom = function() {
   return this.creditCardAccountFrom;
 };
-ChildAggregate.add({name: "CCACCTFROM", order: 10, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountFrom"});
+ChildAggregate.add(TransferInfo, {name: "CCACCTFROM", order: 10, attributeType: CreditCardAccountDetails, readMethod: "getCreditCardAccountFrom", writeMethod: "setCreditCardAccountFrom"});
 
 
 /**
@@ -7655,7 +13281,7 @@ TransferInfo.prototype.setAccountFrom = function(creditCardAccountFrom) {
 TransferInfo.prototype.getBankAccountTo = function() {
   return this.bankAccountTo;
 };
-ChildAggregate.add({name: "BANKACCTTO", order: 20, owner: TransferInfo, /*type: BankAccountDetails,*/ fcn: "getBankAccountTo"});
+ChildAggregate.add(TransferInfo, {name: "BANKACCTTO", order: 20, attributeType: BankAccountDetails, readMethod: "getBankAccountTo", writeMethod: "setBankAccountTo"});
 
 
 /**
@@ -7687,7 +13313,7 @@ TransferInfo.prototype.setAccountTo = function(bankAccountTo) {
 TransferInfo.prototype.getCreditCardAccountTo = function() {
   return this.creditCardAccountTo;
 };
-ChildAggregate.add({name: "CCACCTTO", order: 30, owner: TransferInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccountTo"});
+ChildAggregate.add(TransferInfo, {name: "CCACCTTO", order: 30, attributeType: CreditCardAccountDetails, readMethod: "getCreditCardAccountTo", writeMethod: "setCreditCardAccountTo"});
 
 
 /**
@@ -7719,7 +13345,7 @@ TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
 TransferInfo.prototype.getAmount = function() {
   return this.amount;
 };
-Element.add({name: "TRNAMT", required: true, order: 40, owner: TransferInfo, /*type: Double,*/ fcn: "getAmount"});
+Element.add(TransferInfo, {name: "TRNAMT", required: true, order: 40, attributeType: Number, readMethod: "getAmount", writeMethod: "setAmount"});
 
 
 /**
@@ -7740,7 +13366,7 @@ TransferInfo.prototype.setAmount = function(amount) {
 TransferInfo.prototype.getDue = function() {
   return this.due;
 };
-Element.add({name: "DTDUE", order: 50, owner: TransferInfo, /*type: Date,*/ fcn: "getDue"});
+Element.add(TransferInfo, {name: "DTDUE", order: 50, attributeType: Date, readMethod: "getDue", writeMethod: "setDue"});
 
 
 /**
@@ -7757,7 +13383,7 @@ TransferInfo.prototype.setDue = function(due) {
 
 module.exports = TransferInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransferStatus.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../banking/BankAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/BankAccountDetails.js","../creditcard/CreditCardAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransferStatus.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7776,8 +13402,7 @@ module.exports = TransferInfo;
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
-
-//import java.util.Date;
+var TransferStatusEvent = require("./TransferStatusEvent");
 
 /**
  * @class
@@ -7812,7 +13437,7 @@ Aggregate.add("XFERPRCSTS", TransferStatus);
 TransferStatus.prototype.getEvent = function() {
   return this.event;
 };
-Element.add({name: "XFERPRCCODE", required: true, order: 0, owner: TransferStatus, /*type: TransferStatusEvent,*/ fcn: "getEvent"});
+Element.add(TransferStatus, {name: "XFERPRCCODE", required: true, order: 0, attributeType: TransferStatusEvent, readMethod: "getEvent", writeMethod: "setEvent"});
 
 
 /**
@@ -7833,7 +13458,7 @@ TransferStatus.prototype.setEvent = function(event) {
 TransferStatus.prototype.getDate = function() {
   return this.date;
 };
-Element.add({name: "DTXFERPRC", required: true, order: 10, owner: TransferStatus, /*type: Date,*/ fcn: "getDate"});
+Element.add(TransferStatus, {name: "DTXFERPRC", required: true, order: 10, attributeType: Date, readMethod: "getDate", writeMethod: "setDate"});
 
 
 /**
@@ -7850,7 +13475,7 @@ TransferStatus.prototype.setDate = function(date) {
 
 module.exports = TransferStatus;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransferStatusEvent.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./TransferStatusEvent":"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransferStatusEvent.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/common/TransferStatusEvent.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8063,7 +13688,7 @@ Aggregate.add("CreditCardAccountDetails", CreditCardAccountDetails);
 CreditCardAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 0, owner: CreditCardAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
+Element.add(CreditCardAccountDetails, {name: "ACCTID", required: true, order: 0, attributeType: String, readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -8084,7 +13709,7 @@ CreditCardAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 CreditCardAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCKEY", order: 10, owner: CreditCardAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
+Element.add(CreditCardAccountDetails, {name: "ACCKEY", order: 10, attributeType: String, readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**
@@ -8120,10 +13745,12 @@ module.exports = CreditCardAccountDetails;
 
 var inherit = require("../../../util/inherit");
 
-var AccountInfo = require("../common/AccountInfo");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var AccountInfo = require("../common/AccountInfo");
+var AccountStatus = require("../common/AccountStatus");
+var CreditCardAccountDetails = require("./CreditCardAccountDetails");
 
 /**
  * @class
@@ -8181,7 +13808,7 @@ Aggregate.add("CCACCTINFO", CreditCardAccountInfo);
 CreditCardAccountInfo.prototype.getCreditCardAccount = function() {
   return this.creditCardAccount;
 };
-ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardAccountInfo, /*type: CreditCardAccountDetails,*/ fcn: "getCreditCardAccount"});
+ChildAggregate.add(CreditCardAccountInfo, {name: "CCACCTFROM", required: true, order: 0, attributeType: CreditCardAccountDetails, readMethod: "getCreditCardAccount", writeMethod: "setCreditCardAccount"});
 
 
 /**
@@ -8208,7 +13835,7 @@ CreditCardAccountInfo.prototype.getAccountDetails = function() {
 CreditCardAccountInfo.prototype.getSupportsTransactionDetailOperations = function() {
   return this.supportsTransactionDetailOperations;
 };
-Element.add({name: "SUPTXDL", required: true, order: 10, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransactionDetailOperations"});
+Element.add(CreditCardAccountInfo, {name: "SUPTXDL", required: true, order: 10, attributeType: Boolean, readMethod: "getSupportsTransactionDetailOperations", writeMethod: "setSupportsTransactionDetailOperations"});
 
 
 /**
@@ -8229,7 +13856,7 @@ CreditCardAccountInfo.prototype.setSupportsTransactionDetailOperations = functio
 CreditCardAccountInfo.prototype.getSupportsTransferToOtherAccountOperations = function() {
   return this.supportsTransferToOtherAccountOperations;
 };
-Element.add({name: "XFERSRC", required: true, order: 20, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferToOtherAccountOperations"});
+Element.add(CreditCardAccountInfo, {name: "XFERSRC", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsTransferToOtherAccountOperations", writeMethod: "setSupportsTransferToOtherAccountOperations"});
 
 
 /**
@@ -8250,7 +13877,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferToOtherAccountOperations = fu
 CreditCardAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations = function() {
   return this.supportsTransferFromOtherAccountOperations;
 };
-Element.add({name: "XFERDEST", required: true, order: 30, owner: CreditCardAccountInfo, /*type: Boolean,*/ fcn: "getSupportsTransferFromOtherAccountOperations"});
+Element.add(CreditCardAccountInfo, {name: "XFERDEST", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsTransferFromOtherAccountOperations", writeMethod: "setSupportsTransferFromOtherAccountOperations"});
 
 
 /**
@@ -8271,7 +13898,7 @@ CreditCardAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations = 
 CreditCardAccountInfo.prototype.getStatus = function() {
   return this.status;
 };
-Element.add({name: "SVCSTATUS", required: true, order: 40, owner: CreditCardAccountInfo, /*type: AccountStatus,*/ fcn: "getStatus"});
+Element.add(CreditCardAccountInfo, {name: "SVCSTATUS", required: true, order: 40, attributeType: AccountStatus, readMethod: "getStatus", writeMethod: "setStatus"});
 
 
 /**
@@ -8288,7 +13915,7 @@ CreditCardAccountInfo.prototype.setStatus = function(status) {
 
 module.exports = CreditCardAccountInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/AccountInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardRequestMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/AccountInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountInfo.js","../common/AccountStatus":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountStatus.js","./CreditCardAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardRequestMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8311,6 +13938,7 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var CreditCardStatementRequestTransaction = require("./CreditCardStatementRequestTransaction");
 
 /**
  * @class
@@ -8345,7 +13973,7 @@ CreditCardRequestMessageSet.prototype.getType = function() {
 CreditCardRequestMessageSet.prototype.getStatementRequest = function() {
   return this.statementRequest;
 };
-ChildAggregate.add({order: 0, owner: CreditCardRequestMessageSet, /*type: CreditCardStatementRequestTransaction,*/ fcn: "getStatementRequest"});
+ChildAggregate.add(CreditCardRequestMessageSet, {order: 0, attributeType: CreditCardStatementRequestTransaction, readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
 
 
 /**
@@ -8372,7 +14000,7 @@ CreditCardRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = CreditCardRequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardResponseMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./CreditCardStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8395,6 +14023,7 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var CreditCardStatementResponseTransaction = require("./CreditCardStatementResponseTransaction");
 
 /**
  * @class
@@ -8433,7 +14062,7 @@ CreditCardResponseMessageSet.prototype.getType = function() {
 CreditCardResponseMessageSet.prototype.getStatementResponses = function() {
   return this.statementResponses;
 };
-ChildAggregate.add({order: 0, owner: CreditCardResponseMessageSet, /*type: CreditCardStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
+ChildAggregate.add(CreditCardResponseMessageSet, {order: 0, attributeType: Array, collectionEntryType: CreditCardStatementResponseTransaction, readMethod: "getStatementResponses", writeMethod: "setStatementResponses"});
 
 
 /**
@@ -8477,7 +14106,7 @@ CreditCardResponseMessageSet.prototype.getResponseMessages = function() {
 
 module.exports = CreditCardResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequest.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./CreditCardStatementResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequest.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8499,6 +14128,7 @@ var inherit = require("../../../util/inherit");
 var StatementRequest = require("../common/StatementRequest");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var CreditCardAccountDetails = require("./CreditCardAccountDetails");
 
 /**
  * @class
@@ -8528,7 +14158,7 @@ Aggregate.add("CCSTMTRQ", CreditCardStatementRequest);
 CreditCardStatementRequest.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name: "CCACCTFROM", required: true, order: 0, owner: CreditCardStatementRequest, /*type: CreditCardAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add(CreditCardStatementRequest, {name: "CCACCTFROM", required: true, order: 0, attributeType: CreditCardAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -8545,7 +14175,7 @@ CreditCardStatementRequest.prototype.setAccount = function(account) {
 
 module.exports = CreditCardStatementRequest;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRequest.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequestTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRequest.js","./CreditCardAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8597,7 +14227,7 @@ Aggregate.add("CCSTMTTRNRQ", CreditCardStatementRequestTransaction);
 CreditCardStatementRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: CreditCardStatementRequestTransaction, /*type: CreditCardStatementRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(CreditCardStatementRequestTransaction, {required: true, order: 30, attributeType: CreditCardStatementRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -8643,6 +14273,7 @@ var inherit = require("../../../util/inherit");
 var StatementResponse = require("../common/StatementResponse");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var CreditCardAccountDetails = require("./CreditCardAccountDetails");
 
 /**
  * @class
@@ -8677,7 +14308,7 @@ CreditCardStatementResponse.prototype.getResponseMessageName = function() {
 CreditCardStatementResponse.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name:"CCACCTFROM", order: 10, owner: CreditCardStatementResponse, /*type: CreditCardAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add(CreditCardStatementResponse, {name:"CCACCTFROM", order: 10, attributeType: CreditCardAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -8694,7 +14325,7 @@ CreditCardStatementResponse.prototype.setAccount = function(account) {
 
 module.exports = CreditCardStatementResponse;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementResponseTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/StatementResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js","./CreditCardAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardAccountDetails.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8746,7 +14377,7 @@ Aggregate.add("CCSTMTTRNRS", CreditCardStatementResponseTransaction);
 CreditCardStatementResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: CreditCardStatementResponseTransaction, /*type: CreditCardStatementResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(CreditCardStatementResponseTransaction, {required: true, order: 30, attributeType: CreditCardStatementResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -8971,7 +14602,7 @@ Aggregate.add("InvestmentAccountDetails", InvestmentAccountDetails);
 InvestmentAccountDetails.prototype.getBrokerId = function() {
   return this.brokerId;
 };
-Element.add({name: "BROKERID", required: true, order: 0, owner: InvestmentAccountDetails, /*type: String,*/ fcn: "getBrokerId"});
+Element.add(InvestmentAccountDetails, {name: "BROKERID", required: true, order: 0, attributeType: String, readMethod: "getBrokerId", writeMethod: "setBrokerId"});
 
 
 /**
@@ -8992,7 +14623,7 @@ InvestmentAccountDetails.prototype.setBrokerId = function(brokerId) {
 InvestmentAccountDetails.prototype.getAccountNumber = function() {
   return this.accountNumber;
 };
-Element.add({name: "ACCTID", required: true, order: 20, owner: InvestmentAccountDetails, /*type: String,*/ fcn: "getAccountNumber"});
+Element.add(InvestmentAccountDetails, {name: "ACCTID", required: true, order: 20, attributeType: String, readMethod: "getAccountNumber", writeMethod: "setAccountNumber"});
 
 
 /**
@@ -9013,7 +14644,7 @@ InvestmentAccountDetails.prototype.setAccountNumber = function(accountNumber) {
 InvestmentAccountDetails.prototype.getAccountKey = function() {
   return this.accountKey;
 };
-Element.add({name: "ACCTKEY", order: 40, owner: InvestmentAccountDetails, /*type: String,*/ fcn: "getAccountKey"});
+Element.add(InvestmentAccountDetails, {name: "ACCTKEY", order: 40, attributeType: String, readMethod: "getAccountKey", writeMethod: "setAccountKey"});
 
 
 /**
@@ -9056,6 +14687,7 @@ var Element = require("../../../../meta/Element");
 var UnitedStatesAccountType = require("./UnitedStatesAccountType");
 var ActivationStatus = require("./ActivationStatus");
 var AccountType = require("./AccountType");
+var InvestmentAccountDetails = require("./InvestmentAccountDetails");
 
 /**
  * Aggregate for the info about a brokerage account.
@@ -9123,7 +14755,7 @@ Aggregate.add("INVACCTINFO", InvestmentAccountInfo);
 InvestmentAccountInfo.prototype.getInvestmentAccount = function() {
   return this.investmentAccount;
 };
-ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentAccountInfo, /*type: InvestmentAccountDetails,*/ fcn: "getInvestmentAccount"});
+ChildAggregate.add(InvestmentAccountInfo, {name: "INVACCTFROM", required: true, order: 0, attributeType: InvestmentAccountDetails, readMethod: "getInvestmentAccount", writeMethod: "setInvestmentAccount"});
 
 
 /**
@@ -9152,7 +14784,7 @@ InvestmentAccountInfo.prototype.getAccountDetails = function() {
 InvestmentAccountInfo.prototype.getUnitedStatesAccountType = function() {
   return this.unitedStatesAccountType;
 };
-Element.add({name: "USPRODUCTTYPE", required: true, order: 10, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getUnitedStatesAccountType"});
+Element.add(InvestmentAccountInfo, {name: "USPRODUCTTYPE", required: true, order: 10, attributeType: String, readMethod: "getUnitedStatesAccountType", writeMethod: "setUnitedStatesAccountType"});
 
 
 /**
@@ -9185,7 +14817,7 @@ InvestmentAccountInfo.prototype.getUnitedStatesAccountTypeEnum = function() {
 InvestmentAccountInfo.prototype.getSupportsChecking = function() {
   return this.supportsChecking;
 };
-Element.add({name: "CHECKING", required: true, order: 20, owner: InvestmentAccountInfo, /*type: Boolean,*/ fcn: "getSupportsChecking"});
+Element.add(InvestmentAccountInfo, {name: "CHECKING", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsChecking", writeMethod: "setSupportsChecking"});
 
 
 /**
@@ -9208,7 +14840,7 @@ InvestmentAccountInfo.prototype.setSupportsChecking = function(supportsChecking)
 InvestmentAccountInfo.prototype.getActivationStatus = function() {
   return this.activationStatus;
 };
-Element.add({name: "SVCSTATUS", required: true, order: 30, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getActivationStatus"});
+Element.add(InvestmentAccountInfo, {name: "SVCSTATUS", required: true, order: 30, attributeType: String, readMethod: "getActivationStatus", writeMethod: "setActivationStatus"});
 
 
 /**
@@ -9241,7 +14873,7 @@ InvestmentAccountInfo.prototype.getActivationStatusEnum = function() {
 InvestmentAccountInfo.prototype.getInvestmentAccountType = function() {
   return this.investmentAccountType;
 };
-Element.add({name: "INVACCTTYPE", order: 40, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getInvestmentAccountType"});
+Element.add(InvestmentAccountInfo, {name: "INVACCTTYPE", order: 40, attributeType: String, readMethod: "getInvestmentAccountType", writeMethod: "setInvestmentAccountType"});
 
 
 /**
@@ -9274,7 +14906,7 @@ InvestmentAccountInfo.prototype.getInvestmentAccountTypeEnum = function() {
 InvestmentAccountInfo.prototype.getOptionLevel = function() {
   return this.optionLevel;
 };
-Element.add({name: "OPTIONLEVEL", order: 50, owner: InvestmentAccountInfo, /*type: String,*/ fcn: "getOptionLevel"});
+Element.add(InvestmentAccountInfo, {name: "OPTIONLEVEL", order: 50, attributeType: String, readMethod: "getOptionLevel", writeMethod: "setOptionLevel"});
 
 
 /**
@@ -9292,7 +14924,7 @@ InvestmentAccountInfo.prototype.setOptionLevel = function(optionLevel) {
 
 module.exports = InvestmentAccountInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../common/AccountInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountInfo.js","./AccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/AccountType.js","./ActivationStatus":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/ActivationStatus.js","./UnitedStatesAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/UnitedStatesAccountType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../common/AccountInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/common/AccountInfo.js","./AccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/AccountType.js","./ActivationStatus":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/ActivationStatus.js","./InvestmentAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/InvestmentAccountDetails.js","./UnitedStatesAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/UnitedStatesAccountType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9471,6 +15103,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var PositionType = require("./PositionType");
 var Inv401KSource = require("./Inv401KSource");
+var InvestmentPosition = require("./InvestmentPosition");
 
 /**
  * Base class for the various types of positions.
@@ -9503,7 +15136,7 @@ function BasePosition () {
 BasePosition.prototype.getInvestmentPosition = function() {
   return this.investmentPosition;
 };
-ChildAggregate.add({required: true, order: 10, owner: BasePosition, /*type: InvestmentPosition,*/ fcn: "getInvestmentPosition"});
+ChildAggregate.add(BasePosition, {required: true, order: 10, attributeType: InvestmentPosition, readMethod: "getInvestmentPosition", writeMethod: "setInvestmentPosition"});
 
 
 /**
@@ -9673,7 +15306,7 @@ BasePosition.prototype.get401kSourceEnum = function() {
 
 module.exports = BasePosition;
 
-},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./PositionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/PositionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/DebtPosition.js":[function(require,module,exports){
+},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./InvestmentPosition":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/InvestmentPosition.js","./PositionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/PositionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/DebtPosition.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -9792,6 +15425,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
 var PositionType = require("./PositionType");
 var Inv401KSource = require("./Inv401KSource");
 
@@ -9889,7 +15523,7 @@ Aggregate.add("INVPOS", InvestmentPosition);
 InvestmentPosition.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 10, owner: InvestmentPosition, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(InvestmentPosition, {required: true, order: 10, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -9913,7 +15547,7 @@ InvestmentPosition.prototype.setSecurityId = function(securityId) {
 InvestmentPosition.prototype.getHeldInAccount = function() {
   return this.heldInAccount;
 };
-Element.add({name: "HELDINACCT", required: true, order: 20, owner: InvestmentPosition, /*type: String,*/ fcn: "getHeldInAccount"});
+Element.add(InvestmentPosition, {name: "HELDINACCT", required: true, order: 20, attributeType: String, readMethod: "getHeldInAccount", writeMethod: "setHeldInAccount"});
 
 
 /**
@@ -9949,7 +15583,7 @@ InvestmentPosition.prototype.getHeldInAccountEnum = function() {
 InvestmentPosition.prototype.getPositionType = function() {
   return this.positionType;
 };
-Element.add({name: "POSTYPE", required: true, order: 30, owner: InvestmentPosition, /*type: String,*/ fcn: "getPositionType"});
+Element.add(InvestmentPosition, {name: "POSTYPE", required: true, order: 30, attributeType: String, readMethod: "getPositionType", writeMethod: "setPositionType"});
 
 
 /**
@@ -9986,7 +15620,7 @@ InvestmentPosition.prototype.getPositionTypeEnum = function() {
 InvestmentPosition.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 40, owner: InvestmentPosition, /*type: Double,*/ fcn: "getUnits"});
+Element.add(InvestmentPosition, {name: "UNITS", required: true, order: 40, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -10013,7 +15647,7 @@ InvestmentPosition.prototype.setUnits = function(units) {
 InvestmentPosition.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 50, owner: InvestmentPosition, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add(InvestmentPosition, {name: "UNITPRICE", required: true, order: 50, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -10038,7 +15672,7 @@ InvestmentPosition.prototype.setUnitPrice = function(unitPrice) {
 InvestmentPosition.prototype.getMarketValue = function() {
   return this.marketValue;
 };
-Element.add({name: "MKTVAL", required: true, order: 60, owner: InvestmentPosition, /*type: Double,*/ fcn: "getMarketValue"});
+Element.add(InvestmentPosition, {name: "MKTVAL", required: true, order: 60, attributeType: Number, readMethod: "getMarketValue", writeMethod: "setMarketValue"});
 
 
 /**
@@ -10062,7 +15696,7 @@ InvestmentPosition.prototype.setMarketValue = function(marketValue) {
 InvestmentPosition.prototype.getMarketValueDate = function() {
   return this.marketValueDate;
 };
-Element.add({name: "DTPRICEASOF", required: true, order: 70, owner: InvestmentPosition, /*type: Date,*/ fcn: "getMarketValueDate"});
+Element.add(InvestmentPosition, {name: "DTPRICEASOF", required: true, order: 70, attributeType: Date, readMethod: "getMarketValueDate", writeMethod: "setMarketValueDate"});
 
 
 /**
@@ -10087,7 +15721,7 @@ InvestmentPosition.prototype.setMarketValueDate = function(marketValueDate) {
 InvestmentPosition.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: InvestmentPosition, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(InvestmentPosition, {name: "CURRENCY", order: 80, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -10112,7 +15746,7 @@ InvestmentPosition.prototype.setCurrencyCode = function(currencyCode) {
 InvestmentPosition.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 90, owner: InvestmentPosition, /*type: String,*/ fcn: "getMemo"});
+Element.add(InvestmentPosition, {name: "MEMO", order: 90, attributeType: String, readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**
@@ -10138,7 +15772,7 @@ InvestmentPosition.prototype.setMemo = function(memo) {
 InvestmentPosition.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 100, owner: InvestmentPosition, /*type: String,*/ fcn: "get401kSource"});
+Element.add(InvestmentPosition, {name: "INV401KSOURCE", order: 100, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -10168,7 +15802,7 @@ InvestmentPosition.prototype.get401kSourceEnum = function() {
 
 module.exports = InvestmentPosition;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./PositionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/PositionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/InvestmentPositionList.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./PositionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/PositionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/InvestmentPositionList.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10187,6 +15821,7 @@ module.exports = InvestmentPosition;
 
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var BasePosition = require("./BasePosition");
 
 /**
  * Aggregate for a list of invesment positions.
@@ -10217,7 +15852,7 @@ Aggregate.add("INVPOSLIST", InvestmentPositionList);
 InvestmentPositionList.prototype.getPositions = function() {
   return this.positions;
 };
-ChildAggregate.add({order: 10, owner: InvestmentPositionList, /*type: BasePosition[],*/ fcn: "getPositions"});
+ChildAggregate.add(InvestmentPositionList, {order: 10, attributeType: Array, collectionEntryType: BasePosition, readMethod: "getPositions", writeMethod: "setPositions"});
 
 
 /**
@@ -10234,7 +15869,7 @@ InvestmentPositionList.prototype.setPositions = function(positions) {
 
 module.exports = InvestmentPositionList;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/MutualFundPosition.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./BasePosition":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/BasePosition.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/MutualFundPosition.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10309,7 +15944,7 @@ Aggregate.add("POSMF", MutualFundPosition);
 MutualFundPosition.prototype.getUnitsStreet = function() {
   return this.unitsStreet;
 };
-Element.add({name: "UNITSSTREET", order: 20, owner: MutualFundPosition, /*type: Double,*/ fcn: "getUnitsStreet"});
+Element.add(MutualFundPosition, {name: "UNITSSTREET", order: 20, attributeType: Number, readMethod: "getUnitsStreet", writeMethod: "setUnitsStreet"});
 
 
 /**
@@ -10330,7 +15965,7 @@ MutualFundPosition.prototype.setUnitsStreet = function(unitsStreet) {
 MutualFundPosition.prototype.getUnitsUser = function() {
   return this.unitsUser;
 };
-Element.add({name: "UNITSUSER", order: 30, owner: MutualFundPosition, /*type: Double,*/ fcn: "getUnitsUser"});
+Element.add(MutualFundPosition, {name: "UNITSUSER", order: 30, attributeType: Number, readMethod: "getUnitsUser", writeMethod: "setUnitsUser"});
 
 
 /**
@@ -10351,7 +15986,7 @@ MutualFundPosition.prototype.setUnitsUser = function(unitsUser) {
 MutualFundPosition.prototype.getReinvestDividends = function() {
   return this.reinvestDividends;
 };
-Element.add({name: "REINVDIV", order: 50, owner: MutualFundPosition, /*type: Boolean,*/ fcn: "getReinvestDividends"});
+Element.add(MutualFundPosition, {name: "REINVDIV", order: 50, attributeType: Boolean, readMethod: "getReinvestDividends", writeMethod: "setReinvestDividends"});
 
 
 /**
@@ -10372,7 +16007,7 @@ MutualFundPosition.prototype.setReinvestDividends = function(reinvestDividends) 
 MutualFundPosition.prototype.getReinvestCapitalGains = function() {
   return this.reinvestCapitalGains;
 };
-Element.add({name: "REINVCG", order: 60, owner: MutualFundPosition, /*type: Boolean,*/ fcn: "getReinvestCapitalGains"});
+Element.add(MutualFundPosition, {name: "REINVCG", order: 60, attributeType: Boolean, readMethod: "getReinvestCapitalGains", writeMethod: "setReinvestCapitalGains"});
 
 
 /**
@@ -10444,7 +16079,7 @@ Aggregate.add("POSOPT", OptionsPosition);
 OptionsPosition.prototype.getSecured = function() {
   return this.secured;
 };
-Element.add({name: "SECURED", order: 20, owner: OptionsPosition, /*type: String,*/ fcn: "getSecured"});
+Element.add(OptionsPosition, {name: "SECURED", order: 20, attributeType: String, readMethod: "getSecured", writeMethod: "setSecured"});
 
 
 /**
@@ -10662,7 +16297,7 @@ Aggregate.add("POSSTOCK", StockPosition);
 StockPosition.prototype.getUnitsStreet = function() {
   return this.unitsStreet;
 };
-Element.add({name: "UNITSSTREET", order: 20, owner: StockPosition, /*type: Double,*/ fcn: "getUnitsStreet"});
+Element.add(StockPosition, {name: "UNITSSTREET", order: 20, attributeType: Number, readMethod: "getUnitsStreet", writeMethod: "setUnitsStreet"});
 
 
 /**
@@ -10683,7 +16318,7 @@ StockPosition.prototype.setUnitsStreet = function(unitsStreet) {
 StockPosition.prototype.getUnitsUser = function() {
   return this.unitsUser;
 };
-Element.add({name: "UNITSUSER", order: 30, owner: StockPosition, /*type: Double,*/ fcn: "getUnitsUser"});
+Element.add(StockPosition, {name: "UNITSUSER", order: 30, attributeType: Number, readMethod: "getUnitsUser", writeMethod: "setUnitsUser"});
 
 
 /**
@@ -10704,7 +16339,7 @@ StockPosition.prototype.setUnitsUser = function(unitsUser) {
 StockPosition.prototype.getReinvestDividends = function() {
   return this.reinvestDividends;
 };
-Element.add({name: "REINVDIV", order: 40, owner: StockPosition, /*type: Boolean,*/ fcn: "getReinvestDividends"});
+Element.add(StockPosition, {name: "REINVDIV", order: 40, attributeType: Boolean, readMethod: "getReinvestDividends", writeMethod: "setReinvestDividends"});
 
 
 /**
@@ -10756,6 +16391,7 @@ module.exports = {
 
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var BalanceRecord = require("../../common/BalanceRecord");
 
 /**
  * Aggregate for the investment balance list.
@@ -10786,7 +16422,7 @@ Aggregate.add("BALLIST", BalanceList);
 BalanceList.prototype.getBalanceRecords = function() {
   return this.balanceRecords;
 };
-ChildAggregate.add({order: 10, owner: BalanceList, /*type: BalanceRecord[],*/ fcn: "getBalanceRecords"});
+ChildAggregate.add(BalanceList, {order: 10, attributeType: Array, collectionEntryType: BalanceRecord, readMethod: "getBalanceRecords", writeMethod: "setBalanceRecords"});
 
 
 /**
@@ -10803,7 +16439,7 @@ BalanceList.prototype.setBalanceRecords = function(balanceRecords) {
 
 module.exports = BalanceList;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/IncludePosition.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../common/BalanceRecord":"/Users/aolson/Developer/ofx4js/src/domain/data/common/BalanceRecord.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/IncludePosition.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10861,7 +16497,7 @@ Aggregate.add("INCPOS", IncludePosition);
 IncludePosition.prototype.getDateSentDown = function() {
   return this.sentDownDate;
 };
-Element.add({name: "DTASOF", order: 0, owner: IncludePosition, /*type: Date,*/ fcn: "getDateSentDown"});
+Element.add(IncludePosition, {name: "DTASOF", order: 0, attributeType: Date, readMethod: "getDateSentDown", writeMethod: "setDateSentDown"});
 
 
 /**
@@ -10883,7 +16519,7 @@ IncludePosition.prototype.setDateSentDown = function(sentDownDate) {
 IncludePosition.prototype.getIncludePositions = function() {
   return this.includePositions;
 };
-Element.add({name: "INCLUDE", order: 10, owner: IncludePosition, /*type: Boolean,*/ fcn: "getIncludePositions"});
+Element.add(IncludePosition, {name: "INCLUDE", order: 10, attributeType: Boolean, readMethod: "getIncludePositions", writeMethod: "setIncludePositions"});
 
 
 /**
@@ -10920,6 +16556,7 @@ module.exports = IncludePosition;
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var BalanceList = require("./BalanceList");
 
 /**
  * Aggregate for the investment balance.
@@ -10979,7 +16616,7 @@ Aggregate.add("INVBAL", InvestmentBalance);
 InvestmentBalance.prototype.getAvailableCash = function() {
   return this.availableCash;
 };
-Element.add({name: "AVAILCASH", required: true, order: 10, owner: InvestmentBalance, /*type: Double,*/ fcn: "getAvailableCash"});
+Element.add(InvestmentBalance, {name: "AVAILCASH", required: true, order: 10, attributeType: Number, readMethod: "getAvailableCash", writeMethod: "setAvailableCash"});
 
 
 /**
@@ -11003,7 +16640,7 @@ InvestmentBalance.prototype.setAvailableCash = function(availableCash) {
 InvestmentBalance.prototype.getMarginBalance = function() {
   return this.marginBalance;
 };
-Element.add({name: "MARGINBALANCE", required: true, order: 20, owner: InvestmentBalance, /*type: Double,*/ fcn: "getMarginBalance"});
+Element.add(InvestmentBalance, {name: "MARGINBALANCE", required: true, order: 20, attributeType: Number, readMethod: "getMarginBalance", writeMethod: "setMarginBalance"});
 
 
 /**
@@ -11027,7 +16664,7 @@ InvestmentBalance.prototype.setMarginBalance = function(marginBalance) {
 InvestmentBalance.prototype.getShortBalance = function() {
   return this.shortBalance;
 };
-Element.add({name: "SHORTBALANCE", required: true, order: 30, owner: InvestmentBalance, /*type: Double,*/ fcn: "getShortBalance"});
+Element.add(InvestmentBalance, {name: "SHORTBALANCE", required: true, order: 30, attributeType: Number, readMethod: "getShortBalance", writeMethod: "setShortBalance"});
 
 
 /**
@@ -11049,7 +16686,7 @@ InvestmentBalance.prototype.setShortBalance = function(shortBalance) {
 InvestmentBalance.prototype.getBuyingPower = function() {
   return this.buyingPower;
 };
-Element.add({name: "BUYPOWER", order: 40, owner: InvestmentBalance, /*type: Double,*/ fcn: "getBuyingPower"});
+Element.add(InvestmentBalance, {name: "BUYPOWER", order: 40, attributeType: Number, readMethod: "getBuyingPower", writeMethod: "setBuyingPower"});
 
 
 /**
@@ -11070,7 +16707,7 @@ InvestmentBalance.prototype.setBuyingPower = function(buyingPower) {
 InvestmentBalance.prototype.getBalanceList = function() {
   return this.balanceList;
 };
-ChildAggregate.add({order: 50, owner: InvestmentBalance, /*type: BalanceList,*/ fcn: "getBalanceList"});
+ChildAggregate.add(InvestmentBalance, {order: 50, attributeType: BalanceList, readMethod: "getBalanceList", writeMethod: "setBalanceList"});
 
 
 /**
@@ -11087,7 +16724,7 @@ InvestmentBalance.prototype.setBalanceList = function(balanceList) {
 
 module.exports = InvestmentBalance;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequest.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./BalanceList":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/BalanceList.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequest.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11110,6 +16747,8 @@ var StatementRequest = require("../../common/StatementRequest");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var InvestmentAccountDetails = require("../accounts/InvestmentAccountDetails");
+var IncludePosition = require("./IncludePosition");
 
 /**
  * Aggregate for the investment statement download request.
@@ -11163,7 +16802,7 @@ Aggregate.add("INVSTMTRQ", InvestmentStatementRequest);
 InvestmentStatementRequest.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name: "INVACCTFROM", required: true, order: 0, owner: InvestmentStatementRequest, /*type: InvestmentAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add(InvestmentStatementRequest, {name: "INVACCTFROM", required: true, order: 0, attributeType: InvestmentAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -11186,7 +16825,7 @@ InvestmentStatementRequest.prototype.setAccount = function(account) {
 InvestmentStatementRequest.prototype.getIncludeOpenOrders = function() {
   return this.includeOpenOrders;
 };
-Element.add({name: "INCOO", order: 20, owner: InvestmentStatementRequest, /*type: Boolean,*/ fcn: "getIncludeOpenOrders"});
+Element.add(InvestmentStatementRequest, {name: "INCOO", order: 20, attributeType: Boolean, readMethod: "getIncludeOpenOrders", writeMethod: "setIncludeOpenOrders"});
 
 
 /**
@@ -11209,7 +16848,7 @@ InvestmentStatementRequest.prototype.setIncludeOpenOrders = function(includeOpen
 InvestmentStatementRequest.prototype.getIncludePosition = function() {
   return this.includePosition;
 };
-ChildAggregate.add({name: "INCPOS", required: true, order: 30, owner: InvestmentStatementRequest, /*type: IncludePosition,*/ fcn: "getIncludePosition"});
+ChildAggregate.add(InvestmentStatementRequest, {name: "INCPOS", required: true, order: 30, attributeType: IncludePosition, readMethod: "getIncludePosition", writeMethod: "setIncludePosition"});
 
 
 /**
@@ -11231,7 +16870,7 @@ InvestmentStatementRequest.prototype.setIncludePosition = function(includePositi
 InvestmentStatementRequest.prototype.getIncludeBalance = function() {
   return this.includeBalance;
 };
-Element.add({name: "INCBAL", required: true, order: 40, owner: InvestmentStatementRequest, /*type: Boolean,*/ fcn: "getIncludeBalance"});
+Element.add(InvestmentStatementRequest, {name: "INCBAL", required: true, order: 40, attributeType: Boolean, readMethod: "getIncludeBalance", writeMethod: "setIncludeBalance"});
 
 
 /**
@@ -11249,7 +16888,7 @@ InvestmentStatementRequest.prototype.setIncludeBalance = function(includeBalance
 
 module.exports = InvestmentStatementRequest;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../common/StatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRequest.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestMessageSet.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../common/StatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRequest.js","../accounts/InvestmentAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/InvestmentAccountDetails.js","./IncludePosition":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/IncludePosition.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11272,6 +16911,7 @@ var MessageSetType = require("../../MessageSetType");
 var RequestMessageSet = require("../../RequestMessageSet");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var InvestmentStatementRequestTransaction = require("./InvestmentStatementRequestTransaction");
 
 /**
  * Investment statement request message set.
@@ -11309,7 +16949,7 @@ InvestmentStatementRequestMessageSet.prototype.getType = function() {
 InvestmentStatementRequestMessageSet.prototype.getStatementRequest = function() {
   return this.statementRequest;
 };
-ChildAggregate.add({order: 0, owner: InvestmentStatementRequestMessageSet, /*type: InvestmentStatementRequestTransaction,*/ fcn: "getStatementRequest"});
+ChildAggregate.add(InvestmentStatementRequestMessageSet, {order: 0, attributeType: InvestmentStatementRequestTransaction, readMethod: "getStatementRequest", writeMethod: "setStatementRequest"});
 
 
 /**
@@ -11336,7 +16976,7 @@ InvestmentStatementRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = InvestmentStatementRequestMessageSet;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./InvestmentStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11391,7 +17031,7 @@ Aggregate.add("INVSTMTTRNRQ", InvestmentStatementRequestTransaction);
 InvestmentStatementRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: InvestmentStatementRequestTransaction, /*type: InvestmentStatementRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(InvestmentStatementRequestTransaction, {required: true, order: 30, attributeType: InvestmentStatementRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -11437,6 +17077,11 @@ var StatementResponse = require("../../common/StatementResponse");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var InvestmentAccountDetails = require("../accounts/InvestmentAccountDetails");
+var InvestmentTransactionList = require("../transactions/InvestmentTransactionList");
+var InvestmentPositionList = require("../positions/InvestmentPositionList");
+var InvestmentBalance = require("./InvestmentBalance");
+
 
 /**
  * Aggregate for the investment statement download response.
@@ -11516,7 +17161,7 @@ InvestmentStatementResponse.prototype.getResponseMessageName = function() {
 InvestmentStatementResponse.prototype.getDateOfStatement = function() {
   return this.dateOfStatement;
 };
-Element.add({name: "DTASOF", required: true, order: 60, owner: InvestmentStatementResponse, /*type: Date,*/ fcn: "getDateOfStatement"});
+Element.add(InvestmentStatementResponse, {name: "DTASOF", required: true, order: 60, attributeType: Date, readMethod: "getDateOfStatement", writeMethod: "setDateOfStatement"});
 
 
 /**
@@ -11538,7 +17183,7 @@ InvestmentStatementResponse.prototype.setDateOfStatement = function(dateOfStatem
 InvestmentStatementResponse.prototype.getAccount = function() {
   return this.account;
 };
-ChildAggregate.add({name:"INVACCTFROM", required: true, order: 10, owner: InvestmentStatementResponse, /*type: InvestmentAccountDetails,*/ fcn: "getAccount"});
+ChildAggregate.add(InvestmentStatementResponse, {name:"INVACCTFROM", required: true, order: 10, attributeType: InvestmentAccountDetails, readMethod: "getAccount", writeMethod: "setAccount"});
 
 
 /**
@@ -11559,7 +17204,7 @@ InvestmentStatementResponse.prototype.setAccount = function(account) {
 InvestmentStatementResponse.prototype.getInvestmentTransactionList = function() {
   return this.transactionList;
 };
-ChildAggregate.add({order: 70, owner: InvestmentStatementResponse, /*type: InvestmentTransactionList,*/ fcn: "getInvestmentTransactionList"});
+ChildAggregate.add(InvestmentStatementResponse, {order: 70, attributeType: InvestmentTransactionList, readMethod: "getInvestmentTransactionList", writeMethod: "setInvestmentTransactionList"});
 
 
 /**
@@ -11580,7 +17225,7 @@ InvestmentStatementResponse.prototype.setInvestmentTransactionList = function(tr
 InvestmentStatementResponse.prototype.getPositionList = function() {
   return this.positionList;
 };
-ChildAggregate.add({order: 80, owner: InvestmentStatementResponse, /*type: InvestmentPositionList,*/ fcn: "getPositionList"});
+ChildAggregate.add(InvestmentStatementResponse, {order: 80, attributeType: InvestmentPositionList, readMethod: "getPositionList", writeMethod: "setPositionList"});
 
 
 /**
@@ -11601,7 +17246,7 @@ InvestmentStatementResponse.prototype.setPositionList = function(positionList) {
 InvestmentStatementResponse.prototype.getAccountBalance = function() {
   return this.accountBalance;
 };
-ChildAggregate.add({order: 90, owner: InvestmentStatementResponse, /*type: InvestmentBalance,*/ fcn: "getAccountBalance"});
+ChildAggregate.add(InvestmentStatementResponse, {order: 90, attributeType: InvestmentBalance, readMethod: "getAccountBalance", writeMethod: "setAccountBalance"});
 
 
 /**
@@ -11646,7 +17291,7 @@ InvestmentStatementResponse.prototype.setSecurityList = function(securityList) {
 
 module.exports = InvestmentStatementResponse;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../common/StatementResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementResponseMessageSet.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../common/StatementResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementResponse.js","../accounts/InvestmentAccountDetails":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/InvestmentAccountDetails.js","../positions/InvestmentPositionList":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/InvestmentPositionList.js","../transactions/InvestmentTransactionList":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentTransactionList.js","./InvestmentBalance":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentBalance.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11669,6 +17314,7 @@ var MessageSetType = require("../../MessageSetType");
 var ResponseMessageSet = require("../../ResponseMessageSet");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var InvestmentStatementResponseTransaction = require("./InvestmentStatementResponseTransaction");
 
 /**
  * Investment statement response message set.
@@ -11706,7 +17352,7 @@ InvestmentStatementResponseMessageSet.prototype.getType = function() {
 InvestmentStatementResponseMessageSet.prototype.getStatementResponses = function() {
   return this.statementResponses;
 };
-ChildAggregate.add({order: 0, owner: InvestmentStatementResponseMessageSet, /*type: InvestmentStatementResponseTransaction[],*/ fcn: "getStatementResponses"});
+ChildAggregate.add(InvestmentStatementResponseMessageSet, {order: 0, attributeType: Array, collectionEntryType: InvestmentStatementResponseTransaction, readMethod: "getStatementResponses", writeMethod: "setStatementResponses"});
 
 
 /**
@@ -11750,7 +17396,7 @@ InvestmentStatementResponseMessageSet.prototype.getResponseMessages = function()
 
 module.exports = InvestmentStatementResponseMessageSet;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementResponseTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./InvestmentStatementResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11805,7 +17451,7 @@ Aggregate.add("INVSTMTTRNRS", InvestmentStatementResponseTransaction);
 InvestmentStatementResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: InvestmentStatementResponseTransaction, /*type: InvestmentStatementResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(InvestmentStatementResponseTransaction, {required: true, order: 30, attributeType: InvestmentStatementResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -11866,6 +17512,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
+var BuyInvestmentTransaction = require("./BuyInvestmentTransaction");
 
 
 /**
@@ -11903,7 +17550,7 @@ inherit(BaseBuyInvestmentTransaction, "implements", TransactionWithSecurity);
 BaseBuyInvestmentTransaction.prototype.getBuyInvestment = function() {
   return this.buyInvestment;
 };
-ChildAggregate.add({order: 10, owner: BaseBuyInvestmentTransaction, /*type: BuyInvestmentTransaction,*/ fcn: "getBuyInvestment"});
+ChildAggregate.add(BaseBuyInvestmentTransaction, {order: 10, attributeType: BuyInvestmentTransaction, readMethod: "getBuyInvestment", writeMethod: "setBuyInvestment"});
 
 
 /**
@@ -12105,7 +17752,7 @@ BaseBuyInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
 
 module.exports = BaseBuyInvestmentTransaction;
 
-},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js":[function(require,module,exports){
+},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js","./BuyInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BuyInvestmentTransaction.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12253,6 +17900,7 @@ var inherit = require("../../../../util/inherit");
 
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
+var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Base class for investment transactions that aren't buys or sales..
@@ -12289,7 +17937,7 @@ inherit(BaseOtherInvestmentTransaction, "extends", BaseInvestmentTransaction);
 BaseOtherInvestmentTransaction.prototype.getInvestmentTransaction = function() {
   return this.investmentTransaction;
 };
-ChildAggregate.add({order: 10, owner: BaseOtherInvestmentTransaction, /*type: InvestmentTransaction,*/ fcn: "getInvestmentTransaction"});
+ChildAggregate.add(BaseOtherInvestmentTransaction, {order: 10, attributeType: InvestmentTransaction, readMethod: "getInvestmentTransaction", writeMethod: "setInvestmentTransaction"});
 
 
 /**
@@ -12306,7 +17954,7 @@ BaseOtherInvestmentTransaction.prototype.setInvestmentTransaction = function(inv
 
 module.exports = BaseOtherInvestmentTransaction;
 
-},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseSellInvestmentTransaction.js":[function(require,module,exports){
+},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js","./InvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseSellInvestmentTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12330,6 +17978,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
+var SellInvestmentTransaction = require("./SellInvestmentTransaction");
 
 /**
  * Base class for all investment transactions for selling securities.
@@ -12373,7 +18022,7 @@ BaseSellInvestmentTransaction.prototype.BaseSellInvestmentTransaction = function
 BaseSellInvestmentTransaction.prototype.getSellInvestment = function() {
   return this.sellInvestment;
 };
-ChildAggregate.add({order: 10, owner: BaseSellInvestmentTransaction, /*type: SellInvestmentTransaction,*/ fcn: "getSellInvestment"});
+ChildAggregate.add(BaseSellInvestmentTransaction, {order: 10, attributeType: SellInvestmentTransaction, readMethod: "getSellInvestment", writeMethod: "setSellInvestment"});
 
 
 /**
@@ -12666,7 +18315,7 @@ BaseSellInvestmentTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = BaseSellInvestmentTransaction;
 
-},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BuyDebtTransaction.js":[function(require,module,exports){
+},{"../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js","./SellInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/SellInvestmentTransaction.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BuyDebtTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12726,7 +18375,7 @@ Aggregate.add("BUYDEBT", BuyDebtTransaction);
 BuyDebtTransaction.prototype.getAccruedInterest = function() {
   return this.accruedInterest;
 };
-Element.add({name: "ACCRDINT", order: 20, owner: BuyDebtTransaction, /*type: Double,*/ fcn: "getAccruedInterest"});
+Element.add(BuyDebtTransaction, {name: "ACCRDINT", order: 20, attributeType: Number, readMethod: "getAccruedInterest", writeMethod: "setAccruedInterest"});
 
 
 /**
@@ -12766,6 +18415,9 @@ var SubAccountType = require("../accounts/SubAccountType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
+var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Buy investment transaction aggregate ("INVBUY").
@@ -12887,7 +18539,7 @@ Aggregate.add("INVBUY", BuyInvestmentTransaction);
 BuyInvestmentTransaction.prototype.getInvestmentTransaction = function() {
   return this.investmentTransaction;
 };
-ChildAggregate.add({order: 10, owner: BuyInvestmentTransaction, /*type: InvestmentTransaction,*/ fcn: "getInvestmentTransaction"});
+ChildAggregate.add(BuyInvestmentTransaction, {order: 10, attributeType: InvestmentTransaction, readMethod: "getInvestmentTransaction", writeMethod: "setInvestmentTransaction"});
 
 
 /**
@@ -12910,7 +18562,7 @@ BuyInvestmentTransaction.prototype.setInvestmentTransaction = function(investmen
 BuyInvestmentTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: BuyInvestmentTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(BuyInvestmentTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -12937,7 +18589,7 @@ BuyInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 BuyInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 30, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add(BuyInvestmentTransaction, {name: "UNITS", required: true, order: 30, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -12965,7 +18617,7 @@ BuyInvestmentTransaction.prototype.setUnits = function(units) {
 BuyInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 40, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add(BuyInvestmentTransaction, {name: "UNITPRICE", required: true, order: 40, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -12991,7 +18643,7 @@ BuyInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 BuyInvestmentTransaction.prototype.getMarkup = function() {
   return this.markup;
 };
-Element.add({name: "MARKUP", order: 50, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getMarkup"});
+Element.add(BuyInvestmentTransaction, {name: "MARKUP", order: 50, attributeType: Number, readMethod: "getMarkup", writeMethod: "setMarkup"});
 
 
 /**
@@ -13016,7 +18668,7 @@ BuyInvestmentTransaction.prototype.setMarkup = function(markup) {
 BuyInvestmentTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add({name: "COMMISSION", order: 60, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getCommission"});
+Element.add(BuyInvestmentTransaction, {name: "COMMISSION", order: 60, attributeType: Number, readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -13040,7 +18692,7 @@ BuyInvestmentTransaction.prototype.setCommission = function(commission) {
 BuyInvestmentTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add({name: "TAXES", order: 70, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getTaxes"});
+Element.add(BuyInvestmentTransaction, {name: "TAXES", order: 70, attributeType: Number, readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -13063,7 +18715,7 @@ BuyInvestmentTransaction.prototype.setTaxes = function(taxes) {
 BuyInvestmentTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add({name: "FEES", order: 80, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getFees"});
+Element.add(BuyInvestmentTransaction, {name: "FEES", order: 80, attributeType: Number, readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -13086,7 +18738,7 @@ BuyInvestmentTransaction.prototype.setFees = function(fees) {
 BuyInvestmentTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add({name: "LOAD", order: 90, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getLoad"});
+Element.add(BuyInvestmentTransaction, {name: "LOAD", order: 90, attributeType: Number, readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -13111,7 +18763,7 @@ BuyInvestmentTransaction.prototype.setLoad = function(load) {
 BuyInvestmentTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 100, owner: BuyInvestmentTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(BuyInvestmentTransaction, {name: "TOTAL", required: true, order: 100, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -13137,7 +18789,7 @@ BuyInvestmentTransaction.prototype.setTotal = function(total) {
 BuyInvestmentTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 110, owner: BuyInvestmentTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(BuyInvestmentTransaction, {name: "CURRENCY", order: 110, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -13162,7 +18814,7 @@ BuyInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
 BuyInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-ChildAggregate.add({order: 120, owner: BuyInvestmentTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+ChildAggregate.add(BuyInvestmentTransaction, {order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -13186,7 +18838,7 @@ BuyInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalCu
 BuyInvestmentTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 130, owner: BuyInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(BuyInvestmentTransaction, {name: "SUBACCTSEC", order: 130, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -13219,7 +18871,7 @@ BuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 BuyInvestmentTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 140, owner: BuyInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(BuyInvestmentTransaction, {name: "SUBACCTFUND", order: 140, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -13247,7 +18899,7 @@ BuyInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
 
 module.exports = BuyInvestmentTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BuyMutualFundTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./InvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentTransaction.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BuyMutualFundTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13314,7 +18966,7 @@ Aggregate.add("BUYMF", BuyMutualFundTransaction);
 BuyMutualFundTransaction.prototype.getBuyType = function() {
   return this.buyType;
 };
-Element.add({name: "BUYTYPE", required: true, order: 20, owner: BuyMutualFundTransaction, /*type: String,*/ fcn: "getBuyType"});
+Element.add(BuyMutualFundTransaction, {name: "BUYTYPE", required: true, order: 20, attributeType: String, readMethod: "getBuyType", writeMethod: "setBuyType"});
 
 
 /**
@@ -13349,7 +19001,7 @@ BuyMutualFundTransaction.prototype.getBuyTypeEnum = function() {
 BuyMutualFundTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 30, owner: BuyMutualFundTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
+Element.add(BuyMutualFundTransaction, {name: "RELFITID", order: 30, attributeType: String, readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**
@@ -13435,7 +19087,7 @@ Aggregate.add("BUYOPT", BuyOptionTransaction);
 BuyOptionTransaction.prototype.getOptionBuyType = function() {
   return this.optionBuyType;
 };
-Element.add({name: "OPTBUYTYPE", required: true, order: 20, owner: BuyOptionTransaction, /*type: String,*/ fcn: "getOptionBuyType"});
+Element.add(BuyOptionTransaction, {name: "OPTBUYTYPE", required: true, order: 20, attributeType: String, readMethod: "getOptionBuyType", writeMethod: "setOptionBuyType"});
 
 
 /**
@@ -13469,7 +19121,7 @@ BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
 BuyOptionTransaction.prototype.getSharesPerContract = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", required: true, order: 30, owner: BuyOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContract"});
+Element.add(BuyOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Number, readMethod: "getSharesPerContract", writeMethod: "setSharesPerContract"});
 
 
 /**
@@ -13590,7 +19242,7 @@ Aggregate.add("BUYSTOCK", BuyStockTransaction);
 BuyStockTransaction.prototype.getBuyType = function() {
   return this.buyType;
 };
-Element.add({name: "BUYTYPE", required: true, order: 20, owner: BuyStockTransaction, /*type: String,*/ fcn: "getBuyType"});
+Element.add(BuyStockTransaction, {name: "BUYTYPE", required: true, order: 20, attributeType: String, readMethod: "getBuyType", writeMethod: "setBuyType"});
 
 
 /**
@@ -13731,6 +19383,7 @@ var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction")
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
 var CloseOptionAction = require("./CloseOptionAction");
+var SecurityId = require("../../seclist/SecurityId");
 
 
 /**
@@ -13812,7 +19465,7 @@ Aggregate.add("CLOSUREOPT", CloseOptionTransaction);
 CloseOptionTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({order: 20, owner: CloseOptionTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(CloseOptionTransaction, {order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -13836,7 +19489,7 @@ CloseOptionTransaction.prototype.setSecurityId = function(securityId) {
 CloseOptionTransaction.prototype.getOptionAction = function() {
   return this.optionAction;
 };
-Element.add({name: "OPTACTION", required: true, order: 30, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getOptionAction"});
+Element.add(CloseOptionTransaction, {name: "OPTACTION", required: true, order: 30, attributeType: String, readMethod: "getOptionAction", writeMethod: "setOptionAction"});
 
 
 /**
@@ -13871,7 +19524,7 @@ CloseOptionTransaction.prototype.getOptionActionEnum = function() {
 CloseOptionTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 40, owner: CloseOptionTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add(CloseOptionTransaction, {name: "UNITS", required: true, order: 40, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -13895,7 +19548,7 @@ CloseOptionTransaction.prototype.setUnits = function(units) {
 CloseOptionTransaction.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", required: true, order: 50, owner: CloseOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContact"});
+Element.add(CloseOptionTransaction, {name: "SHPERCTRCT", required: true, order: 50, attributeType: Number, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -13918,7 +19571,7 @@ CloseOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact
 CloseOptionTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", required: true, order: 60, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(CloseOptionTransaction, {name: "SUBACCTSEC", required: true, order: 60, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -13953,7 +19606,7 @@ CloseOptionTransaction.prototype.getSubAccountSecurityEnum = function() {
 CloseOptionTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 70, owner: CloseOptionTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
+Element.add(CloseOptionTransaction, {name: "RELFITID", order: 70, attributeType: String, readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**
@@ -13978,7 +19631,7 @@ CloseOptionTransaction.prototype.setRelatedTransactionId = function(relatedTrans
 CloseOptionTransaction.prototype.getGain = function() {
   return this.gain;
 };
-Element.add({name: "GAIN", order: 80, owner: CloseOptionTransaction, /*type: Double,*/ fcn: "getGain"});
+Element.add(CloseOptionTransaction, {name: "GAIN", order: 80, attributeType: Number, readMethod: "getGain", writeMethod: "setGain"});
 
 
 /**
@@ -13996,7 +19649,7 @@ CloseOptionTransaction.prototype.setGain = function(gain) {
 
 module.exports = CloseOptionTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./CloseOptionAction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/CloseOptionAction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./CloseOptionAction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/CloseOptionAction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14024,6 +19677,8 @@ var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction")
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
 var IncomeType = require("./IncomeType");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
@@ -14125,7 +19780,7 @@ Aggregate.add("INCOME", IncomeTransaction);
 IncomeTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: IncomeTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(IncomeTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -14150,7 +19805,7 @@ IncomeTransaction.prototype.setSecurityId = function(securityId) {
 IncomeTransaction.prototype.getIncomeType = function() {
   return this.incomeType;
 };
-Element.add({name: "INCOMETYPE", required: true, order: 30, owner: IncomeTransaction, /*type: String,*/ fcn: "getIncomeType"});
+Element.add(IncomeTransaction, {name: "INCOMETYPE", required: true, order: 30, attributeType: String, readMethod: "getIncomeType", writeMethod: "setIncomeType"});
 
 
 /**
@@ -14184,7 +19839,7 @@ IncomeTransaction.prototype.getIncomeTypeEnum = function() {
 IncomeTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 40, owner: IncomeTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(IncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -14207,7 +19862,7 @@ IncomeTransaction.prototype.setTotal = function(total) {
 IncomeTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 50, owner: IncomeTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(IncomeTransaction, {name: "SUBACCTSEC", order: 50, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -14240,7 +19895,7 @@ IncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 IncomeTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 60, owner: IncomeTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(IncomeTransaction, {name: "SUBACCTFUND", order: 60, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -14273,7 +19928,7 @@ IncomeTransaction.prototype.getSubAccountFundEnum = function() {
 IncomeTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add({name: "TAXEXEMPT", order: 70, owner: IncomeTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
+Element.add(IncomeTransaction, {name: "TAXEXEMPT", order: 70, attributeType: Boolean, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -14296,7 +19951,7 @@ IncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 IncomeTransaction.prototype.getWithholding = function() {
   return this.withholding;
 };
-Element.add({name: "WITHHOLDING", order: 80, owner: IncomeTransaction, /*type: Double,*/ fcn: "getWithholding"});
+Element.add(IncomeTransaction, {name: "WITHHOLDING", order: 80, attributeType: Number, readMethod: "getWithholding", writeMethod: "setWithholding"});
 
 
 /**
@@ -14320,7 +19975,7 @@ IncomeTransaction.prototype.setWithholding = function(withholding) {
 IncomeTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 90, owner: IncomeTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(IncomeTransaction, {name: "CURRENCY", order: 90, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -14345,7 +20000,7 @@ IncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 IncomeTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-ChildAggregate.add({order: 120, owner: IncomeTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+ChildAggregate.add(IncomeTransaction, {order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -14371,7 +20026,7 @@ IncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalCurrencyI
 IncomeTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 110, owner: IncomeTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(IncomeTransaction, {name: "INV401KSOURCE", order: 110, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -14401,7 +20056,7 @@ IncomeTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = IncomeTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./IncomeType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeType.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeType.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./IncomeType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeType.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14472,6 +20127,7 @@ var SubAccountType = require("../accounts/SubAccountType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var Transaction = require("../../common/Transaction");
 
 /**
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
@@ -14508,7 +20164,7 @@ Aggregate.add("INVBANKTRAN", InvestmentBankTransaction);
 InvestmentBankTransaction.prototype.getTransaction = function() {
   return this.transaction;
 };
-ChildAggregate.add({order: 10, owner: InvestmentBankTransaction, /*type: Transaction,*/ fcn: "getTransaction"});
+ChildAggregate.add(InvestmentBankTransaction, {order: 10, attributeType: Transaction, readMethod: "getTransaction", writeMethod: "setTransaction"});
 
 
 /**
@@ -14529,7 +20185,7 @@ InvestmentBankTransaction.prototype.setTransaction = function(transaction) {
 InvestmentBankTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", required: true, order: 20, owner: InvestmentBankTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(InvestmentBankTransaction, {name: "SUBACCTFUND", required: true, order: 20, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -14557,7 +20213,7 @@ InvestmentBankTransaction.prototype.getSubAccountFundEnum = function() {
 
 module.exports = InvestmentBankTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentExpenseTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../common/Transaction":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Transaction.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentExpenseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14583,6 +20239,8 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for an investment expense
@@ -14661,7 +20319,7 @@ Aggregate.add("INVEXPENSE", InvestmentExpenseTransaction);
 InvestmentExpenseTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: InvestmentExpenseTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(InvestmentExpenseTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -14685,7 +20343,7 @@ InvestmentExpenseTransaction.prototype.setSecurityId = function(securityId) {
 InvestmentExpenseTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 30, owner: InvestmentExpenseTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(InvestmentExpenseTransaction, {name: "TOTAL", required: true, order: 30, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -14708,7 +20366,7 @@ InvestmentExpenseTransaction.prototype.setTotal = function(total) {
 InvestmentExpenseTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 40, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(InvestmentExpenseTransaction, {name: "SUBACCTSEC", order: 40, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -14741,7 +20399,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountSecurityEnum = function() {
 InvestmentExpenseTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 50, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(InvestmentExpenseTransaction, {name: "SUBACCTFUND", order: 50, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -14775,7 +20433,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountFundEnum = function() {
 InvestmentExpenseTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 60, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(InvestmentExpenseTransaction, {name: "CURRENCY", order: 60, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -14800,7 +20458,7 @@ InvestmentExpenseTransaction.prototype.setCurrencyCode = function(currencyCode) 
 InvestmentExpenseTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 70, owner: InvestmentExpenseTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add(InvestmentExpenseTransaction, {name: "ORIGCURRENCY", order: 70, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -14826,7 +20484,7 @@ InvestmentExpenseTransaction.prototype.setOriginalCurrencyInfo = function(origin
 InvestmentExpenseTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 180, owner: InvestmentExpenseTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(InvestmentExpenseTransaction, {name: "INV401KSOURCE", order: 180, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -14856,7 +20514,7 @@ InvestmentExpenseTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = InvestmentExpenseTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14942,7 +20600,7 @@ Aggregate.add("INVTRAN", InvestmentTransaction);
 InvestmentTransaction.prototype.getTransactionId = function() {
   return this.transactionId;
 };
-Element.add({name: "FITID", required: true, order: 0, owner: InvestmentTransaction, /*type: String,*/ fcn: "getTransactionId"});
+Element.add(InvestmentTransaction, {name: "FITID", required: true, order: 0, attributeType: String, readMethod: "getTransactionId", writeMethod: "setTransactionId"});
 
 
 /**
@@ -14967,7 +20625,7 @@ InvestmentTransaction.prototype.setTransactionId = function(transactionId) {
 InvestmentTransaction.prototype.getServerId = function() {
   return this.serverId;
 };
-Element.add({name: "SRVRTID", order: 10, owner: InvestmentTransaction, /*type: String,*/ fcn: "getServerId"});
+Element.add(InvestmentTransaction, {name: "SRVRTID", order: 10, attributeType: String, readMethod: "getServerId", writeMethod: "setServerId"});
 
 
 /**
@@ -14992,7 +20650,7 @@ InvestmentTransaction.prototype.setServerId = function(serverId) {
 InvestmentTransaction.prototype.getTradeDate = function() {
   return this.tradeDate;
 };
-Element.add({name: "DTTRADE", required: true, order: 20, owner: InvestmentTransaction, /*type: Date,*/ fcn: "getTradeDate"});
+Element.add(InvestmentTransaction, {name: "DTTRADE", required: true, order: 20, attributeType: Date, readMethod: "getTradeDate", writeMethod: "setTradeDate"});
 
 
 /**
@@ -15017,7 +20675,7 @@ InvestmentTransaction.prototype.setTradeDate = function(tradeDate) {
 InvestmentTransaction.prototype.getSettlementDate = function() {
   return this.settlementDate;
 };
-Element.add({name: "DTSETTLE", order: 30, owner: InvestmentTransaction, /*type: Date,*/ fcn: "getSettlementDate"});
+Element.add(InvestmentTransaction, {name: "DTSETTLE", order: 30, attributeType: Date, readMethod: "getSettlementDate", writeMethod: "setSettlementDate"});
 
 
 /**
@@ -15042,7 +20700,7 @@ InvestmentTransaction.prototype.setSettlementDate = function(settlementDate) {
 InvestmentTransaction.prototype.getReversalTransactionId = function() {
   return this.reversalTransactionId;
 };
-Element.add({name: "REVERSALFITID", order: 40, owner: InvestmentTransaction, /*type: String,*/ fcn: "getReversalTransactionId"});
+Element.add(InvestmentTransaction, {name: "REVERSALFITID", order: 40, attributeType: String, readMethod: "getReversalTransactionId", writeMethod: "setReversalTransactionId"});
 
 
 /**
@@ -15067,7 +20725,7 @@ InvestmentTransaction.prototype.setReversalTransactionId = function(reversalTran
 InvestmentTransaction.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 50, owner: InvestmentTransaction, /*type: String,*/ fcn: "getMemo"});
+Element.add(InvestmentTransaction, {name: "MEMO", order: 50, attributeType: String, readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**
@@ -15106,6 +20764,8 @@ module.exports = InvestmentTransaction;
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var BaseInvestmentTransaction = require("./BaseInvestmentTransaction");
+var InvestmentBankTransaction = require("./InvestmentBankTransaction");
 
 /**
  * The transaction list aggregate.
@@ -15157,7 +20817,7 @@ Aggregate.add("INVTRANLIST", InvestmentTransactionList);
 InvestmentTransactionList.prototype.getStart = function() {
   return this.start;
 };
-Element.add({name: "DTSTART", required: true, order: 0, owner: InvestmentTransactionList, /*type: Date,*/ fcn: "getStart"});
+Element.add(InvestmentTransactionList, {name: "DTSTART", required: true, order: 0, attributeType: Date, readMethod: "getStart", writeMethod: "setStart"});
 
 
 /**
@@ -15178,7 +20838,7 @@ InvestmentTransactionList.prototype.setStart = function(start) {
 InvestmentTransactionList.prototype.getEnd = function() {
   return this.end;
 };
-Element.add({name: "DTEND", required: true, order: 10, owner: InvestmentTransactionList, /*type: Date,*/ fcn: "getEnd"});
+Element.add(InvestmentTransactionList, {name: "DTEND", required: true, order: 10, attributeType: Date, readMethod: "getEnd", writeMethod: "setEnd"});
 
 
 /**
@@ -15200,7 +20860,7 @@ InvestmentTransactionList.prototype.setEnd = function(end) {
 InvestmentTransactionList.prototype.getInvestmentTransactions = function() {
   return this.transactions;
 };
-ChildAggregate.add({order: 20, owner: InvestmentTransactionList, /*type: BaseInvestmentTransaction[],*/ fcn: "getInvestmentTransactions"});
+ChildAggregate.add(InvestmentTransactionList, {order: 20, attributeType: Array, collectionEntryType: BaseInvestmentTransaction, readMethod: "getInvestmentTransactions", writeMethod: "setInvestmentTransactions"});
 
 
 /**
@@ -15222,7 +20882,7 @@ InvestmentTransactionList.prototype.setInvestmentTransactions = function(transac
 InvestmentTransactionList.prototype.getBankTransactions = function() {
   return this.bankTransactions;
 };
-ChildAggregate.add({order: 30, owner: InvestmentTransactionList, /*type: InvestmentBankTransaction[],*/ fcn: "getBankTransactions"});
+ChildAggregate.add(InvestmentTransactionList, {order: 30, attributeType: Array, collectionEntryType: InvestmentBankTransaction, readMethod: "getBankTransactions", writeMethod: "setBankTransactions"});
 
 
 /**
@@ -15239,7 +20899,7 @@ InvestmentTransactionList.prototype.setBankTransactions = function(bankTransacti
 
 module.exports = InvestmentTransactionList;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/JournalFundTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./BaseInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseInvestmentTransaction.js","./InvestmentBankTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentBankTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/JournalFundTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15317,7 +20977,7 @@ JournalFundTransaction.prototype.JournalFundTransaction = function() {
 JournalFundTransaction.prototype.getFromSubAccountFund = function() {
   return this.subAccountFrom;
 };
-Element.add({name: "SUBACCTFROM", order: 20, owner: JournalFundTransaction, /*type: String,*/ fcn: "getFromSubAccountFund"});
+Element.add(JournalFundTransaction, {name: "SUBACCTFROM", order: 20, attributeType: String, readMethod: "getFromSubAccountFund", writeMethod: "setFromSubAccountFund"});
 
 
 /**
@@ -15350,7 +21010,7 @@ JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
 JournalFundTransaction.prototype.getToSubAccountFund = function() {
   return this.subAccountTo;
 };
-Element.add({name: "SUBACCTTO", order: 30, owner: JournalFundTransaction, /*type: String,*/ fcn: "getToSubAccountFund"});
+Element.add(JournalFundTransaction, {name: "SUBACCTTO", order: 30, attributeType: String, readMethod: "getToSubAccountFund", writeMethod: "setToSubAccountFund"});
 
 
 /**
@@ -15383,7 +21043,7 @@ JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
 JournalFundTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", order: 40, owner: JournalFundTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(JournalFundTransaction, {name: "TOTAL", order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -15427,6 +21087,7 @@ var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
+var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -15487,7 +21148,7 @@ Aggregate.add("JRNLSEC", JournalSecurityTransaction);
 JournalSecurityTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: JournalSecurityTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(JournalSecurityTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -15511,7 +21172,7 @@ JournalSecurityTransaction.prototype.setSecurityId = function(securityId) {
 JournalSecurityTransaction.prototype.getFromSubAccountFund = function() {
   return this.subAccountFrom;
 };
-Element.add({name: "SUBACCTFROM", order: 30, owner: JournalSecurityTransaction, /*type: String,*/ fcn: "getFromSubAccountFund"});
+Element.add(JournalSecurityTransaction, {name: "SUBACCTFROM", order: 30, attributeType: String, readMethod: "getFromSubAccountFund", writeMethod: "setFromSubAccountFund"});
 
 
 /**
@@ -15544,7 +21205,7 @@ JournalSecurityTransaction.prototype.getFromSubAccountFundEnum = function() {
 JournalSecurityTransaction.prototype.getToSubAccountFund = function() {
   return this.subAccountTo;
 };
-Element.add({name: "SUBACCTTO", order: 40, owner: JournalSecurityTransaction, /*type: String,*/ fcn: "getToSubAccountFund"});
+Element.add(JournalSecurityTransaction, {name: "SUBACCTTO", order: 40, attributeType: String, readMethod: "getToSubAccountFund", writeMethod: "setToSubAccountFund"});
 
 
 /**
@@ -15577,7 +21238,7 @@ JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
 JournalSecurityTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", order: 50, owner: JournalSecurityTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(JournalSecurityTransaction, {name: "TOTAL", order: 50, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -15595,7 +21256,7 @@ JournalSecurityTransaction.prototype.setTotal = function(total) {
 
 module.exports = JournalSecurityTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/MarginInterestTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/MarginInterestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15619,6 +21280,7 @@ var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -15675,7 +21337,7 @@ Aggregate.add("MARGININTEREST", MarginInterestTransaction);
 MarginInterestTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 30, owner: MarginInterestTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(MarginInterestTransaction, {name: "SUBACCTFUND", order: 30, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -15709,7 +21371,7 @@ MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
 MarginInterestTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", order: 40, owner: MarginInterestTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(MarginInterestTransaction, {name: "TOTAL", order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -15733,7 +21395,7 @@ MarginInterestTransaction.prototype.setTotal = function(total) {
 MarginInterestTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 110, owner: MarginInterestTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(MarginInterestTransaction, {name: "CURRENCY", order: 110, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -15758,7 +21420,7 @@ MarginInterestTransaction.prototype.setCurrencyCode = function(currencyCode) {
 MarginInterestTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 120, owner: MarginInterestTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add(MarginInterestTransaction, {name: "ORIGCURRENCY", order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -15777,7 +21439,7 @@ MarginInterestTransaction.prototype.SetOriginalCurrency = function(originalCurre
 
 module.exports = MarginInterestTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OptionBuyType.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OptionBuyType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15919,7 +21581,7 @@ Aggregate.add("ORIGCURRENCY", OriginalCurrency);
 OriginalCurrency.prototype.getCurrencyRate = function() {
   return this.currencyRate;
 };
-Element.add({name: "CURRATE", required: true, order: 10, owner: OriginalCurrency, /*type: double,*/ fcn: "getCurrencyRate"});
+Element.add(OriginalCurrency, {name: "CURRATE", required: true, order: 10, attributeType: Number, readMethod: "getCurrencyRate", writeMethod: "setCurrencyRate"});
 
 
 /**
@@ -15942,7 +21604,7 @@ OriginalCurrency.prototype.setCurrencyRate = function(currencyRate) {
 OriginalCurrency.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURSYM", required: true, order: 20, owner: OriginalCurrency, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(OriginalCurrency, {name: "CURSYM", required: true, order: 20, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -15988,6 +21650,8 @@ var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction")
 var TransactionType = require("./TransactionType");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var IncomeType = require("./IncomeType");
+var OriginalCurrency = require("./OriginalCurrency");
+var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for reinvestment transactions.
@@ -16116,7 +21780,7 @@ Aggregate.add("REINVEST", ReinvestIncomeTransaction);
 ReinvestIncomeTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: ReinvestIncomeTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(ReinvestIncomeTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -16142,7 +21806,7 @@ ReinvestIncomeTransaction.prototype.setSecurityId = function(securityId) {
 ReinvestIncomeTransaction.prototype.getIncomeType = function() {
   return this.incomeType;
 };
-Element.add({name: "INCOMETYPE", required: true, order: 30, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getIncomeType"});
+Element.add(ReinvestIncomeTransaction, {name: "INCOMETYPE", required: true, order: 30, attributeType: String, readMethod: "getIncomeType", writeMethod: "setIncomeType"});
 
 
 /**
@@ -16177,7 +21841,7 @@ ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
 ReinvestIncomeTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 40, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(ReinvestIncomeTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -16201,7 +21865,7 @@ ReinvestIncomeTransaction.prototype.setTotal = function(total) {
 ReinvestIncomeTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 50, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(ReinvestIncomeTransaction, {name: "SUBACCTSEC", order: 50, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -16236,7 +21900,7 @@ ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 ReinvestIncomeTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 60, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add(ReinvestIncomeTransaction, {name: "UNITS", required: true, order: 60, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -16260,7 +21924,7 @@ ReinvestIncomeTransaction.prototype.setUnits = function(units) {
 ReinvestIncomeTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 70, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add(ReinvestIncomeTransaction, {name: "UNITPRICE", required: true, order: 70, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -16284,7 +21948,7 @@ ReinvestIncomeTransaction.prototype.setUnitPrice = function(unitPrice) {
 ReinvestIncomeTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add({name: "COMMISSION", order: 80, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getCommission"});
+Element.add(ReinvestIncomeTransaction, {name: "COMMISSION", order: 80, attributeType: Number, readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -16308,7 +21972,7 @@ ReinvestIncomeTransaction.prototype.setCommission = function(commission) {
 ReinvestIncomeTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add({name: "TAXES", order: 90, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getTaxes"});
+Element.add(ReinvestIncomeTransaction, {name: "TAXES", order: 90, attributeType: Number, readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -16331,7 +21995,7 @@ ReinvestIncomeTransaction.prototype.setTaxes = function(taxes) {
 ReinvestIncomeTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add({name: "FEES", order: 100, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getFees"});
+Element.add(ReinvestIncomeTransaction, {name: "FEES", order: 100, attributeType: Number, readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -16354,7 +22018,7 @@ ReinvestIncomeTransaction.prototype.setFees = function(fees) {
 ReinvestIncomeTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add({name: "LOAD", order: 110, owner: ReinvestIncomeTransaction, /*type: Double,*/ fcn: "getLoad"});
+Element.add(ReinvestIncomeTransaction, {name: "LOAD", order: 110, attributeType: Number, readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -16377,7 +22041,7 @@ ReinvestIncomeTransaction.prototype.setLoad = function(load) {
 ReinvestIncomeTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add({name: "TAXEXEMPT", order: 120, owner: ReinvestIncomeTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
+Element.add(ReinvestIncomeTransaction, {name: "TAXEXEMPT", order: 120, attributeType: Boolean, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -16401,7 +22065,7 @@ ReinvestIncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 ReinvestIncomeTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 130, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(ReinvestIncomeTransaction, {name: "CURRENCY", order: 130, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -16426,7 +22090,7 @@ ReinvestIncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 ReinvestIncomeTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 140, owner: ReinvestIncomeTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add(ReinvestIncomeTransaction, {name: "ORIGCURRENCY", order: 140, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -16452,7 +22116,7 @@ ReinvestIncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalC
 ReinvestIncomeTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 150, owner: ReinvestIncomeTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(ReinvestIncomeTransaction, {name: "INV401KSOURCE", order: 150, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -16482,7 +22146,7 @@ ReinvestIncomeTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = ReinvestIncomeTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./IncomeType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeType.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/RelatedOptionType.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./IncomeType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/IncomeType.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/RelatedOptionType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16552,9 +22216,11 @@ var Inv401KSource = require("../positions/Inv401KSource");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionWithSecurity = require("./TransactionWithSecurity");
 var TransactionType = require("./TransactionType");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for return of capital transactions.
@@ -16634,7 +22300,7 @@ Aggregate.add("RETOFCAP", ReturnOfCapitalTransaction);
 ReturnOfCapitalTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: ReturnOfCapitalTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(ReturnOfCapitalTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -16658,7 +22324,7 @@ ReturnOfCapitalTransaction.prototype.setSecurityId = function(securityId) {
 ReturnOfCapitalTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 40, owner: ReturnOfCapitalTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(ReturnOfCapitalTransaction, {name: "TOTAL", required: true, order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -16682,7 +22348,7 @@ ReturnOfCapitalTransaction.prototype.setTotal = function(total) {
 ReturnOfCapitalTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 50, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(ReturnOfCapitalTransaction, {name: "SUBACCTSEC", order: 50, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -16717,7 +22383,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountSecurityEnum = function() {
 ReturnOfCapitalTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 140, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(ReturnOfCapitalTransaction, {name: "SUBACCTFUND", order: 140, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -16752,7 +22418,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountFundEnum = function() {
 ReturnOfCapitalTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 110, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(ReturnOfCapitalTransaction, {name: "CURRENCY", order: 110, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -16777,7 +22443,7 @@ ReturnOfCapitalTransaction.prototype.setCurrencyCode = function(currencyCode) {
 ReturnOfCapitalTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 120, owner: ReturnOfCapitalTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add(ReturnOfCapitalTransaction, {name: "ORIGCURRENCY", order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -16803,7 +22469,7 @@ ReturnOfCapitalTransaction.prototype.setOriginalCurrencyInfo = function(original
 ReturnOfCapitalTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 180, owner: ReturnOfCapitalTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(ReturnOfCapitalTransaction, {name: "INV401KSOURCE", order: 180, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -16833,7 +22499,7 @@ ReturnOfCapitalTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = ReturnOfCapitalTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/SellDebtReason.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransactionWithSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionWithSecurity.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/SellDebtReason.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16943,7 +22609,7 @@ Aggregate.add("SELLDEBT", SellDebtTransaction);
 SellDebtTransaction.prototype.getSellReason = function() {
   return this.sellReason;
 };
-Element.add({name: "SELLREASON", order: 30, owner: SellDebtTransaction, /*type: String,*/ fcn: "getSellReason"});
+Element.add(SellDebtTransaction, {name: "SELLREASON", order: 30, attributeType: String, readMethod: "getSellReason", writeMethod: "setSellReason"});
 
 
 /**
@@ -16978,7 +22644,7 @@ SellDebtTransaction.prototype.getSellReasonEnum = function() {
 SellDebtTransaction.prototype.getAccruedInterest = function() {
   return this.accruedInterest;
 };
-Element.add({name: "ACCRDINT", order: 40, owner: SellDebtTransaction, /*type: Double,*/ fcn: "getAccruedInterest"});
+Element.add(SellDebtTransaction, {name: "ACCRDINT", order: 40, attributeType: Number, readMethod: "getAccruedInterest", writeMethod: "setAccruedInterest"});
 
 
 /**
@@ -17019,6 +22685,9 @@ var Inv401KSource = require("../positions/Inv401KSource");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
+var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Sell investment transaction aggregate ("INVSELL").
@@ -17189,7 +22858,7 @@ Aggregate.add("INVSELL", SellInvestmentTransaction);
 SellInvestmentTransaction.prototype.getInvestmentTransaction = function() {
   return this.investmentTransaction;
 };
-ChildAggregate.add({order: 10, owner: SellInvestmentTransaction, /*type: InvestmentTransaction,*/ fcn: "getInvestmentTransaction"});
+ChildAggregate.add(SellInvestmentTransaction, {order: 10, attributeType: InvestmentTransaction, readMethod: "getInvestmentTransaction", writeMethod: "setInvestmentTransaction"});
 
 
 /**
@@ -17212,7 +22881,7 @@ SellInvestmentTransaction.prototype.setInvestmentTransaction = function(investme
 SellInvestmentTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: SellInvestmentTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(SellInvestmentTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -17239,7 +22908,7 @@ SellInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 SellInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 30, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add(SellInvestmentTransaction, {name: "UNITS", required: true, order: 30, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -17267,7 +22936,7 @@ SellInvestmentTransaction.prototype.setUnits = function(units) {
 SellInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 40, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add(SellInvestmentTransaction, {name: "UNITPRICE", required: true, order: 40, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -17293,7 +22962,7 @@ SellInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 SellInvestmentTransaction.prototype.getMarkdown = function() {
   return this.markdown;
 };
-Element.add({name: "MARKDOWN", order: 50, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getMarkdown"});
+Element.add(SellInvestmentTransaction, {name: "MARKDOWN", order: 50, attributeType: Number, readMethod: "getMarkdown", writeMethod: "setMarkdown"});
 
 
 /**
@@ -17318,7 +22987,7 @@ SellInvestmentTransaction.prototype.setMarkdown = function(markdown) {
 SellInvestmentTransaction.prototype.getCommission = function() {
   return this.commission;
 };
-Element.add({name: "COMMISSION", order: 60, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getCommission"});
+Element.add(SellInvestmentTransaction, {name: "COMMISSION", order: 60, attributeType: Number, readMethod: "getCommission", writeMethod: "setCommission"});
 
 
 /**
@@ -17342,7 +23011,7 @@ SellInvestmentTransaction.prototype.setCommission = function(commission) {
 SellInvestmentTransaction.prototype.getTaxes = function() {
   return this.taxes;
 };
-Element.add({name: "TAXES", order: 70, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getTaxes"});
+Element.add(SellInvestmentTransaction, {name: "TAXES", order: 70, attributeType: Number, readMethod: "getTaxes", writeMethod: "setTaxes"});
 
 
 /**
@@ -17365,7 +23034,7 @@ SellInvestmentTransaction.prototype.setTaxes = function(taxes) {
 SellInvestmentTransaction.prototype.getFees = function() {
   return this.fees;
 };
-Element.add({name: "FEES", order: 80, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getFees"});
+Element.add(SellInvestmentTransaction, {name: "FEES", order: 80, attributeType: Number, readMethod: "getFees", writeMethod: "setFees"});
 
 
 /**
@@ -17388,7 +23057,7 @@ SellInvestmentTransaction.prototype.setFees = function(fees) {
 SellInvestmentTransaction.prototype.getLoad = function() {
   return this.load;
 };
-Element.add({name: "LOAD", order: 90, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getLoad"});
+Element.add(SellInvestmentTransaction, {name: "LOAD", order: 90, attributeType: Number, readMethod: "getLoad", writeMethod: "setLoad"});
 
 
 /**
@@ -17411,7 +23080,7 @@ SellInvestmentTransaction.prototype.setLoad = function(load) {
 SellInvestmentTransaction.prototype.getWithholding = function() {
   return this.withholding;
 };
-Element.add({name: "WITHHOLDING", order: 93, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getWithholding"});
+Element.add(SellInvestmentTransaction, {name: "WITHHOLDING", order: 93, attributeType: Number, readMethod: "getWithholding", writeMethod: "setWithholding"});
 
 
 /**
@@ -17434,7 +23103,7 @@ SellInvestmentTransaction.prototype.setWithholding = function(withholding) {
 SellInvestmentTransaction.prototype.getTaxExempt = function() {
   return this.taxExempt;
 };
-Element.add({name: "TAXEXEMPT", order: 97, owner: SellInvestmentTransaction, /*type: Boolean,*/ fcn: "getTaxExempt"});
+Element.add(SellInvestmentTransaction, {name: "TAXEXEMPT", order: 97, attributeType: Boolean, readMethod: "getTaxExempt", writeMethod: "setTaxExempt"});
 
 
 /**
@@ -17460,7 +23129,7 @@ SellInvestmentTransaction.prototype.setTaxExempt = function(taxExempt) {
 SellInvestmentTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add({name: "TOTAL", required: true, order: 100, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getTotal"});
+Element.add(SellInvestmentTransaction, {name: "TOTAL", required: true, order: 100, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**
@@ -17486,7 +23155,7 @@ SellInvestmentTransaction.prototype.setTotal = function(total) {
 SellInvestmentTransaction.prototype.getGain = function() {
   return this.gain;
 };
-Element.add({name: "GAIN", order: 105, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getGain"});
+Element.add(SellInvestmentTransaction, {name: "GAIN", order: 105, attributeType: Number, readMethod: "getGain", writeMethod: "setGain"});
 
 
 /**
@@ -17510,7 +23179,7 @@ SellInvestmentTransaction.prototype.setGain = function(gain) {
 SellInvestmentTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 110, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(SellInvestmentTransaction, {name: "CURRENCY", order: 110, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -17535,7 +23204,7 @@ SellInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
 SellInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 120, owner: SellInvestmentTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add(SellInvestmentTransaction, {name: "ORIGCURRENCY", order: 120, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -17559,7 +23228,7 @@ SellInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalC
 SellInvestmentTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 130, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(SellInvestmentTransaction, {name: "SUBACCTSEC", order: 130, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -17593,7 +23262,7 @@ SellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 SellInvestmentTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 140, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(SellInvestmentTransaction, {name: "SUBACCTFUND", order: 140, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -17628,7 +23297,7 @@ SellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
 SellInvestmentTransaction.prototype.getLoanId = function() {
   return this.loanId;
 };
-Element.add({name: "LOANID", order: 150, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "getLoanId"});
+Element.add(SellInvestmentTransaction, {name: "LOANID", order: 150, attributeType: String, readMethod: "getLoanId", writeMethod: "setLoanId"});
 
 
 /**
@@ -17652,7 +23321,7 @@ SellInvestmentTransaction.prototype.setLoanId = function(loanId) {
 SellInvestmentTransaction.prototype.getStateWithholding = function() {
   return this.stateWithholding;
 };
-Element.add({name: "STATEWITHHOLDING", order: 160, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getStateWithholding"});
+Element.add(SellInvestmentTransaction, {name: "STATEWITHHOLDING", order: 160, attributeType: Number, readMethod: "getStateWithholding", writeMethod: "setStateWithholding"});
 
 
 /**
@@ -17675,7 +23344,7 @@ SellInvestmentTransaction.prototype.setStateWithholding = function(stateWithhold
 SellInvestmentTransaction.prototype.getPenalty = function() {
   return this.penalty;
 };
-Element.add({name: "PENALTY", order: 170, owner: SellInvestmentTransaction, /*type: Double,*/ fcn: "getPenalty"});
+Element.add(SellInvestmentTransaction, {name: "PENALTY", order: 170, attributeType: Number, readMethod: "getPenalty", writeMethod: "setPenalty"});
 
 
 /**
@@ -17700,7 +23369,7 @@ SellInvestmentTransaction.prototype.setPenalty = function(penalty) {
 SellInvestmentTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 180, owner: SellInvestmentTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(SellInvestmentTransaction, {name: "INV401KSOURCE", order: 180, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -17730,7 +23399,7 @@ SellInvestmentTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = SellInvestmentTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/SellMutualFundTransaction.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./InvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/InvestmentTransaction.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/SellMutualFundTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17802,7 +23471,7 @@ Aggregate.add("SELLMF", SellMutualFundTransaction);
 SellMutualFundTransaction.prototype.getSellType = function() {
   return this.sellType;
 };
-Element.add({name: "SELLTYPE", order: 20, owner: SellMutualFundTransaction, /*type: String,*/ fcn: "getSellType"});
+Element.add(SellMutualFundTransaction, {name: "SELLTYPE", order: 20, attributeType: String, readMethod: "getSellType", writeMethod: "setSellType"});
 
 
 /**
@@ -17835,7 +23504,7 @@ SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
 SellMutualFundTransaction.prototype.getAverageCostBasis = function() {
   return this.averageCostBasis;
 };
-Element.add({name: "AVGCOSTBASIS", order: 30, owner: SellMutualFundTransaction, /*type: Double,*/ fcn: "getAverageCostBasis"});
+Element.add(SellMutualFundTransaction, {name: "AVGCOSTBASIS", order: 30, attributeType: Number, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
 
 
 /**
@@ -17859,7 +23528,7 @@ SellMutualFundTransaction.prototype.setAverageCostBasis = function(averageCostBa
 SellMutualFundTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 40, owner: SellMutualFundTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
+Element.add(SellMutualFundTransaction, {name: "RELFITID", order: 40, attributeType: String, readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**
@@ -17966,7 +23635,7 @@ Aggregate.add("SELLOPT", SellOptionTransaction);
 SellOptionTransaction.prototype.getOptionSellType = function() {
   return this.optionSellType;
 };
-Element.add({name: "OPTSELLTYPE", required: true, order: 20, owner: SellOptionTransaction, /*type: String,*/ fcn: "getOptionSellType"});
+Element.add(SellOptionTransaction, {name: "OPTSELLTYPE", required: true, order: 20, attributeType: String, readMethod: "getOptionSellType", writeMethod: "setOptionSellType"});
 
 
 /**
@@ -18000,7 +23669,7 @@ SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
 SellOptionTransaction.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", required: true, order: 30, owner: SellOptionTransaction, /*type: Integer,*/ fcn: "getSharesPerContact"});
+Element.add(SellOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30, attributeType: Number, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -18024,7 +23693,7 @@ SellOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact)
 SellOptionTransaction.prototype.getRelatedTransactionId = function() {
   return this.relatedTransactionId;
 };
-Element.add({name: "RELFITID", order: 40, owner: SellOptionTransaction, /*type: String,*/ fcn: "getRelatedTransactionId"});
+Element.add(SellOptionTransaction, {name: "RELFITID", order: 40, attributeType: String, readMethod: "getRelatedTransactionId", writeMethod: "setRelatedTransactionId"});
 
 
 /**
@@ -18049,7 +23718,7 @@ SellOptionTransaction.prototype.setRelatedTransactionId = function(relatedTransa
 SellOptionTransaction.prototype.getRelatedType = function() {
   return this.relatedType;
 };
-Element.add({name: "RELTYPE", order: 50, owner: SellOptionTransaction, /*type: String,*/ fcn: "getRelatedType"});
+Element.add(SellOptionTransaction, {name: "RELTYPE", order: 50, attributeType: String, readMethod: "getRelatedType", writeMethod: "setRelatedType"});
 
 
 /**
@@ -18084,7 +23753,7 @@ SellOptionTransaction.prototype.getRelatedTypeEnum = function() {
 SellOptionTransaction.prototype.getSecured = function() {
   return this.secured;
 };
-Element.add({name: "SECURED", order: 60, owner: SellOptionTransaction, /*type: String,*/ fcn: "getSecured"});
+Element.add(SellOptionTransaction, {name: "SECURED", order: 60, attributeType: String, readMethod: "getSecured", writeMethod: "setSecured"});
 
 
 /**
@@ -18214,7 +23883,7 @@ Aggregate.add("SELLSTOCK", SellStockTransaction);
 SellStockTransaction.prototype.getSellType = function() {
   return this.sellType;
 };
-Element.add({name: "SELLTYPE", required: true, order: 20, owner: SellStockTransaction, /*type: String,*/ fcn: "getSellType"});
+Element.add(SellStockTransaction, {name: "SELLTYPE", required: true, order: 20, attributeType: String, readMethod: "getSellType", writeMethod: "setSellType"});
 
 
 /**
@@ -18309,6 +23978,8 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
+var SecurityId = require("../../seclist/SecurityId");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for a stock split.
@@ -18414,7 +24085,7 @@ Aggregate.add("SPLIT", SplitTransaction);
 SplitTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: SplitTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(SplitTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -18439,7 +24110,7 @@ SplitTransaction.prototype.setSecurityId = function(securityId) {
 SplitTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 30, owner: SplitTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(SplitTransaction, {name: "SUBACCTSEC", order: 30, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -18473,7 +24144,7 @@ SplitTransaction.prototype.getSubAccountSecurityEnum = function() {
 SplitTransaction.prototype.getOldUnits = function() {
   return this.oldUnits;
 };
-Element.add({name: "OLDUNITS", order: 40, owner: SplitTransaction, /*type: Double,*/ fcn: "getOldUnits"});
+Element.add(SplitTransaction, {name: "OLDUNITS", order: 40, attributeType: Number, readMethod: "getOldUnits", writeMethod: "setOldUnits"});
 
 
 /**
@@ -18496,7 +24167,7 @@ SplitTransaction.prototype.setOldUnits = function(oldUnits) {
 SplitTransaction.prototype.getNewUnits = function() {
   return this.newUnits;
 };
-Element.add({name: "NEWUNITS", order: 50, owner: SplitTransaction, /*type: Double,*/ fcn: "getNewUnits"});
+Element.add(SplitTransaction, {name: "NEWUNITS", order: 50, attributeType: Number, readMethod: "getNewUnits", writeMethod: "setNewUnits"});
 
 
 /**
@@ -18518,7 +24189,7 @@ SplitTransaction.prototype.setNewUnits = function(newUnits) {
 SplitTransaction.prototype.getNumerator = function() {
   return this.numerator;
 };
-Element.add({name: "NUMERATOR", order: 60, owner: SplitTransaction, /*type: Double,*/ fcn: "getNumerator"});
+Element.add(SplitTransaction, {name: "NUMERATOR", order: 60, attributeType: Number, readMethod: "getNumerator", writeMethod: "setNumerator"});
 
 
 /**
@@ -18539,7 +24210,7 @@ SplitTransaction.prototype.setNumerator = function(numerator) {
 SplitTransaction.prototype.getDenominator = function() {
   return this.denominator;
 };
-Element.add({name: "DENOMINATOR", order: 70, owner: SplitTransaction, /*type: Double,*/ fcn: "getDenominator"});
+Element.add(SplitTransaction, {name: "DENOMINATOR", order: 70, attributeType: Number, readMethod: "getDenominator", writeMethod: "setDenominator"});
 
 
 /**
@@ -18562,7 +24233,7 @@ SplitTransaction.prototype.setDenominator = function(denominator) {
 SplitTransaction.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: SplitTransaction, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(SplitTransaction, {name: "CURRENCY", order: 80, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -18587,7 +24258,7 @@ SplitTransaction.prototype.setCurrencyCode = function(/*String*/ currencyCode) {
 SplitTransaction.prototype.getOriginalCurrencyInfo = function() {
   return this.originalCurrencyInfo;
 };
-Element.add({name: "ORIGCURRENCY", order: 90, owner: SplitTransaction, /*type: OriginalCurrency,*/ fcn: "getOriginalCurrencyInfo"});
+Element.add(SplitTransaction, {name: "ORIGCURRENCY", order: 90, attributeType: OriginalCurrency, readMethod: "getOriginalCurrencyInfo", writeMethod: "setOriginalCurrencyInfo"});
 
 
 /**
@@ -18610,7 +24281,7 @@ SplitTransaction.prototype.setOriginalCurrencyInfo = function(/*OriginalCurrency
 SplitTransaction.prototype.getCashForFractionalUnits = function() {
   return this.cashForFractionalUnits;
 };
-Element.add({name: "FRACCASH", order: 100, owner: SplitTransaction, /*type: Double,*/ fcn: "getCashForFractionalUnits"});
+Element.add(SplitTransaction, {name: "FRACCASH", order: 100, attributeType: Number, readMethod: "getCashForFractionalUnits", writeMethod: "setCashForFractionalUnits"});
 
 
 /**
@@ -18632,7 +24303,7 @@ SplitTransaction.prototype.setCashForFractionalUnits = function(cashForFractiona
 SplitTransaction.prototype.getSubAccountFund = function() {
   return this.subAccountFund;
 };
-Element.add({name: "SUBACCTFUND", order: 110, owner: SplitTransaction, /*type: String,*/ fcn: "getSubAccountFund"});
+Element.add(SplitTransaction, {name: "SUBACCTFUND", order: 110, attributeType: String, readMethod: "getSubAccountFund", writeMethod: "setSubAccountFund"});
 
 
 /**
@@ -18667,7 +24338,7 @@ SplitTransaction.prototype.getSubAccountFundEnum = function() {
 SplitTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 120, owner: SplitTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(SplitTransaction, {name: "INV401KSOURCE", order: 120, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -18697,7 +24368,7 @@ SplitTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = SplitTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./OriginalCurrency":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/OriginalCurrency.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18851,6 +24522,7 @@ var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
 var TransferAction = require("./TransferAction");
+var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for transfers.
@@ -18943,7 +24615,7 @@ Aggregate.add("TRANSFER", TransferInvestmentTransaction);
 TransferInvestmentTransaction.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 20, owner: TransferInvestmentTransaction, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(TransferInvestmentTransaction, {required: true, order: 20, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -18967,7 +24639,7 @@ TransferInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 TransferInvestmentTransaction.prototype.getSubAccountSecurity = function() {
   return this.subAccountSecurity;
 };
-Element.add({name: "SUBACCTSEC", order: 30, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "getSubAccountSecurity"});
+Element.add(TransferInvestmentTransaction, {name: "SUBACCTSEC", order: 30, attributeType: String, readMethod: "getSubAccountSecurity", writeMethod: "setSubAccountSecurity"});
 
 
 /**
@@ -19003,7 +24675,7 @@ TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 TransferInvestmentTransaction.prototype.getUnits = function() {
   return this.units;
 };
-Element.add({name: "UNITS", required: true, order: 40, owner: TransferInvestmentTransaction, /*type: Double,*/ fcn: "getUnits"});
+Element.add(TransferInvestmentTransaction, {name: "UNITS", required: true, order: 40, attributeType: Number, readMethod: "getUnits", writeMethod: "setUnits"});
 
 
 /**
@@ -19029,7 +24701,7 @@ TransferInvestmentTransaction.prototype.setUnits = function(units) {
 TransferInvestmentTransaction.prototype.getTransferAction = function() {
   return this.transferAction;
 };
-Element.add({name: "TFERACTION", required: true, order: 50, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "getTransferAction"});
+Element.add(TransferInvestmentTransaction, {name: "TFERACTION", required: true, order: 50, attributeType: String, readMethod: "getTransferAction", writeMethod: "setTransferAction"});
 
 
 /**
@@ -19062,7 +24734,7 @@ TransferInvestmentTransaction.prototype.getTransferActionEnum = function() {
 TransferInvestmentTransaction.prototype.getPositionType = function() {
   return this.positionType;
 };
-Element.add({name: "POSTYPE", required: true, order: 60, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "getPositionType"});
+Element.add(TransferInvestmentTransaction, {name: "POSTYPE", required: true, order: 60, attributeType: String, readMethod: "getPositionType", writeMethod: "setPositionType"});
 
 
 /**
@@ -19095,7 +24767,7 @@ TransferInvestmentTransaction.prototype.getPositionTypeEnum = function() {
 TransferInvestmentTransaction.prototype.getAverageCostBasis = function() {
   return this.averageCostBasis;
 };
-Element.add({name: "AVGCOSTBASIS", order: 70, owner: TransferInvestmentTransaction, /*type: Double,*/ fcn: "getAverageCostBasis"});
+Element.add(TransferInvestmentTransaction, {name: "AVGCOSTBASIS", order: 70, attributeType: Number, readMethod: "getAverageCostBasis", writeMethod: "setAverageCostBasis"});
 
 
 /**
@@ -19120,7 +24792,7 @@ TransferInvestmentTransaction.prototype.setAverageCostBasis = function(averageCo
 TransferInvestmentTransaction.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", required: true, order: 80, owner: TransferInvestmentTransaction, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add(TransferInvestmentTransaction, {name: "UNITPRICE", required: true, order: 80, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -19145,7 +24817,7 @@ TransferInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 TransferInvestmentTransaction.prototype.getPurchaseDate = function() {
   return this.purchaseDate;
 };
-Element.add({name: "DTPURCHASE", order: 90, owner: TransferInvestmentTransaction, /*type: Date,*/ fcn: "getPurchaseDate"});
+Element.add(TransferInvestmentTransaction, {name: "DTPURCHASE", order: 90, attributeType: Date, readMethod: "getPurchaseDate", writeMethod: "setPurchaseDate"});
 
 
 /**
@@ -19170,7 +24842,7 @@ TransferInvestmentTransaction.prototype.setPurchaseDate = function(purchaseDate)
 TransferInvestmentTransaction.prototype.get401kSource = function() {
   return this.inv401kSource;
 };
-Element.add({name: "INV401KSOURCE", order: 100, owner: TransferInvestmentTransaction, /*type: String,*/ fcn: "get401kSource"});
+Element.add(TransferInvestmentTransaction, {name: "INV401KSOURCE", order: 100, attributeType: String, readMethod: "get401kSource", writeMethod: "set401kSource"});
 
 
 /**
@@ -19200,7 +24872,7 @@ TransferInvestmentTransaction.prototype.get401kSourceEnum = function() {
 
 module.exports = TransferInvestmentTransaction;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","../positions/PositionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/PositionType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransferAction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransferAction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/index.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../seclist/SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js","../accounts/SubAccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/accounts/SubAccountType.js","../positions/Inv401KSource":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/Inv401KSource.js","../positions/PositionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/positions/PositionType.js","./BaseOtherInvestmentTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/BaseOtherInvestmentTransaction.js","./TransactionType":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransactionType.js","./TransferAction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/TransferAction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/investment/transactions/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -19265,6 +24937,7 @@ module.exports = {
 "use strict";
 
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var VersionSpecificMessageSetInfo = require("./VersionSpecificMessageSetInfo");
 
 /**
  * Information about a message set.
@@ -19294,7 +24967,7 @@ function AbstractMessageSetInfo () {
 AbstractMessageSetInfo.prototype.getVersionSpecificInformationList = function() {
   return this.versionSpecificInformationList;
 };
-ChildAggregate.add({order: 0, owner: AbstractMessageSetInfo, /*type: VersionSpecificMessageSetInfo[],*/ fcn: "getVersionSpecificInformationList"});
+ChildAggregate.add(AbstractMessageSetInfo, {order: 0, attributeType: Array, collectionEntryType: VersionSpecificMessageSetInfo, readMethod: "getVersionSpecificInformationList", writeMethod: "setVersionSpecificInformationList"});
 
 
 /**
@@ -19311,7 +24984,7 @@ AbstractMessageSetInfo.prototype.setVersionSpecificInformationList = function(ve
 
 module.exports = AbstractMessageSetInfo;
 
-},{"../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/CharacterType.js":[function(require,module,exports){
+},{"../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/CharacterType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19398,6 +25071,8 @@ module.exports = ClientRoutingCapability;
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
+var ApplicationSecurity = require("../ApplicationSecurity");
+var SynchronizationCapability = require("./SynchronizationCapability");
 
 /**
  * Core information about a specific version of a specific message set.
@@ -19491,7 +25166,7 @@ Aggregate.add("MSGSETCORE", CoreMessageSetInfo);
 CoreMessageSetInfo.prototype.getVersion = function() {
   return this.version;
 };
-Element.add({name: "VER", required: true, order: 0, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getVersion"});
+Element.add(CoreMessageSetInfo, {name: "VER", required: true, order: 0, attributeType: String, readMethod: "getVersion", writeMethod: "setVersion"});
 
 
 /**
@@ -19512,7 +25187,7 @@ CoreMessageSetInfo.prototype.setVersion = function(version) {
 CoreMessageSetInfo.prototype.getServiceProviderName = function() {
   return this.serviceProviderName;
 };
-Element.add({name: "SPNAME", order: 10, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getServiceProviderName"});
+Element.add(CoreMessageSetInfo, {name: "SPNAME", order: 10, attributeType: String, readMethod: "getServiceProviderName", writeMethod: "setServiceProviderName"});
 
 
 /**
@@ -19533,7 +25208,7 @@ CoreMessageSetInfo.prototype.setServiceProviderName = function(serviceProviderNa
 CoreMessageSetInfo.prototype.getUrl = function() {
   return this.url;
 };
-Element.add({name: "URL", required: true, order: 20, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getUrl"});
+Element.add(CoreMessageSetInfo, {name: "URL", required: true, order: 20, attributeType: String, readMethod: "getUrl", writeMethod: "setUrl"});
 
 
 /**
@@ -19554,7 +25229,7 @@ CoreMessageSetInfo.prototype.setUrl = function(url) {
 CoreMessageSetInfo.prototype.getSecurity = function() {
   return this.security;
 };
-Element.add({name: "OFXSEC", required: true, order: 30, owner: CoreMessageSetInfo, /*type: ApplicationSecurity,*/ fcn: "getSecurity"});
+Element.add(CoreMessageSetInfo, {name: "OFXSEC", required: true, order: 30, attributeType: ApplicationSecurity, readMethod: "getSecurity", writeMethod: "setSecurity"});
 
 
 /**
@@ -19575,7 +25250,7 @@ CoreMessageSetInfo.prototype.setSecurity = function(security) {
 CoreMessageSetInfo.prototype.getSslRequired = function() {
   return this.sslRequired;
 };
-Element.add({name: "TRANSPSEC", required: true, order: 40, owner: CoreMessageSetInfo, /*type: Boolean,*/ fcn: "getSslRequired"});
+Element.add(CoreMessageSetInfo, {name: "TRANSPSEC", required: true, order: 40, attributeType: Boolean, readMethod: "getSslRequired", writeMethod: "setSslRequired"});
 
 
 /**
@@ -19596,7 +25271,7 @@ CoreMessageSetInfo.prototype.setSslRequired = function(sslRequired) {
 CoreMessageSetInfo.prototype.getRealm = function() {
   return this.realm;
 };
-Element.add({name: "SIGNONREALM", required: true, order: 50, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getRealm"});
+Element.add(CoreMessageSetInfo, {name: "SIGNONREALM", required: true, order: 50, attributeType: String, readMethod: "getRealm", writeMethod: "setRealm"});
 
 
 /**
@@ -19618,7 +25293,7 @@ CoreMessageSetInfo.prototype.setRealm = function(realm) {
 CoreMessageSetInfo.prototype.getLanguage = function() {
   return this.language;
 };
-Element.add({name: "LANGUAGE", required: true, order: 60, owner: CoreMessageSetInfo, /*type: String,*/ fcn: "getLanguage"});
+Element.add(CoreMessageSetInfo, {name: "LANGUAGE", required: true, order: 60, attributeType: String, readMethod: "getLanguage", writeMethod: "setLanguage"});
 
 
 /**
@@ -19639,7 +25314,7 @@ CoreMessageSetInfo.prototype.setLanguage = function(language) {
 CoreMessageSetInfo.prototype.getSyncCapability = function() {
   return this.syncCapability;
 };
-Element.add({name: "SYNCMODE", required: true, order: 70, owner: CoreMessageSetInfo, /*type: SynchronizationCapability,*/ fcn: "getSyncCapability"});
+Element.add(CoreMessageSetInfo, {name: "SYNCMODE", required: true, order: 70, attributeType: SynchronizationCapability, readMethod: "getSyncCapability", writeMethod: "setSyncCapability"});
 
 
 /**
@@ -19660,7 +25335,7 @@ CoreMessageSetInfo.prototype.setSyncCapability = function(syncCapability) {
 CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport = function() {
   return this.fileBasedErrorRecoverySupport;
 };
-Element.add({name: "RESPFILEER", required: true, order: 80, owner: CoreMessageSetInfo, /*type: Boolean,*/ fcn: "getFileBasedErrorRecoverySupport"});
+Element.add(CoreMessageSetInfo, {name: "RESPFILEER", required: true, order: 80, attributeType: Boolean, readMethod: "getFileBasedErrorRecoverySupport", writeMethod: "setFileBasedErrorRecoverySupport"});
 
 
 /**
@@ -19682,7 +25357,7 @@ CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport = function(fileBas
 CoreMessageSetInfo.prototype.getIntuTimeout = function() {
   return this.timeout;
 };
-Element.add({name: "INTU.TIMEOUT", order: 90, owner: CoreMessageSetInfo, /*type: Integer,*/ fcn: "getIntuTimeout"});
+Element.add(CoreMessageSetInfo, {name: "INTU.TIMEOUT", order: 90, attributeType: Number, readMethod: "getIntuTimeout", writeMethod: "setIntuTimeout"});
 
 
 /**
@@ -19700,7 +25375,7 @@ CoreMessageSetInfo.prototype.setIntuTimeout = function(timeout) {
 
 module.exports = CoreMessageSetInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/MessageSetInfoList.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","./SynchronizationCapability":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SynchronizationCapability.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/MessageSetInfoList.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19719,6 +25394,7 @@ module.exports = CoreMessageSetInfo;
 
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var AbstractMessageSetInfo = require("./AbstractMessageSetInfo");
 
 /**
  * @class
@@ -19747,7 +25423,7 @@ Aggregate.add("MSGSETLIST", MessageSetInfoList);
 MessageSetInfoList.prototype.getInformationList = function() {
   return this.informationList;
 };
-ChildAggregate.add({order: 0, owner: MessageSetInfoList, /*type: AbstractMessageSetInfo[],*/ fcn: "getInformationList"});
+ChildAggregate.add(MessageSetInfoList, {order: 0, attributeType: Array, collectionEntryType: AbstractMessageSetInfo, readMethod: "getInformationList", writeMethod: "setInformationList"});
 
 
 /**
@@ -19764,7 +25440,7 @@ MessageSetInfoList.prototype.setInformationList = function(informationList) {
 
 module.exports = MessageSetInfoList;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequest.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequest.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19823,7 +25499,7 @@ Aggregate.add("PROFRQ", ProfileRequest);
 ProfileRequest.prototype.getRoutingCapability = function() {
   return this.routingCapability;
 };
-Element.add({name: "CLIENTROUTING", order: 0, owner: ProfileRequest, /*type: ClientRoutingCapability,*/ fcn: "getRoutingCapability"});
+Element.add(ProfileRequest, {name: "CLIENTROUTING", order: 0, attributeType: ClientRoutingCapability, readMethod: "getRoutingCapability", writeMethod: "setRoutingCapability"});
 
 
 /**
@@ -19844,7 +25520,7 @@ ProfileRequest.prototype.setRoutingCapability = function(routingCapability) {
 ProfileRequest.prototype.getProfileLastUpdated = function() {
   return this.profileLastUpdated;
 };
-Element.add({name: "DTPROFUP", order: 10, owner: ProfileRequest, /*type: Date,*/ fcn: "getProfileLastUpdated"});
+Element.add(ProfileRequest, {name: "DTPROFUP", order: 10, attributeType: Date, readMethod: "getProfileLastUpdated", writeMethod: "setProfileLastUpdated"});
 
 
 /**
@@ -19884,6 +25560,7 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var ProfileRequestTransaction = require("./ProfileRequestTransaction");
 
 /**
  * @class
@@ -19919,7 +25596,7 @@ ProfileRequestMessageSet.prototype.getType = function() {
 ProfileRequestMessageSet.prototype.getProfileRequest = function() {
   return this.profileRequest;
 };
-ChildAggregate.add({required: true, order: 0, owner: ProfileRequestMessageSet, /*type: ProfileRequestTransaction,*/ fcn: "getProfileRequest"});
+ChildAggregate.add(ProfileRequestMessageSet, {required: true, order: 0, attributeType: ProfileRequestTransaction, readMethod: "getProfileRequest", writeMethod: "setProfileRequest"});
 
 
 /**
@@ -19946,7 +25623,7 @@ ProfileRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = ProfileRequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./ProfileRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19998,7 +25675,7 @@ Aggregate.add("PROFTRNRQ", ProfileRequestTransaction);
 ProfileRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: ProfileRequestTransaction, /*type: ProfileRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(ProfileRequestTransaction, {required: true, order: 30, attributeType: ProfileRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -20045,6 +25722,8 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var FinancialInstitutionProfile = require("../../../client/FinancialInstitutionProfile");
+var MessageSetInfoList = require("./MessageSetInfoList");
+var SignonInfoList = require("./SignonInfoList");
 
 /**
  * @class
@@ -20181,7 +25860,7 @@ Aggregate.add("PROFRS", ProfileResponse);
 ProfileResponse.prototype.getMessageSetList = function() {
   return this.messageSetList;
 };
-ChildAggregate.add({order: 0, owner: ProfileResponse, /*type: MessageSetInfoList,*/ fcn: "getMessageSetList"});
+ChildAggregate.add(ProfileResponse, {order: 0, attributeType: MessageSetInfoList, readMethod: "getMessageSetList", writeMethod: "setMessageSetList"});
 
 
 /**
@@ -20202,7 +25881,7 @@ ProfileResponse.prototype.setMessageSetList = function(messageSetList) {
 ProfileResponse.prototype.getSignonInfoList = function() {
   return this.signonInfoList;
 };
-ChildAggregate.add({order: 10, owner: ProfileResponse, /*type: SignonInfoList,*/ fcn: "getSignonInfoList"});
+ChildAggregate.add(ProfileResponse, {order: 10, attributeType: SignonInfoList, readMethod: "getSignonInfoList", writeMethod: "setSignonInfoList"});
 
 
 /**
@@ -20235,7 +25914,7 @@ ProfileResponse.prototype.getLastUpdated = function() {
 ProfileResponse.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTPROFUP", order: 20, owner: ProfileResponse, /*type: Date,*/ fcn: "getTimestamp"});
+Element.add(ProfileResponse, {name: "DTPROFUP", order: 20, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -20256,7 +25935,7 @@ ProfileResponse.prototype.setTimestamp = function(timestamp) {
 ProfileResponse.prototype.getFinancialInstitutionName = function() {
   return this.financialInstitutionName;
 };
-Element.add({name: "FINAME", order: 30, owner: ProfileResponse, /*type: String,*/ fcn: "getFinancialInstitutionName"});
+Element.add(ProfileResponse, {name: "FINAME", order: 30, attributeType: String, readMethod: "getFinancialInstitutionName", writeMethod: "setFinancialInstitutionName"});
 
 
 /**
@@ -20277,7 +25956,7 @@ ProfileResponse.prototype.setFinancialInstitutionName = function(financialInstit
 ProfileResponse.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1", required: true, order: 40, owner: ProfileResponse, /*type: String,*/ fcn: "getAddress1"});
+Element.add(ProfileResponse, {name: "ADDR1", required: true, order: 40, attributeType: String, readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -20298,7 +25977,7 @@ ProfileResponse.prototype.setAddress1 = function(address1) {
 ProfileResponse.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2", order: 50, owner: ProfileResponse, /*type: String,*/ fcn: "getAddress2"});
+Element.add(ProfileResponse, {name: "ADDR2", order: 50, attributeType: String, readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -20319,7 +25998,7 @@ ProfileResponse.prototype.setAddress2 = function(address2) {
 ProfileResponse.prototype.getAddress3 = function() {
   return this.address3;
 };
-Element.add({name: "ADDR3", order: 60, owner: ProfileResponse, /*type: String,*/ fcn: "getAddress3"});
+Element.add(ProfileResponse, {name: "ADDR3", order: 60, attributeType: String, readMethod: "getAddress3", writeMethod: "setAddress3"});
 
 
 /**
@@ -20340,7 +26019,7 @@ ProfileResponse.prototype.setAddress3 = function(address3) {
 ProfileResponse.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY", required: true, order: 70, owner: ProfileResponse, /*type: String,*/ fcn: "getCity"});
+Element.add(ProfileResponse, {name: "CITY", required: true, order: 70, attributeType: String, readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -20361,7 +26040,7 @@ ProfileResponse.prototype.setCity = function(city) {
 ProfileResponse.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE", required: true, order: 80, owner: ProfileResponse, /*type: String,*/ fcn: "getState"});
+Element.add(ProfileResponse, {name: "STATE", required: true, order: 80, attributeType: String, readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -20382,7 +26061,7 @@ ProfileResponse.prototype.setState = function(state) {
 ProfileResponse.prototype.getZip = function() {
   return this.zip;
 };
-Element.add({name: "POSTALCODE", required: true, order: 90, owner: ProfileResponse, /*type: String,*/ fcn: "getZip"});
+Element.add(ProfileResponse, {name: "POSTALCODE", required: true, order: 90, attributeType: String, readMethod: "getZip", writeMethod: "setZip"});
 
 
 /**
@@ -20404,7 +26083,7 @@ ProfileResponse.prototype.setZip = function(zip) {
 ProfileResponse.prototype.getCountry = function() {
   return this.country;
 };
-Element.add({name: "COUNTRY", required: true, order: 100, owner: ProfileResponse, /*type: String,*/ fcn: "getCountry"});
+Element.add(ProfileResponse, {name: "COUNTRY", required: true, order: 100, attributeType: String, readMethod: "getCountry", writeMethod: "setCountry"});
 
 
 /**
@@ -20425,7 +26104,7 @@ ProfileResponse.prototype.setCountry = function(country) {
 ProfileResponse.prototype.getCustomerServicePhone = function() {
   return this.customerServicePhone;
 };
-Element.add({name: "CSPHONE", order: 110, owner: ProfileResponse, /*type: String,*/ fcn: "getCustomerServicePhone"});
+Element.add(ProfileResponse, {name: "CSPHONE", order: 110, attributeType: String, readMethod: "getCustomerServicePhone", writeMethod: "setCustomerServicePhone"});
 
 
 /**
@@ -20446,7 +26125,7 @@ ProfileResponse.prototype.setCustomerServicePhone = function(customerServicePhon
 ProfileResponse.prototype.getTechnicalSupportPhone = function() {
   return this.technicalSupportPhone;
 };
-Element.add({name: "TSPHONE", order: 120, owner: ProfileResponse, /*type: String,*/ fcn: "getTechnicalSupportPhone"});
+Element.add(ProfileResponse, {name: "TSPHONE", order: 120, attributeType: String, readMethod: "getTechnicalSupportPhone", writeMethod: "setTechnicalSupportPhone"});
 
 
 /**
@@ -20467,7 +26146,7 @@ ProfileResponse.prototype.setTechnicalSupportPhone = function(technicalSupportPh
 ProfileResponse.prototype.getFax = function() {
   return this.fax;
 };
-Element.add({name: "FAXPHONE", order: 130, owner: ProfileResponse, /*type: String,*/ fcn: "getFax"});
+Element.add(ProfileResponse, {name: "FAXPHONE", order: 130, attributeType: String, readMethod: "getFax", writeMethod: "setFax"});
 
 
 /**
@@ -20488,7 +26167,7 @@ ProfileResponse.prototype.setFax = function(fax) {
 ProfileResponse.prototype.getSiteURL = function() {
   return this.siteURL;
 };
-Element.add({name: "URL", order: 140, owner: ProfileResponse, /*type: String,*/ fcn: "getSiteURL"});
+Element.add(ProfileResponse, {name: "URL", order: 140, attributeType: String, readMethod: "getSiteURL", writeMethod: "setSiteURL"});
 
 
 /**
@@ -20509,7 +26188,7 @@ ProfileResponse.prototype.setSiteURL = function(siteURL) {
 ProfileResponse.prototype.getEmail = function() {
   return this.email;
 };
-Element.add({name: "EMAIL", order: 150, owner: ProfileResponse, /*type: String,*/ fcn: "getEmail"});
+Element.add(ProfileResponse, {name: "EMAIL", order: 150, attributeType: String, readMethod: "getEmail", writeMethod: "setEmail"});
 
 
 /**
@@ -20596,7 +26275,7 @@ ProfileResponse.prototype.getSignonProfile = function(/*MessageSetProfile*/ mess
 
 module.exports = ProfileResponse;
 
-},{"../../../client/FinancialInstitutionProfile":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js","../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileResponseMessageSet.js":[function(require,module,exports){
+},{"../../../client/FinancialInstitutionProfile":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js","../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./MessageSetInfoList":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/MessageSetInfoList.js","./SignonInfoList":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SignonInfoList.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20619,6 +26298,7 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var ProfileResponseTransaction = require("./ProfileResponseTransaction");
 
 /**
  * @class
@@ -20654,7 +26334,7 @@ ProfileResponseMessageSet.prototype.getType = function() {
 ProfileResponseMessageSet.prototype.getProfileResponse = function() {
   return this.profileResponse;
 };
-ChildAggregate.add({required: true, order: 0, owner: ProfileResponseMessageSet, /*type: ProfileResponseTransaction,*/ fcn: "getProfileResponse"});
+ChildAggregate.add(ProfileResponseMessageSet, {required: true, order: 0, attributeType: ProfileResponseTransaction, readMethod: "getProfileResponse", writeMethod: "setProfileResponse"});
 
 
 /**
@@ -20683,7 +26363,7 @@ ProfileResponseMessageSet.prototype.getResponseMessages = function() {
 
 module.exports = ProfileResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileResponseTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./ProfileResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20735,7 +26415,7 @@ Aggregate.add("PROFTRNRS", ProfileResponseTransaction);
 ProfileResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: ProfileResponseTransaction, /*type: ProfileResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(ProfileResponseTransaction, {required: true, order: 30, attributeType: ProfileResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -20780,6 +26460,7 @@ var inherit = require("../../../util/inherit");
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
 var SignonProfile = require("../SignonProfile");
+var CharacterType = require("./CharacterType");
 
 /**
  * Sign-on information
@@ -20924,7 +26605,7 @@ Aggregate.add("SIGNONINFO", SignonInfo);
 SignonInfo.prototype.getRealm = function() {
   return this.realm;
 };
-Element.add({name: "SIGNONREALM", required: true, order: 0, owner: SignonInfo, /*type: String,*/ fcn: "getRealm"});
+Element.add(SignonInfo, {name: "SIGNONREALM", required: true, order: 0, attributeType: String, readMethod: "getRealm", writeMethod: "setRealm"});
 
 
 /**
@@ -20945,7 +26626,7 @@ SignonInfo.prototype.setRealm = function(realm) {
 SignonInfo.prototype.getMinPasswordCharacters = function() {
   return this.minPasswordCharacters;
 };
-Element.add({name: "MIN", required: true, order: 10, owner: SignonInfo, /*type: Integer,*/ fcn: "getMinPasswordCharacters"});
+Element.add(SignonInfo, {name: "MIN", required: true, order: 10, attributeType: Number, readMethod: "getMinPasswordCharacters", writeMethod: "setMinPasswordCharacters"});
 
 
 /**
@@ -20966,7 +26647,7 @@ SignonInfo.prototype.setMinPasswordCharacters = function(minPasswordCharacters) 
 SignonInfo.prototype.getMaxPasswordCharacters = function() {
   return this.maxPasswordCharacters;
 };
-Element.add({name: "MAX", required: true, order: 20, owner: SignonInfo, /*type: Integer,*/ fcn: "getMaxPasswordCharacters"});
+Element.add(SignonInfo, {name: "MAX", required: true, order: 20, attributeType: Number, readMethod: "getMaxPasswordCharacters", writeMethod: "setMaxPasswordCharacters"});
 
 
 /**
@@ -20987,7 +26668,7 @@ SignonInfo.prototype.setMaxPasswordCharacters = function(maxPasswordCharacters) 
 SignonInfo.prototype.getPasswordCharacterType = function() {
   return this.passwordCharacterType;
 };
-Element.add({name: "CHARTYPE", required: true, order: 30, owner: SignonInfo, /*type: CharacterType,*/ fcn: "getPasswordCharacterType"});
+Element.add(SignonInfo, {name: "CHARTYPE", required: true, order: 30, attributeType: CharacterType, readMethod: "getPasswordCharacterType", writeMethod: "setPasswordCharacterType"});
 
 
 /**
@@ -21008,7 +26689,7 @@ SignonInfo.prototype.setPasswordCharacterType = function(passwordCharacterType) 
 SignonInfo.prototype.getPasswordCaseSensitive = function() {
   return this.passwordCaseSensitive;
 };
-Element.add({name: "CASESEN", required: true, order: 40, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordCaseSensitive"});
+Element.add(SignonInfo, {name: "CASESEN", required: true, order: 40, attributeType: Boolean, readMethod: "getPasswordCaseSensitive", writeMethod: "setPasswordCaseSensitive"});
 
 
 /**
@@ -21029,7 +26710,7 @@ SignonInfo.prototype.setPasswordCaseSensitive = function(passwordCaseSensitive) 
 SignonInfo.prototype.getPasswordSpecialCharsAllowed = function() {
   return this.passwordSpecialCharsAllowed;
 };
-Element.add({name: "SPECIAL", required: true, order: 50, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordSpecialCharsAllowed"});
+Element.add(SignonInfo, {name: "SPECIAL", required: true, order: 50, attributeType: Boolean, readMethod: "getPasswordSpecialCharsAllowed", writeMethod: "setPasswordSpecialCharsAllowed"});
 
 
 /**
@@ -21050,7 +26731,7 @@ SignonInfo.prototype.setPasswordSpecialCharsAllowed = function(passwordSpecialCh
 SignonInfo.prototype.getPasswordSpacesAllowed = function() {
   return this.passwordSpacesAllowed;
 };
-Element.add({name: "SPACES", required: true, order: 60, owner: SignonInfo, /*type: Boolean,*/ fcn: "getPasswordSpacesAllowed"});
+Element.add(SignonInfo, {name: "SPACES", required: true, order: 60, attributeType: Boolean, readMethod: "getPasswordSpacesAllowed", writeMethod: "setPasswordSpacesAllowed"});
 
 
 /**
@@ -21071,7 +26752,7 @@ SignonInfo.prototype.setPasswordSpacesAllowed = function(passwordSpacesAllowed) 
 SignonInfo.prototype.getChangePasswordSupported = function() {
   return this.changePasswordSupported;
 };
-Element.add({name: "PINCH", required: true, order: 70, owner: SignonInfo, /*type: Boolean,*/ fcn: "getChangePasswordSupported"});
+Element.add(SignonInfo, {name: "PINCH", required: true, order: 70, attributeType: Boolean, readMethod: "getChangePasswordSupported", writeMethod: "setChangePasswordSupported"});
 
 
 /**
@@ -21092,7 +26773,7 @@ SignonInfo.prototype.setChangePasswordSupported = function(changePasswordSupport
 SignonInfo.prototype.getChangePasswordFirstRequired = function() {
   return this.changePasswordFirstRequired;
 };
-Element.add({name: "CHGPINFIRST", required: true, order: 80, owner: SignonInfo, /*type: Boolean,*/ fcn: "getChangePasswordFirstRequired"});
+Element.add(SignonInfo, {name: "CHGPINFIRST", required: true, order: 80, attributeType: Boolean, readMethod: "getChangePasswordFirstRequired", writeMethod: "setChangePasswordFirstRequired"});
 
 
 /**
@@ -21113,7 +26794,7 @@ SignonInfo.prototype.setChangePasswordFirstRequired = function(changePasswordFir
 SignonInfo.prototype.getAdditionalCredientialsLabel1 = function() {
   return this.additionalCredientialsLabel1;
 };
-Element.add({name: "USERCRED1LABEL", order: 90, owner: SignonInfo, /*type: String,*/ fcn: "getAdditionalCredientialsLabel1"});
+Element.add(SignonInfo, {name: "USERCRED1LABEL", order: 90, attributeType: String, readMethod: "getAdditionalCredientialsLabel1", writeMethod: "setAdditionalCredientialsLabel1"});
 
 
 /**
@@ -21134,7 +26815,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel1 = function(additionalCredie
 SignonInfo.prototype.getAdditionalCredientialsLabel2 = function() {
   return this.additionalCredientialsLabel2;
 };
-Element.add({name: "USERCRED2LABEL", order: 100, owner: SignonInfo, /*type: String,*/ fcn: "getAdditionalCredientialsLabel2"});
+Element.add(SignonInfo, {name: "USERCRED2LABEL", order: 100, attributeType: String, readMethod: "getAdditionalCredientialsLabel2", writeMethod: "setAdditionalCredientialsLabel2"});
 
 
 /**
@@ -21155,7 +26836,7 @@ SignonInfo.prototype.setAdditionalCredientialsLabel2 = function(additionalCredie
 SignonInfo.prototype.getClientUIDRequired = function() {
   return this.clientUIDRequired;
 };
-Element.add({name: "CLIENTUIDREQ", order: 110, owner: SignonInfo, /*type: Boolean,*/ fcn: "getClientUIDRequired"});
+Element.add(SignonInfo, {name: "CLIENTUIDREQ", order: 110, attributeType: Boolean, readMethod: "getClientUIDRequired", writeMethod: "setClientUIDRequired"});
 
 
 /**
@@ -21176,7 +26857,7 @@ SignonInfo.prototype.setClientUIDRequired = function(clientUIDRequired) {
 SignonInfo.prototype.getAuthTokenRequiredForFirstSignon = function() {
   return this.authTokenRequiredForFirstSignon;
 };
-Element.add({name: "AUTHTOKENFIRST", order: 120, owner: SignonInfo, /*type: Boolean,*/ fcn: "getAuthTokenRequiredForFirstSignon"});
+Element.add(SignonInfo, {name: "AUTHTOKENFIRST", order: 120, attributeType: Boolean, readMethod: "getAuthTokenRequiredForFirstSignon", writeMethod: "setAuthTokenRequiredForFirstSignon"});
 
 
 /**
@@ -21198,7 +26879,7 @@ SignonInfo.prototype.setAuthTokenRequiredForFirstSignon = function(authTokenRequ
 SignonInfo.prototype.getAuthTokenLabel = function() {
   return this.authTokenLabel;
 };
-Element.add({name: "AUTHTOKENLABEL", order: 130, owner: SignonInfo, /*type: String,*/ fcn: "getAuthTokenLabel"});
+Element.add(SignonInfo, {name: "AUTHTOKENLABEL", order: 130, attributeType: String, readMethod: "getAuthTokenLabel", writeMethod: "setAuthTokenLabel"});
 
 
 /**
@@ -21219,7 +26900,7 @@ SignonInfo.prototype.setAuthTokenLabel = function(authTokenLabel) {
 SignonInfo.prototype.getAuthTokenInfoURL = function() {
   return this.authTokenInfoURL;
 };
-Element.add({name: "AUTHTOKENINFOURL", order: 140, owner: SignonInfo, /*type: String,*/ fcn: "getAuthTokenInfoURL"});
+Element.add(SignonInfo, {name: "AUTHTOKENINFOURL", order: 140, attributeType: String, readMethod: "getAuthTokenInfoURL", writeMethod: "setAuthTokenInfoURL"});
 
 
 /**
@@ -21240,7 +26921,7 @@ SignonInfo.prototype.setAuthTokenInfoURL = function(authTokenInfoURL) {
 SignonInfo.prototype.getMfaSupported = function() {
   return this.mfaSupported;
 };
-Element.add({name: "MFACHALLENGESUPT", order: 150, owner: SignonInfo, /*type: Boolean,*/ fcn: "getMfaSupported"});
+Element.add(SignonInfo, {name: "MFACHALLENGESUPT", order: 150, attributeType: Boolean, readMethod: "getMfaSupported", writeMethod: "setMfaSupported"});
 
 
 /**
@@ -21261,7 +26942,7 @@ SignonInfo.prototype.setMfaSupported = function(mfaSupported) {
 SignonInfo.prototype.getMfaChallengeRequiredForFirstSignon = function() {
   return this.mfaChallengeRequiredForFirstSignon;
 };
-Element.add({name: "MFACHALLENGEFIRST", order: 160, owner: SignonInfo, /*type: Boolean,*/ fcn: "getMfaChallengeRequiredForFirstSignon"});
+Element.add(SignonInfo, {name: "MFACHALLENGEFIRST", order: 160, attributeType: Boolean, readMethod: "getMfaChallengeRequiredForFirstSignon", writeMethod: "setMfaChallengeRequiredForFirstSignon"});
 
 
 /**
@@ -21279,7 +26960,7 @@ SignonInfo.prototype.setMfaChallengeRequiredForFirstSignon = function(mfaChallen
 
 module.exports = SignonInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../SignonProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/SignonProfile.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SignonInfoList.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../SignonProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/SignonProfile.js","./CharacterType":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/CharacterType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SignonInfoList.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21298,8 +26979,7 @@ module.exports = SignonInfo;
 
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
-
-//import java.util.List;
+var SignonInfo = require("./SignonInfo");
 
 /**
  * List of signon information.
@@ -21330,7 +27010,7 @@ Aggregate.add("SIGNONINFOLIST", SignonInfoList);
 SignonInfoList.prototype.getInfoList = function() {
   return this.infoList;
 };
-ChildAggregate.add({order: 0, owner: SignonInfoList, /*type: SignonInfo[],*/ fcn: "getInfoList"});
+ChildAggregate.add(SignonInfoList, {order: 0, attributeType: Array, collectionEntryType: SignonInfo, readMethod: "getInfoList", writeMethod: "setInfoList"});
 
 
 /**
@@ -21347,7 +27027,7 @@ SignonInfoList.prototype.setInfoList = function(infoList) {
 
 module.exports = SignonInfoList;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SynchronizationCapability.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./SignonInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SignonInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/SynchronizationCapability.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21399,6 +27079,7 @@ var inherit = require("../../../util/inherit");
 
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var MessageSetProfile = require("../MessageSetProfile");
+var CoreMessageSetInfo = require("./CoreMessageSetInfo");
 
 /**
  * Information specific to a version of a message set.
@@ -21429,7 +27110,7 @@ inherit(VersionSpecificMessageSetInfo, "implements", MessageSetProfile);
 VersionSpecificMessageSetInfo.prototype.getCore = function() {
   return this.core;
 };
-ChildAggregate.add({order: 0, owner: VersionSpecificMessageSetInfo, /*type: CoreMessageSetInfo,*/ fcn: "getCore"});
+ChildAggregate.add(VersionSpecificMessageSetInfo, {order: 0, attributeType: CoreMessageSetInfo, readMethod: "getCore", writeMethod: "setCore"});
 
 
 /**
@@ -21490,7 +27171,7 @@ VersionSpecificMessageSetInfo.prototype.hasFileBasedErrorRecoverySupport = funct
 
 module.exports = VersionSpecificMessageSetInfo;
 
-},{"../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetProfile.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/index.js":[function(require,module,exports){
+},{"../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetProfile.js","./CoreMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/CoreMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -21534,6 +27215,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var BankingV1MessageSetInfo = require("./BankingV1MessageSetInfo");
 
 /**
  * @class
@@ -21558,7 +27240,7 @@ Aggregate.add("BANKMSGSET", BankingMessageSetInfo);
 BankingMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: BankingMessageSetInfo, /*type: BankingV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(BankingMessageSetInfo, {order: 0, attributeType: BankingV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 BankingMessageSetInfo.prototype.setVersion1Info = function(/*BankingV1MessageSetInfo*/ version1Info) {
@@ -21570,7 +27252,7 @@ BankingMessageSetInfo.prototype.setVersion1Info = function(/*BankingV1MessageSet
 
 module.exports = BankingMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BankingV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./BankingV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BankingV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BankingV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21594,6 +27276,11 @@ var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var AccountType = require("../../banking/AccountType");
+var TransferProfile = require("./common/TransferProfile");
+var StopCheckProfile = require("./banking/StopCheckProfile");
+var EmailProfile = require("./banking/EmailProfile");
+var ImageProfile = require("./common/ImageProfile");
 
 /**
  * Banking Message Set Profile
@@ -21665,7 +27352,7 @@ BankingV1MessageSetInfo.prototype.getMessageSetType = function() {
 BankingV1MessageSetInfo.prototype.getInvalidAccountTypes = function() {
   return this.invalidAccountTypes;
 };
-ChildAggregate.add({order: 10, owner: BankingV1MessageSetInfo, /*type: AccountType[],*/ fcn: "getInvalidAccountTypes"});
+ChildAggregate.add(BankingV1MessageSetInfo, {order: 10, attributeType: Array, collectionEntryType: AccountType, readMethod: "getInvalidAccountTypes", writeMethod: "setInvalidAccountTypes"});
 
 
 /**
@@ -21686,7 +27373,7 @@ BankingV1MessageSetInfo.prototype.setInvalidAccountTypes = function(invalidAccou
 BankingV1MessageSetInfo.prototype.getClosingAvail = function() {
   return this.closingAvail;
 };
-Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: BankingV1MessageSetInfo, /*type: Boolean,*/ fcn: "getClosingAvail"});
+Element.add(BankingV1MessageSetInfo, {name: "CLOSINGAVAIL", required: true, order: 20, attributeType: Boolean, readMethod: "getClosingAvail", writeMethod: "setClosingAvail"});
 
 
 /**
@@ -21702,7 +27389,7 @@ BankingV1MessageSetInfo.prototype.setClosingAvail = function(closingAvail) {
 BankingV1MessageSetInfo.prototype.getTransferProfile = function() {
   return this.transferProfile;
 };
-ChildAggregate.add({name: "XFERPROF", order: 30, owner: BankingV1MessageSetInfo, /*type: TransferProfile,*/ fcn: "getTransferProfile"});
+ChildAggregate.add(BankingV1MessageSetInfo, {name: "XFERPROF", order: 30, attributeType: TransferProfile, readMethod: "getTransferProfile", writeMethod: "setTransferProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setTransferProfile = function(/*TransferProfile*/ transferProfile) {
@@ -21713,7 +27400,7 @@ BankingV1MessageSetInfo.prototype.setTransferProfile = function(/*TransferProfil
 BankingV1MessageSetInfo.prototype.getStopCheckProfile = function() {
   return this.stopCheckProfile;
 };
-ChildAggregate.add({name: "STPCKPROF", order: 40, owner: BankingV1MessageSetInfo, /*type: StopCheckProfile,*/ fcn: "getStopCheckProfile"});
+ChildAggregate.add(BankingV1MessageSetInfo, {name: "STPCKPROF", order: 40, attributeType: StopCheckProfile, readMethod: "getStopCheckProfile", writeMethod: "setStopCheckProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setStopCheckProfile = function(/*StopCheckProfile*/ stopCheckProfile) {
@@ -21724,7 +27411,7 @@ BankingV1MessageSetInfo.prototype.setStopCheckProfile = function(/*StopCheckProf
 BankingV1MessageSetInfo.prototype.getEmailProfile = function() {
   return this.emailProfile;
 };
-ChildAggregate.add({name: "EMAILPROF", required: true, order: 50, owner: BankingV1MessageSetInfo, /*type: EmailProfile,*/ fcn: "getEmailProfile"});
+ChildAggregate.add(BankingV1MessageSetInfo, {name: "EMAILPROF", required: true, order: 50, attributeType: EmailProfile, readMethod: "getEmailProfile", writeMethod: "setEmailProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setEmailProfile = function(/*EmailProfile*/ emailProfile) {
@@ -21735,7 +27422,7 @@ BankingV1MessageSetInfo.prototype.setEmailProfile = function(/*EmailProfile*/ em
 BankingV1MessageSetInfo.prototype.getImageProfile = function() {
   return this.imageProfile;
 };
-ChildAggregate.add({name: "IMAGEPROF", order: 60, owner: BankingV1MessageSetInfo, /*type: ImageProfile,*/ fcn: "getImageProfile"});
+ChildAggregate.add(BankingV1MessageSetInfo, {name: "IMAGEPROF", order: 60, attributeType: ImageProfile, readMethod: "getImageProfile", writeMethod: "setImageProfile"});
 
 
 BankingV1MessageSetInfo.prototype.setImageProfile = function(/*ImageProfile*/ imageProfile) {
@@ -21747,7 +27434,7 @@ BankingV1MessageSetInfo.prototype.setImageProfile = function(/*ImageProfile*/ im
 
 module.exports = BankingV1MessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BillpayMessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../banking/AccountType":"/Users/aolson/Developer/ofx4js/src/domain/data/banking/AccountType.js","../VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js","./banking/EmailProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/banking/EmailProfile.js","./banking/StopCheckProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/banking/StopCheckProfile.js","./common/ImageProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/common/ImageProfile.js","./common/TransferProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/common/TransferProfile.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BillpayMessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21769,6 +27456,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var BillpayV1MessageSetInfo = require("./BillpayV1MessageSetInfo");
 
 /**
  * @class
@@ -21793,7 +27481,7 @@ Aggregate.add("BILLPAYMSGSET", BillpayMessageSetInfo);
 BillpayMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: BillpayMessageSetInfo, /*type: BillpayV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(BillpayMessageSetInfo, {order: 0, attributeType: BillpayV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 BillpayMessageSetInfo.prototype.setVersion1Info = function(/*BillpayV1MessageSetInfo*/ version1Info) {
@@ -21805,7 +27493,7 @@ BillpayMessageSetInfo.prototype.setVersion1Info = function(/*BillpayV1MessageSet
 
 module.exports = BillpayMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BillpayV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./BillpayV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BillpayV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/BillpayV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21828,6 +27516,7 @@ var VersionSpecificMessageSetInfo = require("../../profile/VersionSpecificMessag
 var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
+var ProcessorDayOff = require("../../common/ProcessorDayOff");
 
 /**
  * BillPay Message Set Profile
@@ -21985,7 +27674,7 @@ BillpayV1MessageSetInfo.prototype.getMessageSetType = function() {
 BillpayV1MessageSetInfo.prototype.getDaysWith = function() {
   return this.daysWith;
 };
-Element.add({name: "DAYSWITH", required: true, order: 10, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getDaysWith"});
+Element.add(BillpayV1MessageSetInfo, {name: "DAYSWITH", required: true, order: 10, attributeType: Number, readMethod: "getDaysWith", writeMethod: "setDaysWith"});
 
 
 BillpayV1MessageSetInfo.prototype.setDaysWith = function(/*Integer*/ daysWith) {
@@ -21996,7 +27685,7 @@ BillpayV1MessageSetInfo.prototype.setDaysWith = function(/*Integer*/ daysWith) {
 BillpayV1MessageSetInfo.prototype.getDefaultDaysToPay = function() {
   return this.defaultDaysToPay;
 };
-Element.add({name: "DFLTDAYSTOPAY", required: true, order: 20, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getDefaultDaysToPay"});
+Element.add(BillpayV1MessageSetInfo, {name: "DFLTDAYSTOPAY", required: true, order: 20, attributeType: Number, readMethod: "getDefaultDaysToPay", writeMethod: "setDefaultDaysToPay"});
 
 
 BillpayV1MessageSetInfo.prototype.setDefaultDaysToPay = function(/*Integer*/ defaultDaysToPay) {
@@ -22007,7 +27696,7 @@ BillpayV1MessageSetInfo.prototype.setDefaultDaysToPay = function(/*Integer*/ def
 BillpayV1MessageSetInfo.prototype.getTransferDaysWith = function() {
   return this.transferDaysWith;
 };
-Element.add({name: "XFERDAYSWITH", required: true, order: 30, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getTransferDaysWith"});
+Element.add(BillpayV1MessageSetInfo, {name: "XFERDAYSWITH", required: true, order: 30, attributeType: Number, readMethod: "getTransferDaysWith", writeMethod: "setTransferDaysWith"});
 
 
 BillpayV1MessageSetInfo.prototype.setTransferDaysWith = function(/*Integer*/ transferDaysWith) {
@@ -22018,7 +27707,7 @@ BillpayV1MessageSetInfo.prototype.setTransferDaysWith = function(/*Integer*/ tra
 BillpayV1MessageSetInfo.prototype.getTransferDefaultDaysToPay = function() {
   return this.transferDefaultDaysToPay;
 };
-Element.add({name: "XFERDFLTDAYSTOPAY", required: true, order: 40, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getTransferDefaultDaysToPay"});
+Element.add(BillpayV1MessageSetInfo, {name: "XFERDFLTDAYSTOPAY", required: true, order: 40, attributeType: Number, readMethod: "getTransferDefaultDaysToPay", writeMethod: "setTransferDefaultDaysToPay"});
 
 
 BillpayV1MessageSetInfo.prototype.setTransferDefaultDaysToPay = function(/*Integer*/ transferDefaultDaysToPay) {
@@ -22029,7 +27718,7 @@ BillpayV1MessageSetInfo.prototype.setTransferDefaultDaysToPay = function(/*Integ
 BillpayV1MessageSetInfo.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 50, owner: BillpayV1MessageSetInfo, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
+Element.add(BillpayV1MessageSetInfo, {name: "PROCDAYSOFF", order: 50, attributeType: Array, collectionEntryType: ProcessorDayOff, readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 BillpayV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -22040,7 +27729,7 @@ BillpayV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayO
 BillpayV1MessageSetInfo.prototype.getProcessorEndTime = function() {
   return this.processorEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 60, owner: BillpayV1MessageSetInfo, /*type: String,*/ fcn: "getProcessorEndTime"});
+Element.add(BillpayV1MessageSetInfo, {name: "PROCENDTM", required: true, order: 60, attributeType: String, readMethod: "getProcessorEndTime", writeMethod: "setProcessorEndTime"});
 
 
 BillpayV1MessageSetInfo.prototype.setProcessorEndTime = function(/*String*/ processorEndTime) {
@@ -22051,7 +27740,7 @@ BillpayV1MessageSetInfo.prototype.setProcessorEndTime = function(/*String*/ proc
 BillpayV1MessageSetInfo.prototype.getModelWindow = function() {
   return this.modelWindow;
 };
-Element.add({name: "MODELWND", required: true, order: 70, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getModelWindow"});
+Element.add(BillpayV1MessageSetInfo, {name: "MODELWND", required: true, order: 70, attributeType: Number, readMethod: "getModelWindow", writeMethod: "setModelWindow"});
 
 
 BillpayV1MessageSetInfo.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
@@ -22062,7 +27751,7 @@ BillpayV1MessageSetInfo.prototype.setModelWindow = function(/*Integer*/ modelWin
 BillpayV1MessageSetInfo.prototype.getPostProcessorWindow = function() {
   return this.postProcessorWindow;
 };
-Element.add({name: "POSTPROCWND", required: true, order: 80, owner: BillpayV1MessageSetInfo, /*type: Integer,*/ fcn: "getPostProcessorWindow"});
+Element.add(BillpayV1MessageSetInfo, {name: "POSTPROCWND", required: true, order: 80, attributeType: Number, readMethod: "getPostProcessorWindow", writeMethod: "setPostProcessorWindow"});
 
 
 BillpayV1MessageSetInfo.prototype.setPostProcessorWindow = function(/*Integer*/ postProcessorWindow) {
@@ -22073,7 +27762,7 @@ BillpayV1MessageSetInfo.prototype.setPostProcessorWindow = function(/*Integer*/ 
 BillpayV1MessageSetInfo.prototype.getSupportsStatusUpdateViaPaymentModificationResponse = function() {
   return this.supportsStatusUpdateViaPaymentModificationResponse;
 };
-Element.add({name: "STSVIAMODS", required: true, order: 90, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsStatusUpdateViaPaymentModificationResponse"});
+Element.add(BillpayV1MessageSetInfo, {name: "STSVIAMODS", required: true, order: 90, attributeType: Boolean, readMethod: "getSupportsStatusUpdateViaPaymentModificationResponse", writeMethod: "setSupportsStatusUpdateViaPaymentModificationResponse"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsStatusUpdateViaPaymentModificationResponse = function(/*Boolean*/ supportsStatusUpdateViaPaymentModificationResponse) {
@@ -22084,7 +27773,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsStatusUpdateViaPaymentModificationR
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByAddress = function() {
   return this.supportsPaymentByAddress;
 };
-Element.add({name: "PMTBYADDR", required: true, order: 100, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPaymentByAddress"});
+Element.add(BillpayV1MessageSetInfo, {name: "PMTBYADDR", required: true, order: 100, attributeType: Boolean, readMethod: "getSupportsPaymentByAddress", writeMethod: "setSupportsPaymentByAddress"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsPaymentByAddress = function(/*Boolean*/ supportsPaymentByAddress) {
@@ -22095,7 +27784,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByAddress = function(/*Boole
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByTransfer = function() {
   return this.supportsPaymentByTransfer;
 };
-Element.add({name: "PMTBYXFER", required: true, order: 110, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPaymentByTransfer"});
+Element.add(BillpayV1MessageSetInfo, {name: "PMTBYXFER", required: true, order: 110, attributeType: Boolean, readMethod: "getSupportsPaymentByTransfer", writeMethod: "setSupportsPaymentByTransfer"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsPaymentByTransfer = function(/*Boolean*/ supportsPaymentByTransfer) {
@@ -22106,7 +27795,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByTransfer = function(/*Bool
 BillpayV1MessageSetInfo.prototype.getSupportsPaymentByPayeeId = function() {
   return this.supportsPaymentByPayeeId;
 };
-Element.add({name: "PMTBYPAYEEID", required: true, order: 120, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPaymentByPayeeId"});
+Element.add(BillpayV1MessageSetInfo, {name: "PMTBYPAYEEID", required: true, order: 120, attributeType: Boolean, readMethod: "getSupportsPaymentByPayeeId", writeMethod: "setSupportsPaymentByPayeeId"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsPaymentByPayeeId = function(/*Boolean*/ supportsPaymentByPayeeId) {
@@ -22117,7 +27806,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsPaymentByPayeeId = function(/*Boole
 BillpayV1MessageSetInfo.prototype.getUserCanAddPayee = function() {
   return this.userCanAddPayee;
 };
-Element.add({name: "CANADDPAYEE", required: true, order: 130, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getUserCanAddPayee"});
+Element.add(BillpayV1MessageSetInfo, {name: "CANADDPAYEE", required: true, order: 130, attributeType: Boolean, readMethod: "getUserCanAddPayee", writeMethod: "setUserCanAddPayee"});
 
 
 BillpayV1MessageSetInfo.prototype.setUserCanAddPayee = function(/*Boolean*/ userCanAddPayee) {
@@ -22128,7 +27817,7 @@ BillpayV1MessageSetInfo.prototype.setUserCanAddPayee = function(/*Boolean*/ user
 BillpayV1MessageSetInfo.prototype.getSupportsExtendedPayment = function() {
   return this.supportsExtendedPayment;
 };
-Element.add({name: "HASEXTDPMT", required: true, order: 140, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsExtendedPayment"});
+Element.add(BillpayV1MessageSetInfo, {name: "HASEXTDPMT", required: true, order: 140, attributeType: Boolean, readMethod: "getSupportsExtendedPayment", writeMethod: "setSupportsExtendedPayment"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsExtendedPayment = function(/*Boolean*/ supportsExtendedPayment) {
@@ -22139,7 +27828,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsExtendedPayment = function(/*Boolea
 BillpayV1MessageSetInfo.prototype.getCanModifyPayments = function() {
   return this.canModifyPayments;
 };
-Element.add({name: "CANMODPMTS", required: true, order: 150, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getCanModifyPayments"});
+Element.add(BillpayV1MessageSetInfo, {name: "CANMODPMTS", required: true, order: 150, attributeType: Boolean, readMethod: "getCanModifyPayments", writeMethod: "setCanModifyPayments"});
 
 
 BillpayV1MessageSetInfo.prototype.setCanModifyPayments = function(/*Boolean*/ canModifyPayments) {
@@ -22150,7 +27839,7 @@ BillpayV1MessageSetInfo.prototype.setCanModifyPayments = function(/*Boolean*/ ca
 BillpayV1MessageSetInfo.prototype.getCanModifyModels = function() {
   return this.canModifyModels;
 };
-Element.add({name: "CANMODMDLS", required: true, order: 160, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getCanModifyModels"});
+Element.add(BillpayV1MessageSetInfo, {name: "CANMODMDLS", required: true, order: 160, attributeType: Boolean, readMethod: "getCanModifyModels", writeMethod: "setCanModifyModels"});
 
 
 BillpayV1MessageSetInfo.prototype.setCanModifyModels = function(/*Boolean*/ canModifyModels) {
@@ -22161,7 +27850,7 @@ BillpayV1MessageSetInfo.prototype.setCanModifyModels = function(/*Boolean*/ canM
 BillpayV1MessageSetInfo.prototype.getSupportsDifferentFirstPayment = function() {
   return this.supportsDifferentFirstPayment;
 };
-Element.add({name: "DIFFFIRSTPMT", required: true, order: 170, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsDifferentFirstPayment"});
+Element.add(BillpayV1MessageSetInfo, {name: "DIFFFIRSTPMT", required: true, order: 170, attributeType: Boolean, readMethod: "getSupportsDifferentFirstPayment", writeMethod: "setSupportsDifferentFirstPayment"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsDifferentFirstPayment = function(/*Boolean*/ supportsDifferentFirstPayment) {
@@ -22172,7 +27861,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsDifferentFirstPayment = function(/*
 BillpayV1MessageSetInfo.prototype.getSupportsDifferentLastPayment = function() {
   return this.supportsDifferentLastPayment;
 };
-Element.add({name: "DIFFLASTPMT", required: true, order: 180, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsDifferentLastPayment"});
+Element.add(BillpayV1MessageSetInfo, {name: "DIFFLASTPMT", required: true, order: 180, attributeType: Boolean, readMethod: "getSupportsDifferentLastPayment", writeMethod: "setSupportsDifferentLastPayment"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsDifferentLastPayment = function(/*Boolean*/ supportsDifferentLastPayment) {
@@ -22183,7 +27872,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsDifferentLastPayment = function(/*B
 BillpayV1MessageSetInfo.prototype.getSupportsBillPresentmentContext = function() {
   return this.supportsBillPresentmentContext;
 };
-Element.add({name: "BILLPUBCONTEXT", order: 190, owner: BillpayV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsBillPresentmentContext"});
+Element.add(BillpayV1MessageSetInfo, {name: "BILLPUBCONTEXT", order: 190, attributeType: Boolean, readMethod: "getSupportsBillPresentmentContext", writeMethod: "setSupportsBillPresentmentContext"});
 
 
 BillpayV1MessageSetInfo.prototype.setSupportsBillPresentmentContext = function(/*Boolean*/ supportsBillPresentmentContext) {
@@ -22195,7 +27884,7 @@ BillpayV1MessageSetInfo.prototype.setSupportsBillPresentmentContext = function(/
 
 module.exports = BillpayV1MessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/CreditCardMessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../common/ProcessorDayOff":"/Users/aolson/Developer/ofx4js/src/domain/data/common/ProcessorDayOff.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/CreditCardMessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22217,6 +27906,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var CreditCardV1MessageSetInfo = require("./CreditCardV1MessageSetInfo");
 
 /**
  * @class
@@ -22241,7 +27931,7 @@ Aggregate.add("CREDITCARDMSGSET", CreditCardMessageSetInfo);
 CreditCardMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: CreditCardMessageSetInfo, /*type: CreditCardV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(CreditCardMessageSetInfo, {order: 0, attributeType: CreditCardV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 CreditCardMessageSetInfo.prototype.setVersion1Info = function(/*CreditCardV1MessageSetInfo*/ version1Info) {
@@ -22253,7 +27943,7 @@ CreditCardMessageSetInfo.prototype.setVersion1Info = function(/*CreditCardV1Mess
 
 module.exports = CreditCardMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/CreditCardV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./CreditCardV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/CreditCardV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/CreditCardV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22277,6 +27967,7 @@ var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var ImageProfile = require("./common/ImageProfile");
 
 /**
  * Credit Card Message Set Profile
@@ -22319,7 +28010,7 @@ CreditCardV1MessageSetInfo.prototype.getMessageSetType = function() {
 CreditCardV1MessageSetInfo.prototype.getClosingAvail = function() {
   return this.closingAvail;
 };
-Element.add({name: "CLOSINGAVAIL", required: true, order: 20, owner: CreditCardV1MessageSetInfo, /*type: Boolean,*/ fcn: "getClosingAvail"});
+Element.add(CreditCardV1MessageSetInfo, {name: "CLOSINGAVAIL", required: true, order: 20, attributeType: Boolean, readMethod: "getClosingAvail", writeMethod: "setClosingAvail"});
 
 
 CreditCardV1MessageSetInfo.prototype.setClosingAvail = function(/*Boolean*/ closingAvail) {
@@ -22334,7 +28025,7 @@ CreditCardV1MessageSetInfo.prototype.setClosingAvail = function(/*Boolean*/ clos
 CreditCardV1MessageSetInfo.prototype.getImageProfile = function() {
   return this.imageProfile;
 };
-ChildAggregate.add({name: "IMAGEPROF", order: 10, owner: CreditCardV1MessageSetInfo, /*type: ImageProfile,*/ fcn: "getImageProfile"});
+ChildAggregate.add(CreditCardV1MessageSetInfo, {name: "IMAGEPROF", order: 10, attributeType: ImageProfile, readMethod: "getImageProfile", writeMethod: "setImageProfile"});
 
 
 CreditCardV1MessageSetInfo.prototype.setImageProfile = function(/*ImageProfile*/ imageProfile) {
@@ -22346,7 +28037,7 @@ CreditCardV1MessageSetInfo.prototype.setImageProfile = function(/*ImageProfile*/
 
 module.exports = CreditCardV1MessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/EmailMessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js","./common/ImageProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/common/ImageProfile.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/EmailMessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22368,6 +28059,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var EmailV1MessageSetInfo = require("./EmailV1MessageSetInfo");
 
 /**
  * @class
@@ -22392,7 +28084,7 @@ Aggregate.add("EMAILMSGSET", EmailMessageSetInfo);
 EmailMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: EmailMessageSetInfo, /*type: EmailV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(EmailMessageSetInfo, {order: 0, attributeType: EmailV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 EmailMessageSetInfo.prototype.setVersion1Info = function(/*EmailV1MessageSetInfo*/ version1Info) {
@@ -22404,7 +28096,7 @@ EmailMessageSetInfo.prototype.setVersion1Info = function(/*EmailV1MessageSetInfo
 
 module.exports = EmailMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/EmailV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./EmailV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/EmailV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/EmailV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22470,7 +28162,7 @@ EmailV1MessageSetInfo.prototype.getMessageSetType = function() {
 EmailV1MessageSetInfo.prototype.getSupportsMail = function() {
   return this.supportsMail;
 };
-Element.add({name: "MAILSUP", required: true, order: 10, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsMail"});
+Element.add(EmailV1MessageSetInfo, {name: "MAILSUP", required: true, order: 10, attributeType: Boolean, readMethod: "getSupportsMail", writeMethod: "setSupportsMail"});
 
 
 EmailV1MessageSetInfo.prototype.setSupportsMail = function(/*Boolean*/ supportsMail) {
@@ -22485,7 +28177,7 @@ EmailV1MessageSetInfo.prototype.setSupportsMail = function(/*Boolean*/ supportsM
 EmailV1MessageSetInfo.prototype.getSupportsMimeType = function() {
   return this.supportsMimeType;
 };
-Element.add({name: "GETMIMESUP", required: true, order: 20, owner: EmailV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsMimeType"});
+Element.add(EmailV1MessageSetInfo, {name: "GETMIMESUP", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsMimeType", writeMethod: "setSupportsMimeType"});
 
 
 EmailV1MessageSetInfo.prototype.setSupportsMimeType = function(/*Boolean*/ supportsMimeType) {
@@ -22519,6 +28211,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var InterbankTransferV1MessageSetInfo = require("./InterbankTransferV1MessageSetInfo");
 
 /**
  * @class
@@ -22543,7 +28236,7 @@ Aggregate.add("INTERXFERMSGSET", InterbankTransferMessageSetInfo);
 InterbankTransferMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: InterbankTransferMessageSetInfo, /*type: InterbankTransferV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(InterbankTransferMessageSetInfo, {order: 0, attributeType: InterbankTransferV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 InterbankTransferMessageSetInfo.prototype.setVersion1Info = function(/*InterbankTransferV1MessageSetInfo*/ version1Info) {
@@ -22555,7 +28248,7 @@ InterbankTransferMessageSetInfo.prototype.setVersion1Info = function(/*Interbank
 
 module.exports = InterbankTransferMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InterbankTransferV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./InterbankTransferV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InterbankTransferV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InterbankTransferV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22579,6 +28272,7 @@ var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var TransferProfile = require("./common/TransferProfile");
 
 /**
  * Interbank Funds Transfer Message Set Profile
@@ -22638,7 +28332,7 @@ InterbankTransferV1MessageSetInfo.prototype.getMessageSetType = function() {
 InterbankTransferV1MessageSetInfo.prototype.getTransferProfile = function() {
   return this.transferProfile;
 };
-ChildAggregate.add({name: "XFERPROF", required: true, order: 10, owner: InterbankTransferV1MessageSetInfo, /*type: TransferProfile,*/ fcn: "getTransferProfile"});
+ChildAggregate.add(InterbankTransferV1MessageSetInfo, {name: "XFERPROF", required: true, order: 10, attributeType: TransferProfile, readMethod: "getTransferProfile", writeMethod: "setTransferProfile"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setTransferProfile = function(/*TransferProfile*/ transferProfile) {
@@ -22649,7 +28343,7 @@ InterbankTransferV1MessageSetInfo.prototype.setTransferProfile = function(/*Tran
 InterbankTransferV1MessageSetInfo.prototype.getSupportsBillPay = function() {
   return this.supportsBillPay;
 };
-Element.add({name: "CANBILLPAY", required: true, order: 20, owner: InterbankTransferV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsBillPay"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "CANBILLPAY", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsBillPay", writeMethod: "setSupportsBillPay"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setSupportsBillPay = function(/*Boolean*/ supportsBillPay) {
@@ -22660,7 +28354,7 @@ InterbankTransferV1MessageSetInfo.prototype.setSupportsBillPay = function(/*Bool
 InterbankTransferV1MessageSetInfo.prototype.getCancelWindow = function() {
   return this.cancelWindow;
 };
-Element.add({name: "CANCELWND", required: true, order: 30, owner: InterbankTransferV1MessageSetInfo, /*type: Integer,*/ fcn: "getCancelWindow"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "CANCELWND", required: true, order: 30, attributeType: Number, readMethod: "getCancelWindow", writeMethod: "setCancelWindow"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setCancelWindow = function(/*Integer*/ cancelWindow) {
@@ -22671,7 +28365,7 @@ InterbankTransferV1MessageSetInfo.prototype.setCancelWindow = function(/*Integer
 InterbankTransferV1MessageSetInfo.prototype.getDomesticInterbankTransferFee = function() {
   return this.domesticInterbankTransferFee;
 };
-Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: InterbankTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getDomesticInterbankTransferFee"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "DOMXFERFEE", required: true, order: 40, attributeType: Number, readMethod: "getDomesticInterbankTransferFee", writeMethod: "setDomesticInterbankTransferFee"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee = function(/*Double*/ domesticInterbankTransferFee) {
@@ -22682,7 +28376,7 @@ InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee = fu
 InterbankTransferV1MessageSetInfo.prototype.getInternationalInterbankTransferFee = function() {
   return this.internationalInterbankTransferFee;
 };
-Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: InterbankTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getInternationalInterbankTransferFee"});
+Element.add(InterbankTransferV1MessageSetInfo, {name: "INTLXFERFEE", required: true, order: 50, attributeType: Number, readMethod: "getInternationalInterbankTransferFee", writeMethod: "setInternationalInterbankTransferFee"});
 
 
 InterbankTransferV1MessageSetInfo.prototype.setInternationalInterbankTransferFee = function(/*Double*/ internationalInterbankTransferFee) {
@@ -22694,7 +28388,7 @@ InterbankTransferV1MessageSetInfo.prototype.setInternationalInterbankTransferFee
 
 module.exports = InterbankTransferV1MessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InvestmentMessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js","./common/TransferProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/common/TransferProfile.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InvestmentMessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22716,6 +28410,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var InvestmentV1MessageSetInfo = require("./InvestmentV1MessageSetInfo");
 
 /**
  * @class
@@ -22740,7 +28435,7 @@ Aggregate.add("INVSTMTMSGSET", InvestmentMessageSetInfo);
 InvestmentMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: InvestmentMessageSetInfo, /*type: InvestmentV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(InvestmentMessageSetInfo, {order: 0, attributeType: InvestmentV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 InvestmentMessageSetInfo.prototype.setVersion1Info = function(/*InvestmentV1MessageSetInfo*/ version1Info) {
@@ -22752,7 +28447,7 @@ InvestmentMessageSetInfo.prototype.setVersion1Info = function(/*InvestmentV1Mess
 
 module.exports = InvestmentMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InvestmentV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./InvestmentV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InvestmentV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/InvestmentV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22848,7 +28543,7 @@ InvestmentV1MessageSetInfo.prototype.getMessageSetType = function() {
 InvestmentV1MessageSetInfo.prototype.getSupportsStatementsDownload = function() {
   return this.supportsStatementsDownload;
 };
-Element.add({name: "TRANDNLD", required:true, order: 10, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsStatementsDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "TRANDNLD", required:true, order: 10, attributeType: Boolean, readMethod: "getSupportsStatementsDownload", writeMethod: "setSupportsStatementsDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsStatementsDownload = function(/*Boolean*/ supportsStatementsDownload) {
@@ -22859,7 +28554,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsStatementsDownload = function(/*
 InvestmentV1MessageSetInfo.prototype.getSupportsOpenOrdersDownload = function() {
   return this.supportsOpenOrdersDownload;
 };
-Element.add({name: "OODNLD", required:true, order: 20, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsOpenOrdersDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "OODNLD", required:true, order: 20, attributeType: Boolean, readMethod: "getSupportsOpenOrdersDownload", writeMethod: "setSupportsOpenOrdersDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsOpenOrdersDownload = function(/*Boolean*/ supportsOpenOrdersDownload) {
@@ -22870,7 +28565,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsOpenOrdersDownload = function(/*
 InvestmentV1MessageSetInfo.prototype.getSupportsPositionsDownload = function() {
   return this.supportsPositionsDownload;
 };
-Element.add({name: "POSDNLD", required:true, order: 30, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsPositionsDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "POSDNLD", required:true, order: 30, attributeType: Boolean, readMethod: "getSupportsPositionsDownload", writeMethod: "setSupportsPositionsDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsPositionsDownload = function(/*Boolean*/ supportsPositionsDownload) {
@@ -22881,7 +28576,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsPositionsDownload = function(/*B
 InvestmentV1MessageSetInfo.prototype.getSupportsBalanceDownload = function() {
   return this.supportsBalanceDownload;
 };
-Element.add({name: "BALDNLD", required:true, order: 40, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsBalanceDownload"});
+Element.add(InvestmentV1MessageSetInfo, {name: "BALDNLD", required:true, order: 40, attributeType: Boolean, readMethod: "getSupportsBalanceDownload", writeMethod: "setSupportsBalanceDownload"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsBalanceDownload = function(/*Boolean*/ supportsBalanceDownload) {
@@ -22892,7 +28587,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsBalanceDownload = function(/*Boo
 InvestmentV1MessageSetInfo.prototype.getSupportsEmail = function() {
   return this.supportsEmail;
 };
-Element.add({name: "CANEMAIL", required:true, order: 50, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsEmail"});
+Element.add(InvestmentV1MessageSetInfo, {name: "CANEMAIL", required:true, order: 50, attributeType: Boolean, readMethod: "getSupportsEmail", writeMethod: "setSupportsEmail"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsEmail = function(/*Boolean*/ supportsEmail) {
@@ -22903,7 +28598,7 @@ InvestmentV1MessageSetInfo.prototype.setSupportsEmail = function(/*Boolean*/ sup
 InvestmentV1MessageSetInfo.prototype.getSupports401kInformation = function() {
   return this.supports401kInformation;
 };
-Element.add({name: "INV401KDNLD", order: 60, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupports401kInformation"});
+Element.add(InvestmentV1MessageSetInfo, {name: "INV401KDNLD", order: 60, attributeType: Boolean, readMethod: "getSupports401kInformation", writeMethod: "setSupports401kInformation"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupports401kInformation = function(/*Boolean*/ supports401kInformation) {
@@ -22914,7 +28609,7 @@ InvestmentV1MessageSetInfo.prototype.setSupports401kInformation = function(/*Boo
 InvestmentV1MessageSetInfo.prototype.getSupportsClosingStatements = function() {
   return this.supportsClosingStatements;
 };
-Element.add({name: "CLOSINGAVAIL", order: 70, owner: InvestmentV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClosingStatements"});
+Element.add(InvestmentV1MessageSetInfo, {name: "CLOSINGAVAIL", order: 70, attributeType: Boolean, readMethod: "getSupportsClosingStatements", writeMethod: "setSupportsClosingStatements"});
 
 
 InvestmentV1MessageSetInfo.prototype.setSupportsClosingStatements = function(/*Boolean*/ supportsClosingStatements) {
@@ -22948,6 +28643,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var ProfileV1MessageSetInfo = require("./ProfileV1MessageSetInfo");
 
 /**
  * @class
@@ -22972,7 +28668,7 @@ Aggregate.add("PROFMSGSET", ProfileMessageSetInfo);
 ProfileMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: ProfileMessageSetInfo, /*type: ProfileV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(ProfileMessageSetInfo, {order: 0, attributeType: ProfileV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 ProfileMessageSetInfo.prototype.setVersion1Info = function(/*ProfileV1MessageSetInfo*/ version1Info) {
@@ -22984,7 +28680,7 @@ ProfileMessageSetInfo.prototype.setVersion1Info = function(/*ProfileV1MessageSet
 
 module.exports = ProfileMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/ProfileV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./ProfileV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/ProfileV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/ProfileV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23051,6 +28747,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var SecurityListV1MessageSetInfo = require("./SecurityListV1MessageSetInfo");
 
 /**
  * @class
@@ -23075,7 +28772,7 @@ Aggregate.add("SECLISTMSGSET", SecurityListMessageSetInfo);
 SecurityListMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: SecurityListMessageSetInfo, /*type: SecurityListV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(SecurityListMessageSetInfo, {order: 0, attributeType: SecurityListV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 SecurityListMessageSetInfo.prototype.setVersion1Info = function(/*SecurityListV1MessageSetInfo*/ version1Info) {
@@ -23087,7 +28784,7 @@ SecurityListMessageSetInfo.prototype.setVersion1Info = function(/*SecurityListV1
 
 module.exports = SecurityListMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SecurityListV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./SecurityListV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SecurityListV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SecurityListV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23141,7 +28838,7 @@ SecurityListV1MessageSetInfo.prototype.getMessageSetType = function() {
 SecurityListV1MessageSetInfo.prototype.getSupportsSecurityListDownload = function() {
   return this.supportsSecurityListDownload;
 };
-Element.add({name: "SECLISTRQDNLD", required:true, order: 10, owner: SecurityListV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsSecurityListDownload"});
+Element.add(SecurityListV1MessageSetInfo, {name: "SECLISTRQDNLD", required:true, order: 10, attributeType: Boolean, readMethod: "getSupportsSecurityListDownload", writeMethod: "setSupportsSecurityListDownload"});
 
 
 SecurityListV1MessageSetInfo.prototype.setSupportsSecurityListDownload = function(/*Boolean*/ supportsSecurityListDownload) {
@@ -23175,6 +28872,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var SignOnV1MessageSetInfo = require("./SignOnV1MessageSetInfo");
 
 /**
  * @class
@@ -23199,7 +28897,7 @@ Aggregate.add("SIGNONMSGSET", SignOnMessageSetInfo);
 SignOnMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: SignOnMessageSetInfo, /*type: SignOnV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(SignOnMessageSetInfo, {order: 0, attributeType: SignOnV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 SignOnMessageSetInfo.prototype.setVersion1Info = function(/*SignOnV1MessageSetInfo*/ version1Info) {
@@ -23211,7 +28909,7 @@ SignOnMessageSetInfo.prototype.setVersion1Info = function(/*SignOnV1MessageSetIn
 
 module.exports = SignOnMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SignOnV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./SignOnV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SignOnV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SignOnV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23278,6 +28976,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var SignupV1MessageSetInfo = require("./SignupV1MessageSetInfo");
 
 /**
  * @class
@@ -23302,7 +29001,7 @@ Aggregate.add("SIGNUPMSGSET", SignupMessageSetInfo);
 SignupMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: SignupMessageSetInfo, /*type: SignupV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(SignupMessageSetInfo, {order: 0, attributeType: SignupV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 SignupMessageSetInfo.prototype.setVersion1Info = function(/*SignupV1MessageSetInfo*/ version1Info) {
@@ -23314,7 +29013,7 @@ SignupMessageSetInfo.prototype.setVersion1Info = function(/*SignupV1MessageSetIn
 
 module.exports = SignupMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SignupV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./SignupV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SignupV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/SignupV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23338,6 +29037,9 @@ var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
 var Element = require("../../../../meta/Element");
+var ClientEnrollment = require("./signup/ClientEnrollment");
+var WebEnrollment = require("./signup/WebEnrollment");
+var OtherEnrollment = require("./signup/OtherEnrollment");
 
 /**
  * Servers use the Signup Message Set Profile Information to define how enrollment should proceed.
@@ -23408,7 +29110,7 @@ SignupV1MessageSetInfo.prototype.getMessageSetType = function() {
 SignupV1MessageSetInfo.prototype.getClientEnrollment = function() {
   return this.clientEnrollment;
 };
-ChildAggregate.add({name: "CLIENTENROLL", order: 10, owner: SignupV1MessageSetInfo, /*type: ClientEnrollment,*/ fcn: "getClientEnrollment"});
+ChildAggregate.add(SignupV1MessageSetInfo, {name: "CLIENTENROLL", order: 10, attributeType: ClientEnrollment, readMethod: "getClientEnrollment", writeMethod: "setClientEnrollment"});
 
 
 SignupV1MessageSetInfo.prototype.setClientEnrollment = function(/*ClientEnrollment*/ clientEnrollment) {
@@ -23419,7 +29121,7 @@ SignupV1MessageSetInfo.prototype.setClientEnrollment = function(/*ClientEnrollme
 SignupV1MessageSetInfo.prototype.getWebEnrollment = function() {
   return this.webEnrollment;
 };
-ChildAggregate.add({name: "WEBENROLL", order: 20, owner: SignupV1MessageSetInfo, /*type: WebEnrollment,*/ fcn: "getWebEnrollment"});
+ChildAggregate.add(SignupV1MessageSetInfo, {name: "WEBENROLL", order: 20, attributeType: WebEnrollment, readMethod: "getWebEnrollment", writeMethod: "setWebEnrollment"});
 
 
 SignupV1MessageSetInfo.prototype.setWebEnrollment = function(/*WebEnrollment*/ webEnrollment) {
@@ -23430,7 +29132,7 @@ SignupV1MessageSetInfo.prototype.setWebEnrollment = function(/*WebEnrollment*/ w
 SignupV1MessageSetInfo.prototype.getOtherEnrollment = function() {
   return this.otherEnrollment;
 };
-ChildAggregate.add({name: "OTHERENROLL", order: 30, owner: SignupV1MessageSetInfo, /*type: OtherEnrollment,*/ fcn: "getOtherEnrollment"});
+ChildAggregate.add(SignupV1MessageSetInfo, {name: "OTHERENROLL", order: 30, attributeType: OtherEnrollment, readMethod: "getOtherEnrollment", writeMethod: "setOtherEnrollment"});
 
 
 SignupV1MessageSetInfo.prototype.setOtherEnrollment = function(/*OtherEnrollment*/ otherEnrollment) {
@@ -23445,7 +29147,7 @@ SignupV1MessageSetInfo.prototype.setOtherEnrollment = function(/*OtherEnrollment
 SignupV1MessageSetInfo.prototype.getSupportsClientUserInfoChanges = function() {
   return this.supportsClientUserInfoChanges;
 };
-Element.add({name: "CHGUSERINFO", required: true, order: 40, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClientUserInfoChanges"});
+Element.add(SignupV1MessageSetInfo, {name: "CHGUSERINFO", required: true, order: 40, attributeType: Boolean, readMethod: "getSupportsClientUserInfoChanges", writeMethod: "setSupportsClientUserInfoChanges"});
 
 
 SignupV1MessageSetInfo.prototype.setSupportsClientUserInfoChanges = function(/*Boolean*/ supportsClientUserInfoChanges) {
@@ -23461,7 +29163,7 @@ SignupV1MessageSetInfo.prototype.setSupportsClientUserInfoChanges = function(/*B
 SignupV1MessageSetInfo.prototype.getSupportsAvailableAccounts = function() {
   return this.supportsAvailableAccounts;
 };
-Element.add({name: "AVAILACCTS", required: true, order: 50, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsAvailableAccounts"});
+Element.add(SignupV1MessageSetInfo, {name: "AVAILACCTS", required: true, order: 50, attributeType: Boolean, readMethod: "getSupportsAvailableAccounts", writeMethod: "setSupportsAvailableAccounts"});
 
 
 SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts = function(/*Boolean*/ supportsAvailableAccounts) {
@@ -23478,7 +29180,7 @@ SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts = function(/*Boole
 SignupV1MessageSetInfo.prototype.getSupportsClientServiceActivationRequests = function() {
   return this.supportsClientServiceActivationRequests;
 };
-Element.add({name: "CLIENTACTREQ", required: true, order: 60, owner: SignupV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsClientServiceActivationRequests"});
+Element.add(SignupV1MessageSetInfo, {name: "CLIENTACTREQ", required: true, order: 60, attributeType: Boolean, readMethod: "getSupportsClientServiceActivationRequests", writeMethod: "setSupportsClientServiceActivationRequests"});
 
 
 SignupV1MessageSetInfo.prototype.setSupportsClientServiceActivationRequests = function(/*Boolean*/ supportsClientServiceActivationRequests) {
@@ -23490,7 +29192,7 @@ SignupV1MessageSetInfo.prototype.setSupportsClientServiceActivationRequests = fu
 
 module.exports = SignupV1MessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/WireTransferMessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js","./signup/ClientEnrollment":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/signup/ClientEnrollment.js","./signup/OtherEnrollment":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/signup/OtherEnrollment.js","./signup/WebEnrollment":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/signup/WebEnrollment.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/WireTransferMessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23512,6 +29214,7 @@ var inherit = require("../../../../util/inherit");
 var AbstractMessageSetInfo = require("../../profile/AbstractMessageSetInfo");
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var WireTransferV1MessageSetInfo = require("./WireTransferV1MessageSetInfo");
 
 /**
  * @class
@@ -23536,7 +29239,7 @@ Aggregate.add("WIREXFERMSGSET", WireTransferMessageSetInfo);
 WireTransferMessageSetInfo.prototype.getVersion1Info = function() {
   return this.version1Info;
 };
-ChildAggregate.add({order: 0, owner: WireTransferMessageSetInfo, /*type: WireTransferV1MessageSetInfo,*/ fcn: "getVersion1Info"});
+ChildAggregate.add(WireTransferMessageSetInfo, {order: 0, attributeType: WireTransferV1MessageSetInfo, readMethod: "getVersion1Info", writeMethod: "setVersion1Info"});
 
 
 WireTransferMessageSetInfo.prototype.setVersion1Info = function(/*WireTransferV1MessageSetInfo*/ version1Info) {
@@ -23548,7 +29251,7 @@ WireTransferMessageSetInfo.prototype.setVersion1Info = function(/*WireTransferV1
 
 module.exports = WireTransferMessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/WireTransferV1MessageSetInfo.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../profile/AbstractMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/AbstractMessageSetInfo.js","./WireTransferV1MessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/WireTransferV1MessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/WireTransferV1MessageSetInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23571,6 +29274,7 @@ var VersionSpecificMessageSetInfo = require("../../profile/VersionSpecificMessag
 var MessageSetType = require("../../MessageSetType");
 var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
+var ProcessorDayOff = require("../../common/ProcessorDayOff");
 
 /**
  * Wire Transfer Message Set Profile
@@ -23630,7 +29334,7 @@ WireTransferV1MessageSetInfo.prototype.getMessageSetType = function() {
 WireTransferV1MessageSetInfo.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 10, owner: WireTransferV1MessageSetInfo, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
+Element.add(WireTransferV1MessageSetInfo, {name: "PROCDAYSOFF", order: 10, attributeType: Array, collectionEntryType: ProcessorDayOff, readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 WireTransferV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -23641,7 +29345,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessorDaysOff = function(/*Processo
 WireTransferV1MessageSetInfo.prototype.getProcessEndTime = function() {
   return this.processEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 20, owner: WireTransferV1MessageSetInfo, /*type: String,*/ fcn: "getProcessEndTime"});
+Element.add(WireTransferV1MessageSetInfo, {name: "PROCENDTM", required: true, order: 20, attributeType: String, readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
 
 
 WireTransferV1MessageSetInfo.prototype.setProcessEndTime = function(/*String*/ processEndTime) {
@@ -23652,7 +29356,7 @@ WireTransferV1MessageSetInfo.prototype.setProcessEndTime = function(/*String*/ p
 WireTransferV1MessageSetInfo.prototype.getSupportsScheduledTransfers = function() {
   return this.supportsScheduledTransfers;
 };
-Element.add({name: "CANSCHED", required: true, order: 30, owner: WireTransferV1MessageSetInfo, /*type: Boolean,*/ fcn: "getSupportsScheduledTransfers"});
+Element.add(WireTransferV1MessageSetInfo, {name: "CANSCHED", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsScheduledTransfers", writeMethod: "setSupportsScheduledTransfers"});
 
 
 WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ supportsScheduledTransfers) {
@@ -23663,7 +29367,7 @@ WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers = function(
 WireTransferV1MessageSetInfo.prototype.getDomesticWireTransferFee = function() {
   return this.domesticWireTransferFee;
 };
-Element.add({name: "DOMXFERFEE", required: true, order: 40, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getDomesticWireTransferFee"});
+Element.add(WireTransferV1MessageSetInfo, {name: "DOMXFERFEE", required: true, order: 40, attributeType: Number, readMethod: "getDomesticWireTransferFee", writeMethod: "setDomesticWireTransferFee"});
 
 
 WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*Double*/ domesticWireTransferFee) {
@@ -23674,7 +29378,7 @@ WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee = function(/*D
 WireTransferV1MessageSetInfo.prototype.getInternationalWireTransferFee = function() {
   return this.internationalWireTransferFee;
 };
-Element.add({name: "INTLXFERFEE", required: true, order: 50, owner: WireTransferV1MessageSetInfo, /*type: Double,*/ fcn: "getInternationalWireTransferFee"});
+Element.add(WireTransferV1MessageSetInfo, {name: "INTLXFERFEE", required: true, order: 50, attributeType: Number, readMethod: "getInternationalWireTransferFee", writeMethod: "setInternationalWireTransferFee"});
 
 
 WireTransferV1MessageSetInfo.prototype.setInternationalWireTransferFee = function(/*Double*/ internationalWireTransferFee) {
@@ -23686,7 +29390,7 @@ WireTransferV1MessageSetInfo.prototype.setInternationalWireTransferFee = functio
 
 module.exports = WireTransferV1MessageSetInfo;
 
-},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/banking/EmailProfile.js":[function(require,module,exports){
+},{"../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../common/ProcessorDayOff":"/Users/aolson/Developer/ofx4js/src/domain/data/common/ProcessorDayOff.js","../../profile/VersionSpecificMessageSetInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/VersionSpecificMessageSetInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/banking/EmailProfile.js":[function(require,module,exports){
 /*
  * Copyright 2012 TheStash
  *
@@ -23738,7 +29442,7 @@ Aggregate.add("EMAILPROF", EmailProfile);
 EmailProfile.prototype.getCanEmail = function() {
   return this.canEmail;
 };
-Element.add({name: "CANEMAIL", required: true, order: 10, owner: EmailProfile, /*type: Boolean,*/ fcn: "getCanEmail"});
+Element.add(EmailProfile, {name: "CANEMAIL", required: true, order: 10, attributeType: Boolean, readMethod: "getCanEmail", writeMethod: "setCanEmail"});
 
 
 EmailProfile.prototype.setCanEmail = function(/*Boolean*/ canEmail) {
@@ -23749,7 +29453,7 @@ EmailProfile.prototype.setCanEmail = function(/*Boolean*/ canEmail) {
 EmailProfile.prototype.getCanNotify = function() {
   return this.canNotify;
 };
-Element.add({name: "CANNOTIFY", required: true, order: 20, owner: EmailProfile, /*type: Boolean,*/ fcn: "getCanNotify"});
+Element.add(EmailProfile, {name: "CANNOTIFY", required: true, order: 20, attributeType: Boolean, readMethod: "getCanNotify", writeMethod: "setCanNotify"});
 
 
 EmailProfile.prototype.setCanNotify = function(/*Boolean*/ canNotify) {
@@ -23782,6 +29486,7 @@ module.exports = EmailProfile;
 
 var Aggregate = require("../../../../../meta/Aggregate");
 var Element = require("../../../../../meta/Element");
+var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 
 /**
  * Stop Check Profile
@@ -23839,7 +29544,7 @@ Aggregate.add("STPCHKPROF", StopCheckProfile);
 StopCheckProfile.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 0, owner: StopCheckProfile, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
+Element.add(StopCheckProfile, {name: "PROCDAYSOFF", order: 0, attributeType: Array, collectionEntryType: ProcessorDayOff, readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -23858,7 +29563,7 @@ StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ 
 StopCheckProfile.prototype.getProcessEndTime = function() {
   return this.processEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 10, owner: StopCheckProfile, /*type: String,*/ fcn: "getProcessEndTime"});
+Element.add(StopCheckProfile, {name: "PROCENDTM", required: true, order: 10, attributeType: String, readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
 
 
 /**
@@ -23878,7 +29583,7 @@ StopCheckProfile.prototype.setProcessEndTime = function(processEndTime) {
 StopCheckProfile.prototype.getCanUseRange = function() {
   return this.canUseRange;
 };
-Element.add({name: "CANUSERANGE", required: true, order: 20, owner: StopCheckProfile, /*type: Boolean,*/ fcn: "getCanUseRange"});
+Element.add(StopCheckProfile, {name: "CANUSERANGE", required: true, order: 20, attributeType: Boolean, readMethod: "getCanUseRange", writeMethod: "setCanUseRange"});
 
 
 StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
@@ -23889,7 +29594,7 @@ StopCheckProfile.prototype.setCanUseRange = function(/*Boolean*/ canUseRange) {
 StopCheckProfile.prototype.getCanUseDescription = function() {
   return this.canUseDescription;
 };
-Element.add({name: "CANUSEDESC", required: true, order: 30, owner: StopCheckProfile, /*type: Boolean,*/ fcn: "getCanUseDescription"});
+Element.add(StopCheckProfile, {name: "CANUSEDESC", required: true, order: 30, attributeType: Boolean, readMethod: "getCanUseDescription", writeMethod: "setCanUseDescription"});
 
 
 StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDescription) {
@@ -23900,7 +29605,7 @@ StopCheckProfile.prototype.setCanUseDescription = function(/*Boolean*/ canUseDes
 StopCheckProfile.prototype.getStopCheckFee = function() {
   return this.stopCheckFee;
 };
-Element.add({name: "STPCHKFEE", required: true, order: 40, owner: StopCheckProfile, /*type: Double,*/ fcn: "getStopCheckFee"});
+Element.add(StopCheckProfile, {name: "STPCHKFEE", required: true, order: 40, attributeType: Number, readMethod: "getStopCheckFee", writeMethod: "setStopCheckFee"});
 
 
 StopCheckProfile.prototype.setStopCheckFee = function(/*Double*/ stopCheckFee) {
@@ -23912,7 +29617,7 @@ StopCheckProfile.prototype.setStopCheckFee = function(/*Double*/ stopCheckFee) {
 
 module.exports = StopCheckProfile;
 
-},{"../../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/banking/index.js":[function(require,module,exports){
+},{"../../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../common/ProcessorDayOff":"/Users/aolson/Developer/ofx4js/src/domain/data/common/ProcessorDayOff.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/banking/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -23972,7 +29677,7 @@ Aggregate.add("IMAGEPROF", ImageProfile);
 ImageProfile.prototype.getClosingImageAvailable = function() {
   return this.closingImageAvailable;
 };
-Element.add({name: "CLOSINGIMGAVAIL", required: true, order: 10, owner: ImageProfile, /*type: Boolean,*/ fcn: "getClosingImageAvailable"});
+Element.add(ImageProfile, {name: "CLOSINGIMGAVAIL", required: true, order: 10, attributeType: Boolean, readMethod: "getClosingImageAvailable", writeMethod: "setClosingImageAvailable"});
 
 
 ImageProfile.prototype.setClosingImageAvailable = function(/*Boolean*/ closingImageAvailable) {
@@ -23983,7 +29688,7 @@ ImageProfile.prototype.setClosingImageAvailable = function(/*Boolean*/ closingIm
 ImageProfile.prototype.getTransactionImageAvailable = function() {
   return this.transactionImageAvailable;
 };
-Element.add({name: "TRANIMGAVAIL", required: true, order: 20, owner: ImageProfile, /*type: Boolean,*/ fcn: "getTransactionImageAvailable"});
+Element.add(ImageProfile, {name: "TRANIMGAVAIL", required: true, order: 20, attributeType: Boolean, readMethod: "getTransactionImageAvailable", writeMethod: "setTransactionImageAvailable"});
 
 
 ImageProfile.prototype.setTransactionImageAvailable = function(/*Boolean*/ transactionImageAvailable) {
@@ -24016,6 +29721,7 @@ module.exports = ImageProfile;
 
 var Aggregate = require("../../../../../meta/Aggregate");
 var Element = require("../../../../../meta/Element");
+var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 
 /**
  * Funds Transfer Profile
@@ -24122,7 +29828,7 @@ Aggregate.add("XFERPROF", TransferProfile);
 TransferProfile.prototype.getProcessorDaysOff = function() {
   return this.processorDaysOff;
 };
-Element.add({name: "PROCDAYSOFF", order: 0, owner: TransferProfile, /*type: ProcessorDayOff[],*/ fcn: "getProcessorDaysOff"});
+Element.add(TransferProfile, {name: "PROCDAYSOFF", order: 0, attributeType: Array, collectionEntryType: ProcessorDayOff, readMethod: "getProcessorDaysOff", writeMethod: "setProcessorDaysOff"});
 
 
 TransferProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ processorDaysOff) {
@@ -24141,7 +29847,7 @@ TransferProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ p
 TransferProfile.prototype.getProcessEndTime = function() {
   return this.processEndTime;
 };
-Element.add({name: "PROCENDTM", required: true, order: 10, owner: TransferProfile, /*type: String,*/ fcn: "getProcessEndTime"});
+Element.add(TransferProfile, {name: "PROCENDTM", required: true, order: 10, attributeType: String, readMethod: "getProcessEndTime", writeMethod: "setProcessEndTime"});
 
 
 /**
@@ -24161,7 +29867,7 @@ TransferProfile.prototype.setProcessEndTime = function(processEndTime) {
 TransferProfile.prototype.getSupportsScheduledTransfers = function() {
   return this.supportsScheduledTransfers;
 };
-Element.add({name: "CANSCHED", required: true, order: 20, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsScheduledTransfers"});
+Element.add(TransferProfile, {name: "CANSCHED", required: true, order: 20, attributeType: Boolean, readMethod: "getSupportsScheduledTransfers", writeMethod: "setSupportsScheduledTransfers"});
 
 
 TransferProfile.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ supportsScheduledTransfers) {
@@ -24176,7 +29882,7 @@ TransferProfile.prototype.setSupportsScheduledTransfers = function(/*Boolean*/ s
 TransferProfile.prototype.getSupportsRecurringTransfers = function() {
   return this.supportsRecurringTransfers;
 };
-Element.add({name: "CANRECUR", required: true, order: 30, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsRecurringTransfers"});
+Element.add(TransferProfile, {name: "CANRECUR", required: true, order: 30, attributeType: Boolean, readMethod: "getSupportsRecurringTransfers", writeMethod: "setSupportsRecurringTransfers"});
 
 
 TransferProfile.prototype.setSupportsRecurringTransfers = function(/*Boolean*/ supportsRecurringTransfers) {
@@ -24191,7 +29897,7 @@ TransferProfile.prototype.setSupportsRecurringTransfers = function(/*Boolean*/ s
 TransferProfile.prototype.getSupportsLoanTransfers = function() {
   return this.supportsLoanTransfers;
 };
-Element.add({name: "CANLOAN", order: 40, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsLoanTransfers"});
+Element.add(TransferProfile, {name: "CANLOAN", order: 40, attributeType: Boolean, readMethod: "getSupportsLoanTransfers", writeMethod: "setSupportsLoanTransfers"});
 
 
 TransferProfile.prototype.setSupportsLoanTransfers = function(/*Boolean*/ supportsLoanTransfers) {
@@ -24202,7 +29908,7 @@ TransferProfile.prototype.setSupportsLoanTransfers = function(/*Boolean*/ suppor
 TransferProfile.prototype.getSupportsScheduledLoanTransfers = function() {
   return this.supportsScheduledLoanTransfers;
 };
-Element.add({name: "CANSCHEDLOAN", order: 50, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsScheduledLoanTransfers"});
+Element.add(TransferProfile, {name: "CANSCHEDLOAN", order: 50, attributeType: Boolean, readMethod: "getSupportsScheduledLoanTransfers", writeMethod: "setSupportsScheduledLoanTransfers"});
 
 
 TransferProfile.prototype.setSupportsScheduledLoanTransfers = function(/*Boolean*/ supportsScheduledLoanTransfers) {
@@ -24213,7 +29919,7 @@ TransferProfile.prototype.setSupportsScheduledLoanTransfers = function(/*Boolean
 TransferProfile.prototype.getSupportsRecurringLoanTransfers = function() {
   return this.supportsRecurringLoanTransfers;
 };
-Element.add({name: "CANRECURLOAN", order: 60, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsRecurringLoanTransfers"});
+Element.add(TransferProfile, {name: "CANRECURLOAN", order: 60, attributeType: Boolean, readMethod: "getSupportsRecurringLoanTransfers", writeMethod: "setSupportsRecurringLoanTransfers"});
 
 
 TransferProfile.prototype.setSupportsRecurringLoanTransfers = function(/*Boolean*/ supportsRecurringLoanTransfers) {
@@ -24224,7 +29930,7 @@ TransferProfile.prototype.setSupportsRecurringLoanTransfers = function(/*Boolean
 TransferProfile.prototype.getSupportsTransferModification = function() {
   return this.supportsTransferModification;
 };
-Element.add({name: "CANMODXFERS", required: true, order: 70, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsTransferModification"});
+Element.add(TransferProfile, {name: "CANMODXFERS", required: true, order: 70, attributeType: Boolean, readMethod: "getSupportsTransferModification", writeMethod: "setSupportsTransferModification"});
 
 
 TransferProfile.prototype.setSupportsTransferModification = function(/*Boolean*/ supportsTransferModification) {
@@ -24235,7 +29941,7 @@ TransferProfile.prototype.setSupportsTransferModification = function(/*Boolean*/
 TransferProfile.prototype.getSupportsModelModification = function() {
   return this.supportsModelModification;
 };
-Element.add({name: "CANMODMDLS", required: true, order: 80, owner: TransferProfile, /*type: Boolean,*/ fcn: "getSupportsModelModification"});
+Element.add(TransferProfile, {name: "CANMODMDLS", required: true, order: 80, attributeType: Boolean, readMethod: "getSupportsModelModification", writeMethod: "setSupportsModelModification"});
 
 
 TransferProfile.prototype.setSupportsModelModification = function(/*Boolean*/ supportsModelModification) {
@@ -24252,7 +29958,7 @@ TransferProfile.prototype.setSupportsModelModification = function(/*Boolean*/ su
 TransferProfile.prototype.getModelWindow = function() {
   return this.modelWindow;
 };
-Element.add({name: "MODELWND", required: true, order: 90, owner: TransferProfile, /*type: Integer,*/ fcn: "getModelWindow"});
+Element.add(TransferProfile, {name: "MODELWND", required: true, order: 90, attributeType: Number, readMethod: "getModelWindow", writeMethod: "setModelWindow"});
 
 
 TransferProfile.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
@@ -24267,7 +29973,7 @@ TransferProfile.prototype.setModelWindow = function(/*Integer*/ modelWindow) {
 TransferProfile.prototype.getWithdrawnDays = function() {
   return this.withdrawnDays;
 };
-Element.add({name: "DAYSWITH", required: true, order: 100, owner: TransferProfile, /*type: Integer,*/ fcn: "getWithdrawnDays"});
+Element.add(TransferProfile, {name: "DAYSWITH", required: true, order: 100, attributeType: Number, readMethod: "getWithdrawnDays", writeMethod: "setWithdrawnDays"});
 
 
 TransferProfile.prototype.setWithdrawnDays = function(/*Integer*/ withdrawnDays) {
@@ -24282,7 +29988,7 @@ TransferProfile.prototype.setWithdrawnDays = function(/*Integer*/ withdrawnDays)
 TransferProfile.prototype.getDefaultDaysToPay = function() {
   return this.defaultDaysToPay;
 };
-Element.add({name: "DFLTDAYSTOPAY", required: true, order: 110, owner: TransferProfile, /*type: Integer,*/ fcn: "getDefaultDaysToPay"});
+Element.add(TransferProfile, {name: "DFLTDAYSTOPAY", required: true, order: 110, attributeType: Number, readMethod: "getDefaultDaysToPay", writeMethod: "setDefaultDaysToPay"});
 
 
 TransferProfile.prototype.setDefaultDaysToPay = function(/*Integer*/ defaultDaysToPay) {
@@ -24294,7 +30000,7 @@ TransferProfile.prototype.setDefaultDaysToPay = function(/*Integer*/ defaultDays
 
 module.exports = TransferProfile;
 
-},{"../../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/common/index.js":[function(require,module,exports){
+},{"../../../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../common/ProcessorDayOff":"/Users/aolson/Developer/ofx4js/src/domain/data/common/ProcessorDayOff.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/profile/info/common/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -24383,7 +30089,7 @@ Aggregate.add("CLIENTENROLL", ClientEnrollment);
 ClientEnrollment.prototype.getAccountRequired = function() {
   return this.accountRequired;
 };
-Element.add({name: "ACCTREQUIRED", required: true, order: 0, owner: ClientEnrollment, /*type: Boolean,*/ fcn: "getAccountRequired"});
+Element.add(ClientEnrollment, {name: "ACCTREQUIRED", required: true, order: 0, attributeType: Boolean, readMethod: "getAccountRequired", writeMethod: "setAccountRequired"});
 
 
 ClientEnrollment.prototype.setAccountRequired = function(/*Boolean*/ accountRequired) {
@@ -24445,7 +30151,7 @@ Aggregate.add("OTHERENROLL", OtherEnrollment);
 OtherEnrollment.prototype.getMessage = function() {
   return this.message;
 };
-Element.add({name: "MESSAGE", required: true, order: 0, owner: OtherEnrollment, /*type: String,*/ fcn: "getMessage"});
+Element.add(OtherEnrollment, {name: "MESSAGE", required: true, order: 0, attributeType: String, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 OtherEnrollment.prototype.setMessage = function(/*String*/ message) {
@@ -24506,7 +30212,7 @@ Aggregate.add("WEBENROLL", WebEnrollment);
 WebEnrollment.prototype.getUrl = function() {
   return this.url;
 };
-Element.add({name: "URL", required: true, order: 0, owner: WebEnrollment, /*type: String,*/ fcn: "getUrl"});
+Element.add(WebEnrollment, {name: "URL", required: true, order: 0, attributeType: String, readMethod: "getUrl", writeMethod: "setUrl"});
 
 
 WebEnrollment.prototype.setUrl = function(/*String*/ url) {
@@ -24628,6 +30334,7 @@ module.exports = AssetClass;
 "use strict";
 
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var SecurityInfo = require("./SecurityInfo");
 
 /**
  * Base class for info about the various types of securities.
@@ -24661,7 +30368,7 @@ function BaseSecurityInfo () {
 BaseSecurityInfo.prototype.getSecurityInfo = function() {
   return this.securityInfo;
 };
-ChildAggregate.add({required: true, order: 10, owner: BaseSecurityInfo, /*type: SecurityInfo,*/ fcn: "getSecurityInfo"});
+ChildAggregate.add(BaseSecurityInfo, {required: true, order: 10, attributeType: SecurityInfo, readMethod: "getSecurityInfo", writeMethod: "setSecurityInfo"});
 
 
 /**
@@ -24774,7 +30481,7 @@ BaseSecurityInfo.prototype.getMemo = function() {
 
 module.exports = BaseSecurityInfo;
 
-},{"../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/CallType.js":[function(require,module,exports){
+},{"../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./SecurityInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/CallType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25068,7 +30775,7 @@ Aggregate.add("DEBTINFO", DebtSecurityInfo);
 DebtSecurityInfo.prototype.getParValue = function() {
   return this.parValue;
 };
-Element.add({name: "PARVALUE", required:true, order: 20, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getParValue"});
+Element.add(DebtSecurityInfo, {name: "PARVALUE", required:true, order: 20, attributeType: Number, readMethod: "getParValue", writeMethod: "setParValue"});
 
 
 /**
@@ -25090,7 +30797,7 @@ DebtSecurityInfo.prototype.setParValue = function(parValue) {
 DebtSecurityInfo.prototype.getDebtType = function() {
   return this.debtType;
 };
-Element.add({name: "DEBTTYPE", required:true, order: 30, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtType"});
+Element.add(DebtSecurityInfo, {name: "DEBTTYPE", required:true, order: 30, attributeType: String, readMethod: "getDebtType", writeMethod: "setDebtType"});
 
 
 /**
@@ -25123,7 +30830,7 @@ DebtSecurityInfo.prototype.getDebtTypeEnum = function() {
 DebtSecurityInfo.prototype.getDebtClass = function() {
   return this.debtClass;
 };
-Element.add({name: "DEBTCLASS", order: 40, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getDebtClass"});
+Element.add(DebtSecurityInfo, {name: "DEBTCLASS", order: 40, attributeType: String, readMethod: "getDebtClass", writeMethod: "setDebtClass"});
 
 
 /**
@@ -25156,7 +30863,7 @@ DebtSecurityInfo.prototype.getDebtClassEnum = function() {
 DebtSecurityInfo.prototype.getCouponRate = function() {
   return this.couponRate;
 };
-Element.add({name: "COUPONRT", order: 50, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCouponRate"});
+Element.add(DebtSecurityInfo, {name: "COUPONRT", order: 50, attributeType: Number, readMethod: "getCouponRate", writeMethod: "setCouponRate"});
 
 
 /**
@@ -25179,7 +30886,7 @@ DebtSecurityInfo.prototype.setCouponRate = function(couponRate) {
 DebtSecurityInfo.prototype.getNextMaturityDate = function() {
   return this.nextMaturityDate;
 };
-Element.add({name: "DTCOUPON", order: 60, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextMaturityDate"});
+Element.add(DebtSecurityInfo, {name: "DTCOUPON", order: 60, attributeType: Date, readMethod: "getNextMaturityDate", writeMethod: "setNextMaturityDate"});
 
 
 /**
@@ -25202,7 +30909,7 @@ DebtSecurityInfo.prototype.setNextMaturityDate = function(nextMaturityDate) {
 DebtSecurityInfo.prototype.getCouponFrequency = function() {
   return this.couponFrequency;
 };
-Element.add({name: "COUPONFREQ", order: 70, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCouponFrequency"});
+Element.add(DebtSecurityInfo, {name: "COUPONFREQ", order: 70, attributeType: String, readMethod: "getCouponFrequency", writeMethod: "setCouponFrequency"});
 
 
 /**
@@ -25234,7 +30941,7 @@ DebtSecurityInfo.prototype.getCouponFrequencyEnum = function() {
 DebtSecurityInfo.prototype.getCallPrice = function() {
   return this.callPrice;
 };
-Element.add({name: "CALLPRICE", order: 80, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getCallPrice"});
+Element.add(DebtSecurityInfo, {name: "CALLPRICE", order: 80, attributeType: Number, readMethod: "getCallPrice", writeMethod: "setCallPrice"});
 
 
 /**
@@ -25255,7 +30962,7 @@ DebtSecurityInfo.prototype.setCallPrice = function(callPrice) {
 DebtSecurityInfo.prototype.getYieldToCall = function() {
   return this.yieldToCall;
 };
-Element.add({name: "YIELDTOCALL", order: 90, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToCall"});
+Element.add(DebtSecurityInfo, {name: "YIELDTOCALL", order: 90, attributeType: Number, readMethod: "getYieldToCall", writeMethod: "setYieldToCall"});
 
 
 /**
@@ -25276,7 +30983,7 @@ DebtSecurityInfo.prototype.setYieldToCall = function(yieldToCall) {
 DebtSecurityInfo.prototype.getNextCallDate = function() {
   return this.nextCallDate;
 };
-Element.add({name: "DTCALL", order: 100, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getNextCallDate"});
+Element.add(DebtSecurityInfo, {name: "DTCALL", order: 100, attributeType: Date, readMethod: "getNextCallDate", writeMethod: "setNextCallDate"});
 
 
 /**
@@ -25297,7 +31004,7 @@ DebtSecurityInfo.prototype.setNextCallDate = function(nextCallDate) {
 DebtSecurityInfo.prototype.getCallType = function() {
   return this.callType;
 };
-Element.add({name: "CALLTYPE", order: 110, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getCallType"});
+Element.add(DebtSecurityInfo, {name: "CALLTYPE", order: 110, attributeType: String, readMethod: "getCallType", writeMethod: "setCallType"});
 
 
 /**
@@ -25328,7 +31035,7 @@ DebtSecurityInfo.prototype.getCallTypeEnum = function() {
 DebtSecurityInfo.prototype.getYieldToMaturity = function() {
   return this.yieldToMaturity;
 };
-Element.add({name: "YIELDTOMAT", order: 120, owner: DebtSecurityInfo, /*type: Double,*/ fcn: "getYieldToMaturity"});
+Element.add(DebtSecurityInfo, {name: "YIELDTOMAT", order: 120, attributeType: Number, readMethod: "getYieldToMaturity", writeMethod: "setYieldToMaturity"});
 
 
 /**
@@ -25349,7 +31056,7 @@ DebtSecurityInfo.prototype.setYieldToMaturity = function(yieldToMaturity) {
 DebtSecurityInfo.prototype.getDebtMaturityDate = function() {
   return this.debtMaturityDate;
 };
-Element.add({name: "DTMAT", order: 130, owner: DebtSecurityInfo, /*type: Date,*/ fcn: "getDebtMaturityDate"});
+Element.add(DebtSecurityInfo, {name: "DTMAT", order: 130, attributeType: Date, readMethod: "getDebtMaturityDate", writeMethod: "setDebtMaturityDate"});
 
 
 /**
@@ -25370,7 +31077,7 @@ DebtSecurityInfo.prototype.setDebtMaturityDate = function(debtMaturityDate) {
 DebtSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 140, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add(DebtSecurityInfo, {name: "ASSETCLASS", order: 140, attributeType: String, readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -25402,7 +31109,7 @@ DebtSecurityInfo.prototype.getAssetClassEnum = function() {
 DebtSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 150, owner: DebtSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add(DebtSecurityInfo, {name: "FIASSETCLASS", order: 150, attributeType: String, readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**
@@ -25531,7 +31238,7 @@ Aggregate.add("MFINFO", MutualFundSecurityInfo);
 MutualFundSecurityInfo.prototype.getType = function() {
   return this.mfType;
 };
-Element.add({name: "MFTYPE", order: 20, owner: MutualFundSecurityInfo, /*type: String,*/ fcn: "getType"});
+Element.add(MutualFundSecurityInfo, {name: "MFTYPE", order: 20, attributeType: String, readMethod: "getType", writeMethod: "setType"});
 
 
 /**
@@ -25563,7 +31270,7 @@ MutualFundSecurityInfo.prototype.getTypeEnum = function() {
 MutualFundSecurityInfo.prototype.getYield = function() {
   return this.yield;
 };
-Element.add({name: "YIELD", order: 30, owner: MutualFundSecurityInfo, /*type: Double,*/ fcn: "getYield"});
+Element.add(MutualFundSecurityInfo, {name: "YIELD", order: 30, attributeType: Number, readMethod: "getYield", writeMethod: "setYield"});
 
 
 /**
@@ -25584,7 +31291,7 @@ MutualFundSecurityInfo.prototype.setYield = function(yield_) {
 MutualFundSecurityInfo.prototype.getDateYieldAsOf = function() {
   return this.dateYieldAsOf;
 };
-Element.add({name: "DTYIELDASOF", order: 40, owner: MutualFundSecurityInfo, /*type: Date,*/ fcn: "getDateYieldAsOf"});
+Element.add(MutualFundSecurityInfo, {name: "DTYIELDASOF", order: 40, attributeType: Date, readMethod: "getDateYieldAsOf", writeMethod: "setDateYieldAsOf"});
 
 
 /**
@@ -25666,6 +31373,7 @@ var inherit = require("../../../util/inherit");
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
+var SecurityId = require("./SecurityId");
 var BaseSecurityInfo = require("./BaseSecurityInfo");
 var OptionType = require("./OptionType");
 var AssetClass = require("./AssetClass");
@@ -25744,7 +31452,7 @@ Aggregate.add("OPTINFO", OptionSecurityInfo);
 OptionSecurityInfo.prototype.getOptionType = function() {
   return this.optionType;
 };
-Element.add({name: "OPTTYPE", order: 20, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getOptionType"});
+Element.add(OptionSecurityInfo, {name: "OPTTYPE", order: 20, attributeType: String, readMethod: "getOptionType", writeMethod: "setOptionType"});
 
 
 /**
@@ -25776,7 +31484,7 @@ OptionSecurityInfo.prototype.getOptionTypeEnum = function() {
 OptionSecurityInfo.prototype.getStrikePrice = function() {
   return this.strikePrice;
 };
-Element.add({name: "STRIKEPRICE", order: 30, owner: OptionSecurityInfo, /*type: Double,*/ fcn: "getStrikePrice"});
+Element.add(OptionSecurityInfo, {name: "STRIKEPRICE", order: 30, attributeType: Number, readMethod: "getStrikePrice", writeMethod: "setStrikePrice"});
 
 
 /**
@@ -25797,7 +31505,7 @@ OptionSecurityInfo.prototype.setStrikePrice = function(strikePrice) {
 OptionSecurityInfo.prototype.getExpirationDate = function() {
   return this.expirationDate;
 };
-Element.add({name: "DTEXPIRE", order: 40, owner: OptionSecurityInfo, /*type: Date,*/ fcn: "getExpirationDate"});
+Element.add(OptionSecurityInfo, {name: "DTEXPIRE", order: 40, attributeType: Date, readMethod: "getExpirationDate", writeMethod: "setExpirationDate"});
 
 
 /**
@@ -25819,7 +31527,7 @@ OptionSecurityInfo.prototype.setExpirationDate = function(expirationDate) {
 OptionSecurityInfo.prototype.getSharesPerContact = function() {
   return this.sharesPerContact;
 };
-Element.add({name: "SHPERCTRCT", order: 50, owner: OptionSecurityInfo, /*type: Integer,*/ fcn: "getSharesPerContact"});
+Element.add(OptionSecurityInfo, {name: "SHPERCTRCT", order: 50, attributeType: Number, readMethod: "getSharesPerContact", writeMethod: "setSharesPerContact"});
 
 
 /**
@@ -25842,7 +31550,7 @@ OptionSecurityInfo.prototype.setSharesPerContact = function(sharesPerContact) {
 OptionSecurityInfo.prototype.getUnderlyingSecurity = function() {
   return this.underlyingSecurity;
 };
-Element.add({name: "SECID", order: 60, owner: OptionSecurityInfo, /*type: SecurityId,*/ fcn: "getUnderlyingSecurity"});
+Element.add(OptionSecurityInfo, {name: "SECID", order: 60, attributeType: SecurityId, readMethod: "getUnderlyingSecurity", writeMethod: "setUnderlyingSecurity"});
 
 
 /**
@@ -25864,7 +31572,7 @@ OptionSecurityInfo.prototype.setUnderlyingSecurity = function(underlyingSecurity
 OptionSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 70, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add(OptionSecurityInfo, {name: "ASSETCLASS", order: 70, attributeType: String, readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -25896,7 +31604,7 @@ OptionSecurityInfo.prototype.getAssetClassEnum = function() {
 OptionSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 80, owner: OptionSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add(OptionSecurityInfo, {name: "FIASSETCLASS", order: 80, attributeType: String, readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**
@@ -25914,7 +31622,7 @@ OptionSecurityInfo.prototype.setFiAssetClass = function(fiAssetClass) {
 
 module.exports = OptionSecurityInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./AssetClass":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/AssetClass.js","./BaseSecurityInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/BaseSecurityInfo.js","./OptionType":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/OptionType.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/OptionType.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./AssetClass":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/AssetClass.js","./BaseSecurityInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/BaseSecurityInfo.js","./OptionType":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/OptionType.js","./SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/OptionType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26025,7 +31733,7 @@ Aggregate.add("OTHERINFO", OtherSecurityInfo);
 OtherSecurityInfo.prototype.getTypeDesc = function() {
   return this.typeDesc;
 };
-Element.add({name: "TYPEDESC", order: 20, owner: OtherSecurityInfo, /*type: String,*/ fcn: "getTypeDesc"});
+Element.add(OtherSecurityInfo, {name: "TYPEDESC", order: 20, attributeType: String, readMethod: "getTypeDesc", writeMethod: "setTypeDesc"});
 
 
 /**
@@ -26047,7 +31755,7 @@ OtherSecurityInfo.prototype.setTypeDesc = function(typeDesc) {
 OtherSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 30, owner: OtherSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add(OtherSecurityInfo, {name: "ASSETCLASS", order: 30, attributeType: String, readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -26079,7 +31787,7 @@ OtherSecurityInfo.prototype.getAssetClassEnum = function() {
 OtherSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 40, owner: OtherSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add(OtherSecurityInfo, {name: "FIASSETCLASS", order: 40, attributeType: String, readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**
@@ -26153,7 +31861,7 @@ Aggregate.add("SECID", SecurityId);
 SecurityId.prototype.getUniqueId = function() {
   return this.uniqueId;
 };
-Element.add({name: "UNIQUEID", required: true, order: 10, owner: SecurityId, /*type: String,*/ fcn: "getUniqueId"});
+Element.add(SecurityId, {name: "UNIQUEID", required: true, order: 10, attributeType: String, readMethod: "getUniqueId", writeMethod: "setUniqueId"});
 
 
 /**
@@ -26174,7 +31882,7 @@ SecurityId.prototype.setUniqueId = function(uniqueId) {
 SecurityId.prototype.getUniqueIdType = function() {
   return this.uniqueIdType;
 };
-Element.add({name: "UNIQUEIDTYPE", required: true, order: 20, owner: SecurityId, /*type: String,*/ fcn: "getUniqueIdType"});
+Element.add(SecurityId, {name: "UNIQUEIDTYPE", required: true, order: 20, attributeType: String, readMethod: "getUniqueIdType", writeMethod: "setUniqueIdType"});
 
 
 /**
@@ -26211,6 +31919,7 @@ module.exports = SecurityId;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var SecurityId = require("./SecurityId");
 
 //import java.util.Date;
 
@@ -26300,7 +32009,7 @@ Aggregate.add("SECINFO", SecurityInfo);
 SecurityInfo.prototype.getSecurityId = function() {
   return this.securityId;
 };
-ChildAggregate.add({required: true, order: 10, owner: SecurityInfo, /*type: SecurityId,*/ fcn: "getSecurityId"});
+ChildAggregate.add(SecurityInfo, {required: true, order: 10, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 /**
@@ -26322,7 +32031,7 @@ SecurityInfo.prototype.setSecurityId = function(securityId) {
 SecurityInfo.prototype.getSecurityName = function() {
   return this.securityName;
 };
-Element.add({name: "SECNAME", required: true, order: 20, owner: SecurityInfo, /*type: String,*/ fcn: "getSecurityName"});
+Element.add(SecurityInfo, {name: "SECNAME", required: true, order: 20, attributeType: String, readMethod: "getSecurityName", writeMethod: "setSecurityName"});
 
 
 /**
@@ -26343,7 +32052,7 @@ SecurityInfo.prototype.setSecurityName = function(securityName) {
 SecurityInfo.prototype.getTickerSymbol = function() {
   return this.tickerSymbol;
 };
-Element.add({name: "TICKER", order: 30, owner: SecurityInfo, /*type: String,*/ fcn: "getTickerSymbol"});
+Element.add(SecurityInfo, {name: "TICKER", order: 30, attributeType: String, readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
 
 
 /**
@@ -26364,7 +32073,7 @@ SecurityInfo.prototype.setTickerSymbol = function(tickerSymbol) {
 SecurityInfo.prototype.getFiId = function() {
   return this.fiId;
 };
-Element.add({name: "FIID", order: 40, owner: SecurityInfo, /*type: String,*/ fcn: "getFiId"});
+Element.add(SecurityInfo, {name: "FIID", order: 40, attributeType: String, readMethod: "getFiId", writeMethod: "setFiId"});
 
 
 /**
@@ -26385,7 +32094,7 @@ SecurityInfo.prototype.setFiId = function(fiId) {
 SecurityInfo.prototype.getRating = function() {
   return this.rating;
 };
-Element.add({name: "RATING", order: 50, owner: SecurityInfo, /*type: String,*/ fcn: "getRating"});
+Element.add(SecurityInfo, {name: "RATING", order: 50, attributeType: String, readMethod: "getRating", writeMethod: "setRating"});
 
 
 /**
@@ -26409,7 +32118,7 @@ SecurityInfo.prototype.setRating = function(rating) {
 SecurityInfo.prototype.getUnitPrice = function() {
   return this.unitPrice;
 };
-Element.add({name: "UNITPRICE", order: 60, owner: SecurityInfo, /*type: Double,*/ fcn: "getUnitPrice"});
+Element.add(SecurityInfo, {name: "UNITPRICE", order: 60, attributeType: Number, readMethod: "getUnitPrice", writeMethod: "setUnitPrice"});
 
 
 /**
@@ -26433,7 +32142,7 @@ SecurityInfo.prototype.setUnitPrice = function(unitPrice) {
 SecurityInfo.prototype.getUnitPriceAsOfDate = function() {
   return this.marketValueDate;
 };
-Element.add({name: "DTASOF", order: 70, owner: SecurityInfo, /*type: Date,*/ fcn: "getUnitPriceAsOfDate"});
+Element.add(SecurityInfo, {name: "DTASOF", order: 70, attributeType: Date, readMethod: "getUnitPriceAsOfDate", writeMethod: "setUnitPriceAsOfDate"});
 
 
 /**
@@ -26455,7 +32164,7 @@ SecurityInfo.prototype.setUnitPriceAsOfDate = function(/*Date*/ marketValueDate)
 SecurityInfo.prototype.getCurrencyCode = function() {
   return this.currencyCode;
 };
-Element.add({name: "CURRENCY", order: 80, owner: SecurityInfo, /*type: String,*/ fcn: "getCurrencyCode"});
+Element.add(SecurityInfo, {name: "CURRENCY", order: 80, attributeType: String, readMethod: "getCurrencyCode", writeMethod: "setCurrencyCode"});
 
 
 /**
@@ -26478,7 +32187,7 @@ SecurityInfo.prototype.setCurrencyCode = function(currencyCode) {
 SecurityInfo.prototype.getMemo = function() {
   return this.memo;
 };
-Element.add({name: "MEMO", order: 90, owner: SecurityInfo, /*type: String,*/ fcn: "getMemo"});
+Element.add(SecurityInfo, {name: "MEMO", order: 90, attributeType: String, readMethod: "getMemo", writeMethod: "setMemo"});
 
 
 /**
@@ -26496,7 +32205,7 @@ SecurityInfo.prototype.setMemo = function(memo) {
 
 module.exports = SecurityInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityList.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityList.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26515,6 +32224,7 @@ module.exports = SecurityInfo;
 
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var BaseSecurityInfo = require("./BaseSecurityInfo");
 
 /**
  * Aggregate for a list of securities.
@@ -26540,7 +32250,7 @@ Aggregate.add("SECLIST", SecurityList);
 SecurityList.prototype.getSecurityInfos = function() {
   return this.securityInfos;
 };
-ChildAggregate.add({order: 10, owner: SecurityList, /*type: BaseSecurityInfo[],*/ fcn: "getSecurityInfos"});
+ChildAggregate.add(SecurityList, {order: 10, attributeType: Array, collectionEntryType: BaseSecurityInfo, readMethod: "getSecurityInfos", writeMethod: "setSecurityInfos"});
 
 
 SecurityList.prototype.setSecurityInfos = function(/*BaseSecurityInfo[]*/ securityInfos) {
@@ -26552,7 +32262,7 @@ SecurityList.prototype.setSecurityInfos = function(/*BaseSecurityInfo[]*/ securi
 
 module.exports = SecurityList;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequest.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./BaseSecurityInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/BaseSecurityInfo.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequest.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26574,6 +32284,7 @@ var inherit = require("../../../util/inherit");
 var RequestMessage = require("../RequestMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var SecurityRequest = require("./SecurityRequest");
 
 /**
  * Request aggregate for the security list.
@@ -26600,7 +32311,7 @@ Aggregate.add("SECLISTRQ", SecurityListRequest);
 SecurityListRequest.prototype.getSecurityRequests = function() {
   return this.securityRequests;
 };
-ChildAggregate.add({required: true, order: 10, owner: SecurityListRequest, /*type: SecurityRequest[],*/ fcn: "getSecurityRequests"});
+ChildAggregate.add(SecurityListRequest, {required: true, order: 10, attributeType: Array, collectionEntryType: SecurityRequest, readMethod: "getSecurityRequests", writeMethod: "setSecurityRequests"});
 
 
 SecurityListRequest.prototype.setSecurityRequests = function(/*SecurityRequest[]*/ securityRequests) {
@@ -26612,7 +32323,7 @@ SecurityListRequest.prototype.setSecurityRequests = function(/*SecurityRequest[]
 
 module.exports = SecurityListRequest;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js","./SecurityRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityRequest.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26636,6 +32347,7 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var SecurityListRequestTransaction = require("./SecurityListRequestTransaction");
 
 /**
  * Security list request message set.
@@ -26673,7 +32385,7 @@ SecurityListRequestMessageSet.prototype.getType = function() {
 SecurityListRequestMessageSet.prototype.getSecurityListRequest = function() {
   return this.securityListRequest;
 };
-ChildAggregate.add({order: 0, owner: SecurityListRequestMessageSet, /*type: SecurityListRequestTransaction,*/ fcn: "getSecurityListRequest"});
+ChildAggregate.add(SecurityListRequestMessageSet, {order: 0, attributeType: SecurityListRequestTransaction, readMethod: "getSecurityListRequest", writeMethod: "setSecurityListRequest"});
 
 
 /**
@@ -26700,7 +32412,7 @@ SecurityListRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = SecurityListRequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./SecurityListRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26755,7 +32467,7 @@ Aggregate.add("SECLISTTRNRQ", SecurityListRequestTransaction);
 SecurityListRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: SecurityListRequestTransaction, /*type: SecurityListRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(SecurityListRequestTransaction, {required: true, order: 30, attributeType: SecurityListRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -26850,6 +32562,8 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var SecurityListResponseTransaction = require("./SecurityListResponseTransaction");
+var SecurityList = require("./SecurityList");
 
 /**
  * @class
@@ -26893,7 +32607,7 @@ SecurityListResponseMessageSet.prototype.getType = function() {
 SecurityListResponseMessageSet.prototype.getSecurityListResponse = function() {
   return this.securityListResponse;
 };
-ChildAggregate.add({order: 0, owner: SecurityListResponseMessageSet, /*type: SecurityListResponseTransaction,*/ fcn: "getSecurityListResponse"});
+ChildAggregate.add(SecurityListResponseMessageSet, {order: 0, attributeType: SecurityListResponseTransaction, readMethod: "getSecurityListResponse", writeMethod: "setSecurityListResponse"});
 
 
 /**
@@ -26909,7 +32623,7 @@ SecurityListResponseMessageSet.prototype.setSecurityListResponse = function(secu
 SecurityListResponseMessageSet.prototype.getSecurityList = function() {
   return this.securityList;
 };
-ChildAggregate.add({order: 10, owner: SecurityListResponseMessageSet, /*type: SecurityList,*/ fcn: "getSecurityList"});
+ChildAggregate.add(SecurityListResponseMessageSet, {order: 10, attributeType: SecurityList, readMethod: "getSecurityList", writeMethod: "setSecurityList"});
 
 
 SecurityListResponseMessageSet.prototype.setSecurityList = function(/*SecurityList*/ securityList) {
@@ -26929,7 +32643,7 @@ SecurityListResponseMessageSet.prototype.getResponseMessages = function() {
 
 module.exports = SecurityListResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListResponseTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./SecurityList":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityList.js","./SecurityListResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26983,7 +32697,7 @@ Aggregate.add("SECLISTTRNRS", SecurityListResponseTransaction);
 SecurityListResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: SecurityListResponseTransaction, /*type: SecurityListResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(SecurityListResponseTransaction, {required: true, order: 30, attributeType: SecurityListResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -27025,6 +32739,7 @@ module.exports = SecurityListResponseTransaction;
 
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
+var SecurityId = require("./SecurityId");
 
 /**
  * Security request aggregate.
@@ -27064,7 +32779,7 @@ Aggregate.add("SECRQ", SecurityRequest);
 SecurityRequest.prototype.getSecurityId = function() {
   return this.securityId;
 };
-Element.add({name: "SECID", order: 10, owner: SecurityRequest, /*type: SecurityId,*/ fcn: "getSecurityId"});
+Element.add(SecurityRequest, {name: "SECID", order: 10, attributeType: SecurityId, readMethod: "getSecurityId", writeMethod: "setSecurityId"});
 
 
 SecurityRequest.prototype.setSecurityId = function(/*SecurityId*/ securityId) {
@@ -27077,7 +32792,7 @@ SecurityRequest.prototype.setSecurityId = function(/*SecurityId*/ securityId) {
 SecurityRequest.prototype.getTickerSymbol = function() {
   return this.tickerSymbol;
 };
-Element.add({name: "TICKER", order: 20, owner: SecurityRequest, /*type: String,*/ fcn: "getTickerSymbol"});
+Element.add(SecurityRequest, {name: "TICKER", order: 20, attributeType: String, readMethod: "getTickerSymbol", writeMethod: "setTickerSymbol"});
 
 
 SecurityRequest.prototype.setTickerSymbol = function(/*String*/ tickerSymbol) {
@@ -27090,7 +32805,7 @@ SecurityRequest.prototype.setTickerSymbol = function(/*String*/ tickerSymbol) {
 SecurityRequest.prototype.getFiId = function() {
   return this.fiId;
 };
-Element.add({name: "FIID", order: 30, owner: SecurityRequest, /*type: String,*/ fcn: "getFiId"});
+Element.add(SecurityRequest, {name: "FIID", order: 30, attributeType: String, readMethod: "getFiId", writeMethod: "setFiId"});
 
 
 SecurityRequest.prototype.setFiId = function(/*String*/ fiId) {
@@ -27104,7 +32819,7 @@ SecurityRequest.prototype.setFiId = function(/*String*/ fiId) {
 
 module.exports = SecurityRequest;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/StockSecurityInfo.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./SecurityId":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityId.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/StockSecurityInfo.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27189,7 +32904,7 @@ Aggregate.add("STOCKINFO", StockSecurityInfo);
 StockSecurityInfo.prototype.getType = function() {
   return this.stockType;
 };
-Element.add({name: "STOCKTYPE", order: 20, owner: StockSecurityInfo, /*type: String,*/ fcn: "getType"});
+Element.add(StockSecurityInfo, {name: "STOCKTYPE", order: 20, attributeType: String, readMethod: "getType", writeMethod: "setType"});
 
 
 /**
@@ -27222,7 +32937,7 @@ StockSecurityInfo.prototype.getTypeEnum = function() {
 StockSecurityInfo.prototype.getYield = function() {
   return this.yield;
 };
-Element.add({name: "YIELD", order: 30, owner: StockSecurityInfo, /*type: Double,*/ fcn: "getYield"});
+Element.add(StockSecurityInfo, {name: "YIELD", order: 30, attributeType: Number, readMethod: "getYield", writeMethod: "setYield"});
 
 
 /**
@@ -27244,7 +32959,7 @@ StockSecurityInfo.prototype.setYield = function(yield_) {
 StockSecurityInfo.prototype.getDateYieldAsOf = function() {
   return this.dateYieldAsOf;
 };
-Element.add({name: "DTYIELDASOF", order: 40, owner: StockSecurityInfo, /*type: Date,*/ fcn: "getDateYieldAsOf"});
+Element.add(StockSecurityInfo, {name: "DTYIELDASOF", order: 40, attributeType: Date, readMethod: "getDateYieldAsOf", writeMethod: "setDateYieldAsOf"});
 
 
 /**
@@ -27265,7 +32980,7 @@ StockSecurityInfo.prototype.setDateYieldAsOf = function(dateYieldAsOf) {
 StockSecurityInfo.prototype.getAssetClass = function() {
   return this.assetClass;
 };
-Element.add({name: "ASSETCLASS", order: 50, owner: StockSecurityInfo, /*type: String,*/ fcn: "getAssetClass"});
+Element.add(StockSecurityInfo, {name: "ASSETCLASS", order: 50, attributeType: String, readMethod: "getAssetClass", writeMethod: "setAssetClass"});
 
 
 /**
@@ -27297,7 +33012,7 @@ StockSecurityInfo.prototype.getAssetClassEnum = function() {
 StockSecurityInfo.prototype.getFiAssetClass = function() {
   return this.fiAssetClass;
 };
-Element.add({name: "FIASSETCLASS", order: 60, owner: StockSecurityInfo, /*type: String,*/ fcn: "getFiAssetClass"});
+Element.add(StockSecurityInfo, {name: "FIASSETCLASS", order: 60, attributeType: String, readMethod: "getFiAssetClass", writeMethod: "setFiAssetClass"});
 
 
 /**
@@ -27445,7 +33160,7 @@ Aggregate.add("FI", FinancialInstitution);
 FinancialInstitution.prototype.getId = function() {
   return this.id;
 };
-Element.add({name: "FID", order: 10, owner: FinancialInstitution, /*type: String,*/ fcn: "getId"});
+Element.add(FinancialInstitution, {name: "FID", order: 10, attributeType: String, readMethod: "getId", writeMethod: "setId"});
 
 
 /**
@@ -27466,7 +33181,7 @@ FinancialInstitution.prototype.setId = function(id) {
 FinancialInstitution.prototype.getOrganization = function() {
   return this.organization;
 };
-Element.add({name: "ORG", required: true, order: 0, owner: FinancialInstitution, /*type: String,*/ fcn: "getOrganization"});
+Element.add(FinancialInstitution, {name: "ORG", required: true, order: 0, attributeType: String, readMethod: "getOrganization", writeMethod: "setOrganization"});
 
 
 /**
@@ -27543,7 +33258,7 @@ Aggregate.add("PINCHRQ", PasswordChangeRequest);
 PasswordChangeRequest.prototype.getUserId = function() {
   return this.userId;
 };
-Element.add({name: "USERID", required: true, order: 0, owner: PasswordChangeRequest, /*type: String,*/ fcn: "getUserId"});
+Element.add(PasswordChangeRequest, {name: "USERID", required: true, order: 0, attributeType: String, readMethod: "getUserId", writeMethod: "setUserId"});
 
 
 /**
@@ -27564,7 +33279,7 @@ PasswordChangeRequest.prototype.setUserId = function(userId) {
 PasswordChangeRequest.prototype.getNewPassword = function() {
   return this.newPassword;
 };
-Element.add({name: "NEWUSERPASS", required: true, order: 10, owner: PasswordChangeRequest, /*type: String,*/ fcn: "getNewPassword"});
+Element.add(PasswordChangeRequest, {name: "NEWUSERPASS", required: true, order: 10, attributeType: String, readMethod: "getNewPassword", writeMethod: "setNewPassword"});
 
 
 /**
@@ -27633,7 +33348,7 @@ Aggregate.add("PINCHTRNRQ", PasswordChangeRequestTransaction);
 PasswordChangeRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: PasswordChangeRequestTransaction, /*type: PasswordChangeRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(PasswordChangeRequestTransaction, {required: true, order: 30, attributeType: PasswordChangeRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -27717,7 +33432,7 @@ Aggregate.add("PINCHRQ", PasswordChangeResponse);
 PasswordChangeResponse.prototype.getUserId = function() {
   return this.userId;
 };
-Element.add({name: "USERID", required: true, order: 0, owner: PasswordChangeResponse, /*type: String,*/ fcn: "getUserId"});
+Element.add(PasswordChangeResponse, {name: "USERID", required: true, order: 0, attributeType: String, readMethod: "getUserId", writeMethod: "setUserId"});
 
 
 // Inherited.
@@ -27744,7 +33459,7 @@ PasswordChangeResponse.prototype.setUserId = function(userId) {
 PasswordChangeResponse.prototype.getChangeTimestamp = function() {
   return this.changeTimestamp;
 };
-Element.add({name: "DTCHANGED", order: 10, owner: PasswordChangeResponse, /*type: Date,*/ fcn: "getChangeTimestamp"});
+Element.add(PasswordChangeResponse, {name: "DTCHANGED", order: 10, attributeType: Date, readMethod: "getChangeTimestamp", writeMethod: "setChangeTimestamp"});
 
 
 /**
@@ -27813,7 +33528,7 @@ Aggregate.add("PINCHTRNRS", PasswordChangeResponseTransaction);
 PasswordChangeResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: PasswordChangeResponseTransaction, /*type: PasswordChangeResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(PasswordChangeResponseTransaction, {required: true, order: 30, attributeType: PasswordChangeResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -27859,6 +33574,7 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var RequestMessage = require("../RequestMessage");
+var FinancialInstitution = require("../../../client/FinancialInstitution");
 
 /**
  * Sign-on request
@@ -27995,7 +33711,7 @@ Aggregate.add("SONRQ", SignonRequest);
 SignonRequest.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTCLIENT", required: true, order: 0, owner: SignonRequest, /*type: Date,*/ fcn: "getTimestamp"});
+Element.add(SignonRequest, {name: "DTCLIENT", required: true, order: 0, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -28016,7 +33732,7 @@ SignonRequest.prototype.setTimestamp = function(timestamp) {
 SignonRequest.prototype.getUserId = function() {
   return this.userId;
 };
-Element.add({name: "USERID", order: 10, owner: SignonRequest, /*type: String,*/ fcn: "getUserId"});
+Element.add(SignonRequest, {name: "USERID", order: 10, attributeType: String, readMethod: "getUserId", writeMethod: "setUserId"});
 
 
 /**
@@ -28037,7 +33753,7 @@ SignonRequest.prototype.setUserId = function(userId) {
 SignonRequest.prototype.getPassword = function() {
   return this.password;
 };
-Element.add({name: "USERPASS", order: 20, owner: SignonRequest, /*type: String,*/ fcn: "getPassword"});
+Element.add(SignonRequest, {name: "USERPASS", order: 20, attributeType: String, readMethod: "getPassword", writeMethod: "setPassword"});
 
 
 /**
@@ -28058,7 +33774,7 @@ SignonRequest.prototype.setPassword = function(password) {
 SignonRequest.prototype.getUserKey = function() {
   return this.userKey;
 };
-Element.add({name: "USERKEY", order: 30, owner: SignonRequest, /*type: String,*/ fcn: "getUserKey"});
+Element.add(SignonRequest, {name: "USERKEY", order: 30, attributeType: String, readMethod: "getUserKey", writeMethod: "setUserKey"});
 
 
 /**
@@ -28079,7 +33795,7 @@ SignonRequest.prototype.setUserKey = function(userKey) {
 SignonRequest.prototype.getGenerateUserKey = function() {
   return this.generateUserKey;
 };
-Element.add({name: "GENUSERKEY", order: 40, owner: SignonRequest, /*type: Boolean,*/ fcn: "getGenerateUserKey"});
+Element.add(SignonRequest, {name: "GENUSERKEY", order: 40, attributeType: Boolean, readMethod: "getGenerateUserKey", writeMethod: "setGenerateUserKey"});
 
 
 /**
@@ -28101,7 +33817,7 @@ SignonRequest.prototype.setGenerateUserKey = function(generateUserKey) {
 SignonRequest.prototype.getLanguage = function() {
   return this.language;
 };
-Element.add({name: "LANGUAGE", required: true, order: 50, owner: SignonRequest, /*type: String,*/ fcn: "getLanguage"});
+Element.add(SignonRequest, {name: "LANGUAGE", required: true, order: 50, attributeType: String, readMethod: "getLanguage", writeMethod: "setLanguage"});
 
 
 /**
@@ -28122,7 +33838,7 @@ SignonRequest.prototype.setLanguage = function(language) {
 SignonRequest.prototype.getFinancialInstitution = function() {
   return this.financialInstitution;
 };
-ChildAggregate.add({order: 60, owner: SignonRequest, /*type: FinancialInstitution,*/ fcn: "getFinancialInstitution"});
+ChildAggregate.add(SignonRequest, {order: 60, attributeType: FinancialInstitution, readMethod: "getFinancialInstitution", writeMethod: "setFinancialInstitution"});
 
 
 /**
@@ -28143,7 +33859,7 @@ SignonRequest.prototype.setFinancialInstitution = function(financialInstitution)
 SignonRequest.prototype.getSessionId = function() {
   return this.sessionId;
 };
-Element.add({name: "SESSCOOKIE", order: 70, owner: SignonRequest, /*type: String,*/ fcn: "getSessionId"});
+Element.add(SignonRequest, {name: "SESSCOOKIE", order: 70, attributeType: String, readMethod: "getSessionId", writeMethod: "setSessionId"});
 
 
 /**
@@ -28164,7 +33880,7 @@ SignonRequest.prototype.setSessionId = function(sessionId) {
 SignonRequest.prototype.getApplicationId = function() {
   return this.applicationId;
 };
-Element.add({name: "APPID", required: true, order: 80, owner: SignonRequest, /*type: String,*/ fcn: "getApplicationId"});
+Element.add(SignonRequest, {name: "APPID", required: true, order: 80, attributeType: String, readMethod: "getApplicationId", writeMethod: "setApplicationId"});
 
 
 /**
@@ -28185,7 +33901,7 @@ SignonRequest.prototype.setApplicationId = function(applicationId) {
 SignonRequest.prototype.getApplicationVersion = function() {
   return this.applicationVersion;
 };
-Element.add({name: "APPVER", required: true, order: 90, owner: SignonRequest, /*type: String,*/ fcn: "getApplicationVersion"});
+Element.add(SignonRequest, {name: "APPVER", required: true, order: 90, attributeType: String, readMethod: "getApplicationVersion", writeMethod: "setApplicationVersion"});
 
 
 /**
@@ -28206,7 +33922,7 @@ SignonRequest.prototype.setApplicationVersion = function(applicationVersion) {
 SignonRequest.prototype.getClientUID = function() {
   return this.clientUID;
 };
-Element.add({name: "CLIENTUID", order: 100, owner: SignonRequest, /*type: String,*/ fcn: "getClientUID"});
+Element.add(SignonRequest, {name: "CLIENTUID", order: 100, attributeType: String, readMethod: "getClientUID", writeMethod: "setClientUID"});
 
 
 /**
@@ -28227,7 +33943,7 @@ SignonRequest.prototype.setClientUID = function(clientUID) {
 SignonRequest.prototype.getAdditionalCredentials1 = function() {
   return this.additionalCredentials1;
 };
-Element.add({name: "USERCRED1", order: 110, owner: SignonRequest, /*type: String,*/ fcn: "getAdditionalCredentials1"});
+Element.add(SignonRequest, {name: "USERCRED1", order: 110, attributeType: String, readMethod: "getAdditionalCredentials1", writeMethod: "setAdditionalCredentials1"});
 
 
 /**
@@ -28248,7 +33964,7 @@ SignonRequest.prototype.setAdditionalCredentials1 = function(additionalCredentia
 SignonRequest.prototype.getAdditionalCredentials2 = function() {
   return this.additionalCredentials2;
 };
-Element.add({name: "USERCRED2", order: 120, owner: SignonRequest, /*type: String,*/ fcn: "getAdditionalCredentials2"});
+Element.add(SignonRequest, {name: "USERCRED2", order: 120, attributeType: String, readMethod: "getAdditionalCredentials2", writeMethod: "setAdditionalCredentials2"});
 
 
 /**
@@ -28269,7 +33985,7 @@ SignonRequest.prototype.setAdditionalCredentials2 = function(additionalCredentia
 SignonRequest.prototype.getAuthToken = function() {
   return this.authToken;
 };
-Element.add({name: "AUTHTOKEN", order: 130, owner: SignonRequest, /*type: String,*/ fcn: "getAuthToken"});
+Element.add(SignonRequest, {name: "AUTHTOKEN", order: 130, attributeType: String, readMethod: "getAuthToken", writeMethod: "setAuthToken"});
 
 
 /**
@@ -28290,7 +34006,7 @@ SignonRequest.prototype.setAuthToken = function(authToken) {
 SignonRequest.prototype.getAccessKey = function() {
   return this.accessKey;
 };
-Element.add({name: "ACCESSKEY", order: 140, owner: SignonRequest, /*type: String,*/ fcn: "getAccessKey"});
+Element.add(SignonRequest, {name: "ACCESSKEY", order: 140, attributeType: String, readMethod: "getAccessKey", writeMethod: "setAccessKey"});
 
 
 /**
@@ -28307,7 +34023,7 @@ SignonRequest.prototype.setAccessKey = function(accessKey) {
 
 module.exports = SignonRequest;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js":[function(require,module,exports){
+},{"../../../client/FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28330,6 +34046,8 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var SignonRequest = require("./SignonRequest");
+var PasswordChangeRequestTransaction = require("./PasswordChangeRequestTransaction");
 
 /**
  * The sign-on request message set.
@@ -28374,7 +34092,7 @@ SignonRequestMessageSet.prototype.getType = function() {
 SignonRequestMessageSet.prototype.getSignonRequest = function() {
   return this.signonRequest;
 };
-ChildAggregate.add({required: true, order: 0, owner: SignonRequestMessageSet, /*type: SignonRequest,*/ fcn: "getSignonRequest"});
+ChildAggregate.add(SignonRequestMessageSet, {required: true, order: 0, attributeType: SignonRequest, readMethod: "getSignonRequest", writeMethod: "setSignonRequest"});
 
 
 /**
@@ -28395,7 +34113,7 @@ SignonRequestMessageSet.prototype.setSignonRequest = function(signonRequest) {
 SignonRequestMessageSet.prototype.getPasswordChangeRequest = function() {
   return this.passwordChangeRequest;
 };
-ChildAggregate.add({order: 10, owner: SignonRequestMessageSet, /*type: PasswordChangeRequestTransaction,*/ fcn: "getPasswordChangeRequest"});
+ChildAggregate.add(SignonRequestMessageSet, {order: 10, attributeType: PasswordChangeRequestTransaction, readMethod: "getPasswordChangeRequest", writeMethod: "setPasswordChangeRequest"});
 
 
 /**
@@ -28429,7 +34147,7 @@ SignonRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = SignonRequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonResponse.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./PasswordChangeRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/PasswordChangeRequestTransaction.js","./SignonRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequest.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonResponse.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28453,6 +34171,8 @@ var ResponseMessage = require("../ResponseMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var Status = require("../common/Status");
+var FinancialInstitution = require("./FinancialInstitution");
 
 /**
  * The signon response message.
@@ -28560,7 +34280,7 @@ SignonResponse.prototype.getStatusHolderName = function() {
 SignonResponse.prototype.getStatus = function() {
   return this.status;
 };
-ChildAggregate.add({required: true, order: 0, owner: SignonResponse, /*type: Status,*/ fcn: "getStatus"});
+ChildAggregate.add(SignonResponse, {required: true, order: 0, attributeType: Status, readMethod: "getStatus", writeMethod: "setStatus"});
 
 
 /**
@@ -28581,7 +34301,7 @@ SignonResponse.prototype.setStatus = function(status) {
 SignonResponse.prototype.getTimestamp = function() {
   return this.timestamp;
 };
-Element.add({name: "DTSERVER", required: true, order: 10, owner: SignonResponse, /*type: Date,*/ fcn: "getTimestamp"});
+Element.add(SignonResponse, {name: "DTSERVER", required: true, order: 10, attributeType: Date, readMethod: "getTimestamp", writeMethod: "setTimestamp"});
 
 
 /**
@@ -28602,7 +34322,7 @@ SignonResponse.prototype.setTimestamp = function(timestamp) {
 SignonResponse.prototype.getUserKey = function() {
   return this.userKey;
 };
-Element.add({name: "USERKEY", order: 20, owner: SignonResponse, /*type: String,*/ fcn: "getUserKey"});
+Element.add(SignonResponse, {name: "USERKEY", order: 20, attributeType: String, readMethod: "getUserKey", writeMethod: "setUserKey"});
 
 
 /**
@@ -28623,7 +34343,7 @@ SignonResponse.prototype.setUserKey = function(userKey) {
 SignonResponse.prototype.getUserKeyExpiration = function() {
   return this.userKeyExpiration;
 };
-Element.add({name: "TSKEYEXPIRE", order: 30, owner: SignonResponse, /*type: Date,*/ fcn: "getUserKeyExpiration"});
+Element.add(SignonResponse, {name: "TSKEYEXPIRE", order: 30, attributeType: Date, readMethod: "getUserKeyExpiration", writeMethod: "setUserKeyExpiration"});
 
 
 /**
@@ -28645,7 +34365,7 @@ SignonResponse.prototype.setUserKeyExpiration = function(userKeyExpiration) {
 SignonResponse.prototype.getLanguage = function() {
   return this.language;
 };
-Element.add({name: "LANGUAGE", required: true, order: 40, owner: SignonResponse, /*type: String,*/ fcn: "getLanguage"});
+Element.add(SignonResponse, {name: "LANGUAGE", required: true, order: 40, attributeType: String, readMethod: "getLanguage", writeMethod: "setLanguage"});
 
 
 /**
@@ -28666,7 +34386,7 @@ SignonResponse.prototype.setLanguage = function(language) {
 SignonResponse.prototype.getProfileLastUpdated = function() {
   return this.profileLastUpdated;
 };
-Element.add({name: "DTPROFUP", order: 50, owner: SignonResponse, /*type: Date,*/ fcn: "getProfileLastUpdated"});
+Element.add(SignonResponse, {name: "DTPROFUP", order: 50, attributeType: Date, readMethod: "getProfileLastUpdated", writeMethod: "setProfileLastUpdated"});
 
 
 /**
@@ -28687,7 +34407,7 @@ SignonResponse.prototype.setProfileLastUpdated = function(profileLastUpdated) {
 SignonResponse.prototype.getAccountLastUpdated = function() {
   return this.accountLastUpdated;
 };
-Element.add({name: "DTACCTUP", order: 60, owner: SignonResponse, /*type: Date,*/ fcn: "getAccountLastUpdated"});
+Element.add(SignonResponse, {name: "DTACCTUP", order: 60, attributeType: Date, readMethod: "getAccountLastUpdated", writeMethod: "setAccountLastUpdated"});
 
 
 /**
@@ -28708,7 +34428,7 @@ SignonResponse.prototype.setAccountLastUpdated = function(accountLastUpdated) {
 SignonResponse.prototype.getFinancialInstitution = function() {
   return this.financialInstitution;
 };
-ChildAggregate.add({order: 70, owner: SignonResponse, /*type: FinancialInstitution,*/ fcn: "getFinancialInstitution"});
+ChildAggregate.add(SignonResponse, {order: 70, attributeType: FinancialInstitution, readMethod: "getFinancialInstitution", writeMethod: "setFinancialInstitution"});
 
 
 /**
@@ -28729,7 +34449,7 @@ SignonResponse.prototype.setFinancialInstitution = function(financialInstitution
 SignonResponse.prototype.getSessionId = function() {
   return this.sessionId;
 };
-Element.add({name: "SESSCOOKIE", order: 80, owner: SignonResponse, /*type: String,*/ fcn: "getSessionId"});
+Element.add(SignonResponse, {name: "SESSCOOKIE", order: 80, attributeType: String, readMethod: "getSessionId", writeMethod: "setSessionId"});
 
 
 /**
@@ -28750,7 +34470,7 @@ SignonResponse.prototype.setSessionId = function(sessionId) {
 SignonResponse.prototype.getAccessKey = function() {
   return this.accessKey;
 };
-Element.add({name: "ACCESSKEY", order: 90, owner: SignonResponse, /*type: String,*/ fcn: "getAccessKey"});
+Element.add(SignonResponse, {name: "ACCESSKEY", order: 90, attributeType: String, readMethod: "getAccessKey", writeMethod: "setAccessKey"});
 
 
 /**
@@ -28767,7 +34487,7 @@ SignonResponse.prototype.setAccessKey = function(accessKey) {
 
 module.exports = SignonResponse;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","../common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonResponseMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","../common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js","./FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/FinancialInstitution.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28790,6 +34510,8 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Aggregate = require("../../../meta/Aggregate");
+var SignonResponse = require("./SignonResponse");
+var PasswordChangeResponseTransaction = require("./PasswordChangeResponseTransaction");
 
 /**
  * The sign-on response message set.
@@ -28834,7 +34556,7 @@ SignonResponseMessageSet.prototype.getType = function() {
 SignonResponseMessageSet.prototype.getSignonResponse = function() {
   return this.signonResponse;
 };
-ChildAggregate.add({order: 0, owner: SignonResponseMessageSet, /*type: SignonResponse,*/ fcn: "getSignonResponse"});
+ChildAggregate.add(SignonResponseMessageSet, {order: 0, attributeType: SignonResponse, readMethod: "getSignonResponse", writeMethod: "setSignonResponse"});
 
 
 /**
@@ -28855,7 +34577,7 @@ SignonResponseMessageSet.prototype.setSignonResponse = function(signonResponse) 
 SignonResponseMessageSet.prototype.getPasswordChangeResponse = function() {
   return this.passwordChangeResponse;
 };
-ChildAggregate.add({order: 10, owner: SignonResponseMessageSet, /*type: PasswordChangeResponseTransaction,*/ fcn: "getPasswordChangeResponse"});
+ChildAggregate.add(SignonResponseMessageSet, {order: 10, attributeType: PasswordChangeResponseTransaction, readMethod: "getPasswordChangeResponse", writeMethod: "setPasswordChangeResponse"});
 
 
 /**
@@ -28885,7 +34607,7 @@ SignonResponseMessageSet.prototype.getResponseMessages = function() {
 
 module.exports = SignonResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/index.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./PasswordChangeResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/PasswordChangeResponseTransaction.js","./SignonResponse":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonResponse.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -28951,7 +34673,7 @@ Aggregate.add("ACCTINFORQ", AccountInfoRequest);
 AccountInfoRequest.prototype.getLastUpdated = function() {
   return this.lastUpdated;
 };
-Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoRequest, /*type: Date,*/ fcn: "getLastUpdated"});
+Element.add(AccountInfoRequest, {name: "DTACCTUP", required: true, order: 0, attributeType: Date, readMethod: "getLastUpdated", writeMethod: "setLastUpdated"});
 
 
 /**
@@ -29020,7 +34742,7 @@ Aggregate.add("ACCTINFOTRNRQ", AccountInfoRequestTransaction);
 AccountInfoRequestTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: AccountInfoRequestTransaction, /*type: AccountInfoRequest,*/ fcn: "getMessage"});
+ChildAggregate.add(AccountInfoRequestTransaction, {required: true, order: 30, attributeType: AccountInfoRequest, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -29061,7 +34783,7 @@ module.exports = AccountInfoRequestTransaction;
 "use strict";
 
 var inherit = require("../../../util/inherit");
-
+var AccountProfile = require("./AccountProfile");
 var ResponseMessage = require("../ResponseMessage");
 var Aggregate = require("../../../meta/Aggregate");
 var Element = require("../../../meta/Element");
@@ -29107,7 +34829,7 @@ AccountInfoResponse.prototype.getResponseMessageName = function() {
 AccountInfoResponse.prototype.getLastUpdated = function() {
   return this.lastUpdated;
 };
-Element.add({name: "DTACCTUP", required: true, order: 0, owner: AccountInfoResponse, /*type: Date,*/ fcn: "getLastUpdated"});
+Element.add(AccountInfoResponse, {name: "DTACCTUP", required: true, order: 0, attributeType: Date, readMethod: "getLastUpdated", writeMethod: "setLastUpdated"});
 
 
 /**
@@ -29128,7 +34850,7 @@ AccountInfoResponse.prototype.setLastUpdated = function(lastUpdated) {
 AccountInfoResponse.prototype.getAccounts = function() {
   return this.accounts;
 };
-ChildAggregate.add({order: 10, owner: AccountInfoResponse, /*type: Collection<AccountProfile>,*/ fcn: "getAccounts"});
+ChildAggregate.add(AccountInfoResponse, {order: 10, attributeType: Array, collectionEntryType: AccountProfile, readMethod: "getAccounts", writeMethod: "setAccounts"});
 
 
 /**
@@ -29145,7 +34867,7 @@ AccountInfoResponse.prototype.setAccounts = function(accounts) {
 
 module.exports = AccountInfoResponse;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoResponseTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./AccountProfile":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountProfile.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29197,7 +34919,7 @@ Aggregate.add("ACCTINFOTRNRS", AccountInfoResponseTransaction);
 AccountInfoResponseTransaction.prototype.getMessage = function() {
   return this.message;
 };
-ChildAggregate.add({required: true, order: 30, owner: AccountInfoResponseTransaction, /*type: AccountInfoResponse,*/ fcn: "getMessage"});
+ChildAggregate.add(AccountInfoResponseTransaction, {required: true, order: 30, attributeType: AccountInfoResponse, readMethod: "getMessage", writeMethod: "setMessage"});
 
 
 /**
@@ -29298,7 +35020,7 @@ Aggregate.add("ACCTINFO", AccountProfile);
 AccountProfile.prototype.getDescription = function() {
   return this.description;
 };
-Element.add({name: "DESC", order: 0, owner: AccountProfile, /*type: String,*/ fcn: "getDescription"});
+Element.add(AccountProfile, {name: "DESC", order: 0, attributeType: String, readMethod: "getDescription", writeMethod: "setDescription"});
 
 
 /**
@@ -29319,7 +35041,7 @@ AccountProfile.prototype.setDescription = function(description) {
 AccountProfile.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE", order: 10, owner: AccountProfile, /*type: String,*/ fcn: "getPhone"});
+Element.add(AccountProfile, {name: "PHONE", order: 10, attributeType: String, readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**
@@ -29380,7 +35102,7 @@ AccountProfile.prototype.setSpecifics = function(specifics) {
 AccountProfile.prototype.getBankSpecifics = function() {
   return this.bankSpecifics;
 };
-ChildAggregate.add({order: 20, owner: AccountProfile, /*type: BankAccountInfo,*/ fcn: "getBankSpecifics"});
+ChildAggregate.add(AccountProfile, {order: 20, attributeType: BankAccountInfo, readMethod: "getBankSpecifics", writeMethod: "setBankSpecifics"});
 
 
 /**
@@ -29403,7 +35125,7 @@ AccountProfile.prototype.setBankSpecifics = function(bankSpecifics) {
 AccountProfile.prototype.getCreditCardSpecifics = function() {
   return this.creditCardSpecifics;
 };
-ChildAggregate.add({order: 30, owner: AccountProfile, /*type: CreditCardAccountInfo,*/ fcn: "getCreditCardSpecifics"});
+ChildAggregate.add(AccountProfile, {order: 30, attributeType: CreditCardAccountInfo, readMethod: "getCreditCardSpecifics", writeMethod: "setCreditCardSpecifics"});
 
 
 /**
@@ -29426,7 +35148,7 @@ AccountProfile.prototype.setCreditCardSpecifics = function(creditCardSpecifics) 
 AccountProfile.prototype.getInvestmentSpecifics = function() {
   return this.investSpecifics;
 };
-ChildAggregate.add({order: 40, owner: AccountProfile, /*type: InvestmentAccountInfo,*/ fcn: "getInvestmentSpecifics"});
+ChildAggregate.add(AccountProfile, {order: 40, attributeType: InvestmentAccountInfo, readMethod: "getInvestmentSpecifics", writeMethod: "setInvestmentSpecifics"});
 
 
 /**
@@ -29468,6 +35190,7 @@ var RequestMessageSet = require("../RequestMessageSet");
 var MessageSetType = require("../MessageSetType");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var AccountInfoRequestTransaction = require("./AccountInfoRequestTransaction");
 
 /**
  * @class
@@ -29502,7 +35225,7 @@ SignupRequestMessageSet.prototype.getType = function() {
 SignupRequestMessageSet.prototype.getAccountInfoRequest = function() {
   return this.accountInfoRequest;
 };
-ChildAggregate.add({order: 0, owner: SignupRequestMessageSet, /*type: AccountInfoRequestTransaction,*/ fcn: "getAccountInfoRequest"});
+ChildAggregate.add(SignupRequestMessageSet, {order: 0, attributeType: AccountInfoRequestTransaction, readMethod: "getAccountInfoRequest", writeMethod: "setAccountInfoRequest"});
 
 
 /**
@@ -29535,7 +35258,7 @@ SignupRequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = SignupRequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signup/SignupResponseMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./AccountInfoRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signup/SignupResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29558,6 +35281,7 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var MessageSetType = require("../MessageSetType");
+var AccountInfoResponseTransaction = require("./AccountInfoResponseTransaction");
 
 /**
  * @class
@@ -29592,7 +35316,7 @@ SignupResponseMessageSet.prototype.getType = function() {
 SignupResponseMessageSet.prototype.getAccountInfoResponse = function() {
   return this.accountInfoResponse;
 };
-ChildAggregate.add({order: 0, owner: SignupResponseMessageSet, /*type: AccountInfoResponseTransaction,*/ fcn: "getAccountInfoResponse"});
+ChildAggregate.add(SignupResponseMessageSet, {order: 0, attributeType: AccountInfoResponseTransaction, readMethod: "getAccountInfoResponse", writeMethod: "setAccountInfoResponse"});
 
 
 /**
@@ -29625,7 +35349,7 @@ SignupResponseMessageSet.prototype.getResponseMessages = function() {
 
 module.exports = SignupResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signup/index.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./AccountInfoResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signup/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -29657,7 +35381,7 @@ module.exports = {
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
-
+var ProcDet = require("./ProcDet");
 
 /**
  * @class
@@ -29711,7 +35435,7 @@ Aggregate.add("EXTDBINFO_V100", ExtDBInfo);
 ExtDBInfo.prototype.getProcDet = function() {
   return this.procDet;
 };
-ChildAggregate.add({required:false, order: 0, owner: ExtDBInfo, /*type: ProcDet[],*/ fcn: "getProcDet"});
+ChildAggregate.add(ExtDBInfo, {required:false, order: 0, attributeType: Array, collectionEntryType: ProcDet, readMethod: "getProcDet", writeMethod: "setProcDet"});
 
 
 /**
@@ -29728,7 +35452,7 @@ ExtDBInfo.prototype.setProcDet = function(procDet) {
 ExtDBInfo.prototype.getTeInterest = function() {
   return this.teInterest;
 };
-Element.add({name: "TEINTEREST",required: false , order: 1, owner: ExtDBInfo, /*type: String,*/ fcn: "getTeInterest"});
+Element.add(ExtDBInfo, {name: "TEINTEREST",required: false , order: 1, attributeType: String, readMethod: "getTeInterest", writeMethod: "setTeInterest"});
 
 
 /**
@@ -29745,7 +35469,7 @@ ExtDBInfo.prototype.setTeInterest = function(teInterest) {
 ExtDBInfo.prototype.getPabInterest = function() {
   return this.pabInterest;
 };
-Element.add({name: "PABINTEREST",required: false , order: 2, owner: ExtDBInfo, /*type: String,*/ fcn: "getPabInterest"});
+Element.add(ExtDBInfo, {name: "PABINTEREST",required: false , order: 2, attributeType: String, readMethod: "getPabInterest", writeMethod: "setPabInterest"});
 
 
 /**
@@ -29762,7 +35486,7 @@ ExtDBInfo.prototype.setPabInterest = function(pabInterest) {
 ExtDBInfo.prototype.getTeIntDividend = function() {
   return this.teIntDividend;
 };
-Element.add({name: "TEINTDIVIDEND",required: false , order: 3, owner: ExtDBInfo, /*type: String,*/ fcn: "getTeIntDividend"});
+Element.add(ExtDBInfo, {name: "TEINTDIVIDEND",required: false , order: 3, attributeType: String, readMethod: "getTeIntDividend", writeMethod: "setTeIntDividend"});
 
 
 /**
@@ -29779,7 +35503,7 @@ ExtDBInfo.prototype.setTeIntDividend = function(teIntDividend) {
 ExtDBInfo.prototype.getPabDividend = function() {
   return this.pabDividend;
 };
-Element.add({name: "PABDIVIDEND",required: false , order: 4, owner: ExtDBInfo, /*type: String,*/ fcn: "getPabDividend"});
+Element.add(ExtDBInfo, {name: "PABDIVIDEND",required: false , order: 4, attributeType: String, readMethod: "getPabDividend", writeMethod: "setPabDividend"});
 
 
 /**
@@ -29794,7 +35518,7 @@ ExtDBInfo.prototype.setPabDividend = function(pabDividend) {
 
 module.exports = ExtDBInfo;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./ProcDet":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/ProcDet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29886,7 +35610,7 @@ Aggregate.add("PAYERADDR", PayerAddress);
 PayerAddress.prototype.getPayerName1 = function() {
   return this.payerName1;
 };
-Element.add({name: "PAYERNAME1",required: true , order: 0, owner: PayerAddress, /*type: String,*/ fcn: "getPayerName1"});
+Element.add(PayerAddress, {name: "PAYERNAME1",required: true , order: 0, attributeType: String, readMethod: "getPayerName1", writeMethod: "setPayerName1"});
 
 
 /**
@@ -29903,7 +35627,7 @@ PayerAddress.prototype.setPayerName1 = function(payerName1) {
 PayerAddress.prototype.getPayerName2 = function() {
   return this.payerName2;
 };
-Element.add({name: "PAYERNAME2",required: false , order: 1, owner: PayerAddress, /*type: String,*/ fcn: "getPayerName2"});
+Element.add(PayerAddress, {name: "PAYERNAME2",required: false , order: 1, attributeType: String, readMethod: "getPayerName2", writeMethod: "setPayerName2"});
 
 
 /**
@@ -29920,7 +35644,7 @@ PayerAddress.prototype.setPayerName2 = function(payerName2) {
 PayerAddress.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1",required: true , order: 2, owner: PayerAddress, /*type: String,*/ fcn: "getAddress1"});
+Element.add(PayerAddress, {name: "ADDR1",required: true , order: 2, attributeType: String, readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -29937,7 +35661,7 @@ PayerAddress.prototype.setAddress1 = function(address1) {
 PayerAddress.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2",required: true , order: 3, owner: PayerAddress, /*type: String,*/ fcn: "getAddress2"});
+Element.add(PayerAddress, {name: "ADDR2",required: true , order: 3, attributeType: String, readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -29954,7 +35678,7 @@ PayerAddress.prototype.setAddress2 = function(address2) {
 PayerAddress.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY",required: true , order: 4, owner: PayerAddress, /*type: String,*/ fcn: "getCity"});
+Element.add(PayerAddress, {name: "CITY",required: true , order: 4, attributeType: String, readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -29971,7 +35695,7 @@ PayerAddress.prototype.setCity = function(city) {
 PayerAddress.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE",required: true , order: 5, owner: PayerAddress, /*type: String,*/ fcn: "getState"});
+Element.add(PayerAddress, {name: "STATE",required: true , order: 5, attributeType: String, readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -29988,7 +35712,7 @@ PayerAddress.prototype.setState = function(state) {
 PayerAddress.prototype.getPostalCode = function() {
   return this.postalCode;
 };
-Element.add({name: "POSTALCODE",required: true , order: 6, owner: PayerAddress, /*type: String,*/ fcn: "getPostalCode"});
+Element.add(PayerAddress, {name: "POSTALCODE",required: true , order: 6, attributeType: String, readMethod: "getPostalCode", writeMethod: "setPostalCode"});
 
 
 /**
@@ -30005,7 +35729,7 @@ PayerAddress.prototype.setPostalCode = function(postalCode) {
 PayerAddress.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE",required: false , order: 7, owner: PayerAddress, /*type: String,*/ fcn: "getPhone"});
+Element.add(PayerAddress, {name: "PHONE",required: false , order: 7, attributeType: String, readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**
@@ -30119,7 +35843,7 @@ Aggregate.add("PROCDET_V100", ProcDet);
 ProcDet.prototype.getDtAqd = function() {
   return this.dtAqd;
 };
-Element.add({name: "DTAQD", required: false, order: 0, owner: ProcDet, /*type: String,*/ fcn: "getDtAqd"});
+Element.add(ProcDet, {name: "DTAQD", required: false, order: 0, attributeType: String, readMethod: "getDtAqd", writeMethod: "setDtAqd"});
 
 
 /**
@@ -30136,7 +35860,7 @@ ProcDet.prototype.setDtAqd = function(dtAqd) {
 ProcDet.prototype.getDtSale = function() {
   return this.dtSale;
 };
-Element.add({name: "DTSALE", required: false, order: 2, owner: ProcDet, /*type: String,*/ fcn: "getDtSale"});
+Element.add(ProcDet, {name: "DTSALE", required: false, order: 2, attributeType: String, readMethod: "getDtSale", writeMethod: "setDtSale"});
 
 
 /**
@@ -30153,7 +35877,7 @@ ProcDet.prototype.setDtSale = function(dtSale) {
 ProcDet.prototype.getSecName = function() {
   return this.secName;
 };
-Element.add({name: "SECNAME", required: false, order: 3, owner: ProcDet, /*type: String,*/ fcn: "getSecName"});
+Element.add(ProcDet, {name: "SECNAME", required: false, order: 3, attributeType: String, readMethod: "getSecName", writeMethod: "setSecName"});
 
 
 /**
@@ -30170,7 +35894,7 @@ ProcDet.prototype.setSecName = function(secName) {
 ProcDet.prototype.getCostBasis = function() {
   return this.costBasis;
 };
-Element.add({name: "COSTBASIS", required: false, order: 4, owner: ProcDet, /*type: String,*/ fcn: "getCostBasis"});
+Element.add(ProcDet, {name: "COSTBASIS", required: false, order: 4, attributeType: String, readMethod: "getCostBasis", writeMethod: "setCostBasis"});
 
 
 /**
@@ -30187,7 +35911,7 @@ ProcDet.prototype.setCostBasis = function(costBasis) {
 ProcDet.prototype.getSaleSpr = function() {
   return this.saleSpr;
 };
-Element.add({name: "SALESPR", required: false, order: 5, owner: ProcDet, /*type: String,*/ fcn: "getSaleSpr"});
+Element.add(ProcDet, {name: "SALESPR", required: false, order: 5, attributeType: String, readMethod: "getSaleSpr", writeMethod: "setSaleSpr"});
 
 
 /**
@@ -30204,7 +35928,7 @@ ProcDet.prototype.setSaleSpr = function(saleSpr) {
 ProcDet.prototype.getLongShort = function() {
   return this.longShort;
 };
-Element.add({name: "LONGSHORT", required: false, order: 6, owner: ProcDet, /*type: String,*/ fcn: "getLongShort"});
+Element.add(ProcDet, {name: "LONGSHORT", required: false, order: 6, attributeType: String, readMethod: "getLongShort", writeMethod: "setLongShort"});
 
 
 /**
@@ -30221,7 +35945,7 @@ ProcDet.prototype.setLongShort = function(longShort) {
 ProcDet.prototype.getWasDisAllowed = function() {
   return this.wasDisAllowed;
 };
-Element.add({name: "WASHSALELOSSDISALLOWED", required: false, order: 7, owner: ProcDet, /*type: String,*/ fcn: "getWasDisAllowed"});
+Element.add(ProcDet, {name: "WASHSALELOSSDISALLOWED", required: false, order: 7, attributeType: String, readMethod: "getWasDisAllowed", writeMethod: "setWasDisAllowed"});
 
 
 /**
@@ -30238,7 +35962,7 @@ ProcDet.prototype.setWasDisAllowed = function(wasDisAllowed) {
 ProcDet.prototype.getNoncoveredSec = function() {
   return this.noncoveredSec;
 };
-Element.add({name: "NONCOVEREDSECURITY", required: false, order: 8, owner: ProcDet, /*type: String,*/ fcn: "getNoncoveredSec"});
+Element.add(ProcDet, {name: "NONCOVEREDSECURITY", required: false, order: 8, attributeType: String, readMethod: "getNoncoveredSec", writeMethod: "setNoncoveredSec"});
 
 
 /**
@@ -30255,7 +35979,7 @@ ProcDet.prototype.setNoncoveredSec = function(noncoveredSec) {
 ProcDet.prototype.getBasisNotshown = function() {
   return this.basisNotshown;
 };
-Element.add({name: "BASISNOTSHOWN", required: false, order: 9, owner: ProcDet, /*type: String,*/ fcn: "getBasisNotshown"});
+Element.add(ProcDet, {name: "BASISNOTSHOWN", required: false, order: 9, attributeType: String, readMethod: "getBasisNotshown", writeMethod: "setBasisNotshown"});
 
 
 /**
@@ -30362,7 +36086,7 @@ Aggregate.add("RECADDR", RecAddress);
 RecAddress.prototype.getRecName1 = function() {
   return this.recName1;
 };
-Element.add({name: "RECNAME1",required: true , order: 0, owner: RecAddress, /*type: String,*/ fcn: "getRecName1"});
+Element.add(RecAddress, {name: "RECNAME1",required: true , order: 0, attributeType: String, readMethod: "getRecName1", writeMethod: "setRecName1"});
 
 
 /**
@@ -30379,7 +36103,7 @@ RecAddress.prototype.setRecName1 = function(recName1) {
 RecAddress.prototype.getRecName2 = function() {
   return this.recName2;
 };
-Element.add({name: "RECNAME2",required: false , order: 1, owner: RecAddress, /*type: String,*/ fcn: "getRecName2"});
+Element.add(RecAddress, {name: "RECNAME2",required: false , order: 1, attributeType: String, readMethod: "getRecName2", writeMethod: "setRecName2"});
 
 
 /**
@@ -30396,7 +36120,7 @@ RecAddress.prototype.setRecName2 = function(recName2) {
 RecAddress.prototype.getAddress1 = function() {
   return this.address1;
 };
-Element.add({name: "ADDR1",required: true , order: 2, owner: RecAddress, /*type: String,*/ fcn: "getAddress1"});
+Element.add(RecAddress, {name: "ADDR1",required: true , order: 2, attributeType: String, readMethod: "getAddress1", writeMethod: "setAddress1"});
 
 
 /**
@@ -30413,7 +36137,7 @@ RecAddress.prototype.setAddress1 = function(address1) {
 RecAddress.prototype.getAddress2 = function() {
   return this.address2;
 };
-Element.add({name: "ADDR2",required: true , order: 3, owner: RecAddress, /*type: String,*/ fcn: "getAddress2"});
+Element.add(RecAddress, {name: "ADDR2",required: true , order: 3, attributeType: String, readMethod: "getAddress2", writeMethod: "setAddress2"});
 
 
 /**
@@ -30430,7 +36154,7 @@ RecAddress.prototype.setAddress2 = function(address2) {
 RecAddress.prototype.getCity = function() {
   return this.city;
 };
-Element.add({name: "CITY",required: true , order: 4, owner: RecAddress, /*type: String,*/ fcn: "getCity"});
+Element.add(RecAddress, {name: "CITY",required: true , order: 4, attributeType: String, readMethod: "getCity", writeMethod: "setCity"});
 
 
 /**
@@ -30447,7 +36171,7 @@ RecAddress.prototype.setCity = function(city) {
 RecAddress.prototype.getState = function() {
   return this.state;
 };
-Element.add({name: "STATE",required: true , order: 5, owner: RecAddress, /*type: String,*/ fcn: "getState"});
+Element.add(RecAddress, {name: "STATE",required: true , order: 5, attributeType: String, readMethod: "getState", writeMethod: "setState"});
 
 
 /**
@@ -30464,7 +36188,7 @@ RecAddress.prototype.setState = function(state) {
 RecAddress.prototype.getPostalCode = function() {
   return this.postalCode;
 };
-Element.add({name: "POSTALCODE",required: true , order: 6, owner: RecAddress, /*type: String,*/ fcn: "getPostalCode"});
+Element.add(RecAddress, {name: "POSTALCODE",required: true , order: 6, attributeType: String, readMethod: "getPostalCode", writeMethod: "setPostalCode"});
 
 
 /**
@@ -30481,7 +36205,7 @@ RecAddress.prototype.setPostalCode = function(postalCode) {
 RecAddress.prototype.getPhone = function() {
   return this.phone;
 };
-Element.add({name: "PHONE",required: false , order: 7, owner: RecAddress, /*type: String,*/ fcn: "getPhone"});
+Element.add(RecAddress, {name: "PHONE",required: false , order: 7, attributeType: String, readMethod: "getPhone", writeMethod: "setPhone"});
 
 
 /**
@@ -30516,8 +36240,8 @@ var PayerAddress = require("./PayerAddress");
 var RecAddress = require("./RecAddress");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
-
 var Element = require("../../../meta/Element");
+var ExtDBInfo = require("./ExtDBInfo");
 
 /**
  * @class
@@ -30589,7 +36313,7 @@ Aggregate.add("TAX1099B_V100", Tax1099B);
 Tax1099B.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099B, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add(Tax1099B, {name: "SRVRTID",required: true , order: 0, attributeType: String, readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099B.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -30600,7 +36324,7 @@ Tax1099B.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099B.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099B, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099B, {name: "TAXYEAR", required: true, order: 1, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099B.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -30614,7 +36338,7 @@ Tax1099B.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099B.prototype.getExtDBInfo = function() {
   return this.extDBInfo;
 };
-ChildAggregate.add({required:true, order: 2, owner: Tax1099B, /*type: ExtDBInfo,*/ fcn: "getExtDBInfo"});
+ChildAggregate.add(Tax1099B, {required:true, order: 2, attributeType: ExtDBInfo, readMethod: "getExtDBInfo", writeMethod: "setExtDBInfo"});
 
 
 /**
@@ -30631,7 +36355,7 @@ Tax1099B.prototype.setExtDBInfo = function(extDBInfo) {
 Tax1099B.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 3, owner: Tax1099B, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add(Tax1099B, {required:true, order: 3, attributeType: PayerAddress, readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -30648,7 +36372,7 @@ Tax1099B.prototype.setPayerAddress = function(payerAddress) {
 Tax1099B.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 4, owner: Tax1099B, /*type: String,*/ fcn: "getPayerId"});
+Element.add(Tax1099B, {name: "PAYERID", required: true, order: 4, attributeType: String, readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -30665,7 +36389,7 @@ Tax1099B.prototype.setPayerId = function(payerId) {
 Tax1099B.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 5, owner: Tax1099B, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add(Tax1099B, {required:true, order: 5, attributeType: RecAddress, readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -30682,7 +36406,7 @@ Tax1099B.prototype.setRecAddress = function(recAddress) {
 Tax1099B.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 6, owner: Tax1099B, /*type: String,*/ fcn: "getRecId"});
+Element.add(Tax1099B, {name: "RECID", required: true, order: 6, attributeType: String, readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -30699,7 +36423,7 @@ Tax1099B.prototype.setRecId = function(recId) {
 Tax1099B.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 7, owner: Tax1099B, /*type: String,*/ fcn: "getRecAcct"});
+Element.add(Tax1099B, {name: "RECACCT", required: true, order: 7, attributeType: String, readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**
@@ -30714,7 +36438,7 @@ Tax1099B.prototype.setRecAcct = function(recAcct) {
 
 module.exports = Tax1099B;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099DIV.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./ExtDBInfo":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/ExtDBInfo.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099DIV.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30733,6 +36457,8 @@ module.exports = Tax1099B;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var PayerAddress = require("./PayerAddress");
+var RecAddress = require("./RecAddress");
 
 /**
  * @class
@@ -30881,7 +36607,7 @@ Aggregate.add("TAX1099DIV_V100", Tax1099DIV);
 Tax1099DIV.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: false , order: 0, owner: Tax1099DIV, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add(Tax1099DIV, {name: "SRVRTID",required: false , order: 0, attributeType: String, readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099DIV.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -30892,7 +36618,7 @@ Tax1099DIV.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099DIV.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: false, order: 1, owner: Tax1099DIV, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099DIV, {name: "TAXYEAR", required: false, order: 1, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099DIV.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -30906,7 +36632,7 @@ Tax1099DIV.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099DIV.prototype.getOrdDiv = function() {
   return this.ordDiv;
 };
-Element.add({name: "ORDDIV", required: false, order: 2, owner: Tax1099DIV, /*type: String,*/ fcn: "getOrdDiv"});
+Element.add(Tax1099DIV, {name: "ORDDIV", required: false, order: 2, attributeType: String, readMethod: "getOrdDiv", writeMethod: "setOrdDiv"});
 
 
 /**
@@ -30923,7 +36649,7 @@ Tax1099DIV.prototype.setOrdDiv = function(ordDiv) {
 Tax1099DIV.prototype.getQualifiedDiv = function() {
   return this.qualifiedDiv;
 };
-Element.add({name: "QUALIFIEDDIV", required: false, order: 3, owner: Tax1099DIV, /*type: String,*/ fcn: "getQualifiedDiv"});
+Element.add(Tax1099DIV, {name: "QUALIFIEDDIV", required: false, order: 3, attributeType: String, readMethod: "getQualifiedDiv", writeMethod: "setQualifiedDiv"});
 
 
 /**
@@ -30940,7 +36666,7 @@ Tax1099DIV.prototype.setQualifiedDiv = function(qualifiedDiv) {
 Tax1099DIV.prototype.getTotCapGain = function() {
   return this.totCapGain;
 };
-Element.add({name: "TOTCAPGAIN", required: false, order: 4, owner: Tax1099DIV, /*type: String,*/ fcn: "getTotCapGain"});
+Element.add(Tax1099DIV, {name: "TOTCAPGAIN", required: false, order: 4, attributeType: String, readMethod: "getTotCapGain", writeMethod: "setTotCapGain"});
 
 
 /**
@@ -30957,7 +36683,7 @@ Tax1099DIV.prototype.setTotCapGain = function(totCapGain) {
 Tax1099DIV.prototype.getP28Gain = function() {
   return this.p28Gain;
 };
-Element.add({name: "P28GAIN", required: false, order: 5, owner: Tax1099DIV, /*type: String,*/ fcn: "getP28Gain"});
+Element.add(Tax1099DIV, {name: "P28GAIN", required: false, order: 5, attributeType: String, readMethod: "getP28Gain", writeMethod: "setP28Gain"});
 
 
 /**
@@ -30974,7 +36700,7 @@ Tax1099DIV.prototype.setP28Gain = function(p28Gain) {
 Tax1099DIV.prototype.getUnrecSec1250 = function() {
   return this.unrecSec1250;
 };
-Element.add({name: "UNRECSEC1250", required: false, order: 6, owner: Tax1099DIV, /*type: String,*/ fcn: "getUnrecSec1250"});
+Element.add(Tax1099DIV, {name: "UNRECSEC1250", required: false, order: 6, attributeType: String, readMethod: "getUnrecSec1250", writeMethod: "setUnrecSec1250"});
 
 
 /**
@@ -30991,7 +36717,7 @@ Tax1099DIV.prototype.setUnrecSec1250 = function(unrecSec1250) {
 Tax1099DIV.prototype.getSec1202 = function() {
   return this.sec1202;
 };
-Element.add({name: "SEC1202", required: false, order: 7, owner: Tax1099DIV, /*type: String,*/ fcn: "getSec1202"});
+Element.add(Tax1099DIV, {name: "SEC1202", required: false, order: 7, attributeType: String, readMethod: "getSec1202", writeMethod: "setSec1202"});
 
 
 /**
@@ -31008,7 +36734,7 @@ Tax1099DIV.prototype.setSec1202 = function(sec1202) {
 Tax1099DIV.prototype.getNonTaxDist = function() {
   return this.nonTaxDist;
 };
-Element.add({name: "NONTAXDIST", required: false, order: 8, owner: Tax1099DIV, /*type: String,*/ fcn: "getNonTaxDist"});
+Element.add(Tax1099DIV, {name: "NONTAXDIST", required: false, order: 8, attributeType: String, readMethod: "getNonTaxDist", writeMethod: "setNonTaxDist"});
 
 
 /**
@@ -31025,7 +36751,7 @@ Tax1099DIV.prototype.setNonTaxDist = function(nonTaxDist) {
 Tax1099DIV.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH", required: false, order: 9, owner: Tax1099DIV, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add(Tax1099DIV, {name: "FEDTAXWH", required: false, order: 9, attributeType: String, readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -31042,7 +36768,7 @@ Tax1099DIV.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099DIV.prototype.getInvestExp = function() {
   return this.investExp;
 };
-Element.add({name: "INVESTEXP", required: false, order: 10, owner: Tax1099DIV, /*type: String,*/ fcn: "getInvestExp"});
+Element.add(Tax1099DIV, {name: "INVESTEXP", required: false, order: 10, attributeType: String, readMethod: "getInvestExp", writeMethod: "setInvestExp"});
 
 
 /**
@@ -31059,7 +36785,7 @@ Tax1099DIV.prototype.setInvestExp = function(investExp) {
 Tax1099DIV.prototype.getForTaxPd = function() {
   return this.forTaxPd;
 };
-Element.add({name: "FORTAXPD", required: false, order: 11, owner: Tax1099DIV, /*type: String,*/ fcn: "getForTaxPd"});
+Element.add(Tax1099DIV, {name: "FORTAXPD", required: false, order: 11, attributeType: String, readMethod: "getForTaxPd", writeMethod: "setForTaxPd"});
 
 
 /**
@@ -31076,7 +36802,7 @@ Tax1099DIV.prototype.setForTaxPd = function(forTaxPd) {
 Tax1099DIV.prototype.getCashLiq = function() {
   return this.cashLiq;
 };
-Element.add({name: "CASHLIQ", required: false, order: 12, owner: Tax1099DIV, /*type: String,*/ fcn: "getCashLiq"});
+Element.add(Tax1099DIV, {name: "CASHLIQ", required: false, order: 12, attributeType: String, readMethod: "getCashLiq", writeMethod: "setCashLiq"});
 
 
 /**
@@ -31093,7 +36819,7 @@ Tax1099DIV.prototype.setCashLiq = function(cashLiq) {
 Tax1099DIV.prototype.getNonCashLiq = function() {
   return this.nonCashLiq;
 };
-Element.add({name: "NONCASHLIQ", required: false, order: 13, owner: Tax1099DIV, /*type: String,*/ fcn: "getNonCashLiq"});
+Element.add(Tax1099DIV, {name: "NONCASHLIQ", required: false, order: 13, attributeType: String, readMethod: "getNonCashLiq", writeMethod: "setNonCashLiq"});
 
 
 /**
@@ -31110,7 +36836,7 @@ Tax1099DIV.prototype.setNonCashLiq = function(nonCashLiq) {
 Tax1099DIV.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 14, owner: Tax1099DIV, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add(Tax1099DIV, {required:true, order: 14, attributeType: PayerAddress, readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -31127,7 +36853,7 @@ Tax1099DIV.prototype.setPayerAddress = function(payerAddress) {
 Tax1099DIV.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 15, owner: Tax1099DIV, /*type: String,*/ fcn: "getPayerId"});
+Element.add(Tax1099DIV, {name: "PAYERID", required: true, order: 15, attributeType: String, readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -31144,7 +36870,7 @@ Tax1099DIV.prototype.setPayerId = function(payerId) {
 Tax1099DIV.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 16, owner: Tax1099DIV, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add(Tax1099DIV, {required:true, order: 16, attributeType: RecAddress, readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -31161,7 +36887,7 @@ Tax1099DIV.prototype.setRecAddress = function(recAddress) {
 Tax1099DIV.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 17, owner: Tax1099DIV, /*type: String,*/ fcn: "getRecId"});
+Element.add(Tax1099DIV, {name: "RECID", required: true, order: 17, attributeType: String, readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -31178,7 +36904,7 @@ Tax1099DIV.prototype.setRecId = function(recId) {
 Tax1099DIV.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 18, owner: Tax1099DIV, /*type: String,*/ fcn: "getRecAcct"});
+Element.add(Tax1099DIV, {name: "RECACCT", required: true, order: 18, attributeType: String, readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**
@@ -31193,7 +36919,7 @@ Tax1099DIV.prototype.setRecAcct = function(recAcct) {
 
 module.exports = Tax1099DIV;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099INT.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099INT.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31212,6 +36938,8 @@ module.exports = Tax1099DIV;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var PayerAddress = require("./PayerAddress");
+var RecAddress = require("./RecAddress");
 
 /**
  * @class
@@ -31332,7 +37060,7 @@ Aggregate.add("TAX1099INT_V100", Tax1099INT);
 Tax1099INT.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099INT, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add(Tax1099INT, {name: "SRVRTID",required: true , order: 0, attributeType: String, readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099INT.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -31343,7 +37071,7 @@ Tax1099INT.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099INT.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099INT, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099INT, {name: "TAXYEAR", required: true, order: 1, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099INT.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -31357,7 +37085,7 @@ Tax1099INT.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099INT.prototype.getIntIncome = function() {
   return this.intIncome;
 };
-Element.add({name: "INTINCOME",required: false , order: 2, owner: Tax1099INT, /*type: String,*/ fcn: "getIntIncome"});
+Element.add(Tax1099INT, {name: "INTINCOME",required: false , order: 2, attributeType: String, readMethod: "getIntIncome", writeMethod: "setIntIncome"});
 
 
 /**
@@ -31374,7 +37102,7 @@ Tax1099INT.prototype.setIntIncome = function(intIncome) {
 Tax1099INT.prototype.getErlWithPen = function() {
   return this.erlWithPen;
 };
-Element.add({name: "ERLWITHPEN",required: false , order: 3, owner: Tax1099INT, /*type: String,*/ fcn: "getErlWithPen"});
+Element.add(Tax1099INT, {name: "ERLWITHPEN",required: false , order: 3, attributeType: String, readMethod: "getErlWithPen", writeMethod: "setErlWithPen"});
 
 
 /**
@@ -31391,7 +37119,7 @@ Tax1099INT.prototype.setErlWithPen = function(erlWithPen) {
 Tax1099INT.prototype.getIntUsbndtrs = function() {
   return this.intUsbndtrs;
 };
-Element.add({name: "INTUSBNDTRS",required: false , order: 4, owner: Tax1099INT, /*type: String,*/ fcn: "getIntUsbndtrs"});
+Element.add(Tax1099INT, {name: "INTUSBNDTRS",required: false , order: 4, attributeType: String, readMethod: "getIntUsbndtrs", writeMethod: "setIntUsbndtrs"});
 
 
 /**
@@ -31408,7 +37136,7 @@ Tax1099INT.prototype.setIntUsbndtrs = function(intUsbndtrs) {
 Tax1099INT.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH", required: false, order: 5, owner: Tax1099INT, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add(Tax1099INT, {name: "FEDTAXWH", required: false, order: 5, attributeType: String, readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -31425,7 +37153,7 @@ Tax1099INT.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099INT.prototype.getInvestExp = function() {
   return this.investExp;
 };
-Element.add({name: "INVESTEXP", required: false, order: 6, owner: Tax1099INT, /*type: String,*/ fcn: "getInvestExp"});
+Element.add(Tax1099INT, {name: "INVESTEXP", required: false, order: 6, attributeType: String, readMethod: "getInvestExp", writeMethod: "setInvestExp"});
 
 
 /**
@@ -31442,7 +37170,7 @@ Tax1099INT.prototype.setInvestExp = function(investExp) {
 Tax1099INT.prototype.getForTaxPd = function() {
   return this.forTaxPd;
 };
-Element.add({name: "FORTAXPD", required: false, order: 7, owner: Tax1099INT, /*type: String,*/ fcn: "getForTaxPd"});
+Element.add(Tax1099INT, {name: "FORTAXPD", required: false, order: 7, attributeType: String, readMethod: "getForTaxPd", writeMethod: "setForTaxPd"});
 
 
 /**
@@ -31459,7 +37187,7 @@ Tax1099INT.prototype.setForTaxPd = function(forTaxPd) {
 Tax1099INT.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 8, owner: Tax1099INT, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add(Tax1099INT, {required:true, order: 8, attributeType: PayerAddress, readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -31476,7 +37204,7 @@ Tax1099INT.prototype.setPayerAddress = function(payerAddress) {
 Tax1099INT.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 9, owner: Tax1099INT, /*type: String,*/ fcn: "getPayerId"});
+Element.add(Tax1099INT, {name: "PAYERID", required: true, order: 9, attributeType: String, readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -31493,7 +37221,7 @@ Tax1099INT.prototype.setPayerId = function(payerId) {
 Tax1099INT.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 10, owner: Tax1099INT, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add(Tax1099INT, {required:true, order: 10, attributeType: RecAddress, readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -31510,7 +37238,7 @@ Tax1099INT.prototype.setRecAddress = function(recAddress) {
 Tax1099INT.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 11, owner: Tax1099INT, /*type: String,*/ fcn: "getRecId"});
+Element.add(Tax1099INT, {name: "RECID", required: true, order: 11, attributeType: String, readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -31527,7 +37255,7 @@ Tax1099INT.prototype.setRecId = function(recId) {
 Tax1099INT.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 12, owner: Tax1099INT, /*type: String,*/ fcn: "getRecAcct"});
+Element.add(Tax1099INT, {name: "RECACCT", required: true, order: 12, attributeType: String, readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**
@@ -31544,7 +37272,7 @@ Tax1099INT.prototype.setRecAcct = function(recAcct) {
 Tax1099INT.prototype.getTaxExemptInt = function() {
   return this.taxExemptInt;
 };
-Element.add({name: "TAXEXEMPTINT", required: false, order: 13, owner: Tax1099INT, /*type: String,*/ fcn: "getTaxExemptInt"});
+Element.add(Tax1099INT, {name: "TAXEXEMPTINT", required: false, order: 13, attributeType: String, readMethod: "getTaxExemptInt", writeMethod: "setTaxExemptInt"});
 
 
 /**
@@ -31561,7 +37289,7 @@ Tax1099INT.prototype.setTaxExemptInt = function(taxExemptInt) {
 Tax1099INT.prototype.getSpecifiedPabInt = function() {
   return this.specifiedPabInt;
 };
-Element.add({name: "SPECIFIEDPABINT", required: false, order: 14, owner: Tax1099INT, /*type: String,*/ fcn: "getSpecifiedPabInt"});
+Element.add(Tax1099INT, {name: "SPECIFIEDPABINT", required: false, order: 14, attributeType: String, readMethod: "getSpecifiedPabInt", writeMethod: "setSpecifiedPabInt"});
 
 
 /**
@@ -31576,7 +37304,7 @@ Tax1099INT.prototype.setSpecifiedPabInt = function(specifiedPabInt) {
 
 module.exports = Tax1099INT;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099MISC.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099MISC.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31595,6 +37323,8 @@ module.exports = Tax1099INT;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var PayerAddress = require("./PayerAddress");
+var RecAddress = require("./RecAddress");
 
 /**
  * @class
@@ -31687,7 +37417,7 @@ Aggregate.add("TAX1099MISC_V100", Tax1099MISC);
 Tax1099MISC.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099MISC, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add(Tax1099MISC, {name: "SRVRTID",required: true , order: 0, attributeType: String, readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099MISC.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -31698,7 +37428,7 @@ Tax1099MISC.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099MISC.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099MISC, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099MISC, {name: "TAXYEAR", required: true, order: 1, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099MISC.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -31712,7 +37442,7 @@ Tax1099MISC.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099MISC.prototype.getRoyalties = function() {
   return this.royalties;
 };
-Element.add({name: "ROYALTIES",required: false , order: 2, owner: Tax1099MISC, /*type: String,*/ fcn: "getRoyalties"});
+Element.add(Tax1099MISC, {name: "ROYALTIES",required: false , order: 2, attributeType: String, readMethod: "getRoyalties", writeMethod: "setRoyalties"});
 
 
 /**
@@ -31729,7 +37459,7 @@ Tax1099MISC.prototype.setRoyalties = function(royalties) {
 Tax1099MISC.prototype.getOtherIncome = function() {
   return this.otherIncome;
 };
-Element.add({name: "OTHERINCOME",required: false , order: 3, owner: Tax1099MISC, /*type: String,*/ fcn: "getOtherIncome"});
+Element.add(Tax1099MISC, {name: "OTHERINCOME",required: false , order: 3, attributeType: String, readMethod: "getOtherIncome", writeMethod: "setOtherIncome"});
 
 
 /**
@@ -31746,7 +37476,7 @@ Tax1099MISC.prototype.setOtherIncome = function(otherIncome) {
 Tax1099MISC.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH",required: false , order: 4, owner: Tax1099MISC, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add(Tax1099MISC, {name: "FEDTAXWH",required: false , order: 4, attributeType: String, readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -31763,7 +37493,7 @@ Tax1099MISC.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099MISC.prototype.getSubPmts = function() {
   return this.subPmts;
 };
-Element.add({name: "SUBPMTS",required: false , order: 5, owner: Tax1099MISC, /*type: String,*/ fcn: "getSubPmts"});
+Element.add(Tax1099MISC, {name: "SUBPMTS",required: false , order: 5, attributeType: String, readMethod: "getSubPmts", writeMethod: "setSubPmts"});
 
 
 /**
@@ -31780,7 +37510,7 @@ Tax1099MISC.prototype.setSubPmts = function(subPmts) {
 Tax1099MISC.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 6, owner: Tax1099MISC, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add(Tax1099MISC, {required:true, order: 6, attributeType: PayerAddress, readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -31797,7 +37527,7 @@ Tax1099MISC.prototype.setPayerAddress = function(payerAddress) {
 Tax1099MISC.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 7, owner: Tax1099MISC, /*type: String,*/ fcn: "getPayerId"});
+Element.add(Tax1099MISC, {name: "PAYERID", required: true, order: 7, attributeType: String, readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -31814,7 +37544,7 @@ Tax1099MISC.prototype.setPayerId = function(payerId) {
 Tax1099MISC.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 8, owner: Tax1099MISC, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add(Tax1099MISC, {required:true, order: 8, attributeType: RecAddress, readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -31831,7 +37561,7 @@ Tax1099MISC.prototype.setRecAddress = function(recAddress) {
 Tax1099MISC.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 9, owner: Tax1099MISC, /*type: String,*/ fcn: "getRecId"});
+Element.add(Tax1099MISC, {name: "RECID", required: true, order: 9, attributeType: String, readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -31848,7 +37578,7 @@ Tax1099MISC.prototype.setRecId = function(recId) {
 Tax1099MISC.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 10, owner: Tax1099MISC, /*type: String,*/ fcn: "getRecAcct"});
+Element.add(Tax1099MISC, {name: "RECACCT", required: true, order: 10, attributeType: String, readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**
@@ -31863,7 +37593,7 @@ Tax1099MISC.prototype.setRecAcct = function(recAcct) {
 
 module.exports = Tax1099MISC;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099OID.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099OID.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31882,6 +37612,8 @@ module.exports = Tax1099MISC;
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
+var PayerAddress = require("./PayerAddress");
+var RecAddress = require("./RecAddress");
 
 /**
  * @class
@@ -31995,7 +37727,7 @@ Aggregate.add("TAX1099OID_V100", Tax1099OID);
 Tax1099OID.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099OID, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add(Tax1099OID, {name: "SRVRTID",required: true , order: 0, attributeType: String, readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099OID.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -32006,7 +37738,7 @@ Tax1099OID.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099OID.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099OID, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099OID, {name: "TAXYEAR", required: true, order: 1, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099OID.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -32020,7 +37752,7 @@ Tax1099OID.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099OID.prototype.getOriginalDisc = function() {
   return this.originalDisc;
 };
-Element.add({name: "ORIGISDISC", required: false, order: 2, owner: Tax1099OID, /*type: String,*/ fcn: "getOriginalDisc"});
+Element.add(Tax1099OID, {name: "ORIGISDISC", required: false, order: 2, attributeType: String, readMethod: "getOriginalDisc", writeMethod: "setOriginalDisc"});
 
 
 /**
@@ -32037,7 +37769,7 @@ Tax1099OID.prototype.setOriginalDisc = function(originalDisc) {
 Tax1099OID.prototype.getOtherPerInt = function() {
   return this.otherPerInt;
 };
-Element.add({name: "OTHERPERINT", required: false, order: 3, owner: Tax1099OID, /*type: String,*/ fcn: "getOtherPerInt"});
+Element.add(Tax1099OID, {name: "OTHERPERINT", required: false, order: 3, attributeType: String, readMethod: "getOtherPerInt", writeMethod: "setOtherPerInt"});
 
 
 /**
@@ -32054,7 +37786,7 @@ Tax1099OID.prototype.setOtherPerInt = function(otherPerInt) {
 Tax1099OID.prototype.getErlWithPen = function() {
   return this.erlWithPen;
 };
-Element.add({name: "ERLWITHPEN", required: false, order: 4, owner: Tax1099OID, /*type: String,*/ fcn: "getErlWithPen"});
+Element.add(Tax1099OID, {name: "ERLWITHPEN", required: false, order: 4, attributeType: String, readMethod: "getErlWithPen", writeMethod: "setErlWithPen"});
 
 
 /**
@@ -32071,7 +37803,7 @@ Tax1099OID.prototype.setErlWithPen = function(erlWithPen) {
 Tax1099OID.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH", required: false, order: 5, owner: Tax1099OID, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add(Tax1099OID, {name: "FEDTAXWH", required: false, order: 5, attributeType: String, readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -32088,7 +37820,7 @@ Tax1099OID.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099OID.prototype.getDesc = function() {
   return this.desc;
 };
-Element.add({name: "DESCRIPTION", required: true, order: 6, owner: Tax1099OID, /*type: String,*/ fcn: "getDesc"});
+Element.add(Tax1099OID, {name: "DESCRIPTION", required: true, order: 6, attributeType: String, readMethod: "getDesc", writeMethod: "setDesc"});
 
 
 /**
@@ -32105,7 +37837,7 @@ Tax1099OID.prototype.setDesc = function(desc) {
 Tax1099OID.prototype.getOidOnUstres = function() {
   return this.oidOnUstres;
 };
-Element.add({name: "OIDONUSTRES", required: false, order: 7, owner: Tax1099OID, /*type: String,*/ fcn: "getOidOnUstres"});
+Element.add(Tax1099OID, {name: "OIDONUSTRES", required: false, order: 7, attributeType: String, readMethod: "getOidOnUstres", writeMethod: "setOidOnUstres"});
 
 
 /**
@@ -32122,7 +37854,7 @@ Tax1099OID.prototype.setOidOnUstres = function(oidOnUstres) {
 Tax1099OID.prototype.getInvestExp = function() {
   return this.investExp;
 };
-Element.add({name: "INVESTEXP", required: false, order: 8, owner: Tax1099OID, /*type: String,*/ fcn: "getInvestExp"});
+Element.add(Tax1099OID, {name: "INVESTEXP", required: false, order: 8, attributeType: String, readMethod: "getInvestExp", writeMethod: "setInvestExp"});
 
 
 /**
@@ -32139,7 +37871,7 @@ Tax1099OID.prototype.setInvestExp = function(investExp) {
 Tax1099OID.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 9, owner: Tax1099OID, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add(Tax1099OID, {required:true, order: 9, attributeType: PayerAddress, readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -32156,7 +37888,7 @@ Tax1099OID.prototype.setPayerAddress = function(payerAddress) {
 Tax1099OID.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 10, owner: Tax1099OID, /*type: String,*/ fcn: "getPayerId"});
+Element.add(Tax1099OID, {name: "PAYERID", required: true, order: 10, attributeType: String, readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -32173,7 +37905,7 @@ Tax1099OID.prototype.setPayerId = function(payerId) {
 Tax1099OID.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 11, owner: Tax1099OID, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add(Tax1099OID, {required:true, order: 11, attributeType: RecAddress, readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -32190,7 +37922,7 @@ Tax1099OID.prototype.setRecAddress = function(recAddress) {
 Tax1099OID.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 12, owner: Tax1099OID, /*type: String,*/ fcn: "getRecId"});
+Element.add(Tax1099OID, {name: "RECID", required: true, order: 12, attributeType: String, readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -32207,7 +37939,7 @@ Tax1099OID.prototype.setRecId = function(recId) {
 Tax1099OID.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 13, owner: Tax1099OID, /*type: String,*/ fcn: "getRecAcct"});
+Element.add(Tax1099OID, {name: "RECACCT", required: true, order: 13, attributeType: String, readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**
@@ -32222,7 +37954,7 @@ Tax1099OID.prototype.setRecAcct = function(recAcct) {
 
 module.exports = Tax1099OID;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099R.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099R.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32240,8 +37972,9 @@ module.exports = Tax1099OID;
 
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
-
 var Element = require("../../../meta/Element");
+var PayerAddress = require("./PayerAddress");
+var RecAddress = require("./RecAddress");
 
 /**
  * @class
@@ -32383,7 +38116,7 @@ Aggregate.add("TAX1099R_V100", Tax1099R);
 Tax1099R.prototype.getSrvrtId = function() {
   return this.srvrtId;
 };
-Element.add({name: "SRVRTID",required: true , order: 0, owner: Tax1099R, /*type: String,*/ fcn: "getSrvrtId"});
+Element.add(Tax1099R, {name: "SRVRTID",required: true , order: 0, attributeType: String, readMethod: "getSrvrtId", writeMethod: "setSrvrtId"});
 
 
 Tax1099R.prototype.setSrvrtId = function(/*String*/ srvrtId) {
@@ -32394,7 +38127,7 @@ Tax1099R.prototype.setSrvrtId = function(/*String*/ srvrtId) {
 Tax1099R.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 1, owner: Tax1099R, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099R, {name: "TAXYEAR", required: true, order: 1, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099R.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -32408,7 +38141,7 @@ Tax1099R.prototype.setTaxYear = function(/*String*/ taxYear) {
 Tax1099R.prototype.getGrossDist = function() {
   return this.grossDist;
 };
-Element.add({name: "GROSSDIST", required: true, order: 2, owner: Tax1099R, /*type: String,*/ fcn: "getGrossDist"});
+Element.add(Tax1099R, {name: "GROSSDIST", required: true, order: 2, attributeType: String, readMethod: "getGrossDist", writeMethod: "setGrossDist"});
 
 
 /**
@@ -32425,7 +38158,7 @@ Tax1099R.prototype.setGrossDist = function(grossDist) {
 Tax1099R.prototype.getTaxAmt = function() {
   return this.taxAmt;
 };
-Element.add({name: "TAXAMT", required: false, order: 3, owner: Tax1099R, /*type: String,*/ fcn: "getTaxAmt"});
+Element.add(Tax1099R, {name: "TAXAMT", required: false, order: 3, attributeType: String, readMethod: "getTaxAmt", writeMethod: "setTaxAmt"});
 
 
 /**
@@ -32442,7 +38175,7 @@ Tax1099R.prototype.setTaxAmt = function(taxAmt) {
 Tax1099R.prototype.getTaxAmtNd = function() {
   return this.taxAmtNd;
 };
-Element.add({name: "TAXAMTND", required: false, order: 4, owner: Tax1099R, /*type: String,*/ fcn: "getTaxAmtNd"});
+Element.add(Tax1099R, {name: "TAXAMTND", required: false, order: 4, attributeType: String, readMethod: "getTaxAmtNd", writeMethod: "setTaxAmtNd"});
 
 
 /**
@@ -32459,7 +38192,7 @@ Tax1099R.prototype.setTaxAmtNd = function(taxAmtNd) {
 Tax1099R.prototype.getCapGain = function() {
   return this.capGain;
 };
-Element.add({name: "CAPGAIN", required: false, order: 5, owner: Tax1099R, /*type: String,*/ fcn: "getCapGain"});
+Element.add(Tax1099R, {name: "CAPGAIN", required: false, order: 5, attributeType: String, readMethod: "getCapGain", writeMethod: "setCapGain"});
 
 
 /**
@@ -32476,7 +38209,7 @@ Tax1099R.prototype.setCapGain = function(capGain) {
 Tax1099R.prototype.getFedTaxWh = function() {
   return this.fedTaxWh;
 };
-Element.add({name: "FEDTAXWH", required: false, order: 6, owner: Tax1099R, /*type: String,*/ fcn: "getFedTaxWh"});
+Element.add(Tax1099R, {name: "FEDTAXWH", required: false, order: 6, attributeType: String, readMethod: "getFedTaxWh", writeMethod: "setFedTaxWh"});
 
 
 /**
@@ -32493,7 +38226,7 @@ Tax1099R.prototype.setFedTaxWh = function(fedTaxWh) {
 Tax1099R.prototype.getEmpContins = function() {
   return this.empContins;
 };
-Element.add({name: "EMPCONTINS", required: false, order: 7, owner: Tax1099R, /*type: String,*/ fcn: "getEmpContins"});
+Element.add(Tax1099R, {name: "EMPCONTINS", required: false, order: 7, attributeType: String, readMethod: "getEmpContins", writeMethod: "setEmpContins"});
 
 
 /**
@@ -32510,7 +38243,7 @@ Tax1099R.prototype.setEmpContins = function(empContins) {
 Tax1099R.prototype.getNetUnapEmp = function() {
   return this.netUnapEmp;
 };
-Element.add({name: "NETUNAPEMP", required: false, order: 8, owner: Tax1099R, /*type: String,*/ fcn: "getNetUnapEmp"});
+Element.add(Tax1099R, {name: "NETUNAPEMP", required: false, order: 8, attributeType: String, readMethod: "getNetUnapEmp", writeMethod: "setNetUnapEmp"});
 
 
 /**
@@ -32527,7 +38260,7 @@ Tax1099R.prototype.setNetUnapEmp = function(netUnapEmp) {
 Tax1099R.prototype.getDistCode = function() {
   return this.distCode;
 };
-Element.add({name: "DISTCODE", required: true, order: 9, owner: Tax1099R, /*type: String,*/ fcn: "getDistCode"});
+Element.add(Tax1099R, {name: "DISTCODE", required: true, order: 9, attributeType: String, readMethod: "getDistCode", writeMethod: "setDistCode"});
 
 
 /**
@@ -32544,7 +38277,7 @@ Tax1099R.prototype.setDistCode = function(distCode) {
 Tax1099R.prototype.getIraSepSimp = function() {
   return this.iraSepSimp;
 };
-Element.add({name: "IRASEPSIMP", required: true, order: 10, owner: Tax1099R, /*type: String,*/ fcn: "getIraSepSimp"});
+Element.add(Tax1099R, {name: "IRASEPSIMP", required: true, order: 10, attributeType: String, readMethod: "getIraSepSimp", writeMethod: "setIraSepSimp"});
 
 
 /**
@@ -32561,7 +38294,7 @@ Tax1099R.prototype.setIraSepSimp = function(iraSepSimp) {
 Tax1099R.prototype.getAnnCtrctDist = function() {
   return this.annCtrctDist;
 };
-Element.add({name: "ANNCTRCTDIST", required: false, order: 11, owner: Tax1099R, /*type: String,*/ fcn: "getAnnCtrctDist"});
+Element.add(Tax1099R, {name: "ANNCTRCTDIST", required: false, order: 11, attributeType: String, readMethod: "getAnnCtrctDist", writeMethod: "setAnnCtrctDist"});
 
 
 /**
@@ -32578,7 +38311,7 @@ Tax1099R.prototype.setAnnCtrctDist = function(annCtrctDist) {
 Tax1099R.prototype.getTotEmpCount = function() {
   return this.totEmpCount;
 };
-Element.add({name: "TOTEMPCONT", required: false, order: 12, owner: Tax1099R, /*type: String,*/ fcn: "getTotEmpCount"});
+Element.add(Tax1099R, {name: "TOTEMPCONT", required: false, order: 12, attributeType: String, readMethod: "getTotEmpCount", writeMethod: "setTotEmpCount"});
 
 
 /**
@@ -32595,7 +38328,7 @@ Tax1099R.prototype.setTotEmpCount = function(totEmpCount) {
 Tax1099R.prototype.getPayerAddress = function() {
   return this.payerAddress;
 };
-ChildAggregate.add({required:true, order: 13, owner: Tax1099R, /*type: PayerAddress,*/ fcn: "getPayerAddress"});
+ChildAggregate.add(Tax1099R, {required:true, order: 13, attributeType: PayerAddress, readMethod: "getPayerAddress", writeMethod: "setPayerAddress"});
 
 
 /**
@@ -32612,7 +38345,7 @@ Tax1099R.prototype.setPayerAddress = function(payerAddress) {
 Tax1099R.prototype.getPayerId = function() {
   return this.payerId;
 };
-Element.add({name: "PAYERID", required: true, order: 14, owner: Tax1099R, /*type: String,*/ fcn: "getPayerId"});
+Element.add(Tax1099R, {name: "PAYERID", required: true, order: 14, attributeType: String, readMethod: "getPayerId", writeMethod: "setPayerId"});
 
 
 /**
@@ -32629,7 +38362,7 @@ Tax1099R.prototype.setPayerId = function(payerId) {
 Tax1099R.prototype.getRecAddress = function() {
   return this.recAddress;
 };
-ChildAggregate.add({required:true, order: 15, owner: Tax1099R, /*type: RecAddress,*/ fcn: "getRecAddress"});
+ChildAggregate.add(Tax1099R, {required:true, order: 15, attributeType: RecAddress, readMethod: "getRecAddress", writeMethod: "setRecAddress"});
 
 
 /**
@@ -32646,7 +38379,7 @@ Tax1099R.prototype.setRecAddress = function(recAddress) {
 Tax1099R.prototype.getRecId = function() {
   return this.recId;
 };
-Element.add({name: "RECID", required: true, order: 16, owner: Tax1099R, /*type: String,*/ fcn: "getRecId"});
+Element.add(Tax1099R, {name: "RECID", required: true, order: 16, attributeType: String, readMethod: "getRecId", writeMethod: "setRecId"});
 
 
 /**
@@ -32663,7 +38396,7 @@ Tax1099R.prototype.setRecId = function(recId) {
 Tax1099R.prototype.getRecAcct = function() {
   return this.recAcct;
 };
-Element.add({name: "RECACCT", required: true, order: 17, owner: Tax1099R, /*type: String,*/ fcn: "getRecAcct"});
+Element.add(Tax1099R, {name: "RECACCT", required: true, order: 17, attributeType: String, readMethod: "getRecAcct", writeMethod: "setRecAcct"});
 
 
 /**
@@ -32678,7 +38411,7 @@ Tax1099R.prototype.setRecAcct = function(recAcct) {
 
 module.exports = Tax1099R;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099Request.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./PayerAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/PayerAddress.js","./RecAddress":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/RecAddress.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099Request.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32723,7 +38456,7 @@ Aggregate.add("TAX1099RQ", Tax1099Request);
 Tax1099Request.prototype.getTaxYear = function() {
   return this.taxYear;
 };
-Element.add({name: "TAXYEAR", required: true, order: 0, owner: Tax1099Request, /*type: String,*/ fcn: "getTaxYear"});
+Element.add(Tax1099Request, {name: "TAXYEAR", required: true, order: 0, attributeType: String, readMethod: "getTaxYear", writeMethod: "setTaxYear"});
 
 
 Tax1099Request.prototype.setTaxYear = function(/*String*/ taxYear) {
@@ -32757,6 +38490,7 @@ var MessageSetType = require("../MessageSetType");
 var RequestMessageSet = require("../RequestMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Tax1099RequestTransaction = require("./Tax1099RequestTransaction");
 
 /**
  * @class
@@ -32791,7 +38525,7 @@ Tax1099RequestMessageSet.prototype.getType = function() {
 Tax1099RequestMessageSet.prototype.getTaxRequestTransaction = function() {
   return this.taxRequestTransaction;
 };
-ChildAggregate.add({order: 0, owner: Tax1099RequestMessageSet, /*type: Tax1099RequestTransaction,*/ fcn: "getTaxRequestTransaction"});
+ChildAggregate.add(Tax1099RequestMessageSet, {order: 0, attributeType: Tax1099RequestTransaction, readMethod: "getTaxRequestTransaction", writeMethod: "setTaxRequestTransaction"});
 
 
 /**
@@ -32818,7 +38552,7 @@ Tax1099RequestMessageSet.prototype.getRequestMessages = function() {
 
 module.exports = Tax1099RequestMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099RequestTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../RequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessageSet.js","./Tax1099RequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099RequestTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099RequestTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32869,7 +38603,7 @@ Aggregate.add("TAX1099TRNRQ", Tax1099RequestTransaction);
 Tax1099RequestTransaction.prototype.getTax1099Request = function() {
   return this.tax1099Request;
 };
-ChildAggregate.add({required: true, order: 30, owner: Tax1099RequestTransaction, /*type: Tax1099Request,*/ fcn: "getTax1099Request"});
+ChildAggregate.add(Tax1099RequestTransaction, {required: true, order: 30, attributeType: Tax1099Request, readMethod: "getTax1099Request", writeMethod: "setTax1099Request"});
 
 
 /**
@@ -32914,6 +38648,12 @@ var inherit = require("../../../util/inherit");
 var T1099Response = require("../common/T1099Response");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Tax1099DIV = require("./Tax1099DIV");
+var Tax1099INT = require("./Tax1099INT");
+var Tax1099R = require("./Tax1099R");
+var Tax1099B = require("./Tax1099B");
+var Tax1099MISC = require("./Tax1099MISC");
+var Tax1099OID = require("./Tax1099OID");
 
 /**
  * @class
@@ -32983,7 +38723,7 @@ Aggregate.add("TAX1099RS", Tax1099Response);
 Tax1099Response.prototype.getLstTax1099DIV = function() {
   return this.lstTax1099DIV;
 };
-ChildAggregate.add({required: false, order: 0, owner: Tax1099Response, /*type: Tax1099DIV[],*/ fcn: "getLstTax1099DIV"});
+ChildAggregate.add(Tax1099Response, {required: false, order: 0, attributeType: Array, collectionEntryType: Tax1099DIV, readMethod: "getLstTax1099DIV", writeMethod: "setLstTax1099DIV"});
 
 
 /**
@@ -33006,7 +38746,7 @@ Tax1099Response.prototype.getResponseMessageName = function() {
 Tax1099Response.prototype.getLstTax1099INT = function() {
   return this.lstTax1099INT;
 };
-ChildAggregate.add({required: false, order: 1, owner: Tax1099Response, /*type: Tax1099INT[],*/ fcn: "getLstTax1099INT"});
+ChildAggregate.add(Tax1099Response, {required: false, order: 1, attributeType: Array, collectionEntryType: Tax1099INT, readMethod: "getLstTax1099INT", writeMethod: "setLstTax1099INT"});
 
 
 /**
@@ -33023,7 +38763,7 @@ Tax1099Response.prototype.setLstTax1099INT = function(lstTax1099INT) {
 Tax1099Response.prototype.getLstTax1099R = function() {
   return this.lstTax1099R;
 };
-ChildAggregate.add({required: false, order: 2, owner: Tax1099Response, /*type: Tax1099R[],*/ fcn: "getLstTax1099R"});
+ChildAggregate.add(Tax1099Response, {required: false, order: 2, attributeType: Array, collectionEntryType: Tax1099R, readMethod: "getLstTax1099R", writeMethod: "setLstTax1099R"});
 
 
 /**
@@ -33040,7 +38780,7 @@ Tax1099Response.prototype.setLstTax1099R = function(lstTax1099R) {
 Tax1099Response.prototype.getLstTax1099B = function() {
   return this.lstTax1099B;
 };
-ChildAggregate.add({required: false, order: 3, owner: Tax1099Response, /*type: Tax1099B[],*/ fcn: "getLstTax1099B"});
+ChildAggregate.add(Tax1099Response, {required: false, order: 3, attributeType: Array, collectionEntryType: Tax1099B, readMethod: "getLstTax1099B", writeMethod: "setLstTax1099B"});
 
 
 /**
@@ -33057,7 +38797,7 @@ Tax1099Response.prototype.setLstTax1099B = function(lstTax1099B) {
 Tax1099Response.prototype.getLstTax1099MISC = function() {
   return this.lstTax1099MISC;
 };
-ChildAggregate.add({required: false, order: 4, owner: Tax1099Response, /*type: Tax1099MISC[],*/ fcn: "getLstTax1099MISC"});
+ChildAggregate.add(Tax1099Response, {required: false, order: 4, attributeType: Array, collectionEntryType: Tax1099MISC, readMethod: "getLstTax1099MISC", writeMethod: "setLstTax1099MISC"});
 
 
 /**
@@ -33074,7 +38814,7 @@ Tax1099Response.prototype.setLstTax1099MISC = function(lstTax1099MISC) {
 Tax1099Response.prototype.getLstTax1099OID = function() {
   return this.lstTax1099OID;
 };
-ChildAggregate.add({required: false, order:5, owner: Tax1099Response, /*type: Tax1099OID[],*/ fcn: "getLstTax1099OID"});
+ChildAggregate.add(Tax1099Response, {required: false, order:5, attributeType: Array, collectionEntryType: Tax1099OID, readMethod: "getLstTax1099OID", writeMethod: "setLstTax1099OID"});
 
 
 /**
@@ -33089,7 +38829,7 @@ Tax1099Response.prototype.setLstTax1099OID = function(lstTax1099OID) {
 
 module.exports = Tax1099Response;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/T1099Response":"/Users/aolson/Developer/ofx4js/src/domain/data/common/T1099Response.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099ResponseMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../common/T1099Response":"/Users/aolson/Developer/ofx4js/src/domain/data/common/T1099Response.js","./Tax1099B":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099B.js","./Tax1099DIV":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099DIV.js","./Tax1099INT":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099INT.js","./Tax1099MISC":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099MISC.js","./Tax1099OID":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099OID.js","./Tax1099R":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099R.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099ResponseMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33111,6 +38851,7 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Tax1099ResponseTransaction = require("./Tax1099ResponseTransaction");
 
 /**
  * @class
@@ -33149,7 +38890,7 @@ Tax1099ResponseMessageSet.prototype.getType = function() {
 Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction = function() {
   return this.taxResponseTransaction;
 };
-ChildAggregate.add({order: 0, owner: Tax1099ResponseMessageSet, /*type: Tax1099ResponseTransaction[],*/ fcn: "getTaxResponseTransaction"});
+ChildAggregate.add(Tax1099ResponseMessageSet, {order: 0, attributeType: Array, collectionEntryType: Tax1099ResponseTransaction, readMethod: "getTaxResponseTransaction", writeMethod: "setTaxResponseTransaction"});
 
 
 /**
@@ -33188,7 +38929,7 @@ Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(/*Tax10
 
 module.exports = Tax1099ResponseMessageSet;
 
-},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099ResponseTransaction.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../ResponseMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessageSet.js","./Tax1099ResponseTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099ResponseTransaction.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/tax1099/Tax1099ResponseTransaction.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33239,7 +38980,7 @@ Aggregate.add("TAX1099TRNRS", Tax1099ResponseTransaction);
 Tax1099ResponseTransaction.prototype.getTax1099Response = function() {
   return this.tax1099Response;
 };
-ChildAggregate.add({required:false, order: 2, owner: Tax1099ResponseTransaction, /*type: Tax1099Response,*/ fcn: "getTax1099Response"});
+ChildAggregate.add(Tax1099ResponseTransaction, {required:false, order: 2, attributeType: Tax1099Response, readMethod: "getTax1099Response", writeMethod: "setTax1099Response"});
 
 
 /**
@@ -33291,7 +39032,1760 @@ module.exports = {
   data: require("./data/index"),
 };
 
-},{"./data/index":"/Users/aolson/Developer/ofx4js/src/domain/data/index.js"}],"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js":[function(require,module,exports){
+},{"./data/index":"/Users/aolson/Developer/ofx4js/src/domain/data/index.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateIntrospector = require("./AggregateIntrospector");
+
+/**
+ * A generic descriptor for an attribute of an OFX aggregate.
+ *
+ * @class
+ */
+function AggregateAttribute(type, info) {
+
+  /**
+   * @name AggregateAttribute#readMethod
+   * @type Method
+   * @access private
+   */
+  this.readMethod = null;
+
+  /**
+   * @name AggregateAttribute#writeMethod
+   * @type Method
+   * @access private
+   */
+  this.writeMethod = null;
+
+  /**
+   * @name AggregateAttribute#attributeType
+   * @type Class
+   * @access private
+   */
+  this.attributeType = null;
+
+  /**
+   * @name AggregateAttribute#collectionEntryType
+   * @type Class
+   * @access private
+   */
+  this.collectionEntryType = null;
+
+  /**
+   * @name AggregateAttribute#name
+   * @type String
+   * @access private
+   */
+  this.name = null;
+
+  /**
+   * @name AggregateAttribute#order
+   * @type int
+   * @access private
+   */
+  this.order = null;
+
+  /**
+   * @name AggregateAttribute#required
+   * @type boolean
+   * @access private
+   */
+  this.required = null;
+
+  /**
+   * @name AggregateAttribute#type
+   * @type Type
+   * @access private
+   */
+  this.type = type;
+
+  /**
+   * @name AggregateAttribute#toString_
+   * @type String
+   * @access private
+   */
+  this.toString_ = null;
+
+  /**
+   * @name AggregateAttribute#collection
+   * @type boolean
+   * @access private
+   */
+  this.collection = null;
+  
+  switch(type) {
+    case AggregateAttribute.Type.CHILD_AGGREGATE:
+      this.AggregateAttributeForChildAggregate(info);
+      break;
+      
+    case AggregateAttribute.Type.ELEMENT:
+      this.AggregateAttributeForElement(info);
+      break;
+      
+    default:
+      throw new Error("illegal invocation");
+  }
+}
+
+
+var Type = AggregateAttribute.Type = {
+  CHILD_AGGREGATE: 0,
+  ELEMENT: 1
+};
+
+
+AggregateAttribute.prototype.AggregateAttributeForElement = function(elementInfo) {
+  this.readMethod = elementInfo.readMethod;
+  this.writeMethod = elementInfo.writeMethod;
+  if (this.readMethod === null) {
+    throw new Error("Illegal property '" + elementInfo.name + "' for aggregate: no read method.");
+  }
+  else if (this.writeMethod === null) {
+    throw new Error("Illegal property '" + elementInfo.name + "' for aggregate: no write method.");
+  }
+
+  this.attributeType = elementInfo.attributeType;
+  this.collectionEntryType = null;
+  this.name = elementInfo.name;
+  this.order = elementInfo.order;
+  this.required = elementInfo.required;
+  this.type = Type.ELEMENT;
+  this.toString_ = "Element '" + this.name + "'";
+  this.collection = false;
+
+  //todo: validate known/supported element types here?
+};
+
+
+AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(childAggregate) {
+  this.readMethod = childAggregate.readMethod;
+  this.writeMethod = childAggregate.writeMethod;
+  if (this.readMethod === null) {
+    throw new Error("Illegal property '" + childAggregate.name + "' for aggregate: no read method.");
+  }
+  else if (this.writeMethod === null) {
+    throw new Error("Illegal property '" + childAggregate.name + "' for aggregate: no write method.");
+  }
+
+  this.collection = (childAggregate.collectionEntryType !== null);
+  if (this.collection) {
+    this.name = null;
+    this.collectionEntryType = childAggregate.collectionEntryType;
+  }
+  else if ("##not_specified##".equals(childAggregate.name)) {
+    var aggregateInfo = AggregateIntrospector.getAggregateInfo(childAggregate.attributeType);
+    if (aggregateInfo === null) {
+      throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': no aggregate information available.");
+    }
+
+    this.name = aggregateInfo.getName();
+    if ("##not_specified##".equals(this.name)) {
+      throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': a child aggregate name must be specified.");
+    }
+    this.collectionEntryType = null;
+  }
+  else {
+    this.name = childAggregate.name;
+    this.collectionEntryType = null;
+  }
+
+  this.order = childAggregate.order();
+  this.required = childAggregate.required();
+  this.type = Type.CHILD_AGGREGATE;
+  this.toString_ = "ChildAggregate '" + this.name + "'";
+};
+
+
+AggregateAttribute.prototype.get = function(/*Object*/ instance) {
+  return this.readMethod.invoke(instance);
+};
+
+
+AggregateAttribute.prototype.set = function(/*Object*/ value, /*Object*/ instance) {
+  if (this.collection) {
+    var collection = this.get(instance);
+    if (collection === null) {
+      collection = [];
+    }
+    collection.push(value);
+    value = collection;
+  }
+
+  this.writeMethod.invoke(instance, value);
+};
+
+
+AggregateAttribute.prototype.getAttributeType = function() {
+  return this.attributeType;
+};
+
+
+AggregateAttribute.prototype.getCollectionEntryType = function() {
+  return this.collectionEntryType;
+};
+
+
+AggregateAttribute.prototype.getName = function() {
+  return this.name;
+};
+
+
+AggregateAttribute.prototype.isRequired = function() {
+  return this.required;
+};
+
+
+AggregateAttribute.prototype.getOrder = function() {
+  return this.order;
+};
+
+
+AggregateAttribute.prototype.getType = function() {
+  return this.type;
+};
+
+
+AggregateAttribute.prototype.compareTo = function(/*AggregateAttribute*/ other) {
+  return this.order - other.order;
+};
+
+
+AggregateAttribute.prototype.isCollection = function() {
+  return this.collection;
+};
+
+
+// @Override
+AggregateAttribute.prototype.toString = function() {
+  return this.toString_;
+};
+
+
+
+
+module.exports = AggregateAttribute;
+
+},{"./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateAttribute = require("./AggregateAttribute");
+
+/**
+ * Holder for meta information about an aggregate class.
+ *
+ * @class
+ */
+function AggregateInfo(name, clazz) {
+  
+  /**
+   * @name AggregateInfo#clazz
+   * @type Class
+   * @access private
+   */
+  this.clazz = clazz;
+
+  /**
+   * @name AggregateInfo#name
+   * @type String
+   * @access private
+   */
+  this.name = name;
+
+  /**
+   * @name AggregateInfo#attributes
+   * @type AggregateAttribute[]
+   * @access private
+   */
+  this.attributes = null;
+
+  /**
+   * @name AggregateInfo#headers
+   * @type object
+   */
+  this.headers = {};
+}
+
+
+AggregateInfo.prototype.addChildAggregate = function(childAggregateInfo) {
+  var attribute = new AggregateAttribute(AggregateAttribute.Type.CHILD_AGGREGATE, childAggregateInfo);
+  this.attributes.push(attribute);
+};
+
+AggregateInfo.prototype.addElement = function(elementInfo) {
+  var attribute = new AggregateAttribute(AggregateAttribute.Type.ELEMENT, elementInfo);
+  this.attributes.push(attribute);
+};
+
+AggregateInfo.prototype.addHeader = function(options) {
+  console.assert(options.name);
+  this.headers[options.name] = options;
+};
+
+
+/**
+ * The name of the aggregate.
+ *
+ * @return {String} The name of the aggregate.
+ */
+AggregateInfo.prototype.getName = function() {
+  return this.name;
+};
+
+
+/**
+ * The attributes.
+ *
+ * @return {AggregateAttribute[]} The attributes.
+ */
+AggregateInfo.prototype.getAttributes = function() {
+  return this.attributes;
+};
+
+
+/**
+ * Get the attribute by the specified name.
+ *
+ * @param {String} name The name of the attribute.
+ * @param {int} orderHint The order at which the attribute should come after in case there are more than one candidates.
+ * @param {Class} [assignableTo=null] The class this attribute must be assignable to
+ * @return {AggregateAttribute} The attribute by the specified name,
+ * or if there are more than one by that name,
+ * the first one after the specified order,
+ * or if there are none then the first collection that
+ * comes after the order hint, or the latest if there
+ * are none that come after the order hint, or null.
+ */
+AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
+  var candidates = [];
+  var collectionBucket = null;
+  for (var attribute in this.attributes) {
+    if (name.equals(attribute.getName())) {
+      candidates.add(attribute);
+    }
+    else if (attribute.isCollection()) {
+      if (assignableTo !== null) {
+        // Verify it's the right generic type.
+        var entryType = attribute.getCollectionEntryType();
+        if (entryType !== null && !entryType.isAssignableFrom(assignableTo)) { //ARO_TODO
+          // Collection is of wrong type.
+          continue;
+        }
+      }
+      if (collectionBucket === null || collectionBucket.getOrder() < orderHint) {
+        //the default is the first collection that comes after the order hint, or the latest if there are none that come after the order hint.
+        collectionBucket = attribute;
+      }
+    }
+  }
+
+  if (!candidates.isEmpty()) {
+    if (candidates.length === 1) {
+      return candidates[0];
+    }
+    else {
+      for (var candidate in candidates) {
+        if (candidate.getOrder() >= orderHint) {
+          return candidate;
+        }
+      }
+    }
+  }
+
+  return collectionBucket;
+};
+
+
+/**
+ * Whether this aggregate has headers.
+ *
+ * @return {boolean} Whether this aggregate has headers.
+ */
+AggregateInfo.prototype.hasHeaders = function() {
+  return this.headers.length > 0;
+};
+
+
+AggregateInfo.prototype.getMethod = function(header, name) {
+  console.assert(header[name]);
+  var fcn = this.clazz[header[name]];
+  console.assert(fcn && (typeof(fcn) === "function"));
+  return fcn;
+};
+
+/**
+ * Get the headers defined by the specific aggregate instance.
+ *
+ * @param {Object} instance The aggregate instance.
+ * @return {Object} The headers.
+ */
+AggregateInfo.prototype.getHeaders = function(instance) {
+  var headers = {};
+  for (var name in this.headers) {
+    var header = this.headers[name];
+    var readMethod = this.getMethod(header, "readMethod");
+    var headerValue = readMethod.call(instance);
+    headers[header.name] = headerValue;
+  }
+  return headers;
+};
+
+
+/**
+ * The type of the specified header.
+ *
+ * @param {String} name The header name.
+ * @return {Class} The header type, or null if no header by the specified name exists.
+ */
+AggregateInfo.prototype.getHeaderType = function(name) {
+  for(var header in this.headers) {
+    if(header.name === name) {
+      return header.attributeType;
+    }
+  }
+  return null;
+};
+
+
+/**
+ * Set the header value for the specified instance.
+ *
+ * @param {Object} instance The instance.
+ * @param {String} name     The name of the header.
+ * @param {Object} value    the value of the header.
+ */
+AggregateInfo.prototype.setHeader = function(instance, name, value) {
+  if (this.headers[name]) {
+    var header = this.headers[name];
+    var writeMethod = this.getMethod(header, "writeMethod");
+    writeMethod.call(instance, value);
+  }
+};
+
+
+
+
+module.exports = AggregateInfo;
+
+},{"./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateInfo = require("./AggregateInfo");
+
+
+var AGGREGATE_CLASSES_BY_NAME = {};
+
+
+/**
+ * Introspector for aggregate information.
+ *
+ * @class
+ */
+var AggregateIntrospector = {};
+
+
+/**
+ * Get the aggregate meta information for the specified class.
+ *
+ * @param clazz the aggregate class.
+ * @return {AggregateInfo} The aggregate meta information, or null if the class isn't an aggregate.
+ */
+AggregateIntrospector.getAggregateInfo = function(clazz) {
+  return clazz.Aggregate;
+};
+
+/**
+ * Find the aggregate class by name.
+ *
+ * @param {String} aggregateName The name of the aggregate.
+ * @return The aggregate class.
+ */
+AggregateIntrospector.findAggregateByName = function(aggregateName) {
+  return AGGREGATE_CLASSES_BY_NAME.get(aggregateName);
+};
+
+
+
+AggregateIntrospector.addAggregate = function(name, clazz) {
+  console.assert(!(name in AGGREGATE_CLASSES_BY_NAME));
+  AGGREGATE_CLASSES_BY_NAME[name] = clazz;
+  console.assert(!clazz.Aggregate);
+  clazz.Aggregate = new AggregateInfo(name, clazz);
+};
+
+
+AggregateIntrospector.addChildAggregate = function(clazz, options) {
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
+  console.assert(aggregateInfo);
+  if(aggregateInfo) {
+    aggregateInfo.addChildAggregate(options);
+  }
+};
+
+
+AggregateIntrospector.addElement = function(clazz, options) {
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
+  console.assert(aggregateInfo);
+  if(aggregateInfo) {
+    aggregateInfo.addElement(options);
+  }
+};
+
+AggregateIntrospector.addHeader = function(clazz, options) {
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
+  console.assert(aggregateInfo);
+  if(aggregateInfo) {
+    aggregateInfo.addHeader(options);
+  }
+};
+
+
+module.exports = AggregateIntrospector;
+
+},{"./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js"}],"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../util/inherit");
+var DefaultHandler = require("./DefaultHandler");
+var OFXReader = require("./OFXReader");
+var OFXV2ContentHandler = require("./OFXV2ContentHandler");
+var sax = require("sax");
+
+
+/**
+ * @type Log
+ */
+var LOG = function() { console.log.apply(console, arguments); };
+
+/**
+ * @type RegExp
+ */
+var OFX_2_PROCESSING_INSTRUCTION_PATTERN = /<\\?OFX ([^\\?]+)\\?>/;
+
+
+/**
+ * Base class for an OFX reader.  Parses the headers and determines whether we're parsing an
+ * OFX v2 or OFX v1 element.  For OFX v2, uses a standard SAX library.
+ *
+ * @class
+ */
+function BaseOFXReader () {
+  /**
+   * @name BaseOFXReader#contentHandler
+   * @type OFXHandler
+   * @access private
+   */
+  this.contentHandler = new DefaultHandler();
+}
+
+inherit(BaseOFXReader, "implements", OFXReader);
+
+
+
+
+/**
+ * The content handler.
+ *
+ * @return {OFXHandler} The content handler.
+ */
+BaseOFXReader.prototype.getContentHandler = function() {
+  return this.contentHandler;
+};
+
+
+/**
+ * The content handler.
+ *
+ * @param {OFXHandler} handler The content handler.
+ */
+BaseOFXReader.prototype.setContentHandler = function(handler) {
+  this.contentHandler = handler;
+};
+
+
+function arraysEqual(a1, a2) {
+  if(a1.length !== a2.length) {
+    return false;
+  }
+  for(var i=0; i<a1.length; i++) {
+    if(a1[i] !== a2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+/**
+ * Parse the reader, including the headers.
+ *
+ * @param {Reader} reader The reader to parse.
+ */
+BaseOFXReader.prototype.parse = function(reader) {
+  var header = "";
+  var firstElementStart = this.getFirstElementStart();
+  var buffer = new Array(firstElementStart.length);
+  reader.mark(firstElementStart.length);
+  var ch = reader.read(buffer);
+  while ((ch != -1) && (!arraysEqual(buffer, firstElementStart))) {
+    if (!this.contains(buffer, '<')) {
+      //if the buffer contains a '<', then we might already have marked the beginning.
+      reader.mark(firstElementStart.length);
+    }
+    ch = reader.read();
+    var shifted = this.shiftAndAppend(buffer, ch);
+    header += shifted;
+  }
+
+  if (ch == -1) {
+    throw new Error("Invalid OFX: no root <OFX> element!");
+  }
+  else {
+    var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.match(header);
+    if (matches) {
+      LOG("Processing OFX 2 header...");
+      this.processOFXv2Headers(matches[1]);
+      reader.reset();
+      this.parseV2FromFirstElement(reader);
+    }
+    else {
+      LOG("Processing OFX 1 headers...");
+      this.processOFXv1Headers(header);
+      reader.reset();
+      this.parseV1FromFirstElement(reader);
+    }
+  }
+};
+
+
+/**
+ * The first characters of the first OFX element, '<', 'O', 'F', 'X'
+ *
+ * @return {} The first characters of the OFX element.
+ */
+BaseOFXReader.prototype.getFirstElementStart = function() {
+  return [ '<', 'O', 'F', 'X' ];
+};
+
+
+/**
+ * Whether the specified buffer contains the specified character.
+ *
+ * @param {} buffer The buffer.
+ * @param {} c The character to search for.
+ * @return {boolean} Whether the specified buffer contains the specified character.
+ */
+BaseOFXReader.prototype.contains = function(buffer, /*char*/ c) {
+  for (var ch in buffer) {
+    if (ch === c) {
+      return true;
+    }
+  }
+  return false;
+};
+
+
+BaseOFXReader.prototype.shiftAndAppend = function(buffer, /*char*/ c) {
+  var shifted = buffer[0];
+  for (var i = 0; i + 1 < buffer.length; i++) {
+    buffer[i] = buffer[i + 1];
+  }
+  buffer[buffer.length - 1] = c;
+  return shifted;
+};
+
+
+/**
+ * Parse an OFX version 1 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
+ *
+ * @param {Reader} reader The reader.
+ */
+BaseOFXReader.prototype.parseV1FromFirstElement = function(text) {
+  var strict = false;
+  var parser = sax.parser(strict);
+  var handler = new OFXV2ContentHandler(this.getContentHandler());
+  handler.install(parser);
+  parser.write(text);
+};
+
+
+/**
+ * Parse an OFX version 2 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
+ *
+ * @param {string} text The text.
+ */
+BaseOFXReader.prototype.parseV2FromFirstElement = function(text) {
+  var strict = true;
+  var parser = sax.parser(strict);
+  var handler = new OFXV2ContentHandler(this.getContentHandler());
+  handler.install(parser);
+  parser.write(text);
+};
+
+/**
+ * Process the given characters as OFX version 1 headers.
+ *
+ * @param {String} chars The characters to process.
+ */
+BaseOFXReader.prototype.processOFXv1Headers = function(chars) {
+  var lines = chars.split(/(\n|\r\n)/);
+  for(var line in lines) {
+    var colonIndex = line.indexOf(':');
+    if (colonIndex >= 0) {
+      var name = line.substring(0, colonIndex);
+      var value = line.length() > colonIndex ? line.substring(colonIndex + 1) : "";
+      this.contentHandler.onHeader(name, value);
+    }
+  }
+};
+
+/**
+ * Process the given characters as OFX version 2 headers.
+ *
+ * @param {String} chars The characters to process.
+ */
+BaseOFXReader.prototype.processOFXv2Headers = function(chars) {
+  var nameValuePairs = chars.split("\\s+");
+  for (var nameValuePair in nameValuePairs) {
+    var equalsIndex = nameValuePair.indexOf('=');
+    if (equalsIndex >= 0) {
+      var name = nameValuePair.substring(0, equalsIndex);
+      var value = nameValuePair.length() > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
+      value = value.replace('"', ' ');
+      value = value.replace('\'', ' ');
+      value = value.trim();
+      this.contentHandler.onHeader(name, value);
+    }
+  }
+};
+
+
+
+
+module.exports = BaseOFXReader;
+
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","sax":"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js"}],"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../util/inherit");
+var OFXHandler = require("./OFXHandler");
+
+/**
+ * Default (no-op) implementation of an OFX handler.
+ *
+ * @class
+ */
+function DefaultHandler () {
+}
+
+inherit(DefaultHandler, "implements", OFXHandler);
+
+
+
+
+DefaultHandler.prototype.onHeader = function(/*name, value*/) {
+};
+
+
+DefaultHandler.prototype.onElement = function(/*name, value*/) {
+};
+
+
+DefaultHandler.prototype.startAggregate = function(/*aggregateName*/) {
+};
+
+
+DefaultHandler.prototype.endAggregate = function(/*aggregateName*/) {
+};
+
+
+
+
+module.exports = DefaultHandler;
+
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+
+/**
+ * An OFX aggregate is just an aggregate of name-value pairs that identify the elements and element values of the aggregate.
+ * The element values can strings or another (sub)aggregate.  The implementation of a
+ *
+ * @class
+ */
+function OFXAggregate() {
+}
+
+/**
+ * The name of the OFX aggregate.
+ *
+ * @return {String} The name of the aggregate.
+ */
+OFXAggregate.prototype.getName = function() { throw new Error("not implemented"); };
+
+/**
+ * Whether this aggregate contains the specified element.
+ *
+ * @param {String} elementName The name of the element.
+ * @return {boolean} Whether this aggregate contains the specified element.
+ */
+OFXAggregate.prototype.containsElement = function(/*elementName*/) { throw new Error("not implemented"); };
+
+/**
+ * The element names of this aggregate.
+ *
+ * @return {String[]} The element names of this aggregate.
+ */
+OFXAggregate.prototype.elementNames = function() { throw new Error("not implemented"); };
+
+/**
+ * The value of the element.  This will be either a string or another OFXAggregate.
+ *
+ * @param {String} elementName The name of the element.
+ * @return {Object} The value of the specified element.
+ */
+OFXAggregate.prototype.getElementValue = function(/*elementName*/) { throw new Error("not implemented"); };
+
+
+module.exports = OFXAggregate;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+/**
+ * Handler for events during OFX parsing.
+ *
+ * @author Ryan Heaton
+ */
+function OFXHandler() {
+}
+
+/**
+ * Handler an OFX header.
+ *
+ * @param {String} name The name of the header.
+ * @param {String} value The value of the header.
+ */
+OFXHandler.prototype.onHeader = function(/*name, value*/) { throw new Error("not implemented"); };
+
+/**
+ * Handle a new OFX element.
+ *
+ * @param {String} name The name of the element.
+ * @param {String} value The value of the element.
+ */
+OFXHandler.prototype.onElement = function(/*name, value*/) { throw new Error("not implemented"); };
+
+/**
+ * Handle the start of a new OFX aggregate.
+ *
+ * @param {String} aggregateName The name of the aggregate.
+ */
+OFXHandler.prototype.startAggregate = function(/*aggregateName*/) { throw new Error("not implemented"); };
+
+/**
+ * Handle the end of an OFX aggregate.
+ *
+ * @param {String} aggregateName The aggregate name.
+ */
+OFXHandler.prototype.endAggregate = function(/*aggregateName*/) { throw new Error("not implemented"); };
+
+
+module.exports = OFXHandler;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+/**
+ * An event during OFX parsing.
+ *
+ * @class
+ */
+function OFXParseEvent () {
+
+  /**
+   * @name OFXParseEvent#eventType
+   * @type Type
+   * @access private
+   */
+  this.eventType = null;
+
+  /**
+   * @name OFXParseEvent#eventValue
+   * @type String
+   * @access private
+   */
+  this.eventValue = null;
+}
+
+
+
+
+
+OFXParseEvent.Type = {
+
+  CHARACTERS: 0,
+
+  ELEMENT: 1
+};
+
+OFXParseEvent.prototype.OFXParseEvent = function(/*Type*/ eventType, /*String*/ eventValue) {
+  this.eventType = eventType;
+  this.eventValue = eventValue;
+};
+
+
+OFXParseEvent.prototype.getEventType = function() {
+  return this.eventType;
+};
+
+
+OFXParseEvent.prototype.getEventValue = function() {
+  return this.eventValue;
+};
+
+
+
+
+module.exports = OFXParseEvent;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../util/inherit");
+
+/**
+ * Basic interface for reading an OFX document.
+ *
+ * @author Ryan Heaton
+ */
+function OFXReader() {
+}
+
+/**
+ * Set the handler for this OFX reader.
+ *
+ * @param {OFXHandler} handler The handler.
+ */
+OFXReader.prototype.setContentHandler = function(handler) { throw new Error("not implemented"); };
+
+/**
+ * Parse a stream.
+ *
+ * @param {InputStream or Reader} stream The stream or reader to parse.
+ */
+OFXReader.prototype.parse = function(stream) { throw new Error("not implemented"); };
+
+
+module.exports = OFXReader;
+
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var Stack = require("../util/stack");
+var OFXParseEvent = require("./OFXParseEvent");
+
+//ARO_TODO
+var LOG = function() { console.log.apply(console.log, arguments); };
+
+/**
+ * @class
+ * @param {sax.parser} parser
+ * @param {OFXHandler} ofxHandler
+ */
+function OFXV2ContentHandler(ofxHandler) {
+  if (ofxHandler === null) {
+    throw new Error("An OFX handler must be supplied.");
+  }
+  
+  /**
+   * @name OFXV2ContentHandler#eventStack
+   * @type Stack<OFXParseEvent>
+   * @access private
+   */
+  this.eventStack = new Stack();
+
+  /**
+   * @name OFXV2ContentHandler#ofxHandler
+   * @type OFXHandler
+   * @access private
+   */
+  this.ofxHandler = ofxHandler;
+
+  /**
+   * @name OFXV2ContentHandler#startedEvents
+   * @type List<OFXParseEvent>
+   * @access private
+   */
+  this.startedEvents = [];
+}
+
+
+
+OFXV2ContentHandler.prototype.install = function(parser) {
+  parser.ontext = function(value) { this.ontext(value); };
+  parser.onopentag = function(params) { this.onopentag(params); };
+  parser.onclosetag = function(name) { this.onclosetag(name); };
+}
+
+
+
+// @Override
+OFXV2ContentHandler.prototype.onopentag = function(params) {
+  var qName = params.name;
+
+  if (LOG) {
+    LOG("START ELEMENT: " + qName);
+  }
+
+  if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
+    var eventValue = this.eventStack.peek().getEventValue();
+    if (LOG) {
+      LOG("Element " + qName + " is starting aggregate " + eventValue);
+    }
+
+    //the last element started was not ended; we are assuming we've started a new aggregate.
+    this.ofxHandler.startAggregate(eventValue);
+    this.startedEvents.add(this.eventStack.peek());
+  }
+
+  this.eventStack.push(new OFXParseEvent(OFXParseEvent.Type.ELEMENT, qName));
+};
+
+
+/**
+ * Whether the specified element aggregate has already been started.
+ *
+ * @param {OFXParseEvent} event The event containing the start.
+ * @return {boolean} Whether the specified element aggregate has already been started.
+ */
+OFXV2ContentHandler.prototype.isAlreadyStarted = function(event) {
+  return this.startedEvents.contains(event);
+};
+
+
+// @Override
+OFXV2ContentHandler.prototype.onclosetag = function(qName) {
+  if (LOG) {
+    LOG("END ELEMENT: " + qName);
+  }
+
+  var eventToFinish = this.eventStack.pop();
+  if (eventToFinish.getEventType() == OFXParseEvent.Type.CHARACTERS) {
+    var chars = eventToFinish.getEventValue().trim();
+
+    if (this.eventStack.isEmpty()) {
+      throw new Error("Illegal character data outside main OFX root element: \"" + chars + "\".");
+    }
+    else {
+      var elementEvent = this.eventStack.pop();
+      if (elementEvent.getEventType() != OFXParseEvent.Type.ELEMENT) {
+        throw new Error("Illegal OFX event before characters \"" + chars + "\" (" + elementEvent.getEventType() + ")!");
+      }
+      else {
+        var value = elementEvent.getEventValue();
+        if (LOG) {
+          LOG("Element " + value + " processed with value " + chars);
+        }
+        this.ofxHandler.onElement(value, chars);
+      }
+    }
+  }
+  else if (eventToFinish.getEventType() == OFXParseEvent.Type.ELEMENT) {
+    //we're ending an aggregate (no character data on the stack).
+    if (qName.equals(eventToFinish.getEventValue())) {
+      //the last element on the stack is ours; we're ending an OFX aggregate.
+      /*jshint -W004*/
+      var value = eventToFinish.getEventValue();
+      if (LOG) {
+        LOG("Ending aggregate " + value);
+      }
+      this.ofxHandler.endAggregate(value);
+      this.startedEvents.remove(eventToFinish);
+    }
+    else {
+      throw new Error("Unexpected end tag: " + eventToFinish.getEventValue());
+    }
+  }
+  else {
+    throw new Error("Illegal OFX event: " + eventToFinish.getEventType());
+  }
+};
+
+
+// @Override
+OFXV2ContentHandler.prototype.ontext = function(value) {
+  if (value.trim().length() > 0) {
+    var event;
+    if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.CHARACTERS)) {
+      //append the characters...
+      event = new OFXParseEvent(OFXParseEvent.Type.CHARACTERS, this.eventStack.pop().getEventValue() + value);
+    }
+    else {
+      event = new OFXParseEvent(OFXParseEvent.Type.CHARACTERS, value);
+    }
+    this.eventStack.push(event);
+  }
+};
+
+
+
+
+module.exports = OFXV2ContentHandler;
+
+},{"../util/stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js","./OFXParseEvent":"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+/**
+ * @class
+ */
+function OFXWriter() {
+}
+
+/**
+ * Write the specified headers.
+ *
+ * @param {} headers The headers to be written.
+ */
+OFXWriter.prototype.writeHeaders = function(/*headers*/) { throw new Error("not implemented"); };
+
+/**
+ * Write the start of a new aggregate.
+ *
+ * @param {String} aggregateName The aggregate name.
+ */
+OFXWriter.prototype.writeStartAggregate = function(/*aggregateName*/) { throw new Error("not implemented"); };
+
+/**
+ * Write an element to the current aggregate.
+ *
+ * @param {String} name The name of the element.
+ * @param {String} value The value of the element.
+ */
+OFXWriter.prototype.writeElement = function(/*name, value*/) { throw new Error("not implemented"); };
+
+/**
+ * Write the end of an aggregate.
+ *
+ * @param {String} aggregateName The aggregate name.
+ * @throws IllegalArgumentException If the specified aggregate hasn't been started.
+ */
+OFXWriter.prototype.writeEndAggregate = function(/*aggregateName*/) { throw new Error("not implemented"); };
+
+/**
+ * Close this OFX writer.
+ */
+OFXWriter.prototype.close = function() { throw new Error("not implemented"); };
+
+
+module.exports = OFXWriter;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+/**
+ * Interface for converting to/from OFX strings.
+ *
+ * @class
+ */
+function StringConversion() {
+}
+
+/**
+ * Convert the specified object to a string.
+ *
+ * @param {Object} value The value to convert to a string.
+ * @return {String} The string.
+ */
+StringConversion.prototype.toString = function(/*value*/) { throw new Error("not implemented"); };
+
+/**
+ * Convert the specified value to an object of the specified type.
+ *
+ * @param {Class<E>} clazz The class.
+ * @param {String} value The value.
+ * @return {E} The converted value.
+ * @throws OFXSyntaxException If there was something wrong with the syntax of the string.
+ */
+StringConversion.prototype.fromString = function(/*clazz, value*/) { throw new Error("not implemented"); };
+
+
+module.exports = StringConversion;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/io/index.js":[function(require,module,exports){
+"use strict";
+
+module.exports = {
+  AggregateAttribute: require("./AggregateAttribute"),
+  AggregateInfo: require("./AggregateInfo"),
+  AggregateIntrospector: require("./AggregateIntrospector"),
+//  AggregateMarshaller: require("./AggregateMarshaller"),
+//  //AggregateStackContentHandler: require("./AggregateStackContentHandler"),
+//  //AggregateUnmarshaller: require("./AggregateUnmarshaller"),
+  BaseOFXReader: require("./BaseOFXReader"),
+  DefaultHandler: require("./DefaultHandler"),
+//  //DefaultStringConversion: require("./DefaultStringConversion"),
+  OFXAggregate: require("./OFXAggregate"),
+  OFXHandler: require("./OFXHandler"),
+  OFXParseEvent: require("./OFXParseEvent"),
+  OFXReader: require("./OFXReader"),
+  OFXV2ContentHandler: require("./OFXV2ContentHandler"),
+  OFXWriter: require("./OFXWriter"),
+  StringConversion: require("./StringConversion"),
+  
+  v1: {
+    OFXV1Writer: require("./v1/OFXV1Writer"),
+  },
+  v2: {
+    OFXV2Writer: require("./v2/OFXV2Writer"),
+  },
+};
+
+},{"./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./BaseOFXReader":"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXAggregate":"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js","./OFXParseEvent":"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","./OFXWriter":"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js","./StringConversion":"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js","./v1/OFXV1Writer":"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js","./v2/OFXV2Writer":"/Users/aolson/Developer/ofx4js/src/io/v2/OFXV2Writer.js"}],"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../../util/inherit");
+var OutputStreamWriter = require("../../util/OutputStreamWriter");
+var OFXWriter = require("../OFXWriter");
+
+/**
+ * OFX writer to SGML, suitable for OFX versions < 2.0.
+ *
+ * @class
+ */
+function OFXV1Writer () {
+
+  /**
+   * @name OFXV1Writer#LINE_SEPARATOR
+   * @type String
+   */
+  this.LINE_SEPARATOR = "\r\n";
+
+  /**
+   * @name OFXV1Writer#headersWritten
+   * @type boolean
+   * @access protected
+   */
+  this.headersWritten = false;
+
+  /**
+   * @name OFXV1Writer#writer
+   * @type Writer
+   * @access protected
+   */
+  this.writer = null;
+
+  /**
+   * @name OFXV1Writer#writeAttributesOnNewLine
+   * @type boolean
+   * @access private
+   */
+  this.writeAttributesOnNewLine = false;
+}
+
+inherit(OFXV1Writer, "implements", OFXWriter);
+
+
+
+
+OFXV1Writer.prototype.OFXV1Writer = function(/*OutputStream*/ out) {
+  this.writer = this.newWriter(out);
+};
+
+
+OFXV1Writer.prototype.OFXV1Writer = function(/*Writer*/ writer) {
+  this.writer = writer;
+};
+
+
+OFXV1Writer.prototype.newWriter = function(/*OutputStream*/ out) {
+  return new OutputStreamWriter(out, "ISO-8859-1");
+};
+
+
+OFXV1Writer.prototype.writeHeaders = function(/*object*/ headers) {
+  if (this.headersWritten) {
+    throw new Error("Headers have already been written!");
+  }
+
+  //write out the 1.0 headers
+  this.println("OFXHEADER:100");
+  this.println("DATA:OFXSGML");
+  this.println("VERSION:102");
+
+  this.print("SECURITY:");
+  var security = headers["SECURITY"];
+  if (security === null) {
+    security = "NONE";
+  }
+  this.println(security);
+  this.println("ENCODING:USASCII"); //too many ofx v1 servers don't read unicode...
+  this.println("CHARSET:1252"); //windows-compatible.
+  this.println("COMPRESSION:NONE");
+  this.print("OLDFILEUID:");
+  var olduid = headers["OLDFILEUID"];
+  if (olduid === null) {
+    olduid = "NONE";
+  }
+  this.println(olduid);
+  this.print("NEWFILEUID:");
+  var uid = headers["NEWFILEUID"];
+  if (uid === null) {
+    uid = "NONE";
+  }
+  this.println(uid);
+  this.println();
+
+  this.headersWritten = true;
+};
+
+
+OFXV1Writer.prototype.writeStartAggregate = function(/*String*/ aggregateName) {
+  this.print('<');
+  this.print(aggregateName);
+  this.print('>');
+  if (this.isWriteAttributesOnNewLine()) {
+    this.println();
+  }
+};
+
+
+OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value) {
+  if ((value === null) || ("".equals(value))) {
+    throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
+  }
+
+  //todo: optimize performance of the character escaping
+  if (value.indexOf('&') >= 0) {
+    value = value.replaceAll("\\&", "&amp;");
+  }
+
+  if (value.indexOf('<') >= 0) {
+    value = value.replaceAll("<", "&lt;");
+  }
+
+  if (value.indexOf('>') >= 0) {
+    value = value.replaceAll(">", "&gt;");
+  }
+  
+  this.print('<');
+  this.print(name);
+  this.print('>');
+  this.print(value);
+  if (this.isWriteAttributesOnNewLine()) {
+    this.println();
+  }
+};
+
+
+OFXV1Writer.prototype.writeEndAggregate = function(/*String*/ aggregateName) {
+  this.print("</");
+  this.print(aggregateName);
+  this.print('>');
+  if (this.isWriteAttributesOnNewLine()) {
+    this.println();
+  }
+};
+
+
+OFXV1Writer.prototype.isWriteAttributesOnNewLine = function() {
+  return this.writeAttributesOnNewLine;
+};
+
+
+OFXV1Writer.prototype.setWriteAttributesOnNewLine = function(/*boolean*/ writeAttributesOnNewLine) {
+  this.writeAttributesOnNewLine = writeAttributesOnNewLine;
+};
+
+
+OFXV1Writer.prototype.close = function() {
+  this.flush();
+  this.writer.close();
+};
+
+
+OFXV1Writer.prototype.flush = function() {
+  this.writer.flush();
+};
+
+
+OFXV1Writer.prototype.println = function(/*String*/ line) {
+  this.print(line);
+  this.println();
+};
+
+
+OFXV1Writer.prototype.println = function() {
+  this.writer.write(this.LINE_SEPARATOR);
+};
+
+
+OFXV1Writer.prototype.print = function(/*String*/ line) {
+  this.writer.write(line === null ? "null" : line);
+};
+
+
+OFXV1Writer.prototype.print = function(/*char*/ ch) {
+  this.writer.write(ch);
+};
+
+
+
+
+module.exports = OFXV1Writer;
+
+},{"../../util/OutputStreamWriter":"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../OFXWriter":"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js"}],"/Users/aolson/Developer/ofx4js/src/io/v2/OFXV2Writer.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../../util/inherit");
+
+var OFXV1Writer = require("../v1/OFXV1Writer");
+var OutputStreamWriter = require("../../util/OutputStreamWriter");
+
+/**
+ * OFX writer to XML, suitable for OFX version 2.0.
+ *
+ * @class
+ */
+function OFXV2Writer () {
+  OFXV1Writer.apply(this, arguments);
+}
+
+inherit(OFXV2Writer, "extends", OFXV1Writer);
+
+
+
+// @Override
+OFXV2Writer.prototype.newWriter = function(/*OutputStream*/ out) {
+  return new OutputStreamWriter(out, "UTF-8");
+};
+
+
+OFXV2Writer.prototype.writeHeaders = function(/*object*/ headers) {
+  if (this.headersWritten) {
+    throw new Error("Headers have already been written!");
+  }
+
+  //write out the XML PI
+  this.print("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+  var security = headers.get("SECURITY");
+  if (security === null) {
+    security = "NONE";
+  }
+  var olduid = headers.get("OLDFILEUID");
+  if (olduid === null) {
+    olduid = "NONE";
+  }
+  // println(olduid);
+  var uid = headers.get("NEWFILEUID");
+  if (uid === null) {
+    uid = "NONE";
+  }
+
+  this.print(String.format("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"%s\" OLDFILEUID=\"%s\" NEWFILEUID=\"%s\"?>", security, olduid, uid));
+  this.headersWritten = true;
+};
+
+
+OFXV2Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value) {
+  OFXV1Writer.prototype.writeElement.call(this, name, value);
+  this.print("</");
+  this.print(name);
+  this.print('>');
+};
+
+
+// @Override
+OFXV2Writer.prototype.isWriteAttributesOnNewLine = function() {
+  return false;
+};
+
+
+
+
+module.exports = OFXV2Writer;
+
+},{"../../util/OutputStreamWriter":"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../v1/OFXV1Writer":"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js"}],"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js":[function(require,module,exports){
+/*
+ * Copyright 2008 Web Cohesion
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateIntrospector = require("../io/AggregateIntrospector");
+
+var Aggregate = {};
+
+Aggregate.add = function(name, clazz) {
+  AggregateIntrospector.addAggregate(name, clazz);
+};
+
+module.exports = Aggregate;
+
+},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js"}],"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateIntrospector = require("../io/AggregateIntrospector");
+
+var ChildAggregate = {};
+
+ChildAggregate.add = function(clazz, options) {
+  options.name = options.name || "##not_specified##";
+  AggregateIntrospector.addChildAggregate(clazz, options);
+};
+
+module.exports = ChildAggregate;
+
+},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js"}],"/Users/aolson/Developer/ofx4js/src/meta/Element.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateIntrospector = require("../io/AggregateIntrospector");
+
+var Element = {};
+
+Element.add = function(clazz, options) {
+  AggregateIntrospector.addElement(clazz, options);
+};
+
+module.exports = Element;
+
+},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js"}],"/Users/aolson/Developer/ofx4js/src/meta/Header.js":[function(require,module,exports){
 /*
  * Copyright 2008 Web Cohesion
  *
@@ -33310,182 +40804,19 @@ module.exports = {
 
 module.exports = function() {};
 
-//package net.sf.ofx4j.meta;
-//
-//import java.lang.annotation.*;
-//
-///**
-// * Annotation for a method that returns an OFX aggregate.
-// *
-// * @author Ryan Heaton
-// */
-//@Target ( ElementType.TYPE )
-//@Retention ( RetentionPolicy.RUNTIME )
-//public @interface Aggregate {
-//
-//  /**
-//   * The name of the aggregate.
-//   *
-//   * @return The name of the aggregate.
-//   */
-//  String value() default "#NOT_SET#";
-//}
+"use strict";
 
-},{}],"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js":[function(require,module,exports){
-/*
- * Copyright 2008 Web Cohesion
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+var AggregateIntrospector = require("../io/AggregateIntrospector");
 
-module.exports = function() {};
+var Header = {};
 
-//package net.sf.ofx4j.meta;
-//
-//import java.lang.annotation.Retention;
-//import java.lang.annotation.RetentionPolicy;
-//import java.lang.annotation.Target;
-//import java.lang.annotation.ElementType;
-//
-///**
-// * Marks a method as providing a child aggregate (or set of them to a top-level aggregate).
-// *
-// * @author Ryan Heaton
-// */
-//@Target ( ElementType.METHOD )
-//@Retention ( RetentionPolicy.RUNTIME)
-//public @interface ChildAggregate {
-//
-//  /**
-//   * Used to specify the name of the aggregate in its context as a child aggregate.
-//   *
-//   * @return Used to specify the name of the aggregate in its context as a child aggregate.
-//   */
-//  String name() default "##not_specified##";
-//
-//  /**
-//   * Whether this aggregate is required.
-//   *
-//   * @return Whether this aggregate is required.
-//   */
-//  boolean required() default false;
-//
-//  /**
-//   * The order this child aggregate comes in its parent aggregate.
-//   *
-//   * @return The order this child aggregate comes in its parent aggregate.
-//   */
-//  int order();
-//
-//}
-},{}],"/Users/aolson/Developer/ofx4js/src/meta/Element.js":[function(require,module,exports){
-/*
- * Copyright 2008 Web Cohesion
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+Header.add = function(clazz, options) {
+  AggregateIntrospector.addHeader(clazz, options);
+};
 
-module.exports = function() {};
+module.exports = Header;
 
-//'use strict';
-//
-//
-///**
-// * An OFX element, applied to a javabean property.
-// *
-// * @typedef {Object} ElementParams
-// * @property {string} name - The name of the element.
-// * @property {bool} [required=false] - Whether this element is required.
-// * @property {int} order - The order this element comes in its parent aggregate.
-// */
-//function Element() {
-//  
-//}
-//public @interface Element {
-//
-//  /**
-//   * The name of the element.
-//   *
-//   * @return The name of the element.
-//   */
-//  String name();
-//
-//  /**
-//   * Whether this element is required.
-//   *
-//   * @return Whether this element is required.
-//   */
-//  boolean required() default false;
-//
-//  /**
-//   * The order this element comes in its parent aggregate.
-//   *
-//   * @return The order this element comes in its parent aggregate.
-//   */
-//  int order();
-//}
-
-},{}],"/Users/aolson/Developer/ofx4js/src/meta/Header.js":[function(require,module,exports){
-/*
- * Copyright 2008 Web Cohesion
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-module.exports = function() {};
-
-//package net.sf.ofx4j.meta;
-//
-//import java.lang.annotation.*;
-//
-///**
-// * An OFX element, applied to a javabean property.
-// *
-// * @author Ryan Heaton
-// */
-//@Target ( ElementType.METHOD )
-//@Retention ( RetentionPolicy.RUNTIME)
-//public @interface Header {
-//
-//  /**
-//   * The name of the element.
-//   *
-//   * @return The name of the element.
-//   */
-//  String name();
-//
-//}
-},{}],"/Users/aolson/Developer/ofx4js/src/meta/index.js":[function(require,module,exports){
+},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js"}],"/Users/aolson/Developer/ofx4js/src/meta/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -33495,7 +40826,9 @@ module.exports = {
   Header: require('./Header'),
 };
 
-},{"./Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","./ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js"}],"/Users/aolson/Developer/ofx4js/src/util/inherit.js":[function(require,module,exports){
+},{"./Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","./ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js"}],"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js":[function(require,module,exports){
+
+},{}],"/Users/aolson/Developer/ofx4js/src/util/inherit.js":[function(require,module,exports){
 "use strict";
 
 function inherit(child, type, parent) {
@@ -33514,6 +40847,39 @@ function inherit(child, type, parent) {
 }
 
 module.exports = inherit;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/util/stack.js":[function(require,module,exports){
+"use strict";
+
+function Stack() {
+  this.values = [];
+}
+
+
+Stack.prototype.push = function() {
+  return Array.prototype.push.apply(this.values, arguments);
+};
+
+
+Stack.prototype.pop = function() {
+  return Array.prototype.pop.apply(this.values, arguments);
+};
+
+
+Stack.prototype.peek = function() {
+  if(this.values.length === 0) {
+    return null;
+  } else {
+    return this.values[this.values.length - 1];
+  }
+};
+
+
+Stack.prototype.isEmpty = function() {
+  return this.values.length > 0;
+};
+
+module.exports = Stack;
 
 },{}]},{},["./src/index.js"])
 

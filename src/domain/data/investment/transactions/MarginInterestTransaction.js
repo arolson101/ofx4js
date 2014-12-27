@@ -21,6 +21,7 @@ var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
 var BaseOtherInvestmentTransaction = require("./BaseOtherInvestmentTransaction");
 var TransactionType = require("./TransactionType");
+var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -111,7 +112,7 @@ MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
 MarginInterestTransaction.prototype.getTotal = function() {
   return this.total;
 };
-Element.add(MarginInterestTransaction, {name: "TOTAL", order: 40, attributeType: Double, readMethod: "getTotal", writeMethod: "setTotal"});
+Element.add(MarginInterestTransaction, {name: "TOTAL", order: 40, attributeType: Number, readMethod: "getTotal", writeMethod: "setTotal"});
 
 
 /**

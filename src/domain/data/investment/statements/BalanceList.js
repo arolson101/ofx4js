@@ -15,6 +15,7 @@
 
 var Aggregate = require("../../../../meta/Aggregate");
 var ChildAggregate = require("../../../../meta/ChildAggregate");
+var BalanceRecord = require("../../common/BalanceRecord");
 
 /**
  * Aggregate for the investment balance list.

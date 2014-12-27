@@ -99,7 +99,7 @@ MutualFundSecurityInfo.prototype.getTypeEnum = function() {
 MutualFundSecurityInfo.prototype.getYield = function() {
   return this.yield;
 };
-Element.add(MutualFundSecurityInfo, {name: "YIELD", order: 30, attributeType: Double, readMethod: "getYield", writeMethod: "setYield"});
+Element.add(MutualFundSecurityInfo, {name: "YIELD", order: 30, attributeType: Number, readMethod: "getYield", writeMethod: "setYield"});
 
 
 /**

@@ -21,117 +21,117 @@ var ChildAggregate = require("../../meta/ChildAggregate");
 var Element = require("../../meta/Element");
 var Aggregate = require("../../meta/Aggregate");
 var ResponseMessage = require("./ResponseMessage");
+var Status = require("./common/Status");
 
 /**
  * A response message wrapped in a transaction.
  *
- * @author Ryan Heaton
+ * @class
+ * @augments ResponseMessage
+ * @augments StatusHolder
  * @see "Section 2.4.6, OFX Spec"
  */
 function TransactionWrappedResponseMessage(/*M*/) {
-
-  var c = function() {
-    /**
-     * @type String
-     */
-    this.UID = null;
-
-    /**
-     * @type String
-     */
-    this.clientCookie = null;
-
-    /**
-     * @type Status
-     */
-    this.status = null;
-  };
+  /**
+   * @type String
+   */
+  this.UID = null;
 
   /**
-   * UID of this transaction.
-   *
-   * @return {String} UID of this transaction.
+   * @type String
    */
-  c.prototype.getUID = function() {
-    return this.UID;
-  };
-  Element.add(c, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
+  this.clientCookie = null;
 
   /**
-   * UID of this transaction.
-   *
-   * @param {String} UID UID of this transaction.
+   * @type Status
    */
-  c.prototype.setUID = function(UID) {
-    this.UID = UID;
-  };
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @return {String} Client cookie (echoed back by the response).
-   */
-  c.prototype.getClientCookie = function() {
-    return this.clientCookie;
-  };
-  Element.add(c, {name: "CLTCOOKIE", order: 20, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @param {String} clientCookie Client cookie (echoed back by the response).
-   */
-  c.prototype.setClientCookie = function(clientCookie) {
-    this.clientCookie = clientCookie;
-  };
-
-  // Inherited.
-  c.prototype.getStatusHolderName = function() {
-    return this.getResponseMessageName();
-  };
-
-  // Inherited.
-  c.prototype.getResponseMessageName = function() {
-    var name = "transaction response";
-    if (this.getWrappedMessage() !== null) {
-      name = this.getWrappedMessage().getResponseMessageName() + " transaction";
-    }
-    else if (this.getClass().isAnnotationPresent(Aggregate.class)) {
-      name = this.getClass().getAnnotation(Aggregate.class).value() + " transaction";
-    }
-
-    return name;
-  };
-
-  /**
-   * Status of the transaction.
-   *
-   * @return {Status} Status of the transaction.
-   */
-  c.prototype.getStatus = function() {
-    return this.status;
-  };
-  ChildAggregate.add(c, {required: true, order: 10, attributeType: Status, readMethod: "getStatus", writeMethod: "setStatus"});
-
-  /**
-   * Status of the transaction.
-   *
-   * @param {Status} status Status of the transaction.
-   */
-  c.prototype.setStatus = function(status) {
-    this.status = status;
-  };
-
-  /**
-   * Get the wrapped message.
-   *
-   * @return The wrapped message.
-   */
-  c.prototype.getWrappedMessage = function() { throw new Error("not implemented"); };
-
-  inherit(c, 'extends', ResponseMessage);
-  inherit(c, 'implements', StatusHolder);
-  return c;
+  this.status = null;
 }
+
+inherit(TransactionWrappedResponseMessage, 'extends', ResponseMessage);
+inherit(TransactionWrappedResponseMessage, 'implements', StatusHolder);
+
+
+/**
+ * UID of this transaction.
+ *
+ * @return {String} UID of this transaction.
+ */
+TransactionWrappedResponseMessage.prototype.getUID = function() {
+  return this.UID;
+};
+Element.add(TransactionWrappedResponseMessage, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
+
+/**
+ * UID of this transaction.
+ *
+ * @param {String} UID UID of this transaction.
+ */
+TransactionWrappedResponseMessage.prototype.setUID = function(UID) {
+  this.UID = UID;
+};
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @return {String} Client cookie (echoed back by the response).
+ */
+TransactionWrappedResponseMessage.prototype.getClientCookie = function() {
+  return this.clientCookie;
+};
+Element.add(TransactionWrappedResponseMessage, {name: "CLTCOOKIE", order: 20, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @param {String} clientCookie Client cookie (echoed back by the response).
+ */
+TransactionWrappedResponseMessage.prototype.setClientCookie = function(clientCookie) {
+  this.clientCookie = clientCookie;
+};
+
+// Inherited.
+TransactionWrappedResponseMessage.prototype.getStatusHolderName = function() {
+  return this.getResponseMessageName();
+};
+
+// Inherited.
+TransactionWrappedResponseMessage.prototype.getResponseMessageName = function() {
+  var name = "transaction response";
+  if (this.getWrappedMessage() !== null) {
+    name = this.getWrappedMessage().getResponseMessageName() + " transaction";
+  }
+  else if (this.getClass().isAnnotationPresent(Aggregate.class)) {
+    name = this.getClass().getAnnotation(Aggregate.class).value() + " transaction";
+  }
+
+  return name;
+};
+
+/**
+ * Status of the transaction.
+ *
+ * @return {Status} Status of the transaction.
+ */
+TransactionWrappedResponseMessage.prototype.getStatus = function() {
+  return this.status;
+};
+ChildAggregate.add(TransactionWrappedResponseMessage, {required: true, order: 10, attributeType: Status, readMethod: "getStatus", writeMethod: "setStatus"});
+
+/**
+ * Status of the transaction.
+ *
+ * @param {Status} status Status of the transaction.
+ */
+TransactionWrappedResponseMessage.prototype.setStatus = function(status) {
+  this.status = status;
+};
+
+/**
+ * Get the wrapped message.
+ *
+ * @return The wrapped message.
+ */
+TransactionWrappedResponseMessage.prototype.getWrappedMessage = function() { throw new Error("not implemented"); };
 
 module.exports = TransactionWrappedResponseMessage;

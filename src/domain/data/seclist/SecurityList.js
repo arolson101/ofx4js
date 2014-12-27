@@ -16,6 +16,7 @@
 
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var BaseSecurityInfo = require("./BaseSecurityInfo");
 
 /**
  * Aggregate for a list of securities.

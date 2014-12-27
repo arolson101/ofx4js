@@ -19,6 +19,7 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var Tax1099ResponseTransaction = require("./Tax1099ResponseTransaction");
 
 /**
  * @class

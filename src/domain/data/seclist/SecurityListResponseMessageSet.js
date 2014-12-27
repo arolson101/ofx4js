@@ -20,6 +20,8 @@ var MessageSetType = require("../MessageSetType");
 var ResponseMessageSet = require("../ResponseMessageSet");
 var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
+var SecurityListResponseTransaction = require("./SecurityListResponseTransaction");
+var SecurityList = require("./SecurityList");
 
 /**
  * @class
