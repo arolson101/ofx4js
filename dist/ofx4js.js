@@ -39584,7 +39584,519 @@ AggregateIntrospector.addHeader = function(clazz, options) {
 
 module.exports = AggregateIntrospector;
 
-},{"./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js"}],"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js":[function(require,module,exports){
+},{"./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateMarshaller.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var AggregateIntrospector = require("./AggregateIntrospector");
+var DefaultStringConversion = require("./DefaultStringConversion");
+var AggregateAttribute = require("./AggregateAttribute");
+
+/**
+ * Marshaller for aggregate objects.
+ *
+ * @class
+ */
+function AggregateMarshaller () {
+  /**
+   * @name AggregateMarshaller#conversion
+   * @type StringConversion
+   * @access private
+   */
+  this.conversion = new DefaultStringConversion();
+}
+
+
+/**
+ * Marshal the specified aggregate object.
+ *
+ * @param {Object} aggregate The aggregate to marshal.
+ * @param {OFXWriter} writer    The writer.
+ */
+AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.getClass());
+  if (aggregateInfo === null) {
+    throw new Error("Unable to marshal object: no aggregate metadata found.");
+  }
+
+  if (aggregateInfo.hasHeaders()) {
+    var headerValues = aggregateInfo.getHeaders(aggregate);
+    var convertedValues = {};
+    for (var header in headerValues) {
+      convertedValues.put(header, this.getConversion().toString(headerValues[header]));
+    }
+    writer.writeHeaders(convertedValues);
+  }
+
+  writer.writeStartAggregate(aggregateInfo.getName());
+  var aggregateAttributes = aggregateInfo.getAttributes();
+  this.writeAggregateAttributes(aggregate, writer, aggregateAttributes);
+  writer.writeEndAggregate(aggregateInfo.getName());
+};
+
+
+/**
+ * Write the aggregate attributes for the specified aggregate.
+ *
+ * @param {Object} aggregate           The aggregate.
+ * @param {OFXWriter} writer              The writer.
+ * @param {Object} aggregateAttributes The aggregate attributes.
+ */
+AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, writer, /*SortedSet<AggregateAttribute>*/ aggregateAttributes) {
+  for (var aggregateAttribute in aggregateAttributes) {
+    var childValue = aggregateAttribute.get(aggregate);
+    if (childValue !== null) {
+      switch (aggregateAttribute.getType()) {
+        case AggregateAttribute.Type.CHILD_AGGREGATE:
+          var childValues;
+          if (childValue instanceof Array) {
+            childValues = childValue;
+          }
+          else {
+            childValues = [childValue];
+          }
+
+          for (var value in childValues) {
+            var aggregateInfo = AggregateIntrospector.getAggregateInfo(value.constructor);
+            if (aggregateInfo === null) {
+              throw new Error("Unable to marshal object of type " + value.constructor.name + " (no aggregate metadata found).");
+            }
+
+            var attributeName = aggregateAttribute.getName();
+            if (aggregateAttribute.isCollection()) {
+              attributeName = aggregateInfo.getName();
+            }
+            
+            writer.writeStartAggregate(attributeName);
+            this.writeAggregateAttributes(value, writer, aggregateInfo.getAttributes());
+            writer.writeEndAggregate(attributeName);
+          }
+          break;
+        case AggregateAttribute.Type.ELEMENT:
+          /*jshint -W004*/
+          var value = this.getConversion().toString(childValue);
+          if ((value !== null) && (!"".equals(value.trim()))) {
+            writer.writeElement(aggregateAttribute.getName(), value);
+          }
+          break;
+        default:
+          throw new Error("Unknown aggregate attribute type: " + aggregateAttribute.getType());
+      }
+    }
+    else if (aggregateAttribute.isRequired()) {
+      throw new Error("Required " + aggregateAttribute.toString() + " is null or empty.");
+    }
+  }
+};
+
+
+/**
+ * The conversion.
+ *
+ * @return {StringConversion} The conversion.
+ */
+AggregateMarshaller.prototype.getConversion = function() {
+  return this.conversion;
+};
+
+
+/**
+ * The conversion.
+ *
+ * @param {StringConversion} conversion The conversion.
+ */
+AggregateMarshaller.prototype.setConversion = function(conversion) {
+  this.conversion = conversion;
+};
+
+
+
+
+module.exports = AggregateMarshaller;
+
+},{"./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./DefaultStringConversion":"/Users/aolson/Developer/ofx4js/src/io/DefaultStringConversion.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateStackContentHandler.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../util/inherit");
+var Stack = require("../util/stack");
+var AggregateIntrospector = require("./AggregateIntrospector");
+var OFXHandler = require("./OFXHandler");
+var AggregateAttribute = require("./AggregateAttribute");
+
+function AggregateInfoHolder() {
+
+  /**
+   * @name AggregateInfoHolder#aggregate
+   * @type Object
+   */
+  this.aggregate = null;
+
+  /**
+   * @name AggregateInfoHolder#info
+   * @type AggregateInfo
+   */
+  this.info = null;
+
+  /**
+   * @name AggregateInfoHolder#aggregateName
+   * @type String
+   */
+  this.aggregateName = null;
+
+  /**
+   * @name AggregateInfoHolder#currentAttributeIndex
+   * @type int
+   */
+  this.currentAttributeIndex = 0;
+
+  switch(arguments.length) {
+    case 1:
+      var ignoredAggregateName = arguments[0];
+      this.aggregate = null;
+      this.info = null;
+      this.aggregateName = ignoredAggregateName;
+      break;
+      
+    case 3:
+      var aggregate = arguments[0],
+          info = arguments[1],
+          aggregateName = arguments[2];
+      this.aggregateName = aggregateName;
+      this.aggregate = aggregate;
+      this.info = info;
+      break;
+  }
+}
+
+
+/**
+ * @returns boolean
+ */
+AggregateInfoHolder.prototype.isBeingSkipped = function() {
+  return this.aggregate === null || this.info === null;
+};
+
+/**
+ * @param {String} aggregateName
+ * @returns boolean
+ */
+AggregateInfoHolder.prototype.isSkipping = function(aggregateName) {
+  return this.isBeingSkipped() && aggregateName.equals(this.aggregateName);
+};
+
+
+function LOG() { console.log.apply(console.log, arguments); }
+
+
+/**
+ * Content handler that manages the aggregate using a stack-based implementation.
+ * @param {Object} root
+ * @param {StringConversion} conversion
+ *
+ * @author Ryan Heaton
+ */
+function AggregateStackContentHandler(root, conversion) {
+  /**
+   * @name AggregateStackContentHandler#stack
+   * @type Stack<AggregateInfoHolder>
+   * @access private
+   */
+  this.stack = new Stack();
+
+  /**
+   * @name AggregateStackContentHandler#conversion
+   * @type StringConversion
+   * @access private
+   */
+  this.conversion = conversion;
+
+  /**
+   * @name AggregateStackContentHandler#parsingRoot
+   * @type boolean
+   * @access private
+   */
+  this.parsingRoot = false;
+
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(root.constructor);
+  if (aggregateInfo === null) {
+    throw new Error("Unable to marshal object of type '" + root.constructor.name + "' (no aggregate metadata found).");
+  }
+
+  this.stack.push(new AggregateInfoHolder(root, aggregateInfo, aggregateInfo.getName()));
+}
+
+inherit(AggregateStackContentHandler, 'implements', OFXHandler);
+
+
+
+/**
+ * @param {String} name
+ * @param {String} value
+ */
+AggregateStackContentHandler.prototype.onHeader = function(name, value) {
+  var headerType = this.stack.peek().info.getHeaderType(name);
+  if (headerType !== null) {
+    this.stack.peek().info.setHeader(this.stack.peek().aggregate, name, this.conversion.fromString(headerType, value));
+  }
+};
+
+/**
+ * @param {String} name
+ * @param {String} value
+ */
+AggregateStackContentHandler.prototype.onElement = function(name, value) {
+  if (!this.stack.peek().isBeingSkipped()) {
+    var attribute = this.stack.peek().info.getAttribute(name, this.stack.peek().currentAttributeIndex);
+    if (attribute !== null && attribute.getType() === AggregateAttribute.Type.ELEMENT) {
+      try {
+        attribute.set(this.conversion.fromString(attribute.getAttributeType(), value), this.stack.peek().aggregate);
+      }
+      catch (e) {
+        LOG("Unable to set " + attribute.toString(), e);
+      }
+      this.stack.peek().currentAttributeIndex = attribute.getOrder();
+    }
+    else {
+      LOG("Element " + name + " is not supported on aggregate " + this.stack.peek().info.getName() + " at index " + this.stack.peek().currentAttributeIndex);
+    }
+  }
+};
+
+/**
+ * @param {String} aggregateName
+ */
+AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) {
+  if (this.stack.peek().isBeingSkipped()) {
+    this.stack.push(new AggregateInfoHolder(aggregateName));
+  }
+  else if (!this.parsingRoot) {
+    if (!aggregateName.equals(this.stack.peek().info.getName())) {
+      throw new Error("Unexpected root element: " + aggregateName);
+    }
+
+    this.parsingRoot = true;
+  }
+  else {
+    var infoHolder;
+
+    var attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex);
+    if (attribute !== null) {
+      if (attribute.getType() == AggregateAttribute.Type.CHILD_AGGREGATE) {
+        var aggregateType;
+        if (attribute.isCollection()) {
+          aggregateType = AggregateIntrospector.findAggregateByName(aggregateName);
+        }
+        else {
+          aggregateType = attribute.getAttributeType();
+        }
+
+        if (aggregateType !== null) {
+          var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregateType);
+          if (aggregateInfo === null) {
+            throw new Error("Unable to locate aggregate info for type " + aggregateType.getName());
+          }
+
+          var aggregate = aggregateType.newInstance();
+          infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
+        }
+        else {
+          if (LOG) {
+            LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
+          }
+
+          //element not supported.  push a skipping aggregate on the stack.
+          infoHolder = new AggregateInfoHolder(aggregateName);
+        }
+
+        this.stack.peek().currentAttributeIndex = attribute.getOrder();
+      }
+      else {
+        if (LOG) {
+          LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
+        }
+
+        //child aggregate not supported.  push a skipping aggregate on the stack.
+        infoHolder = new AggregateInfoHolder(aggregateName);
+      }
+    }
+    else {
+      if (LOG) {
+        LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
+      }
+
+      //child aggregate not supported.  push a skipping aggregate on the stack.
+      infoHolder = new AggregateInfoHolder(aggregateName);
+    }
+
+    this.stack.push(infoHolder);
+  }
+};
+
+/**
+ * @param {String} aggregateName
+ */
+AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
+  var infoHolder = this.stack.pop();
+  if (!aggregateName.equals(infoHolder.aggregateName)) {
+    throw new Error("Unexpected end aggregate " + aggregateName + ". (Perhaps " +
+      infoHolder.aggregateName + " is an element with an empty value, making it impossible to parse.)");
+  }
+
+  if (!this.stack.isEmpty()) {
+    if (!infoHolder.isSkipping(aggregateName)) {
+      //we're not skipping the top aggregate, so process it.
+      var attribute = this.stack.peek().info.getAttribute(
+          aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.getClass());
+      try {
+        if (attribute !== null) {
+          attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
+        } else {
+          if (LOG) {
+            LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
+          }
+        }
+      }
+      catch (e) {
+        LOG.error("Unable to set " + attribute.toString(), e);
+      }
+      this.stack.peek().currentAttributeIndex = attribute.getOrder();
+    }
+  }
+  else {
+    //ended the root element.
+  }
+};
+
+
+module.exports = AggregateStackContentHandler;
+
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../util/stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js","./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateUnmarshaller.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+//var NanoXMLOFXReader = require("io/nanoxml/NanoXMLOFXReader");
+var DefaultStringConversion = require("./DefaultStringConversion");
+var AggregateStackContentHandler = require("./AggregateStackContentHandler");
+var BaseOFXReader = require("./BaseOFXReader");
+
+/**
+ * Unmarshaller for aggregate objects.
+ * 
+ * @class
+ */
+function AggregateUnmarshaller (clazz) {
+
+  /**
+   * @name AggregateUnmarshaller#clazz
+   * @type Class
+   * @access private
+   */
+  this.clazz = clazz;
+
+  /**
+   * @name AggregateUnmarshaller#conversion
+   * @type StringConversion
+   * @access private
+   */
+  this.conversion = new DefaultStringConversion();
+}
+
+
+
+
+AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
+  var aggregate = this.clazz.newInstance();
+  var reader = this.newReader();
+  reader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
+  reader.parse(stream);
+  return aggregate;
+};
+
+
+AggregateUnmarshaller.prototype.unmarshal = function(/*Reader*/ reader) {
+  var aggregate = this.clazz.newInstance();
+  var ofxReader = this.newReader();
+  ofxReader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
+  ofxReader.parse(reader);
+  return aggregate;
+};
+
+
+/**
+ * New OFX reader.
+ *
+ * @return {OFXReader} new OFX reader.
+ */
+AggregateUnmarshaller.prototype.newReader = function() {
+  return new BaseOFXReader/*NanoXMLOFXReader*/();
+};
+
+
+/**
+ * The conversion.
+ *
+ * @return {StringConversion} The conversion.
+ */
+AggregateUnmarshaller.prototype.getConversion = function() {
+  return this.conversion;
+};
+
+
+/**
+ * The conversion.
+ *
+ * @param {StringConversion} conversion The conversion.
+ */
+AggregateUnmarshaller.prototype.setConversion = function(conversion) {
+  this.conversion = conversion;
+};
+
+
+
+
+module.exports = AggregateUnmarshaller;
+
+},{"./AggregateStackContentHandler":"/Users/aolson/Developer/ofx4js/src/io/AggregateStackContentHandler.js","./BaseOFXReader":"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js","./DefaultStringConversion":"/Users/aolson/Developer/ofx4js/src/io/DefaultStringConversion.js"}],"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39873,7 +40385,231 @@ DefaultHandler.prototype.endAggregate = function(/*aggregateName*/) {
 
 module.exports = DefaultHandler;
 
-},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js":[function(require,module,exports){
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js"}],"/Users/aolson/Developer/ofx4js/src/io/DefaultStringConversion.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../util/inherit");
+
+var Status = require("../domain/data/common/Status");
+var StatusCode = require("../domain/data/common/StatusCode");
+var UnknownStatusCode = require("../domain/data/common/UnknownStatusCode");
+var StringConversion = require("./StringConversion");
+
+/**
+ * Utility class for conversion to/from OFX strings.
+ *
+ * @author Ryan Heaton
+ */
+function DefaultStringConversion () {
+
+//  /**
+//   * @name DefaultStringConversion#GMT_TIME_ZONE
+//   * @type TimeZone
+//   */
+//  this.GMT_TIME_ZONE = TimeZone.getTimeZone("GMT");
+
+  /**
+   * @name DefaultStringConversion#DATE_FORMAT_LENGTH
+   * @type int
+   */
+  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length();
+
+  /**
+   * @name DefaultStringConversion#TIME_FORMAT_LENGTH
+   * @type int
+   */
+  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length();
+}
+
+inherit(DefaultStringConversion, "implements", StringConversion);
+
+
+
+
+DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
+  if (value === null) {
+    return null;
+  }
+  else if (value instanceof Boolean) {
+    return value ? "Y" : "N";
+  }
+  else if (Date.class.isInstance(value)) {
+    return this.formatDate(value);
+  }
+  else {
+    return value;
+  }
+};
+
+
+DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*String*/ value) {
+  if (value === null) {
+    return null;
+  }
+  else if (clazz.prototype instanceof StatusCode) {
+    var code = value;
+    var statusCode = Status.KnownCode.fromCode(code);
+    if (statusCode === null) {
+      statusCode = new UnknownStatusCode(code, "Unknown status code.", Status.Severity.ERROR);
+    }
+    
+    return statusCode;
+  }
+  else if (clazz.prototype instanceof Boolean) {
+    return "Y".equals(value.toUpperCase());
+  }
+//  else if (Time.class.isAssignableFrom(clazz)) {
+//    return parseTime(value);
+//  }
+  else if (clazz.prototype instanceof Date) {
+    return this.parseDate(value);
+  }
+  return value;
+};
+
+
+/**
+ * Parses a date according to OFX.
+ *
+ * @param {String} value The value of the date.
+ * @return {Date} The date value.
+ */
+DefaultStringConversion.prototype.parseDate = function(value) {
+//  var parseableDate = new char[DATE_FORMAT_LENGTH];
+//  Arrays.fill(parseableDate, '0');
+//  parseableDate[parseableDate.length - 4] = '.';
+//  char[] valueChars = value.toCharArray();
+//  int index = 0;
+//  while (index < valueChars.length && valueChars[index] != '[') {
+//    if (index < DATE_FORMAT_LENGTH) {
+//      parseableDate[index] = valueChars[index];
+//    }
+//    
+//    index++;
+//  }
+//
+//  int year = Integer.parseInt(new String(parseableDate, 0, 4));
+//  int month = Integer.parseInt(new String(parseableDate, 4, 2)) - 1; //java month numberss are zero-based
+//  int day = Integer.parseInt(new String(parseableDate, 6, 2));
+//  int hour = Integer.parseInt(new String(parseableDate, 8, 2));
+//  int minute = Integer.parseInt(new String(parseableDate, 10, 2));
+//  int second = Integer.parseInt(new String(parseableDate, 12, 2));
+//  int milli = Integer.parseInt(new String(parseableDate, 15, 3));
+//
+//  //set up a new calendar at zero, then set all the fields.
+//  GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
+//  if (index < valueChars.length && valueChars[index] == '[') {
+//    String tzoffset = value.substring(index);
+//    calendar.setTimeZone(parseTimeZone(tzoffset));
+//  }
+//  else {
+//    calendar.setTimeZone(GMT_TIME_ZONE);
+//  }
+//  calendar.add(GregorianCalendar.MILLISECOND, milli);
+//
+//  return calendar.getTime();
+  return Date.parse(value);
+};
+
+
+/**
+ * Format the date according to the OFX spec.
+ *
+ * @param {Date} date The date.
+ * @return {String} The date format.
+ */
+DefaultStringConversion.prototype.formatDate = function(date) {
+//  GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
+//  calendar.setTime(date);
+//  return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.%1$tL", calendar);
+  return date.toUTCString();
+};
+
+
+/**
+ * Parses a time according to OFX.
+ *
+ * @param {String} value The value of the date.
+ * @return {Time} The date value.
+ */
+DefaultStringConversion.prototype.parseTime = function(value) {
+//  var parseableTime = new char[TIME_FORMAT_LENGTH];
+//  Arrays.fill(parseableTime, '0');
+//  parseableTime[parseableTime.length - 4] = '.';
+//  value.getChars(0, Math.min(parseableTime.length, value.length()), parseableTime, 0);
+//
+//  int hour = Integer.parseInt(new String(parseableTime, 0, 2));
+//  int minute = Integer.parseInt(new String(parseableTime, 2, 2));
+//  int second = Integer.parseInt(new String(parseableTime, 4, 2));
+//  int milli = Integer.parseInt(new String(parseableTime, 7, 3));
+//
+//  //set up a new calendar at zero, then set all the fields.
+//  GregorianCalendar calendar = new GregorianCalendar(0, 0, 0, hour, minute, second);
+//  if (value.length() > parseableTime.length) {
+//    String tzoffset = value.substring(parseableTime.length);
+//    calendar.setTimeZone(parseTimeZone(tzoffset));
+//  }
+//  else {
+//    calendar.setTimeZone(GMT_TIME_ZONE);
+//  }
+//  calendar.add(GregorianCalendar.MILLISECOND, milli);
+//
+//  return new Time(calendar.getTimeInMillis());
+  return Date.parse(value);
+};
+
+
+/**
+ * Format the time according to the OFX spec.
+ *
+ * @param {Time} time The time to format.
+ * @return {String} The formatted time.
+ */
+DefaultStringConversion.prototype.formatTime = function(time) {
+//  GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
+//  calendar.setTime(time);
+//  return String.format("%1$tH%1$tM%1$tS.%1$tL", calendar);
+  return time.toTimeString();
+};
+
+
+///**
+// * Parse the timezone offset of the form [HOURS_OFF_GMT:TZ_ID]
+// *
+// * @param {String} tzoffset The offset pattern.
+// * @return {TimeZone} The timezone.
+// */
+//DefaultStringConversion.prototype.parseTimeZone = function(tzoffset) {
+//  StringTokenizer tokenizer = new StringTokenizer(tzoffset, "[]:");
+//  TimeZone tz = GMT_TIME_ZONE;
+//  if (tokenizer.hasMoreTokens()) {
+//    String hoursOff = tokenizer.nextToken();
+//    tz = TimeZone.getTimeZone("GMT" + hoursOff);
+//  }
+//
+//  return tz;
+//};
+
+
+
+
+module.exports = DefaultStringConversion;
+
+},{"../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../domain/data/common/StatusCode":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusCode.js","../domain/data/common/UnknownStatusCode":"/Users/aolson/Developer/ofx4js/src/domain/data/common/UnknownStatusCode.js","../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./StringConversion":"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40387,12 +41123,12 @@ module.exports = {
   AggregateAttribute: require("./AggregateAttribute"),
   AggregateInfo: require("./AggregateInfo"),
   AggregateIntrospector: require("./AggregateIntrospector"),
-//  AggregateMarshaller: require("./AggregateMarshaller"),
-//  //AggregateStackContentHandler: require("./AggregateStackContentHandler"),
-//  //AggregateUnmarshaller: require("./AggregateUnmarshaller"),
+  AggregateMarshaller: require("./AggregateMarshaller"),
+  AggregateStackContentHandler: require("./AggregateStackContentHandler"),
+  AggregateUnmarshaller: require("./AggregateUnmarshaller"),
   BaseOFXReader: require("./BaseOFXReader"),
   DefaultHandler: require("./DefaultHandler"),
-//  //DefaultStringConversion: require("./DefaultStringConversion"),
+  DefaultStringConversion: require("./DefaultStringConversion"),
   OFXAggregate: require("./OFXAggregate"),
   OFXHandler: require("./OFXHandler"),
   OFXParseEvent: require("./OFXParseEvent"),
@@ -40409,7 +41145,7 @@ module.exports = {
   },
 };
 
-},{"./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./BaseOFXReader":"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXAggregate":"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js","./OFXParseEvent":"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","./OFXWriter":"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js","./StringConversion":"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js","./v1/OFXV1Writer":"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js","./v2/OFXV2Writer":"/Users/aolson/Developer/ofx4js/src/io/v2/OFXV2Writer.js"}],"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js":[function(require,module,exports){
+},{"./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./AggregateMarshaller":"/Users/aolson/Developer/ofx4js/src/io/AggregateMarshaller.js","./AggregateStackContentHandler":"/Users/aolson/Developer/ofx4js/src/io/AggregateStackContentHandler.js","./AggregateUnmarshaller":"/Users/aolson/Developer/ofx4js/src/io/AggregateUnmarshaller.js","./BaseOFXReader":"/Users/aolson/Developer/ofx4js/src/io/BaseOFXReader.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./DefaultStringConversion":"/Users/aolson/Developer/ofx4js/src/io/DefaultStringConversion.js","./OFXAggregate":"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js","./OFXParseEvent":"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","./OFXWriter":"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js","./StringConversion":"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js","./v1/OFXV1Writer":"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js","./v2/OFXV2Writer":"/Users/aolson/Developer/ofx4js/src/io/v2/OFXV2Writer.js"}],"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

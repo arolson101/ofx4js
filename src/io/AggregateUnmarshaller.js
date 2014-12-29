@@ -14,30 +14,27 @@
 
 "use strict";
 
-var inherit = require("../util/inherit");
-
-var NanoXMLOFXReader = require("io/nanoxml/NanoXMLOFXReader");
-
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.io.Reader;
+//var NanoXMLOFXReader = require("io/nanoxml/NanoXMLOFXReader");
+var DefaultStringConversion = require("./DefaultStringConversion");
+var AggregateStackContentHandler = require("./AggregateStackContentHandler");
+var BaseOFXReader = require("./BaseOFXReader");
 
 /**
  * Unmarshaller for aggregate objects.
  * 
- * @author Ryan Heaton
+ * @class
  */
-function AggregateUnmarshaller<A> () {
+function AggregateUnmarshaller (clazz) {
 
   /**
-   * @name AggregateUnmarshaller<A>#clazz
-   * @type Class<A>
+   * @name AggregateUnmarshaller#clazz
+   * @type Class
    * @access private
    */
-  this.clazz = null;
+  this.clazz = clazz;
 
   /**
-   * @name AggregateUnmarshaller<A>#conversion
+   * @name AggregateUnmarshaller#conversion
    * @type StringConversion
    * @access private
    */
@@ -47,46 +44,21 @@ function AggregateUnmarshaller<A> () {
 
 
 
-
-AggregateUnmarshaller<A>.prototype.AggregateUnmarshaller = function(/*Class<A>*/ clazz) {
-  this.clazz = clazz;
+AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
+  var aggregate = this.clazz.newInstance();
+  var reader = this.newReader();
+  reader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
+  reader.parse(stream);
+  return aggregate;
 };
 
 
-AggregateUnmarshaller<A>.prototype.unmarshal = function(/*InputStream*/ stream) {
-  try {
-    A aggregate = clazz.newInstance();
-    OFXReader reader = newReader();
-    reader.setContentHandler(new AggregateStackContentHandler<A>(aggregate, getConversion()));
-    reader.parse(stream);
-    return aggregate;
-  }
-  catch (OFXParseException e) {
-    throw e;
-  }
-  catch (RuntimeException e) {
-    throw e;
-  }
-  catch (Exception e) {
-    throw new IllegalStateException(e);
-  }
-};
-
-
-AggregateUnmarshaller<A>.prototype.unmarshal = function(/*Reader*/ reader) {
-  try {
-    A aggregate = clazz.newInstance();
-    OFXReader ofxReader = newReader();
-    ofxReader.setContentHandler(new AggregateStackContentHandler<A>(aggregate, getConversion()));
-    ofxReader.parse(reader);
-    return aggregate;
-  }
-  catch (OFXParseException e) {
-    throw e;
-  }
-  catch (Exception e) {
-    throw new IllegalStateException(e);
-  }
+AggregateUnmarshaller.prototype.unmarshal = function(/*Reader*/ reader) {
+  var aggregate = this.clazz.newInstance();
+  var ofxReader = this.newReader();
+  ofxReader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
+  ofxReader.parse(reader);
+  return aggregate;
 };
 
 
@@ -95,8 +67,8 @@ AggregateUnmarshaller<A>.prototype.unmarshal = function(/*Reader*/ reader) {
  *
  * @return {OFXReader} new OFX reader.
  */
-AggregateUnmarshaller<A>.prototype.newReader = function() {
-  return new NanoXMLOFXReader();
+AggregateUnmarshaller.prototype.newReader = function() {
+  return new BaseOFXReader/*NanoXMLOFXReader*/();
 };
 
 
@@ -105,8 +77,8 @@ AggregateUnmarshaller<A>.prototype.newReader = function() {
  *
  * @return {StringConversion} The conversion.
  */
-AggregateUnmarshaller<A>.prototype.getConversion = function() {
-  return conversion;
+AggregateUnmarshaller.prototype.getConversion = function() {
+  return this.conversion;
 };
 
 
@@ -115,11 +87,11 @@ AggregateUnmarshaller<A>.prototype.getConversion = function() {
  *
  * @param {StringConversion} conversion The conversion.
  */
-AggregateUnmarshaller<A>.prototype.setConversion = function(conversion) {
+AggregateUnmarshaller.prototype.setConversion = function(conversion) {
   this.conversion = conversion;
 };
 
 
 
 
-module.exports = AggregateUnmarshaller<A>;
+module.exports = AggregateUnmarshaller;
