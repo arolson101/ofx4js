@@ -104,7 +104,7 @@ BaseAccountImpl.prototype.getMessageSetType = function(details) {
     messageType = MessageSetType.investment;
   }
   else {
-    throw new Error("Illegal details: " + this.details.getClass().getName());
+    throw new Error("Illegal details: " + this.details.constructor.name);
   }
   return messageType;
 };
@@ -119,7 +119,7 @@ BaseAccountImpl.prototype.readStatement = function(/*Date*/ start, /*Date*/ end)
   var request = this.institution.createAuthenticatedRequest(this.username, this.password);
   var requestTransaction = this.createTransaction();
   requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
-  request.getMessageSets().add(this.createRequestMessageSet(requestTransaction));
+  request.getMessageSets().push(this.createRequestMessageSet(requestTransaction));
 
   var response = this.institution.sendRequest(request);
   this.institution.doGeneralValidationChecks(request, response);

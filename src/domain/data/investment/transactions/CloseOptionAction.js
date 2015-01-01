@@ -26,11 +26,11 @@ var CloseOptionAction = {
   EXPIRE: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("EXERCISE".equals(ofxVal)) {
+    if ("EXERCISE" === ofxVal) {
       return CloseOptionAction.EXERCISE;
-    } else if ("ASSIGN".equals(ofxVal)) {
+    } else if ("ASSIGN" === ofxVal) {
       return CloseOptionAction.ASSIGN;
-    } else if ("EXPIRE".equals(ofxVal)) {
+    } else if ("EXPIRE" === ofxVal) {
       return CloseOptionAction.EXPIRE;
     } else {
       return null;

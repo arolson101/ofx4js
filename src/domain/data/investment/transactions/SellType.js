@@ -24,9 +24,9 @@ var SellType = {
   SELL_SHORT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("SELL".equals(ofxVal)) {
+    if ("SELL" === ofxVal) {
       return SellType.SELL;
-    } else if ("SELLSHORT".equals(ofxVal)) {
+    } else if ("SELLSHORT" === ofxVal) {
       return SellType.SELL_SHORT;
     } else {
       return null;

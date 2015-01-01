@@ -26,6 +26,7 @@ var ProfileResponse = require("./ProfileResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function ProfileResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name ProfileResponseTransaction#message
@@ -35,7 +36,7 @@ function ProfileResponseTransaction () {
   this.message = null;
 }
 
-inherit(ProfileResponseTransaction, "extends", new TransactionWrappedResponseMessage(ProfileResponse));
+inherit(ProfileResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("PROFTRNRS", ProfileResponseTransaction);

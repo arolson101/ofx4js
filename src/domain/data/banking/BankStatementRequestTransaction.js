@@ -26,6 +26,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function BankStatementRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name BankStatementRequestTransaction#message
@@ -35,7 +36,7 @@ function BankStatementRequestTransaction () {
   this.message = null;
 }
 
-inherit(BankStatementRequestTransaction, "extends", new TransactionWrappedRequestMessage(BankStatementRequest));
+inherit(BankStatementRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("STMTTRNRQ", BankStatementRequestTransaction);

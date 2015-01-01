@@ -25,6 +25,7 @@ var Tax1099Response = require("./Tax1099Response");
  * @augments TransactionWrappedResponseMessage
  */
 function Tax1099ResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name Tax1099ResponseTransaction#tax1099Response
@@ -34,7 +35,7 @@ function Tax1099ResponseTransaction () {
   this.tax1099Response = null;
 }
 
-inherit(Tax1099ResponseTransaction, "extends", new TransactionWrappedResponseMessage(Tax1099Response));
+inherit(Tax1099ResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("TAX1099TRNRS", Tax1099ResponseTransaction);

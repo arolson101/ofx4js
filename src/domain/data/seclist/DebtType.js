@@ -25,9 +25,9 @@ var DebtType = {
   ZERO: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("COUPON".equals(ofxVal)) {
+    if ("COUPON" === ofxVal) {
       return DebtType.COUPON;
-    } else if ("ZERO".equals(ofxVal)) {
+    } else if ("ZERO" === ofxVal) {
       return DebtType.ZERO;
     } else {
       return null;

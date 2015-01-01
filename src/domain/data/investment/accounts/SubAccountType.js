@@ -27,13 +27,13 @@ var SubAccountType = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CASH".equals(ofxVal)) {
+    if ("CASH" === ofxVal) {
       return SubAccountType.CASH;
-    } else if ("MARGIN".equals(ofxVal)) {
+    } else if ("MARGIN" === ofxVal) {
       return SubAccountType.MARGIN;
-    } else if ("SHORT".equals(ofxVal)) {
+    } else if ("SHORT" === ofxVal) {
       return SubAccountType.SHORT;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return SubAccountType.OTHER;
     } else {
       return null;

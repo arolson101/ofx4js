@@ -29,6 +29,7 @@ var SecurityListRequest = require("./SecurityListRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function SecurityListRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name SecurityListRequestTransaction#message
@@ -38,7 +39,7 @@ function SecurityListRequestTransaction () {
   this.message = null;
 }
 
-inherit(SecurityListRequestTransaction, "extends", new TransactionWrappedRequestMessage(SecurityListRequest));
+inherit(SecurityListRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("SECLISTTRNRQ", SecurityListRequestTransaction);

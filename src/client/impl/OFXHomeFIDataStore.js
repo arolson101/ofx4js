@@ -200,7 +200,7 @@
 //        }
 //        else if (this.fieldValueBuffer != null) {
 //          String fieldValue = this.fieldValueBuffer.toString().trim();
-//          if ("".equals(fieldValue)) {
+//          if ("" === fieldValue) {
 //            fieldValue = null;
 //          }
 //

@@ -139,7 +139,8 @@ Status.KnownCode.prototype.getDefaultSeverity = function() {
  * @returns KnownCode
  */
 Status.KnownCode.fromCode = function(code) {
-  for (var value in Status.KnownCode) {
+  for (var key in Status.KnownCode) {
+    var value = Status.KnownCode[key];
     if (value instanceof Status.KnownCode && value.getCode() == code) {
       return value;
     }

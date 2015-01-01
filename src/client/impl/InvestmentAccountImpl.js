@@ -69,7 +69,7 @@ InvestmentAccountImpl.prototype.readStatement = function(/*Date*/ start, /*Date*
   var request = this.institution.createAuthenticatedRequest(this.username, this.password);
   var requestTransaction = new InvestmentStatementRequestTransaction();
   requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
-  request.getMessageSets().add(this.createStatementRequestMessageSet(requestTransaction));
+  request.getMessageSets().push(this.createStatementRequestMessageSet(requestTransaction));
 
   var response = this.institution.sendRequest(request);
   this.institution.doGeneralValidationChecks(request, response);
@@ -82,7 +82,7 @@ InvestmentAccountImpl.prototype.readSecurityList = function(/*SecurityRequest[]*
   var request = this.institution.createAuthenticatedRequest(this.username, this.password);
   var requestTransaction = new SecurityListRequestTransaction();
   requestTransaction.setWrappedMessage(this.createSecurityListRequest(securities));
-  request.getMessageSets().add(this.createSecurityListRequestMessageSet(requestTransaction));
+  request.getMessageSets().push(this.createSecurityListRequestMessageSet(requestTransaction));
 
   var response = this.institution.sendRequest(request);
   this.institution.doGeneralValidationChecks(request, response);

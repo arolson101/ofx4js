@@ -26,6 +26,7 @@ var AccountInfoResponse = require("./AccountInfoResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function AccountInfoResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name AccountInfoResponseTransaction#message
@@ -35,7 +36,7 @@ function AccountInfoResponseTransaction () {
   this.message = null;
 }
 
-inherit(AccountInfoResponseTransaction, "extends", new TransactionWrappedResponseMessage(AccountInfoResponse));
+inherit(AccountInfoResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("ACCTINFOTRNRS", AccountInfoResponseTransaction);

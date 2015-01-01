@@ -27,13 +27,13 @@ var DebtClass = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("TREASURY".equals(ofxVal)) {
+    if ("TREASURY" === ofxVal) {
       return DebtClass.TREASURY;
-    } else if ("MUNICIPAL".equals(ofxVal)) {
+    } else if ("MUNICIPAL" === ofxVal) {
       return DebtClass.MUNICIPAL;
-    } else if ("CORPORATE".equals(ofxVal)) {
+    } else if ("CORPORATE" === ofxVal) {
       return DebtClass.CORPORATE;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return DebtClass.OTHER;
     } else {
       return null;

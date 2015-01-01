@@ -29,6 +29,7 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function InvestmentStatementRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name InvestmentStatementRequestTransaction#message
@@ -38,7 +39,7 @@ function InvestmentStatementRequestTransaction () {
   this.message = null;
 }
 
-inherit(InvestmentStatementRequestTransaction, "extends", new TransactionWrappedRequestMessage(InvestmentStatementRequest));
+inherit(InvestmentStatementRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("INVSTMTTRNRQ", InvestmentStatementRequestTransaction);

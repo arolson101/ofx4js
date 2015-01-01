@@ -26,13 +26,13 @@ var RelatedOptionType = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("SPREAD".equals(ofxVal)) {
+    if ("SPREAD" === ofxVal) {
       return RelatedOptionType.SPREAD;
-    } else if ("STRADDLE".equals(ofxVal)) {
+    } else if ("STRADDLE" === ofxVal) {
       return RelatedOptionType.STRADDLE;
-    } else if ("NONE".equals(ofxVal)) {
+    } else if ("NONE" === ofxVal) {
       return RelatedOptionType.NONE;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return RelatedOptionType.OTHER;
     } else {
       return null;

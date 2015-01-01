@@ -28,6 +28,7 @@ var SecurityListResponse = require("./SecurityListResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function SecurityListResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name SecurityListResponseTransaction#message
@@ -37,7 +38,7 @@ function SecurityListResponseTransaction () {
   this.message = null;
 }
 
-inherit(SecurityListResponseTransaction, "extends", new TransactionWrappedResponseMessage(SecurityListResponse));
+inherit(SecurityListResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("SECLISTTRNRS", SecurityListResponseTransaction);

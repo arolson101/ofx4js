@@ -19,7 +19,6 @@ var inherit = require("../../util/inherit");
 var StatusHolder = require("./common/StatusHolder");
 var ChildAggregate = require("../../meta/ChildAggregate");
 var Element = require("../../meta/Element");
-var Aggregate = require("../../meta/Aggregate");
 var ResponseMessage = require("./ResponseMessage");
 var Status = require("./common/Status");
 
@@ -101,8 +100,12 @@ TransactionWrappedResponseMessage.prototype.getResponseMessageName = function() 
   if (this.getWrappedMessage() !== null) {
     name = this.getWrappedMessage().getResponseMessageName() + " transaction";
   }
-  else if (this.getClass().isAnnotationPresent(Aggregate.class)) {
-    name = this.getClass().getAnnotation(Aggregate.class).value() + " transaction";
+  else {
+    var AggregateIntrospector = require("../../io/AggregateIntrospector");
+    var aggregateName = AggregateIntrospector.getAggregateName(this.constructor);
+    if (aggregateName) {
+      name = aggregateName + " transaction";
+    }
   }
 
   return name;

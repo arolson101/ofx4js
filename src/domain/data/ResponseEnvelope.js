@@ -152,7 +152,8 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
 ResponseEnvelope.prototype.getMessageSet = function(type) {
   var message = null;
   if (this.messageSets !== null) {
-    for (var messageSet in this.messageSets) {
+    for (var i=0; i<this.messageSets.length; i++) {
+      var messageSet = this.messageSets[i];
       if (messageSet.getType() == type) {
         message = messageSet;
         break;

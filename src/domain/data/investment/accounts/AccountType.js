@@ -27,13 +27,13 @@ var AccountType = {
   CORPORATE: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("INDIVIDUAL".equals(ofxVal)) {
+    if ("INDIVIDUAL" === ofxVal) {
       return AccountType.INDIVIDUAL;
-    } else if ("JOINT".equals(ofxVal)) {
+    } else if ("JOINT" === ofxVal) {
       return AccountType.JOINT;
-    } else if ("CORPORATE".equals(ofxVal)) {
+    } else if ("CORPORATE" === ofxVal) {
       return AccountType.CORPORATE;
-    } else if ("CORPORATE".equals(ofxVal)) {
+    } else if ("CORPORATE" === ofxVal) {
       return AccountType.CORPORATE;
     } else {
       return null;

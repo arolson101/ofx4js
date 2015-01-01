@@ -25,9 +25,9 @@ var OptionBuyType = {
   BUY_TO_CLOSE: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("BUYTOOPEN".equals(ofxVal)) {
+    if ("BUYTOOPEN" === ofxVal) {
       return OptionBuyType.BUY_TO_OPEN;
-    } else if ("BUYTOCLOSE".equals(ofxVal)) {
+    } else if ("BUYTOCLOSE" === ofxVal) {
       return OptionBuyType.BUY_TO_CLOSE;
     } else {
       return null;

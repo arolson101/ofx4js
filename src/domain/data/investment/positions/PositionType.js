@@ -25,9 +25,9 @@ var PositionType = {
   SHORT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("LONG".equals(ofxVal)) {
+    if ("LONG" === ofxVal) {
       return PositionType.LONG;
-    } else if ("SHORT".equals(ofxVal)) {
+    } else if ("SHORT" === ofxVal) {
       return PositionType.SHORT;
     } else {
       return null;

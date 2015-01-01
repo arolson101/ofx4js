@@ -28,103 +28,98 @@ var RequestMessage = require("./ResponseMessage");
  * @param {RequestMessage} M
  */
 function TransactionWrappedRequestMessage(/*M*/) {
+  var UID;
+  if(arguments.length === 1) {
+    UID = arguments[0];
+  } else {
+    UID = UUID.v4();
+  }
 
   /**
-   * constructor
+   * @type String
    */
-  var c = function() {
-    var UID;
-    if(arguments.length === 1) {
-      UID = arguments[0];
-    } else {
-      UID = UUID.v4();
-    }
-
-    /**
-     * @type String
-     */
-    this.UID = UID;
-
-    /**
-     * @type String
-     */
-    this.clientCookie = null;
-
-    /**
-     * @type String
-     */
-    this.transactionAuthorizationNumber = null;
-  };
+  this.UID = UID;
 
   /**
-   * UID of this transaction.
-   *
-   * @return UID of this transaction.
+   * @type String
    */
-  c.prototype.getUID = function() {
-    return this.UID;
-  };
-  Element.add(c, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
-
+  this.clientCookie = null;
 
   /**
-   * UID of this transaction.
-   *
-   * @param {String} UID UID of this transaction.
+   * @type String
    */
-  c.prototype.setUID = function(UID) {
-    this.UID = UID;
-  };
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @return {String} Client cookie (echoed back by the response).
-   */
-  c.prototype.getClientCookie = function() {
-    return this.clientCookie;
-  };
-  Element.add(c, {name: "CLTCOOKIE", order: 10, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @param {String} clientCookie Client cookie (echoed back by the response).
-   */
-  c.prototype.setClientCookie = function(clientCookie) {
-    this.clientCookie = clientCookie;
-  };
-
-  /**
-   * The transaction authorization number.
-   *
-   * @return {String} The transaction authorization number.
-   */
-  c.prototype.getTransactionAuthorizationNumber = function() {
-    return this.transactionAuthorizationNumber;
-  };
-  Element.add(c, {name: "TAN", order: 20, attributeType: String, readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
-
-  /**
-   * The transaction authorization number.
-   *
-   * @param {String} transactionAuthorizationNumber The transaction authorization number.
-   */
-  c.prototype.setTransactionAuthorizationNumber = function(transactionAuthorizationNumber) {
-    this.transactionAuthorizationNumber = transactionAuthorizationNumber;
-  };
-  
-  
-  /**
-   * Set the wrapped message.
-   *
-   * @param {M} message The wrapped message.
-   */
-  c.prototype.setWrappedMessage = function(/*message*/) { throw new Error("not implemented"); };
-
-
-  inherit(c, 'extends', RequestMessage);
-  return c;
+  this.transactionAuthorizationNumber = null;
 }
+
+inherit(TransactionWrappedRequestMessage, 'extends', RequestMessage);
+
+
+/**
+ * UID of this transaction.
+ *
+ * @return UID of this transaction.
+ */
+TransactionWrappedRequestMessage.prototype.getUID = function() {
+  return this.UID;
+};
+Element.add(TransactionWrappedRequestMessage, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
+
+
+/**
+ * UID of this transaction.
+ *
+ * @param {String} UID UID of this transaction.
+ */
+TransactionWrappedRequestMessage.prototype.setUID = function(UID) {
+  this.UID = UID;
+};
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @return {String} Client cookie (echoed back by the response).
+ */
+TransactionWrappedRequestMessage.prototype.getClientCookie = function() {
+  return this.clientCookie;
+};
+Element.add(TransactionWrappedRequestMessage, {name: "CLTCOOKIE", order: 10, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @param {String} clientCookie Client cookie (echoed back by the response).
+ */
+TransactionWrappedRequestMessage.prototype.setClientCookie = function(clientCookie) {
+  this.clientCookie = clientCookie;
+};
+
+/**
+ * The transaction authorization number.
+ *
+ * @return {String} The transaction authorization number.
+ */
+TransactionWrappedRequestMessage.prototype.getTransactionAuthorizationNumber = function() {
+  return this.transactionAuthorizationNumber;
+};
+Element.add(TransactionWrappedRequestMessage, {name: "TAN", order: 20, attributeType: String, readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
+
+/**
+ * The transaction authorization number.
+ *
+ * @param {String} transactionAuthorizationNumber The transaction authorization number.
+ */
+TransactionWrappedRequestMessage.prototype.setTransactionAuthorizationNumber = function(transactionAuthorizationNumber) {
+  this.transactionAuthorizationNumber = transactionAuthorizationNumber;
+};
+
+
+/**
+ * Set the wrapped message.
+ *
+ * @param {M} message The wrapped message.
+ */
+TransactionWrappedRequestMessage.prototype.setWrappedMessage = function(/*message*/) { throw new Error("not implemented"); };
+
+
 
 module.exports = TransactionWrappedRequestMessage;

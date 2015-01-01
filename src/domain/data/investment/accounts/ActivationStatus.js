@@ -26,11 +26,11 @@ var ActivationStatus = {
   AVAILABLE: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("ACTIVE".equals(ofxVal)) {
+    if ("ACTIVE" === ofxVal) {
       return ActivationStatus.ACTIVE;
-    } else if ("PEND".equals(ofxVal)) {
+    } else if ("PEND" === ofxVal) {
       return ActivationStatus.PENDING;
-    } else if ("AVAIL".equals(ofxVal)) {
+    } else if ("AVAIL" === ofxVal) {
       return ActivationStatus.AVAILABLE;
     } else {
       return null;

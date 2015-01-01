@@ -40,7 +40,7 @@ function AggregateMarshaller () {
  * @param {OFXWriter} writer    The writer.
  */
 AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
-  var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.getClass());
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.constructor);
   if (aggregateInfo === null) {
     throw new Error("Unable to marshal object: no aggregate metadata found.");
   }
@@ -68,8 +68,9 @@ AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
  * @param {OFXWriter} writer              The writer.
  * @param {Object} aggregateAttributes The aggregate attributes.
  */
-AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, writer, /*SortedSet<AggregateAttribute>*/ aggregateAttributes) {
-  for (var aggregateAttribute in aggregateAttributes) {
+AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, writer, /*AggregateAttribute[]*/ aggregateAttributes) {
+  for (var i=0; i<aggregateAttributes.length; i++) {
+    var aggregateAttribute = aggregateAttributes[i];
     var childValue = aggregateAttribute.get(aggregate);
     if (childValue !== null) {
       switch (aggregateAttribute.getType()) {
@@ -101,7 +102,7 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
         case AggregateAttribute.Type.ELEMENT:
           /*jshint -W004*/
           var value = this.getConversion().toString(childValue);
-          if ((value !== null) && (!"".equals(value.trim()))) {
+          if ((value !== null) && ("" !== value.trim())) {
             writer.writeElement(aggregateAttribute.getName(), value);
           }
           break;

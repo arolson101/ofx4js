@@ -1,14 +1,19 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./src/index.js":[function(require,module,exports){
 "use strict";
 
-module.exports = {
+var ofx4js = {
   client: require("./client/index"),
   domain: require("./domain/index"),
   io: require("./io/index"),
   meta: require("./meta/index"),
+  util: require("./util/index"),
 };
 
-},{"./client/index":"/Users/aolson/Developer/ofx4js/src/client/index.js","./domain/index":"/Users/aolson/Developer/ofx4js/src/domain/index.js","./io/index":"/Users/aolson/Developer/ofx4js/src/io/index.js","./meta/index":"/Users/aolson/Developer/ofx4js/src/meta/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
+window.ofx4js = ofx4js;
+
+module.exports = ofx4js;
+
+},{"./client/index":"/Users/aolson/Developer/ofx4js/src/client/index.js","./domain/index":"/Users/aolson/Developer/ofx4js/src/domain/index.js","./io/index":"/Users/aolson/Developer/ofx4js/src/io/index.js","./meta/index":"/Users/aolson/Developer/ofx4js/src/meta/index.js","./util/index":"/Users/aolson/Developer/ofx4js/src/util/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -4205,7 +4210,157 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js":[function(require,module,exports){
+},{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/clone/clone.js":[function(require,module,exports){
+(function (Buffer){
+'use strict';
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+// shim for Node's 'util' package
+// DO NOT REMOVE THIS! It is required for compatibility with EnderJS (http://enderjs.com/).
+var util = {
+  isArray: function (ar) {
+    return Array.isArray(ar) || (typeof ar === 'object' && objectToString(ar) === '[object Array]');
+  },
+  isDate: function (d) {
+    return typeof d === 'object' && objectToString(d) === '[object Date]';
+  },
+  isRegExp: function (re) {
+    return typeof re === 'object' && objectToString(re) === '[object RegExp]';
+  },
+  getRegExpFlags: function (re) {
+    var flags = '';
+    re.global && (flags += 'g');
+    re.ignoreCase && (flags += 'i');
+    re.multiline && (flags += 'm');
+    return flags;
+  }
+};
+
+
+if (typeof module === 'object')
+  module.exports = clone;
+
+/**
+ * Clones (copies) an Object using deep copying.
+ *
+ * This function supports circular references by default, but if you are certain
+ * there are no circular references in your object, you can save some CPU time
+ * by calling clone(obj, false).
+ *
+ * Caution: if `circular` is false and `parent` contains circular references,
+ * your program may enter an infinite loop and crash.
+ *
+ * @param `parent` - the object to be cloned
+ * @param `circular` - set to true if the object to be cloned may contain
+ *    circular references. (optional - true by default)
+ * @param `depth` - set to a number if the object is only to be cloned to
+ *    a particular depth. (optional - defaults to Infinity)
+ * @param `prototype` - sets the prototype to be used when cloning an object.
+ *    (optional - defaults to parent prototype).
+*/
+
+function clone(parent, circular, depth, prototype) {
+  // maintain two arrays for circular references, where corresponding parents
+  // and children have the same index
+  var allParents = [];
+  var allChildren = [];
+
+  var useBuffer = typeof Buffer != 'undefined';
+
+  if (typeof circular == 'undefined')
+    circular = true;
+
+  if (typeof depth == 'undefined')
+    depth = Infinity;
+
+  // recurse this function so we don't reset allParents and allChildren
+  function _clone(parent, depth) {
+    // cloning null always returns null
+    if (parent === null)
+      return null;
+
+    if (depth == 0)
+      return parent;
+
+    var child;
+    var proto;
+    if (typeof parent != 'object') {
+      return parent;
+    }
+
+    if (util.isArray(parent)) {
+      child = [];
+    } else if (util.isRegExp(parent)) {
+      child = new RegExp(parent.source, util.getRegExpFlags(parent));
+      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+    } else if (util.isDate(parent)) {
+      child = new Date(parent.getTime());
+    } else if (useBuffer && Buffer.isBuffer(parent)) {
+      child = new Buffer(parent.length);
+      parent.copy(child);
+      return child;
+    } else {
+      if (typeof prototype == 'undefined') {
+        proto = Object.getPrototypeOf(parent);
+        child = Object.create(proto);
+      }
+      else {
+        child = Object.create(prototype);
+        proto = prototype;
+      }
+    }
+
+    if (circular) {
+      var index = allParents.indexOf(parent);
+
+      if (index != -1) {
+        return allChildren[index];
+      }
+      allParents.push(parent);
+      allChildren.push(child);
+    }
+
+    for (var i in parent) {
+      var attrs;
+      if (proto) {
+        attrs = Object.getOwnPropertyDescriptor(proto, i);
+      }
+      
+      if (attrs && attrs.set == null) {
+        continue;
+      }
+      child[i] = _clone(parent[i], depth - 1);
+    }
+
+    return child;
+  }
+
+  return _clone(parent, depth);
+}
+
+/**
+ * Simple flat clone using prototype, accepts only objects, usefull for property
+ * override on FLAT configuration object (no nested props).
+ *
+ * USE WITH CAUTION! This may not behave as you wish if you do not know how this
+ * works.
+ */
+clone.clonePrototype = function(parent) {
+  if (parent === null)
+    return null;
+
+  var c = function () {};
+  c.prototype = parent;
+  return new c();
+};
+
+}).call(this,require("buffer").Buffer)
+},{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+arguments[4]["/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"][0].apply(exports,arguments)
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js":[function(require,module,exports){
 (function (Buffer){
 // wrapper for non-node envs
 ;(function (sax) {
@@ -6801,7 +6956,7 @@ BaseAccountImpl.prototype.getMessageSetType = function(details) {
     messageType = MessageSetType.investment;
   }
   else {
-    throw new Error("Illegal details: " + this.details.getClass().getName());
+    throw new Error("Illegal details: " + this.details.constructor.name);
   }
   return messageType;
 };
@@ -6816,7 +6971,7 @@ BaseAccountImpl.prototype.readStatement = function(/*Date*/ start, /*Date*/ end)
   var request = this.institution.createAuthenticatedRequest(this.username, this.password);
   var requestTransaction = this.createTransaction();
   requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
-  request.getMessageSets().add(this.createRequestMessageSet(requestTransaction));
+  request.getMessageSets().push(this.createRequestMessageSet(requestTransaction));
 
   var response = this.institution.sendRequest(request);
   this.institution.doGeneralValidationChecks(request, response);
@@ -7237,7 +7392,7 @@ FinancialInstitutionImpl.prototype.readProfile = function() {
   var request = this.createAuthenticatedRequest(SignonRequest.ANONYMOUS_USER, SignonRequest.ANONYMOUS_USER);
   var profileRequest = new ProfileRequestMessageSet();
   profileRequest.setProfileRequest(this.createProfileTransaction());
-  request.getMessageSets().add(profileRequest);
+  request.getMessageSets().push(profileRequest);
   var response = this.sendRequest(request, this.getData().getOFXURL());
   this.doGeneralValidationChecks(request, response);
   return this.getProfile(response);
@@ -7249,7 +7404,7 @@ FinancialInstitutionImpl.prototype.readAccountProfiles = function(/*String*/ use
   var request = this.createAuthenticatedRequest(username, password);
   var signupRequest = new SignupRequestMessageSet();
   signupRequest.setAccountInfoRequest(this.createAccountInfoTransaction());
-  request.getMessageSets().add(signupRequest);
+  request.getMessageSets().push(signupRequest);
   var response = this.sendRequest(request, this.getData().getOFXURL());
   this.doGeneralValidationChecks(request, response);
   return this.getAccountProfiles(response);
@@ -7353,11 +7508,13 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
     throw new Error(String.format("Unable to participate in %s security.", response.getSecurity()));
   }
 
-  if (!request.getUID().equals(response.getUID())) {
+  if (request.getUID() !== response.getUID()) {
     throw new Error(String.format("Invalid transaction ID '%s' in response.  Expected: %s", response.getUID(), request));
   }
 
-  for (var requestSet in request.getMessageSets()) {
+  var messageSets = request.getMessageSets();
+  for (var messageSetsIdx=0; messageSetsIdx<messageSets.length; messageSetsIdx++) {
+    var requestSet = messageSets[messageSetsIdx];
     var responseSet = response.getMessageSet(requestSet.getType());
     if (responseSet === null) {
       throw new Error("No response for the " + requestSet.getType() + " request.");
@@ -7372,13 +7529,17 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
     }
 
     var transactionIds = {};
-    for (var requestMessage in requestSet.getRequestMessages()) {
+    var requestMessages = requestSet.getRequestMessages();
+    for (var requestMessagesIdx=0; requestMessagesIdx<requestMessages.length; requestMessages++) {
+      var requestMessage = requestMessages[requestMessagesIdx];
       if (requestMessage instanceof TransactionWrappedRequestMessage) {
         transactionIds[requestMessage.getUID()] = 1;
       }
     }
 
-    for (var responseMessage in responseSet.getResponseMessages()) {
+    var responseMessages = responseSet.getResponseMessages();
+    for (var responseMessagesIdx=0; responseMessagesIdx<responseMessages.length; responseMessagesIdx++) {
+      var responseMessage = responseMessages[responseMessagesIdx];
       if (responseMessage instanceof StatusHolder) {
         this.validateStatus(responseMessage);
       }
@@ -7394,7 +7555,7 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
       }
     }
 
-    if (!transactionIds.isEmpty()) {
+    if (transactionIds.length > 0) {
       throw new Error("No response to the following transactions: " + transactionIds);
     }
   }
@@ -7412,7 +7573,7 @@ FinancialInstitutionImpl.prototype.validateStatus = function(statusHolder) {
     throw new Error("Invalid OFX response: no status returned in the " + statusHolder.getStatusHolderName() + " response.");
   }
 
-  if (!Status.KnownCode.SUCCESS.equals(status.getCode())) {
+  if (Status.KnownCode.SUCCESS !== status.getCode()) {
     var message = status.getMessage();
     if (message === null) {
       message = "No response status code.";
@@ -7703,7 +7864,7 @@ InvestmentAccountImpl.prototype.readStatement = function(/*Date*/ start, /*Date*
   var request = this.institution.createAuthenticatedRequest(this.username, this.password);
   var requestTransaction = new InvestmentStatementRequestTransaction();
   requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
-  request.getMessageSets().add(this.createStatementRequestMessageSet(requestTransaction));
+  request.getMessageSets().push(this.createStatementRequestMessageSet(requestTransaction));
 
   var response = this.institution.sendRequest(request);
   this.institution.doGeneralValidationChecks(request, response);
@@ -7716,7 +7877,7 @@ InvestmentAccountImpl.prototype.readSecurityList = function(/*SecurityRequest[]*
   var request = this.institution.createAuthenticatedRequest(this.username, this.password);
   var requestTransaction = new SecurityListRequestTransaction();
   requestTransaction.setWrappedMessage(this.createSecurityListRequest(securities));
-  request.getMessageSets().add(this.createSecurityListRequestMessageSet(requestTransaction));
+  request.getMessageSets().push(this.createSecurityListRequestMessageSet(requestTransaction));
 
   var response = this.institution.sendRequest(request);
   this.institution.doGeneralValidationChecks(request, response);
@@ -8171,7 +8332,7 @@ module.exports = InvestmentAccountImpl;
 //        }
 //        else if (this.fieldValueBuffer != null) {
 //          String fieldValue = this.fieldValueBuffer.toString().trim();
-//          if ("".equals(fieldValue)) {
+//          if ("" === fieldValue) {
 //            fieldValue = null;
 //          }
 //
@@ -9166,7 +9327,8 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
 ResponseEnvelope.prototype.getMessageSet = function(type) {
   var message = null;
   if (this.messageSets !== null) {
-    for (var messageSet in this.messageSets) {
+    for (var i=0; i<this.messageSets.length; i++) {
+      var messageSet = this.messageSets[i];
       if (messageSet.getType() == type) {
         message = messageSet;
         break;
@@ -9468,104 +9630,99 @@ var RequestMessage = require("./ResponseMessage");
  * @param {RequestMessage} M
  */
 function TransactionWrappedRequestMessage(/*M*/) {
+  var UID;
+  if(arguments.length === 1) {
+    UID = arguments[0];
+  } else {
+    UID = UUID.v4();
+  }
 
   /**
-   * constructor
+   * @type String
    */
-  var c = function() {
-    var UID;
-    if(arguments.length === 1) {
-      UID = arguments[0];
-    } else {
-      UID = UUID.v4();
-    }
-
-    /**
-     * @type String
-     */
-    this.UID = UID;
-
-    /**
-     * @type String
-     */
-    this.clientCookie = null;
-
-    /**
-     * @type String
-     */
-    this.transactionAuthorizationNumber = null;
-  };
+  this.UID = UID;
 
   /**
-   * UID of this transaction.
-   *
-   * @return UID of this transaction.
+   * @type String
    */
-  c.prototype.getUID = function() {
-    return this.UID;
-  };
-  Element.add(c, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
-
+  this.clientCookie = null;
 
   /**
-   * UID of this transaction.
-   *
-   * @param {String} UID UID of this transaction.
+   * @type String
    */
-  c.prototype.setUID = function(UID) {
-    this.UID = UID;
-  };
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @return {String} Client cookie (echoed back by the response).
-   */
-  c.prototype.getClientCookie = function() {
-    return this.clientCookie;
-  };
-  Element.add(c, {name: "CLTCOOKIE", order: 10, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
-
-  /**
-   * Client cookie (echoed back by the response).
-   *
-   * @param {String} clientCookie Client cookie (echoed back by the response).
-   */
-  c.prototype.setClientCookie = function(clientCookie) {
-    this.clientCookie = clientCookie;
-  };
-
-  /**
-   * The transaction authorization number.
-   *
-   * @return {String} The transaction authorization number.
-   */
-  c.prototype.getTransactionAuthorizationNumber = function() {
-    return this.transactionAuthorizationNumber;
-  };
-  Element.add(c, {name: "TAN", order: 20, attributeType: String, readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
-
-  /**
-   * The transaction authorization number.
-   *
-   * @param {String} transactionAuthorizationNumber The transaction authorization number.
-   */
-  c.prototype.setTransactionAuthorizationNumber = function(transactionAuthorizationNumber) {
-    this.transactionAuthorizationNumber = transactionAuthorizationNumber;
-  };
-  
-  
-  /**
-   * Set the wrapped message.
-   *
-   * @param {M} message The wrapped message.
-   */
-  c.prototype.setWrappedMessage = function(/*message*/) { throw new Error("not implemented"); };
-
-
-  inherit(c, 'extends', RequestMessage);
-  return c;
+  this.transactionAuthorizationNumber = null;
 }
+
+inherit(TransactionWrappedRequestMessage, 'extends', RequestMessage);
+
+
+/**
+ * UID of this transaction.
+ *
+ * @return UID of this transaction.
+ */
+TransactionWrappedRequestMessage.prototype.getUID = function() {
+  return this.UID;
+};
+Element.add(TransactionWrappedRequestMessage, {name: "TRNUID", required: true, order: 0, attributeType: String, readMethod: "getUID", writeMethod: "setUID"});
+
+
+/**
+ * UID of this transaction.
+ *
+ * @param {String} UID UID of this transaction.
+ */
+TransactionWrappedRequestMessage.prototype.setUID = function(UID) {
+  this.UID = UID;
+};
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @return {String} Client cookie (echoed back by the response).
+ */
+TransactionWrappedRequestMessage.prototype.getClientCookie = function() {
+  return this.clientCookie;
+};
+Element.add(TransactionWrappedRequestMessage, {name: "CLTCOOKIE", order: 10, attributeType: String, readMethod: "getClientCookie", writeMethod: "setClientCookie"});
+
+/**
+ * Client cookie (echoed back by the response).
+ *
+ * @param {String} clientCookie Client cookie (echoed back by the response).
+ */
+TransactionWrappedRequestMessage.prototype.setClientCookie = function(clientCookie) {
+  this.clientCookie = clientCookie;
+};
+
+/**
+ * The transaction authorization number.
+ *
+ * @return {String} The transaction authorization number.
+ */
+TransactionWrappedRequestMessage.prototype.getTransactionAuthorizationNumber = function() {
+  return this.transactionAuthorizationNumber;
+};
+Element.add(TransactionWrappedRequestMessage, {name: "TAN", order: 20, attributeType: String, readMethod: "getTransactionAuthorizationNumber", writeMethod: "setTransactionAuthorizationNumber"});
+
+/**
+ * The transaction authorization number.
+ *
+ * @param {String} transactionAuthorizationNumber The transaction authorization number.
+ */
+TransactionWrappedRequestMessage.prototype.setTransactionAuthorizationNumber = function(transactionAuthorizationNumber) {
+  this.transactionAuthorizationNumber = transactionAuthorizationNumber;
+};
+
+
+/**
+ * Set the wrapped message.
+ *
+ * @param {M} message The wrapped message.
+ */
+TransactionWrappedRequestMessage.prototype.setWrappedMessage = function(/*message*/) { throw new Error("not implemented"); };
+
+
 
 module.exports = TransactionWrappedRequestMessage;
 
@@ -9591,7 +9748,6 @@ var inherit = require("../../util/inherit");
 var StatusHolder = require("./common/StatusHolder");
 var ChildAggregate = require("../../meta/ChildAggregate");
 var Element = require("../../meta/Element");
-var Aggregate = require("../../meta/Aggregate");
 var ResponseMessage = require("./ResponseMessage");
 var Status = require("./common/Status");
 
@@ -9673,8 +9829,12 @@ TransactionWrappedResponseMessage.prototype.getResponseMessageName = function() 
   if (this.getWrappedMessage() !== null) {
     name = this.getWrappedMessage().getResponseMessageName() + " transaction";
   }
-  else if (this.getClass().isAnnotationPresent(Aggregate.class)) {
-    name = this.getClass().getAnnotation(Aggregate.class).value() + " transaction";
+  else {
+    var AggregateIntrospector = require("../../io/AggregateIntrospector");
+    var aggregateName = AggregateIntrospector.getAggregateName(this.constructor);
+    if (aggregateName) {
+      name = aggregateName + " transaction";
+    }
   }
 
   return name;
@@ -9708,7 +9868,7 @@ TransactionWrappedResponseMessage.prototype.getWrappedMessage = function() { thr
 
 module.exports = TransactionWrappedResponseMessage;
 
-},{"../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","./common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/AccountType.js":[function(require,module,exports){
+},{"../../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./ResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseMessage.js","./common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","./common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/banking/AccountType.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10235,6 +10395,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function BankStatementRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name BankStatementRequestTransaction#message
@@ -10244,7 +10405,7 @@ function BankStatementRequestTransaction () {
   this.message = null;
 }
 
-inherit(BankStatementRequestTransaction, "extends", new TransactionWrappedRequestMessage(BankStatementRequest));
+inherit(BankStatementRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("STMTTRNRQ", BankStatementRequestTransaction);
@@ -10385,6 +10546,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedResponseMessage
  */
 function BankStatementResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name BankStatementResponseTransaction#message
@@ -10394,7 +10556,7 @@ function BankStatementResponseTransaction () {
   this.message = null;
 }
 
-inherit(BankStatementResponseTransaction, "extends", new TransactionWrappedResponseMessage(BankStatementResponse));
+inherit(BankStatementResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("STMTTRNRS", BankStatementResponseTransaction);
@@ -11506,19 +11668,19 @@ var ProcessorDayOff = {
   SUNDAY: 6,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("MONDAY".equals(ofxVal)) {
+    if ("MONDAY" === ofxVal) {
       return this.MONDAY;
-    } else if ("TUESDAY".equals(ofxVal)) {
+    } else if ("TUESDAY" === ofxVal) {
       return this.TUESDAY;
-    } else if ("WEDNESDAY".equals(ofxVal)) {
+    } else if ("WEDNESDAY" === ofxVal) {
       return this.WEDNESDAY;
-    } else if ("THURSDAY".equals(ofxVal)) {
+    } else if ("THURSDAY" === ofxVal) {
       return this.THURSDAY;
-    } else if ("FRIDAY".equals(ofxVal)) {
+    } else if ("FRIDAY" === ofxVal) {
       return this.FRIDAY;
-    } else if ("SATURDAY".equals(ofxVal)) {
+    } else if ("SATURDAY" === ofxVal) {
       return this.SATURDAY;
-    } else if ("SUNDAY".equals(ofxVal)) {
+    } else if ("SUNDAY" === ofxVal) {
       return this.SUNDAY;
     } else {
       return null;
@@ -12044,7 +12206,8 @@ Status.KnownCode.prototype.getDefaultSeverity = function() {
  * @returns KnownCode
  */
 Status.KnownCode.fromCode = function(code) {
-  for (var value in Status.KnownCode) {
+  for (var key in Status.KnownCode) {
+    var value = Status.KnownCode[key];
     if (value instanceof Status.KnownCode && value.getCode() == code) {
       return value;
     }
@@ -14204,6 +14367,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function CreditCardStatementRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name CreditCardStatementRequestTransaction#message
@@ -14213,7 +14377,7 @@ function CreditCardStatementRequestTransaction () {
   this.message = null;
 }
 
-inherit(CreditCardStatementRequestTransaction, "extends", new TransactionWrappedRequestMessage(CreditCardStatementRequest));
+inherit(CreditCardStatementRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("CCSTMTTRNRQ", CreditCardStatementRequestTransaction);
@@ -14354,6 +14518,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedResponseMessage
  */
 function CreditCardStatementResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name CreditCardStatementResponseTransaction#message
@@ -14363,7 +14528,7 @@ function CreditCardStatementResponseTransaction () {
   this.message = null;
 }
 
-inherit(CreditCardStatementResponseTransaction, "extends", new TransactionWrappedResponseMessage(CreditCardStatementResponse));
+inherit(CreditCardStatementResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("CCSTMTTRNRS", CreditCardStatementResponseTransaction);
@@ -14472,13 +14637,13 @@ var AccountType = {
   CORPORATE: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("INDIVIDUAL".equals(ofxVal)) {
+    if ("INDIVIDUAL" === ofxVal) {
       return AccountType.INDIVIDUAL;
-    } else if ("JOINT".equals(ofxVal)) {
+    } else if ("JOINT" === ofxVal) {
       return AccountType.JOINT;
-    } else if ("CORPORATE".equals(ofxVal)) {
+    } else if ("CORPORATE" === ofxVal) {
       return AccountType.CORPORATE;
-    } else if ("CORPORATE".equals(ofxVal)) {
+    } else if ("CORPORATE" === ofxVal) {
       return AccountType.CORPORATE;
     } else {
       return null;
@@ -14518,11 +14683,11 @@ var ActivationStatus = {
   AVAILABLE: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("ACTIVE".equals(ofxVal)) {
+    if ("ACTIVE" === ofxVal) {
       return ActivationStatus.ACTIVE;
-    } else if ("PEND".equals(ofxVal)) {
+    } else if ("PEND" === ofxVal) {
       return ActivationStatus.PENDING;
-    } else if ("AVAIL".equals(ofxVal)) {
+    } else if ("AVAIL" === ofxVal) {
       return ActivationStatus.AVAILABLE;
     } else {
       return null;
@@ -14954,13 +15119,13 @@ var SubAccountType = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CASH".equals(ofxVal)) {
+    if ("CASH" === ofxVal) {
       return SubAccountType.CASH;
-    } else if ("MARGIN".equals(ofxVal)) {
+    } else if ("MARGIN" === ofxVal) {
       return SubAccountType.MARGIN;
-    } else if ("SHORT".equals(ofxVal)) {
+    } else if ("SHORT" === ofxVal) {
       return SubAccountType.SHORT;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return SubAccountType.OTHER;
     } else {
       return null;
@@ -15029,27 +15194,27 @@ var UnitedStatesAccountType = {
   UGMA: 21,
   
   fromOfx: function(/*String*/ ofxVal) {
-    if ("401K".equals(ofxVal)) {
+    if ("401K" === ofxVal) {
       return UnitedStatesAccountType.R401K;
-    } else if ("403B".equals(ofxVal)) {
+    } else if ("403B" === ofxVal) {
       return UnitedStatesAccountType.R403B;
-    } else if ("IRA".equals(ofxVal)) {
+    } else if ("IRA" === ofxVal) {
       return UnitedStatesAccountType.IRA;
-    } else if ("KEOUGH".equals(ofxVal)) {
+    } else if ("KEOUGH" === ofxVal) {
       return UnitedStatesAccountType.KEOUGH;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return UnitedStatesAccountType.OTHER;
-    } else if ("SARSEP".equals(ofxVal)) {
+    } else if ("SARSEP" === ofxVal) {
       return UnitedStatesAccountType.SARSEP;
-    } else if ("SIMPLE".equals(ofxVal)) {
+    } else if ("SIMPLE" === ofxVal) {
       return UnitedStatesAccountType.SIMPLE;
-    } else if ("NORMAL".equals(ofxVal)) {
+    } else if ("NORMAL" === ofxVal) {
       return UnitedStatesAccountType.NORMAL;
-    } else if ("TDA".equals(ofxVal)) {
+    } else if ("TDA" === ofxVal) {
       return UnitedStatesAccountType.TDA;
-    } else if ("TRUST".equals(ofxVal)) {
+    } else if ("TRUST" === ofxVal) {
       return UnitedStatesAccountType.TRUST;
-    } else if ("UGMA".equals(ofxVal)) {
+    } else if ("UGMA" === ofxVal) {
       return UnitedStatesAccountType.UGMA;
     } else {
       return null;
@@ -15381,19 +15546,19 @@ var Inv401KSource = {
   OTHER_NONVEST: 6,
   
   fromOfx: function(/*String*/ ofxVal) {
-    if ("PRETAX".equals(ofxVal)) {
+    if ("PRETAX" === ofxVal) {
       return Inv401KSource.PRETAX;
-    } else if ("AFTERTAX".equals(ofxVal)) {
+    } else if ("AFTERTAX" === ofxVal) {
       return Inv401KSource.AFTER_TAX;
-    } else if ("MATCH".equals(ofxVal)) {
+    } else if ("MATCH" === ofxVal) {
       return Inv401KSource.MATCH;
-    } else if ("PROFITSHARING".equals(ofxVal)) {
+    } else if ("PROFITSHARING" === ofxVal) {
       return Inv401KSource.PROFIT_SHARING;
-    } else if ("ROLLOVER".equals(ofxVal)) {
+    } else if ("ROLLOVER" === ofxVal) {
       return Inv401KSource.ROLLOVER;
-    } else if ("OTHERVEST".equals(ofxVal)) {
+    } else if ("OTHERVEST" === ofxVal) {
       return Inv401KSource.OTHER_VEST;
-    } else if ("OTHERNONVEST".equals(ofxVal)) {
+    } else if ("OTHERNONVEST" === ofxVal) {
       return Inv401KSource.OTHER_NONVEST;
     } else {
       return null;
@@ -16176,9 +16341,9 @@ var PositionType = {
   SHORT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("LONG".equals(ofxVal)) {
+    if ("LONG" === ofxVal) {
       return PositionType.LONG;
-    } else if ("SHORT".equals(ofxVal)) {
+    } else if ("SHORT" === ofxVal) {
       return PositionType.SHORT;
     } else {
       return null;
@@ -16216,9 +16381,9 @@ var ShortOptionSecurity = {
   COVERED: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("NAKED".equals(ofxVal)) {
+    if ("NAKED" === ofxVal) {
       return ShortOptionSecurity.NAKED;
-    } else if ("COVERED".equals(ofxVal)) {
+    } else if ("COVERED" === ofxVal) {
       return ShortOptionSecurity.COVERED;
     } else {
       return null;
@@ -17008,6 +17173,7 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function InvestmentStatementRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name InvestmentStatementRequestTransaction#message
@@ -17017,7 +17183,7 @@ function InvestmentStatementRequestTransaction () {
   this.message = null;
 }
 
-inherit(InvestmentStatementRequestTransaction, "extends", new TransactionWrappedRequestMessage(InvestmentStatementRequest));
+inherit(InvestmentStatementRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("INVSTMTTRNRQ", InvestmentStatementRequestTransaction);
@@ -17428,6 +17594,7 @@ var InvestmentStatementResponse = require("./InvestmentStatementResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function InvestmentStatementResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name InvestmentStatementResponseTransaction#message
@@ -17437,7 +17604,7 @@ function InvestmentStatementResponseTransaction () {
   this.message = null;
 }
 
-inherit(InvestmentStatementResponseTransaction, "extends", new TransactionWrappedResponseMessage(InvestmentStatementResponse));
+inherit(InvestmentStatementResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("INVSTMTTRNRS", InvestmentStatementResponseTransaction);
@@ -18005,12 +18172,6 @@ function BaseSellInvestmentTransaction (/*TransactionType*/ transactionType) {
 inherit(BaseSellInvestmentTransaction, "extends", BaseInvestmentTransaction);
 inherit(BaseSellInvestmentTransaction, "implements", TransactionWithSecurity);
 
-
-
-
-BaseSellInvestmentTransaction.prototype.BaseSellInvestmentTransaction = function(/*TransactionType*/ transactionType) {
-  super(transactionType);
-};
 
 
 /**
@@ -19299,9 +19460,9 @@ var BuyType = {
   BUY_TO_COVER: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("BUY".equals(ofxVal)) {
+    if ("BUY" === ofxVal) {
       return BuyType.BUY;
-    } else if ("BUYTOCOVER".equals(ofxVal)) {
+    } else if ("BUYTOCOVER" === ofxVal) {
       return BuyType.BUY_TO_COVER;
     } else {
       return null;
@@ -19341,11 +19502,11 @@ var CloseOptionAction = {
   EXPIRE: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("EXERCISE".equals(ofxVal)) {
+    if ("EXERCISE" === ofxVal) {
       return CloseOptionAction.EXERCISE;
-    } else if ("ASSIGN".equals(ofxVal)) {
+    } else if ("ASSIGN" === ofxVal) {
       return CloseOptionAction.ASSIGN;
-    } else if ("EXPIRE".equals(ofxVal)) {
+    } else if ("EXPIRE" === ofxVal) {
       return CloseOptionAction.EXPIRE;
     } else {
       return null;
@@ -20087,15 +20248,15 @@ var IncomeType = {
   MISC: 4,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CGLONG".equals(ofxVal)) {
+    if ("CGLONG" === ofxVal) {
       return IncomeType.LONG_TERM_CAP_GAINS;
-    } else if ("CGSHORT".equals(ofxVal)) {
+    } else if ("CGSHORT" === ofxVal) {
       return IncomeType.SHORT_TERM_CAP_GAINS;
-    } else if ("DIV".equals(ofxVal)) {
+    } else if ("DIV" === ofxVal) {
       return IncomeType.DIVIDEND;
-    } else if ("INTEREST".equals(ofxVal)) {
+    } else if ("INTEREST" === ofxVal) {
       return IncomeType.INTEREST;
-    } else if ("MISC".equals(ofxVal)) {
+    } else if ("MISC" === ofxVal) {
       return IncomeType.MISC;
     } else {
       return null;
@@ -20963,10 +21124,6 @@ inherit(JournalFundTransaction, "extends", BaseOtherInvestmentTransaction);
 Aggregate.add("JRNLFUND", JournalFundTransaction);
 
 
-JournalFundTransaction.prototype.JournalFundTransaction = function() {
-  super(TransactionType.JOURNAL_FUND);
-};
-
 
 /**
  * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
@@ -21467,9 +21624,9 @@ var OptionBuyType = {
   BUY_TO_CLOSE: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("BUYTOOPEN".equals(ofxVal)) {
+    if ("BUYTOOPEN" === ofxVal) {
       return OptionBuyType.BUY_TO_OPEN;
-    } else if ("BUYTOCLOSE".equals(ofxVal)) {
+    } else if ("BUYTOCLOSE" === ofxVal) {
       return OptionBuyType.BUY_TO_CLOSE;
     } else {
       return null;
@@ -21508,9 +21665,9 @@ var OptionSellType = {
   SELL_TO_OPEN: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("SELLTOOPEN".equals(ofxVal)) {
+    if ("SELLTOOPEN" === ofxVal) {
       return OptionSellType.SELL_TO_OPEN;
-    } else if ("SELLTOCLOSE".equals(ofxVal)) {
+    } else if ("SELLTOCLOSE" === ofxVal) {
       return OptionSellType.SELL_TO_CLOSE;
     } else {
       return null;
@@ -22175,13 +22332,13 @@ var RelatedOptionType = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("SPREAD".equals(ofxVal)) {
+    if ("SPREAD" === ofxVal) {
       return RelatedOptionType.SPREAD;
-    } else if ("STRADDLE".equals(ofxVal)) {
+    } else if ("STRADDLE" === ofxVal) {
       return RelatedOptionType.STRADDLE;
-    } else if ("NONE".equals(ofxVal)) {
+    } else if ("NONE" === ofxVal) {
       return RelatedOptionType.NONE;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return RelatedOptionType.OTHER;
     } else {
       return null;
@@ -22528,11 +22685,11 @@ var SellDebtReason = {
   MATURITY: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CALL".equals(ofxVal)) {
+    if ("CALL" === ofxVal) {
       return SellDebtReason.CALL;
-    } else if ("SELL".equals(ofxVal)) {
+    } else if ("SELL" === ofxVal) {
       return SellDebtReason.SELL;
-    } else if ("MATURITY".equals(ofxVal)) {
+    } else if ("MATURITY" === ofxVal) {
       return SellDebtReason.MATURITY;
     } else {
       return null;
@@ -23939,9 +24096,9 @@ var SellType = {
   SELL_SHORT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("SELL".equals(ofxVal)) {
+    if ("SELL" === ofxVal) {
       return SellType.SELL;
-    } else if ("SELLSHORT".equals(ofxVal)) {
+    } else if ("SELLSHORT" === ofxVal) {
       return SellType.SELL_SHORT;
     } else {
       return null;
@@ -24481,9 +24638,9 @@ var TransferAction = {
   OUT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("IN".equals(ofxVal)) {
+    if ("IN" === ofxVal) {
       return TransferAction.IN;
-    } else if ("OUT".equals(ofxVal)) {
+    } else if ("OUT" === ofxVal) {
       return TransferAction.OUT;
     } else {
       return null;
@@ -25652,6 +25809,7 @@ var ProfileRequest = require("./ProfileRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function ProfileRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name ProfileRequestTransaction#message
@@ -25661,7 +25819,7 @@ function ProfileRequestTransaction () {
   this.message = null;
 }
 
-inherit(ProfileRequestTransaction, "extends", new TransactionWrappedRequestMessage(ProfileRequest));
+inherit(ProfileRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("PROFTRNRQ", ProfileRequestTransaction);
@@ -26206,7 +26364,7 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
   if (profiles.length > 1) {
     throw new Error("More than one profile of type " + type);
   }
-  else if (profiles.isEmpty()) {
+  else if (profiles.length === 0) {
     return null;
   }
   else {
@@ -26224,9 +26382,13 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 ProfileResponse.prototype.getProfiles = function(type) {
   var profiles = [];
   if (this.getMessageSetList() !== null && this.getMessageSetList().getInformationList() !== null) {
-    for (var info in this.getMessageSetList().getInformationList()) {
+    var informationList = this.getMessageSetList().getInformationList();
+    for (var informationListIdx=0; informationListIdx<informationList.length; informationListIdx++) {
+      var info = informationList[informationListIdx];
       if (info.getVersionSpecificInformationList() !== null) {
-        for (var versionSpecificInfo in info.getVersionSpecificInformationList()) {
+        var versionSpecificInformationList = info.getVersionSpecificInformationList();
+        for (var versionSpecificInformationListIdx=0; versionSpecificInformationListIdx<versionSpecificInformationList.length; versionSpecificInformationListIdx++) {
+          var versionSpecificInfo = versionSpecificInformationList[versionSpecificInformationListIdx];
           if (versionSpecificInfo.getMessageSetType() == type) {
             profiles.add(versionSpecificInfo);
           }
@@ -26239,13 +26401,15 @@ ProfileResponse.prototype.getProfiles = function(type) {
 
 
 ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type, /*String*/ version) {
-  for (var profile in this.getProfiles(type)) {
+  var profiles = this.getProfiles(type);
+  for (var i=0; i<profiles.length; i++) {
+    var profile = profiles[i];
     if (version === null) {
       if (profile.getVersion() === null) {
         return profile;
       }
     }
-    else if (version.equals(profile.getVersion())) {
+    else if (version === profile.getVersion()) {
       return profile;
     }
   }
@@ -26256,13 +26420,15 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 
 ProfileResponse.prototype.getSignonProfile = function(/*MessageSetProfile*/ messageSet) {
   if (this.getSignonInfoList() !== null && this.getSignonInfoList().getInfoList() !== null) {
-    for (var signonInfo in this.getSignonInfoList().getInfoList()) {
+    var infoList = this.getSignonInfoList().getInfoList();
+    for (var infoListIdx=0; infoListIdx<infoList.length; infoListIdx++) {
+      var signonInfo = infoList[infoListIdx];
       if (messageSet.getRealm() === null) {
         if (signonInfo.getRealm() === null) {
           return signonInfo;
         }
       }
-      else if (messageSet.getRealm().equals(signonInfo.getRealm())) {
+      else if (messageSet.getRealm() === signonInfo.getRealm()) {
         return signonInfo;
       }
     }
@@ -26392,6 +26558,7 @@ var ProfileResponse = require("./ProfileResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function ProfileResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name ProfileResponseTransaction#message
@@ -26401,7 +26568,7 @@ function ProfileResponseTransaction () {
   this.message = null;
 }
 
-inherit(ProfileResponseTransaction, "extends", new TransactionWrappedResponseMessage(ProfileResponse));
+inherit(ProfileResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("PROFTRNRS", ProfileResponseTransaction);
@@ -30293,19 +30460,19 @@ var AssetClass = {
   OTHER: 14,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("DOMESTICBOND".equals(ofxVal)) {
+    if ("DOMESTICBOND" === ofxVal) {
       return AssetClass.DOMESTIC_BOND;
-    } else if ("INTLBOND".equals(ofxVal)) {
+    } else if ("INTLBOND" === ofxVal) {
       return AssetClass.INTL_BOND;
-    } else if ("LARGESTOCK".equals(ofxVal)) {
+    } else if ("LARGESTOCK" === ofxVal) {
       return AssetClass.LARGE_STOCK;
-    } else if ("SMALLSTOCK".equals(ofxVal)) {
+    } else if ("SMALLSTOCK" === ofxVal) {
       return AssetClass.SMALL_STOCK;
-    } else if ("INTLSTOCK".equals(ofxVal)) {
+    } else if ("INTLSTOCK" === ofxVal) {
       return AssetClass.INTL_STOCK;
-    } else if ("MONEYMARKET".equals(ofxVal)) {
+    } else if ("MONEYMARKET" === ofxVal) {
       return AssetClass.MONEY_MARKET;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return AssetClass.OTHER;
     } else {
       return null;
@@ -30511,13 +30678,13 @@ var CallType = {
   MATURITY: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CALL".equals(ofxVal)) {
+    if ("CALL" === ofxVal) {
       return CallType.CALL;
-    } else if ("PUT".equals(ofxVal)) {
+    } else if ("PUT" === ofxVal) {
       return CallType.PUT;
-    } else if ("PREFUND".equals(ofxVal)) {
+    } else if ("PREFUND" === ofxVal) {
       return CallType.PREFUND;
-    } else if ("MATURITY".equals(ofxVal)) {
+    } else if ("MATURITY" === ofxVal) {
       return CallType.MATURITY;
     } else {
       return null;
@@ -30559,15 +30726,15 @@ var CouponFrequency = {
   OTHER: 4,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("MONTHLY".equals(ofxVal)) {
+    if ("MONTHLY" === ofxVal) {
       return CouponFrequency.MONTHLY;
-    } else if ("QUARTERLY".equals(ofxVal)) {
+    } else if ("QUARTERLY" === ofxVal) {
       return CouponFrequency.QUARTERLY;
-    } else if ("SEMIANNUAL".equals(ofxVal)) {
+    } else if ("SEMIANNUAL" === ofxVal) {
       return CouponFrequency.SEMIANNUAL;
-    } else if ("ANNUAL".equals(ofxVal)) {
+    } else if ("ANNUAL" === ofxVal) {
       return CouponFrequency.ANNUAL;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return CouponFrequency.OTHER;
     } else {
       return null;
@@ -30608,13 +30775,13 @@ var DebtClass = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("TREASURY".equals(ofxVal)) {
+    if ("TREASURY" === ofxVal) {
       return DebtClass.TREASURY;
-    } else if ("MUNICIPAL".equals(ofxVal)) {
+    } else if ("MUNICIPAL" === ofxVal) {
       return DebtClass.MUNICIPAL;
-    } else if ("CORPORATE".equals(ofxVal)) {
+    } else if ("CORPORATE" === ofxVal) {
       return DebtClass.CORPORATE;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return DebtClass.OTHER;
     } else {
       return null;
@@ -31155,9 +31322,9 @@ var DebtType = {
   ZERO: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("COUPON".equals(ofxVal)) {
+    if ("COUPON" === ofxVal) {
       return DebtType.COUPON;
-    } else if ("ZERO".equals(ofxVal)) {
+    } else if ("ZERO" === ofxVal) {
       return DebtType.ZERO;
     } else {
       return null;
@@ -31337,11 +31504,11 @@ var MutualFundType = {
   OTHER: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("OPENEND".equals(ofxVal)) {
+    if ("OPENEND" === ofxVal) {
       return MutualFundType.OPEN_END;
-    } else if ("CLOSEEND".equals(ofxVal)) {
+    } else if ("CLOSEEND" === ofxVal) {
       return MutualFundType.CLOSE_END;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return MutualFundType.OTHER;
     } else {
       return null;
@@ -31650,9 +31817,9 @@ var OptionType = {
   CALL: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("PUT".equals(ofxVal)) {
+    if ("PUT" === ofxVal) {
       return OptionType.PUT;
-    } else if ("CALL".equals(ofxVal)) {
+    } else if ("CALL" === ofxVal) {
       return OptionType.CALL;
     } else {
       return null;
@@ -32444,6 +32611,7 @@ var SecurityListRequest = require("./SecurityListRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function SecurityListRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name SecurityListRequestTransaction#message
@@ -32453,7 +32621,7 @@ function SecurityListRequestTransaction () {
   this.message = null;
 }
 
-inherit(SecurityListRequestTransaction, "extends", new TransactionWrappedRequestMessage(SecurityListRequest));
+inherit(SecurityListRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("SECLISTTRNRQ", SecurityListRequestTransaction);
@@ -32674,6 +32842,7 @@ var SecurityListResponse = require("./SecurityListResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function SecurityListResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name SecurityListResponseTransaction#message
@@ -32683,7 +32852,7 @@ function SecurityListResponseTransaction () {
   this.message = null;
 }
 
-inherit(SecurityListResponseTransaction, "extends", new TransactionWrappedResponseMessage(SecurityListResponse));
+inherit(SecurityListResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("SECLISTTRNRS", SecurityListResponseTransaction);
@@ -33060,13 +33229,13 @@ var StockType = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("COMMON".equals(ofxVal)) {
+    if ("COMMON" === ofxVal) {
       return StockType.COMMON;
-    } else if ("PREFERRED".equals(ofxVal)) {
+    } else if ("PREFERRED" === ofxVal) {
       return StockType.PREFERRED;
-    } else if ("CONVERTIBLE".equals(ofxVal)) {
+    } else if ("CONVERTIBLE" === ofxVal) {
       return StockType.CONVERTIBLE;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return StockType.OTHER;
     } else {
       return null;
@@ -33325,6 +33494,7 @@ var PasswordChangeRequest = require("./PasswordChangeRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function PasswordChangeRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name PasswordChangeRequestTransaction#message
@@ -33334,7 +33504,7 @@ function PasswordChangeRequestTransaction () {
   this.message = null;
 }
 
-inherit(PasswordChangeRequestTransaction, "extends", new TransactionWrappedRequestMessage(PasswordChangeRequest));
+inherit(PasswordChangeRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("PINCHTRNRQ", PasswordChangeRequestTransaction);
@@ -33505,6 +33675,7 @@ var PasswordChangeResponse = require("./PasswordChangeResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function PasswordChangeResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name PasswordChangeResponseTransaction#message
@@ -33514,7 +33685,7 @@ function PasswordChangeResponseTransaction () {
   this.message = null;
 }
 
-inherit(PasswordChangeResponseTransaction, "extends", new TransactionWrappedResponseMessage(PasswordChangeResponse));
+inherit(PasswordChangeResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("PINCHTRNRS", PasswordChangeResponseTransaction);
@@ -34719,6 +34890,7 @@ var AccountInfoRequest = require("./AccountInfoRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function AccountInfoRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name AccountInfoRequestTransaction#message
@@ -34728,7 +34900,7 @@ function AccountInfoRequestTransaction () {
   this.message = null;
 }
 
-inherit(AccountInfoRequestTransaction, "extends", new TransactionWrappedRequestMessage(AccountInfoRequest));
+inherit(AccountInfoRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("ACCTINFOTRNRQ", AccountInfoRequestTransaction);
@@ -34896,6 +35068,7 @@ var AccountInfoResponse = require("./AccountInfoResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function AccountInfoResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name AccountInfoResponseTransaction#message
@@ -34905,7 +35078,7 @@ function AccountInfoResponseTransaction () {
   this.message = null;
 }
 
-inherit(AccountInfoResponseTransaction, "extends", new TransactionWrappedResponseMessage(AccountInfoResponse));
+inherit(AccountInfoResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("ACCTINFOTRNRS", AccountInfoResponseTransaction);
@@ -38580,6 +38753,7 @@ var Tax1099Request = require("./Tax1099Request");
  * @augments TransactionWrappedRequestMessage
  */
 function Tax1099RequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name Tax1099RequestTransaction#tax1099Request
@@ -38589,7 +38763,7 @@ function Tax1099RequestTransaction () {
   this.tax1099Request = null;
 }
 
-inherit(Tax1099RequestTransaction, "extends", new TransactionWrappedRequestMessage(Tax1099Request));
+inherit(Tax1099RequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("TAX1099TRNRQ", Tax1099RequestTransaction);
@@ -38916,7 +39090,7 @@ Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 Tax1099ResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.taxResponseTransaction === null || this.taxResponseTransaction.isEmpty() ? null : this.taxResponseTransaction.get(0);
+  return this.taxResponseTransaction === null || this.taxResponseTransaction.length === 0 ? null : this.taxResponseTransaction.get(0);
 };
 
 
@@ -38957,6 +39131,7 @@ var Tax1099Response = require("./Tax1099Response");
  * @augments TransactionWrappedResponseMessage
  */
 function Tax1099ResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name Tax1099ResponseTransaction#tax1099Response
@@ -38966,7 +39141,7 @@ function Tax1099ResponseTransaction () {
   this.tax1099Response = null;
 }
 
-inherit(Tax1099ResponseTransaction, "extends", new TransactionWrappedResponseMessage(Tax1099Response));
+inherit(Tax1099ResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("TAX1099TRNRS", Tax1099ResponseTransaction);
@@ -39187,14 +39362,14 @@ AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(chil
     this.name = null;
     this.collectionEntryType = childAggregate.collectionEntryType;
   }
-  else if ("##not_specified##".equals(childAggregate.name)) {
+  else if ("##not_specified##" === childAggregate.name) {
     var aggregateInfo = AggregateIntrospector.getAggregateInfo(childAggregate.attributeType);
     if (aggregateInfo === null) {
       throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': no aggregate information available.");
     }
 
     this.name = aggregateInfo.getName();
-    if ("##not_specified##".equals(this.name)) {
+    if ("##not_specified##" === this.name) {
       throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': a child aggregate name must be specified.");
     }
     this.collectionEntryType = null;
@@ -39204,15 +39379,16 @@ AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(chil
     this.collectionEntryType = null;
   }
 
-  this.order = childAggregate.order();
-  this.required = childAggregate.required();
+  this.order = childAggregate.order;
+  this.required = childAggregate.required;
   this.type = Type.CHILD_AGGREGATE;
   this.toString_ = "ChildAggregate '" + this.name + "'";
 };
 
 
 AggregateAttribute.prototype.get = function(/*Object*/ instance) {
-  return this.readMethod.invoke(instance);
+  var readMethod = instance[this.readMethod];
+  return readMethod.call(instance);
 };
 
 
@@ -39226,7 +39402,8 @@ AggregateAttribute.prototype.set = function(/*Object*/ value, /*Object*/ instanc
     value = collection;
   }
 
-  this.writeMethod.invoke(instance, value);
+  var writeMethod = instance[this.writeMethod];
+  writeMethod.call(instance, value);
 };
 
 
@@ -39325,7 +39502,7 @@ function AggregateInfo(name, clazz) {
    * @type AggregateAttribute[]
    * @access private
    */
-  this.attributes = null;
+  this.attributes = [];
 
   /**
    * @name AggregateInfo#headers
@@ -39362,6 +39539,16 @@ AggregateInfo.prototype.getName = function() {
 
 
 /**
+ * The name of the aggregate.
+ *
+ * @param {String} value The name of the aggregate.
+ */
+AggregateInfo.prototype.setName = function(value) {
+  this.name = value;
+};
+
+
+/**
  * The attributes.
  *
  * @return {AggregateAttribute[]} The attributes.
@@ -39369,6 +39556,11 @@ AggregateInfo.prototype.getName = function() {
 AggregateInfo.prototype.getAttributes = function() {
   return this.attributes;
 };
+
+
+function isAssignableFrom(entryType, assignableTo) {
+  return (assignableTo.prototype instanceof entryType);
+}
 
 
 /**
@@ -39387,15 +39579,16 @@ AggregateInfo.prototype.getAttributes = function() {
 AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
   var candidates = [];
   var collectionBucket = null;
-  for (var attribute in this.attributes) {
-    if (name.equals(attribute.getName())) {
-      candidates.add(attribute);
+  for (var attributeIdx=0; attributeIdx<this.attributes.length; attributeIdx++) {
+    var attribute = this.attributes[attributeIdx];
+    if (name === attribute.getName()) {
+      candidates.push(attribute);
     }
     else if (attribute.isCollection()) {
-      if (assignableTo !== null) {
+      if (assignableTo) {
         // Verify it's the right generic type.
         var entryType = attribute.getCollectionEntryType();
-        if (entryType !== null && !entryType.isAssignableFrom(assignableTo)) { //ARO_TODO
+        if (entryType && !isAssignableFrom(entryType, assignableTo)) { //ARO_TODO
           // Collection is of wrong type.
           continue;
         }
@@ -39407,12 +39600,13 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
     }
   }
 
-  if (!candidates.isEmpty()) {
+  if (candidates.length > 0) {
     if (candidates.length === 1) {
       return candidates[0];
     }
     else {
-      for (var candidate in candidates) {
+      for (var candidateIdx=0; candidateIdx<candidates.length; candidateIdx++) {
+        var candidate = candidates[candidateIdx];
         if (candidate.getOrder() >= orderHint) {
           return candidate;
         }
@@ -39466,10 +39660,9 @@ AggregateInfo.prototype.getHeaders = function(instance) {
  * @return {Class} The header type, or null if no header by the specified name exists.
  */
 AggregateInfo.prototype.getHeaderType = function(name) {
-  for(var header in this.headers) {
-    if(header.name === name) {
-      return header.attributeType;
-    }
+  if (this.headers[name]) {
+    var header = this.headers[name];
+    return header.attributeType;
   }
   return null;
 };
@@ -39513,10 +39706,10 @@ module.exports = AggregateInfo;
 "use strict";
 
 var AggregateInfo = require("./AggregateInfo");
-
+var clone = require("clone");
 
 var AGGREGATE_CLASSES_BY_NAME = {};
-
+var placeholderName = "##PLACEHOLDER##";
 
 /**
  * Introspector for aggregate information.
@@ -39525,6 +39718,8 @@ var AGGREGATE_CLASSES_BY_NAME = {};
  */
 var AggregateIntrospector = {};
 
+AggregateIntrospector.AGGREGATE_CLASSES_BY_NAME = AGGREGATE_CLASSES_BY_NAME;
+AggregateIntrospector.placeholderName = placeholderName;
 
 /**
  * Get the aggregate meta information for the specified class.
@@ -39543,21 +39738,52 @@ AggregateIntrospector.getAggregateInfo = function(clazz) {
  * @return The aggregate class.
  */
 AggregateIntrospector.findAggregateByName = function(aggregateName) {
-  return AGGREGATE_CLASSES_BY_NAME.get(aggregateName);
+  return AGGREGATE_CLASSES_BY_NAME[aggregateName];
 };
 
 
+/**
+ * Add parent's aggregate data to child
+ *
+ * @param clazz the child class
+ * @return parent the parent class
+ */
+AggregateIntrospector.extend = function(clazz, parent) {
+  var parentAggregate = AggregateIntrospector.getAggregateInfo(parent);
+  if(parentAggregate) {
+    clazz.Aggregate = clone(parentAggregate);
+    clazz.Aggregate.setName(AggregateIntrospector.placeholderName);
+  }
+};
+
+
+AggregateIntrospector.getAggregateName = function(clazz) {
+  if(!clazz.Aggregate || clazz.Aggregate.getName() === AggregateIntrospector.placeholderName) {
+    return null;
+  } else {
+    return clazz.Aggregate.getName();
+  }
+};
+
 
 AggregateIntrospector.addAggregate = function(name, clazz) {
-  console.assert(!(name in AGGREGATE_CLASSES_BY_NAME));
+//  console.assert(!(name in AGGREGATE_CLASSES_BY_NAME));
   AGGREGATE_CLASSES_BY_NAME[name] = clazz;
-  console.assert(!clazz.Aggregate);
-  clazz.Aggregate = new AggregateInfo(name, clazz);
+  
+  if(clazz.Aggregate) {
+    console.assert(clazz.Aggregate.getName() === AggregateIntrospector.placeholderName);
+    clazz.Aggregate.setName(name);
+  } else {
+    clazz.Aggregate = new AggregateInfo(name, clazz);
+  }
 };
 
 
 AggregateIntrospector.addChildAggregate = function(clazz, options) {
   var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
+  if(!aggregateInfo) {
+    aggregateInfo = clazz.Aggregate = new AggregateInfo(AggregateIntrospector.placeholderName, clazz);
+  }
   console.assert(aggregateInfo);
   if(aggregateInfo) {
     aggregateInfo.addChildAggregate(options);
@@ -39567,6 +39793,9 @@ AggregateIntrospector.addChildAggregate = function(clazz, options) {
 
 AggregateIntrospector.addElement = function(clazz, options) {
   var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
+  if(!aggregateInfo) {
+    aggregateInfo = clazz.Aggregate = new AggregateInfo(AggregateIntrospector.placeholderName, clazz);
+  }
   console.assert(aggregateInfo);
   if(aggregateInfo) {
     aggregateInfo.addElement(options);
@@ -39575,6 +39804,9 @@ AggregateIntrospector.addElement = function(clazz, options) {
 
 AggregateIntrospector.addHeader = function(clazz, options) {
   var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
+  if(!aggregateInfo) {
+    aggregateInfo = clazz.Aggregate = new AggregateInfo(AggregateIntrospector.placeholderName, clazz);
+  }
   console.assert(aggregateInfo);
   if(aggregateInfo) {
     aggregateInfo.addHeader(options);
@@ -39584,7 +39816,7 @@ AggregateIntrospector.addHeader = function(clazz, options) {
 
 module.exports = AggregateIntrospector;
 
-},{"./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateMarshaller.js":[function(require,module,exports){
+},{"./AggregateInfo":"/Users/aolson/Developer/ofx4js/src/io/AggregateInfo.js","clone":"/Users/aolson/Developer/ofx4js/node_modules/clone/clone.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateMarshaller.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39627,7 +39859,7 @@ function AggregateMarshaller () {
  * @param {OFXWriter} writer    The writer.
  */
 AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
-  var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.getClass());
+  var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.constructor);
   if (aggregateInfo === null) {
     throw new Error("Unable to marshal object: no aggregate metadata found.");
   }
@@ -39655,8 +39887,9 @@ AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
  * @param {OFXWriter} writer              The writer.
  * @param {Object} aggregateAttributes The aggregate attributes.
  */
-AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, writer, /*SortedSet<AggregateAttribute>*/ aggregateAttributes) {
-  for (var aggregateAttribute in aggregateAttributes) {
+AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, writer, /*AggregateAttribute[]*/ aggregateAttributes) {
+  for (var i=0; i<aggregateAttributes.length; i++) {
+    var aggregateAttribute = aggregateAttributes[i];
     var childValue = aggregateAttribute.get(aggregate);
     if (childValue !== null) {
       switch (aggregateAttribute.getType()) {
@@ -39688,7 +39921,7 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
         case AggregateAttribute.Type.ELEMENT:
           /*jshint -W004*/
           var value = this.getConversion().toString(childValue);
-          if ((value !== null) && (!"".equals(value.trim()))) {
+          if ((value !== null) && ("" !== value.trim())) {
             writer.writeElement(aggregateAttribute.getName(), value);
           }
           break;
@@ -39808,11 +40041,11 @@ AggregateInfoHolder.prototype.isBeingSkipped = function() {
  * @returns boolean
  */
 AggregateInfoHolder.prototype.isSkipping = function(aggregateName) {
-  return this.isBeingSkipped() && aggregateName.equals(this.aggregateName);
+  return this.isBeingSkipped() && aggregateName === this.aggregateName;
 };
 
 
-function LOG() { console.log.apply(console.log, arguments); }
+var LOG = true;
 
 
 /**
@@ -39879,12 +40112,12 @@ AggregateStackContentHandler.prototype.onElement = function(name, value) {
         attribute.set(this.conversion.fromString(attribute.getAttributeType(), value), this.stack.peek().aggregate);
       }
       catch (e) {
-        LOG("Unable to set " + attribute.toString(), e);
+        console.log("Unable to set " + attribute.toString(), e);
       }
       this.stack.peek().currentAttributeIndex = attribute.getOrder();
     }
     else {
-      LOG("Element " + name + " is not supported on aggregate " + this.stack.peek().info.getName() + " at index " + this.stack.peek().currentAttributeIndex);
+      console.log("Element " + name + " is not supported on aggregate " + this.stack.peek().info.getName() + " at index " + this.stack.peek().currentAttributeIndex);
     }
   }
 };
@@ -39897,7 +40130,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
     this.stack.push(new AggregateInfoHolder(aggregateName));
   }
   else if (!this.parsingRoot) {
-    if (!aggregateName.equals(this.stack.peek().info.getName())) {
+    if (aggregateName !== this.stack.peek().info.getName()) {
       throw new Error("Unexpected root element: " + aggregateName);
     }
 
@@ -39923,12 +40156,13 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
             throw new Error("Unable to locate aggregate info for type " + aggregateType.getName());
           }
 
-          var aggregate = aggregateType.newInstance();
+          /*jshint -W055*/
+          var aggregate = new aggregateType();
           infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
         }
         else {
           if (LOG) {
-            LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
+            console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
           }
 
           //element not supported.  push a skipping aggregate on the stack.
@@ -39939,7 +40173,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
       }
       else {
         if (LOG) {
-          LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
+          console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
         }
 
         //child aggregate not supported.  push a skipping aggregate on the stack.
@@ -39948,7 +40182,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
     }
     else {
       if (LOG) {
-        LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
+        console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
       }
 
       //child aggregate not supported.  push a skipping aggregate on the stack.
@@ -39964,7 +40198,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
  */
 AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
   var infoHolder = this.stack.pop();
-  if (!aggregateName.equals(infoHolder.aggregateName)) {
+  if (aggregateName !== infoHolder.aggregateName) {
     throw new Error("Unexpected end aggregate " + aggregateName + ". (Perhaps " +
       infoHolder.aggregateName + " is an element with an empty value, making it impossible to parse.)");
   }
@@ -39973,18 +40207,18 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
     if (!infoHolder.isSkipping(aggregateName)) {
       //we're not skipping the top aggregate, so process it.
       var attribute = this.stack.peek().info.getAttribute(
-          aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.getClass());
+          aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
       try {
         if (attribute !== null) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
           if (LOG) {
-            LOG("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
+            console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
           }
         }
       }
       catch (e) {
-        LOG.error("Unable to set " + attribute.toString(), e);
+        console.log("Unable to set " + attribute.toString(), e);
       }
       this.stack.peek().currentAttributeIndex = attribute.getOrder();
     }
@@ -40025,6 +40259,7 @@ var BaseOFXReader = require("./BaseOFXReader");
  * @class
  */
 function AggregateUnmarshaller (clazz) {
+  console.assert(clazz);
 
   /**
    * @name AggregateUnmarshaller#clazz
@@ -40045,7 +40280,7 @@ function AggregateUnmarshaller (clazz) {
 
 
 AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
-  var aggregate = this.clazz.newInstance();
+  var aggregate = new this.clazz();
   var reader = this.newReader();
   reader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
   reader.parse(stream);
@@ -40054,7 +40289,7 @@ AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
 
 
 AggregateUnmarshaller.prototype.unmarshal = function(/*Reader*/ reader) {
-  var aggregate = this.clazz.newInstance();
+  var aggregate = new this.clazz();
   var ofxReader = this.newReader();
   ofxReader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
   ofxReader.parse(reader);
@@ -40117,13 +40352,9 @@ var inherit = require("../util/inherit");
 var DefaultHandler = require("./DefaultHandler");
 var OFXReader = require("./OFXReader");
 var OFXV2ContentHandler = require("./OFXV2ContentHandler");
+var StringReader = require("../util/StringReader");
 var sax = require("sax");
 
-
-/**
- * @type Log
- */
-var LOG = function() { console.log.apply(console, arguments); };
 
 /**
  * @type RegExp
@@ -40185,12 +40416,13 @@ function arraysEqual(a1, a2) {
 
 
 /**
- * Parse the reader, including the headers.
+ * Parse the text, including the headers.
  *
- * @param {Reader} reader The reader to parse.
+ * @param {String} text The text to parse.
  */
-BaseOFXReader.prototype.parse = function(reader) {
+BaseOFXReader.prototype.parse = function(text) {
   var header = "";
+  var reader = new StringReader(text);
   var firstElementStart = this.getFirstElementStart();
   var buffer = new Array(firstElementStart.length);
   reader.mark(firstElementStart.length);
@@ -40209,18 +40441,18 @@ BaseOFXReader.prototype.parse = function(reader) {
     throw new Error("Invalid OFX: no root <OFX> element!");
   }
   else {
-    var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.match(header);
+    var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
     if (matches) {
-      LOG("Processing OFX 2 header...");
+      console.log("Processing OFX 2 header...");
       this.processOFXv2Headers(matches[1]);
       reader.reset();
-      this.parseV2FromFirstElement(reader);
+      this.parseV2FromFirstElement(reader.remainder());
     }
     else {
-      LOG("Processing OFX 1 headers...");
+      console.log("Processing OFX 1 headers...");
       this.processOFXv1Headers(header);
       reader.reset();
-      this.parseV1FromFirstElement(reader);
+      this.parseV1FromFirstElement(reader.remainder());
     }
   }
 };
@@ -40244,7 +40476,8 @@ BaseOFXReader.prototype.getFirstElementStart = function() {
  * @return {boolean} Whether the specified buffer contains the specified character.
  */
 BaseOFXReader.prototype.contains = function(buffer, /*char*/ c) {
-  for (var ch in buffer) {
+  for (var i=0; i<buffer.length; i++) {
+    var ch = buffer[i];
     if (ch === c) {
       return true;
     }
@@ -40301,7 +40534,7 @@ BaseOFXReader.prototype.processOFXv1Headers = function(chars) {
     var colonIndex = line.indexOf(':');
     if (colonIndex >= 0) {
       var name = line.substring(0, colonIndex);
-      var value = line.length() > colonIndex ? line.substring(colonIndex + 1) : "";
+      var value = line.length > colonIndex ? line.substring(colonIndex + 1) : "";
       this.contentHandler.onHeader(name, value);
     }
   }
@@ -40318,7 +40551,7 @@ BaseOFXReader.prototype.processOFXv2Headers = function(chars) {
     var equalsIndex = nameValuePair.indexOf('=');
     if (equalsIndex >= 0) {
       var name = nameValuePair.substring(0, equalsIndex);
-      var value = nameValuePair.length() > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
+      var value = nameValuePair.length > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
       value = value.replace('"', ' ');
       value = value.replace('\'', ' ');
       value = value.trim();
@@ -40332,7 +40565,7 @@ BaseOFXReader.prototype.processOFXv2Headers = function(chars) {
 
 module.exports = BaseOFXReader;
 
-},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","sax":"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js"}],"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js":[function(require,module,exports){
+},{"../util/StringReader":"/Users/aolson/Developer/ofx4js/src/util/StringReader.js","../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","sax":"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js"}],"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40426,13 +40659,13 @@ function DefaultStringConversion () {
    * @name DefaultStringConversion#DATE_FORMAT_LENGTH
    * @type int
    */
-  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length();
+  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length;
 
   /**
    * @name DefaultStringConversion#TIME_FORMAT_LENGTH
    * @type int
    */
-  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length();
+  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length;
 }
 
 inherit(DefaultStringConversion, "implements", StringConversion);
@@ -40470,7 +40703,7 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
     return statusCode;
   }
   else if (clazz.prototype instanceof Boolean) {
-    return "Y".equals(value.toUpperCase());
+    return "Y" === value.toUpperCase();
   }
 //  else if (Time.class.isAssignableFrom(clazz)) {
 //    return parseTime(value);
@@ -40550,7 +40783,7 @@ DefaultStringConversion.prototype.parseTime = function(value) {
 //  var parseableTime = new char[TIME_FORMAT_LENGTH];
 //  Arrays.fill(parseableTime, '0');
 //  parseableTime[parseableTime.length - 4] = '.';
-//  value.getChars(0, Math.min(parseableTime.length, value.length()), parseableTime, 0);
+//  value.getChars(0, Math.min(parseableTime.length, value.length), parseableTime, 0);
 //
 //  int hour = Integer.parseInt(new String(parseableTime, 0, 2));
 //  int minute = Integer.parseInt(new String(parseableTime, 2, 2));
@@ -40559,7 +40792,7 @@ DefaultStringConversion.prototype.parseTime = function(value) {
 //
 //  //set up a new calendar at zero, then set all the fields.
 //  GregorianCalendar calendar = new GregorianCalendar(0, 0, 0, hour, minute, second);
-//  if (value.length() > parseableTime.length) {
+//  if (value.length > parseableTime.length) {
 //    String tzoffset = value.substring(parseableTime.length);
 //    calendar.setTimeZone(parseTimeZone(tzoffset));
 //  }
@@ -40749,21 +40982,21 @@ module.exports = OFXHandler;
  *
  * @class
  */
-function OFXParseEvent () {
+function OFXParseEvent (/*Type*/ eventType, /*String*/ eventValue) {
 
   /**
    * @name OFXParseEvent#eventType
    * @type Type
    * @access private
    */
-  this.eventType = null;
+  this.eventType = eventType;
 
   /**
    * @name OFXParseEvent#eventValue
    * @type String
    * @access private
    */
-  this.eventValue = null;
+  this.eventValue = eventValue;
 }
 
 
@@ -40775,11 +41008,6 @@ OFXParseEvent.Type = {
   CHARACTERS: 0,
 
   ELEMENT: 1
-};
-
-OFXParseEvent.prototype.OFXParseEvent = function(/*Type*/ eventType, /*String*/ eventValue) {
-  this.eventType = eventType;
-  this.eventValue = eventValue;
 };
 
 
@@ -40862,7 +41090,7 @@ var Stack = require("../util/stack");
 var OFXParseEvent = require("./OFXParseEvent");
 
 //ARO_TODO
-var LOG = function() { console.log.apply(console.log, arguments); };
+var LOG = true;
 
 /**
  * @class
@@ -40899,10 +41127,11 @@ function OFXV2ContentHandler(ofxHandler) {
 
 
 OFXV2ContentHandler.prototype.install = function(parser) {
-  parser.ontext = function(value) { this.ontext(value); };
-  parser.onopentag = function(params) { this.onopentag(params); };
-  parser.onclosetag = function(name) { this.onclosetag(name); };
-}
+  var self = this;
+  parser.ontext = function(value) { self.ontext(value); };
+  parser.onopentag = function(params) { self.onopentag(params); };
+  parser.onclosetag = function(name) { self.onclosetag(name); };
+};
 
 
 
@@ -40911,18 +41140,18 @@ OFXV2ContentHandler.prototype.onopentag = function(params) {
   var qName = params.name;
 
   if (LOG) {
-    LOG("START ELEMENT: " + qName);
+    console.log("START ELEMENT: " + qName);
   }
 
   if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
     var eventValue = this.eventStack.peek().getEventValue();
     if (LOG) {
-      LOG("Element " + qName + " is starting aggregate " + eventValue);
+      console.log("Element " + qName + " is starting aggregate " + eventValue);
     }
 
     //the last element started was not ended; we are assuming we've started a new aggregate.
     this.ofxHandler.startAggregate(eventValue);
-    this.startedEvents.add(this.eventStack.peek());
+    this.startedEvents.push(this.eventStack.peek());
   }
 
   this.eventStack.push(new OFXParseEvent(OFXParseEvent.Type.ELEMENT, qName));
@@ -40936,14 +41165,14 @@ OFXV2ContentHandler.prototype.onopentag = function(params) {
  * @return {boolean} Whether the specified element aggregate has already been started.
  */
 OFXV2ContentHandler.prototype.isAlreadyStarted = function(event) {
-  return this.startedEvents.contains(event);
+  return this.startedEvents.indexOf(event) != -1;
 };
 
 
 // @Override
 OFXV2ContentHandler.prototype.onclosetag = function(qName) {
   if (LOG) {
-    LOG("END ELEMENT: " + qName);
+    console.log("END ELEMENT: " + qName);
   }
 
   var eventToFinish = this.eventStack.pop();
@@ -40961,7 +41190,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       else {
         var value = elementEvent.getEventValue();
         if (LOG) {
-          LOG("Element " + value + " processed with value " + chars);
+          console.log("Element " + value + " processed with value " + chars);
         }
         this.ofxHandler.onElement(value, chars);
       }
@@ -40969,15 +41198,19 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
   }
   else if (eventToFinish.getEventType() == OFXParseEvent.Type.ELEMENT) {
     //we're ending an aggregate (no character data on the stack).
-    if (qName.equals(eventToFinish.getEventValue())) {
+    if (qName === eventToFinish.getEventValue()) {
       //the last element on the stack is ours; we're ending an OFX aggregate.
       /*jshint -W004*/
       var value = eventToFinish.getEventValue();
       if (LOG) {
-        LOG("Ending aggregate " + value);
+        console.log("Ending aggregate " + value);
       }
       this.ofxHandler.endAggregate(value);
-      this.startedEvents.remove(eventToFinish);
+      var i = this.startedEvents.indexOf(eventToFinish);
+      console.assert(i !== -1);
+      if (i > -1) {
+        this.startedEvents.splice(i, 1);
+      }
     }
     else {
       throw new Error("Unexpected end tag: " + eventToFinish.getEventValue());
@@ -40991,7 +41224,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
 
 // @Override
 OFXV2ContentHandler.prototype.ontext = function(value) {
-  if (value.trim().length() > 0) {
+  if (value.trim().length > 0) {
     var event;
     if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.CHARACTERS)) {
       //append the characters...
@@ -41269,7 +41502,7 @@ OFXV1Writer.prototype.writeStartAggregate = function(/*String*/ aggregateName) {
 
 
 OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value) {
-  if ((value === null) || ("".equals(value))) {
+  if ((value === null) || ("" === value)) {
     throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
   }
 
@@ -41564,14 +41797,93 @@ module.exports = {
 
 },{"./Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","./ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js"}],"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js":[function(require,module,exports){
 
-},{}],"/Users/aolson/Developer/ofx4js/src/util/inherit.js":[function(require,module,exports){
+},{}],"/Users/aolson/Developer/ofx4js/src/util/StringReader.js":[function(require,module,exports){
 "use strict";
+
+function StringReader(text) {
+  this._text = text;
+  this._cursor = 0;
+  this._mark = 0;
+}
+
+StringReader.prototype.read = function() {
+  if(this._cursor >= this._text.length) {
+    return -1;
+  } else {
+    if(arguments.length === 0) {
+      return this.readChar();
+    } else {
+      var cbuf = arguments[0];
+      var offset = arguments[1] || 0;
+      var length = arguments[2] || cbuf.length;
+      length = Math.min(length, this._text.length - this._cursor);
+      for(var i=0; i<length; i++) {
+        cbuf[offset + i] = this.readChar();
+      }
+      return length;
+    }
+  }
+};
+
+
+StringReader.prototype.readChar = function() {
+  console.assert(this._cursor < this._text.length);
+  var ch = this._text[this._cursor];
+  this._cursor++;
+  return ch;
+};
+
+
+StringReader.prototype.close = function() {
+  this._text = null;
+  this._cursor = null;
+  this._mark = null;
+};
+
+
+StringReader.prototype.mark = function(/*readLimit*/) {
+  this._mark = this._cursor;
+};
+
+
+StringReader.prototype.reset = function() {
+  this._cursor = this._mark;
+};
+
+
+StringReader.prototype.remainder = function() {
+  return this._text.substring(this._cursor);
+};
+
+
+module.exports = StringReader;
+
+},{}],"/Users/aolson/Developer/ofx4js/src/util/index.js":[function(require,module,exports){
+"use strict";
+
+module.exports = {
+  inherit: require("./inherit"),
+  OutputStreamWriter: require("./OutputStreamWriter"),
+  stack: require("./stack"),
+  StringReader: require("./StringReader"),
+};
+
+},{"./OutputStreamWriter":"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js","./StringReader":"/Users/aolson/Developer/ofx4js/src/util/StringReader.js","./inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js"}],"/Users/aolson/Developer/ofx4js/src/util/inherit.js":[function(require,module,exports){
+"use strict";
+
+var inherits = require("inherits");
+
+
+var AggregateIntrospector = require("../io/AggregateIntrospector");
 
 function inherit(child, type, parent) {
   switch(type) {
     case 'extends':
-      child.prototype = Object.create(parent);
-      child.prototype.constructor = child;
+      inherits(child, parent);
+//      child.prototype = Object.create(parent);
+//      child.prototype.constructor = child;
+      
+      AggregateIntrospector.extend(child, parent);
       break;
       
     case 'implements':
@@ -41584,7 +41896,7 @@ function inherit(child, type, parent) {
 
 module.exports = inherit;
 
-},{}],"/Users/aolson/Developer/ofx4js/src/util/stack.js":[function(require,module,exports){
+},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/src/util/stack.js":[function(require,module,exports){
 "use strict";
 
 function Stack() {
@@ -41612,7 +41924,7 @@ Stack.prototype.peek = function() {
 
 
 Stack.prototype.isEmpty = function() {
-  return this.values.length > 0;
+  return this.values.length === 0;
 };
 
 module.exports = Stack;

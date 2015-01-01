@@ -29,6 +29,7 @@ var InvestmentStatementResponse = require("./InvestmentStatementResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function InvestmentStatementResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name InvestmentStatementResponseTransaction#message
@@ -38,7 +39,7 @@ function InvestmentStatementResponseTransaction () {
   this.message = null;
 }
 
-inherit(InvestmentStatementResponseTransaction, "extends", new TransactionWrappedResponseMessage(InvestmentStatementResponse));
+inherit(InvestmentStatementResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("INVSTMTTRNRS", InvestmentStatementResponseTransaction);

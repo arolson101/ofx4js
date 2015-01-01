@@ -82,7 +82,7 @@ FinancialInstitutionImpl.prototype.readProfile = function() {
   var request = this.createAuthenticatedRequest(SignonRequest.ANONYMOUS_USER, SignonRequest.ANONYMOUS_USER);
   var profileRequest = new ProfileRequestMessageSet();
   profileRequest.setProfileRequest(this.createProfileTransaction());
-  request.getMessageSets().add(profileRequest);
+  request.getMessageSets().push(profileRequest);
   var response = this.sendRequest(request, this.getData().getOFXURL());
   this.doGeneralValidationChecks(request, response);
   return this.getProfile(response);
@@ -94,7 +94,7 @@ FinancialInstitutionImpl.prototype.readAccountProfiles = function(/*String*/ use
   var request = this.createAuthenticatedRequest(username, password);
   var signupRequest = new SignupRequestMessageSet();
   signupRequest.setAccountInfoRequest(this.createAccountInfoTransaction());
-  request.getMessageSets().add(signupRequest);
+  request.getMessageSets().push(signupRequest);
   var response = this.sendRequest(request, this.getData().getOFXURL());
   this.doGeneralValidationChecks(request, response);
   return this.getAccountProfiles(response);
@@ -198,11 +198,13 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
     throw new Error(String.format("Unable to participate in %s security.", response.getSecurity()));
   }
 
-  if (!request.getUID().equals(response.getUID())) {
+  if (request.getUID() !== response.getUID()) {
     throw new Error(String.format("Invalid transaction ID '%s' in response.  Expected: %s", response.getUID(), request));
   }
 
-  for (var requestSet in request.getMessageSets()) {
+  var messageSets = request.getMessageSets();
+  for (var messageSetsIdx=0; messageSetsIdx<messageSets.length; messageSetsIdx++) {
+    var requestSet = messageSets[messageSetsIdx];
     var responseSet = response.getMessageSet(requestSet.getType());
     if (responseSet === null) {
       throw new Error("No response for the " + requestSet.getType() + " request.");
@@ -217,13 +219,17 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
     }
 
     var transactionIds = {};
-    for (var requestMessage in requestSet.getRequestMessages()) {
+    var requestMessages = requestSet.getRequestMessages();
+    for (var requestMessagesIdx=0; requestMessagesIdx<requestMessages.length; requestMessages++) {
+      var requestMessage = requestMessages[requestMessagesIdx];
       if (requestMessage instanceof TransactionWrappedRequestMessage) {
         transactionIds[requestMessage.getUID()] = 1;
       }
     }
 
-    for (var responseMessage in responseSet.getResponseMessages()) {
+    var responseMessages = responseSet.getResponseMessages();
+    for (var responseMessagesIdx=0; responseMessagesIdx<responseMessages.length; responseMessagesIdx++) {
+      var responseMessage = responseMessages[responseMessagesIdx];
       if (responseMessage instanceof StatusHolder) {
         this.validateStatus(responseMessage);
       }
@@ -239,7 +245,7 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
       }
     }
 
-    if (!transactionIds.isEmpty()) {
+    if (transactionIds.length > 0) {
       throw new Error("No response to the following transactions: " + transactionIds);
     }
   }
@@ -257,7 +263,7 @@ FinancialInstitutionImpl.prototype.validateStatus = function(statusHolder) {
     throw new Error("Invalid OFX response: no status returned in the " + statusHolder.getStatusHolderName() + " response.");
   }
 
-  if (!Status.KnownCode.SUCCESS.equals(status.getCode())) {
+  if (Status.KnownCode.SUCCESS !== status.getCode()) {
     var message = status.getMessage();
     if (message === null) {
       message = "No response status code.";

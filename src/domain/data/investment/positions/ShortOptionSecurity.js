@@ -24,9 +24,9 @@ var ShortOptionSecurity = {
   COVERED: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("NAKED".equals(ofxVal)) {
+    if ("NAKED" === ofxVal) {
       return ShortOptionSecurity.NAKED;
-    } else if ("COVERED".equals(ofxVal)) {
+    } else if ("COVERED" === ofxVal) {
       return ShortOptionSecurity.COVERED;
     } else {
       return null;

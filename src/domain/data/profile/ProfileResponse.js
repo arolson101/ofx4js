@@ -505,7 +505,7 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
   if (profiles.length > 1) {
     throw new Error("More than one profile of type " + type);
   }
-  else if (profiles.isEmpty()) {
+  else if (profiles.length === 0) {
     return null;
   }
   else {
@@ -523,9 +523,13 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 ProfileResponse.prototype.getProfiles = function(type) {
   var profiles = [];
   if (this.getMessageSetList() !== null && this.getMessageSetList().getInformationList() !== null) {
-    for (var info in this.getMessageSetList().getInformationList()) {
+    var informationList = this.getMessageSetList().getInformationList();
+    for (var informationListIdx=0; informationListIdx<informationList.length; informationListIdx++) {
+      var info = informationList[informationListIdx];
       if (info.getVersionSpecificInformationList() !== null) {
-        for (var versionSpecificInfo in info.getVersionSpecificInformationList()) {
+        var versionSpecificInformationList = info.getVersionSpecificInformationList();
+        for (var versionSpecificInformationListIdx=0; versionSpecificInformationListIdx<versionSpecificInformationList.length; versionSpecificInformationListIdx++) {
+          var versionSpecificInfo = versionSpecificInformationList[versionSpecificInformationListIdx];
           if (versionSpecificInfo.getMessageSetType() == type) {
             profiles.add(versionSpecificInfo);
           }
@@ -538,13 +542,15 @@ ProfileResponse.prototype.getProfiles = function(type) {
 
 
 ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type, /*String*/ version) {
-  for (var profile in this.getProfiles(type)) {
+  var profiles = this.getProfiles(type);
+  for (var i=0; i<profiles.length; i++) {
+    var profile = profiles[i];
     if (version === null) {
       if (profile.getVersion() === null) {
         return profile;
       }
     }
-    else if (version.equals(profile.getVersion())) {
+    else if (version === profile.getVersion()) {
       return profile;
     }
   }
@@ -555,13 +561,15 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 
 ProfileResponse.prototype.getSignonProfile = function(/*MessageSetProfile*/ messageSet) {
   if (this.getSignonInfoList() !== null && this.getSignonInfoList().getInfoList() !== null) {
-    for (var signonInfo in this.getSignonInfoList().getInfoList()) {
+    var infoList = this.getSignonInfoList().getInfoList();
+    for (var infoListIdx=0; infoListIdx<infoList.length; infoListIdx++) {
+      var signonInfo = infoList[infoListIdx];
       if (messageSet.getRealm() === null) {
         if (signonInfo.getRealm() === null) {
           return signonInfo;
         }
       }
-      else if (messageSet.getRealm().equals(signonInfo.getRealm())) {
+      else if (messageSet.getRealm() === signonInfo.getRealm()) {
         return signonInfo;
       }
     }

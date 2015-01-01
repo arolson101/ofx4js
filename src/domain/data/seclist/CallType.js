@@ -27,13 +27,13 @@ var CallType = {
   MATURITY: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CALL".equals(ofxVal)) {
+    if ("CALL" === ofxVal) {
       return CallType.CALL;
-    } else if ("PUT".equals(ofxVal)) {
+    } else if ("PUT" === ofxVal) {
       return CallType.PUT;
-    } else if ("PREFUND".equals(ofxVal)) {
+    } else if ("PREFUND" === ofxVal) {
       return CallType.PREFUND;
-    } else if ("MATURITY".equals(ofxVal)) {
+    } else if ("MATURITY" === ofxVal) {
       return CallType.MATURITY;
     } else {
       return null;

@@ -50,7 +50,7 @@ public class OFXServlet extends HttpServlet {
 
     this.server = loadOFXServer();
     String version = getServletConfig().getInitParameter("ofx-version");
-    this.OFXVersion2 = "2".equals(version);
+    this.OFXVersion2 = "2" === version;
   }
 
   @Override

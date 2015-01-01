@@ -25,9 +25,9 @@ var OptionSellType = {
   SELL_TO_OPEN: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("SELLTOOPEN".equals(ofxVal)) {
+    if ("SELLTOOPEN" === ofxVal) {
       return OptionSellType.SELL_TO_OPEN;
-    } else if ("SELLTOCLOSE".equals(ofxVal)) {
+    } else if ("SELLTOCLOSE" === ofxVal) {
       return OptionSellType.SELL_TO_CLOSE;
     } else {
       return null;

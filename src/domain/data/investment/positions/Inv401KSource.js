@@ -30,19 +30,19 @@ var Inv401KSource = {
   OTHER_NONVEST: 6,
   
   fromOfx: function(/*String*/ ofxVal) {
-    if ("PRETAX".equals(ofxVal)) {
+    if ("PRETAX" === ofxVal) {
       return Inv401KSource.PRETAX;
-    } else if ("AFTERTAX".equals(ofxVal)) {
+    } else if ("AFTERTAX" === ofxVal) {
       return Inv401KSource.AFTER_TAX;
-    } else if ("MATCH".equals(ofxVal)) {
+    } else if ("MATCH" === ofxVal) {
       return Inv401KSource.MATCH;
-    } else if ("PROFITSHARING".equals(ofxVal)) {
+    } else if ("PROFITSHARING" === ofxVal) {
       return Inv401KSource.PROFIT_SHARING;
-    } else if ("ROLLOVER".equals(ofxVal)) {
+    } else if ("ROLLOVER" === ofxVal) {
       return Inv401KSource.ROLLOVER;
-    } else if ("OTHERVEST".equals(ofxVal)) {
+    } else if ("OTHERVEST" === ofxVal) {
       return Inv401KSource.OTHER_VEST;
-    } else if ("OTHERNONVEST".equals(ofxVal)) {
+    } else if ("OTHERNONVEST" === ofxVal) {
       return Inv401KSource.OTHER_NONVEST;
     } else {
       return null;

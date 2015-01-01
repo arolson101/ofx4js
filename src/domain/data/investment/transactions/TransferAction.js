@@ -25,9 +25,9 @@ var TransferAction = {
   OUT: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("IN".equals(ofxVal)) {
+    if ("IN" === ofxVal) {
       return TransferAction.IN;
-    } else if ("OUT".equals(ofxVal)) {
+    } else if ("OUT" === ofxVal) {
       return TransferAction.OUT;
     } else {
       return null;

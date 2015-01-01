@@ -25,7 +25,7 @@ Stack.prototype.peek = function() {
 
 
 Stack.prototype.isEmpty = function() {
-  return this.values.length > 0;
+  return this.values.length === 0;
 };
 
 module.exports = Stack;

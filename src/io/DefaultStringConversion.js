@@ -38,13 +38,13 @@ function DefaultStringConversion () {
    * @name DefaultStringConversion#DATE_FORMAT_LENGTH
    * @type int
    */
-  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length();
+  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length;
 
   /**
    * @name DefaultStringConversion#TIME_FORMAT_LENGTH
    * @type int
    */
-  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length();
+  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length;
 }
 
 inherit(DefaultStringConversion, "implements", StringConversion);
@@ -82,7 +82,7 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
     return statusCode;
   }
   else if (clazz.prototype instanceof Boolean) {
-    return "Y".equals(value.toUpperCase());
+    return "Y" === value.toUpperCase();
   }
 //  else if (Time.class.isAssignableFrom(clazz)) {
 //    return parseTime(value);
@@ -162,7 +162,7 @@ DefaultStringConversion.prototype.parseTime = function(value) {
 //  var parseableTime = new char[TIME_FORMAT_LENGTH];
 //  Arrays.fill(parseableTime, '0');
 //  parseableTime[parseableTime.length - 4] = '.';
-//  value.getChars(0, Math.min(parseableTime.length, value.length()), parseableTime, 0);
+//  value.getChars(0, Math.min(parseableTime.length, value.length), parseableTime, 0);
 //
 //  int hour = Integer.parseInt(new String(parseableTime, 0, 2));
 //  int minute = Integer.parseInt(new String(parseableTime, 2, 2));
@@ -171,7 +171,7 @@ DefaultStringConversion.prototype.parseTime = function(value) {
 //
 //  //set up a new calendar at zero, then set all the fields.
 //  GregorianCalendar calendar = new GregorianCalendar(0, 0, 0, hour, minute, second);
-//  if (value.length() > parseableTime.length) {
+//  if (value.length > parseableTime.length) {
 //    String tzoffset = value.substring(parseableTime.length);
 //    calendar.setTimeZone(parseTimeZone(tzoffset));
 //  }

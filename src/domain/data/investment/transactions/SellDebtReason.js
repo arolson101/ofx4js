@@ -26,11 +26,11 @@ var SellDebtReason = {
   MATURITY: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CALL".equals(ofxVal)) {
+    if ("CALL" === ofxVal) {
       return SellDebtReason.CALL;
-    } else if ("SELL".equals(ofxVal)) {
+    } else if ("SELL" === ofxVal) {
       return SellDebtReason.SELL;
-    } else if ("MATURITY".equals(ofxVal)) {
+    } else if ("MATURITY" === ofxVal) {
       return SellDebtReason.MATURITY;
     } else {
       return null;

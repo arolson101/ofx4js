@@ -42,7 +42,7 @@ function AggregateInfo(name, clazz) {
    * @type AggregateAttribute[]
    * @access private
    */
-  this.attributes = null;
+  this.attributes = [];
 
   /**
    * @name AggregateInfo#headers
@@ -79,6 +79,16 @@ AggregateInfo.prototype.getName = function() {
 
 
 /**
+ * The name of the aggregate.
+ *
+ * @param {String} value The name of the aggregate.
+ */
+AggregateInfo.prototype.setName = function(value) {
+  this.name = value;
+};
+
+
+/**
  * The attributes.
  *
  * @return {AggregateAttribute[]} The attributes.
@@ -86,6 +96,11 @@ AggregateInfo.prototype.getName = function() {
 AggregateInfo.prototype.getAttributes = function() {
   return this.attributes;
 };
+
+
+function isAssignableFrom(entryType, assignableTo) {
+  return (assignableTo.prototype instanceof entryType);
+}
 
 
 /**
@@ -104,15 +119,16 @@ AggregateInfo.prototype.getAttributes = function() {
 AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
   var candidates = [];
   var collectionBucket = null;
-  for (var attribute in this.attributes) {
-    if (name.equals(attribute.getName())) {
-      candidates.add(attribute);
+  for (var attributeIdx=0; attributeIdx<this.attributes.length; attributeIdx++) {
+    var attribute = this.attributes[attributeIdx];
+    if (name === attribute.getName()) {
+      candidates.push(attribute);
     }
     else if (attribute.isCollection()) {
-      if (assignableTo !== null) {
+      if (assignableTo) {
         // Verify it's the right generic type.
         var entryType = attribute.getCollectionEntryType();
-        if (entryType !== null && !entryType.isAssignableFrom(assignableTo)) { //ARO_TODO
+        if (entryType && !isAssignableFrom(entryType, assignableTo)) { //ARO_TODO
           // Collection is of wrong type.
           continue;
         }
@@ -124,12 +140,13 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
     }
   }
 
-  if (!candidates.isEmpty()) {
+  if (candidates.length > 0) {
     if (candidates.length === 1) {
       return candidates[0];
     }
     else {
-      for (var candidate in candidates) {
+      for (var candidateIdx=0; candidateIdx<candidates.length; candidateIdx++) {
+        var candidate = candidates[candidateIdx];
         if (candidate.getOrder() >= orderHint) {
           return candidate;
         }
@@ -183,10 +200,9 @@ AggregateInfo.prototype.getHeaders = function(instance) {
  * @return {Class} The header type, or null if no header by the specified name exists.
  */
 AggregateInfo.prototype.getHeaderType = function(name) {
-  for(var header in this.headers) {
-    if(header.name === name) {
-      return header.attributeType;
-    }
+  if (this.headers[name]) {
+    var header = this.headers[name];
+    return header.attributeType;
   }
   return null;
 };

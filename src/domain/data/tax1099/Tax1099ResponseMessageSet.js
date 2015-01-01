@@ -84,7 +84,7 @@ Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 Tax1099ResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.taxResponseTransaction === null || this.taxResponseTransaction.isEmpty() ? null : this.taxResponseTransaction.get(0);
+  return this.taxResponseTransaction === null || this.taxResponseTransaction.length === 0 ? null : this.taxResponseTransaction.get(0);
 };
 
 

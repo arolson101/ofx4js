@@ -55,27 +55,27 @@ var UnitedStatesAccountType = {
   UGMA: 21,
   
   fromOfx: function(/*String*/ ofxVal) {
-    if ("401K".equals(ofxVal)) {
+    if ("401K" === ofxVal) {
       return UnitedStatesAccountType.R401K;
-    } else if ("403B".equals(ofxVal)) {
+    } else if ("403B" === ofxVal) {
       return UnitedStatesAccountType.R403B;
-    } else if ("IRA".equals(ofxVal)) {
+    } else if ("IRA" === ofxVal) {
       return UnitedStatesAccountType.IRA;
-    } else if ("KEOUGH".equals(ofxVal)) {
+    } else if ("KEOUGH" === ofxVal) {
       return UnitedStatesAccountType.KEOUGH;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return UnitedStatesAccountType.OTHER;
-    } else if ("SARSEP".equals(ofxVal)) {
+    } else if ("SARSEP" === ofxVal) {
       return UnitedStatesAccountType.SARSEP;
-    } else if ("SIMPLE".equals(ofxVal)) {
+    } else if ("SIMPLE" === ofxVal) {
       return UnitedStatesAccountType.SIMPLE;
-    } else if ("NORMAL".equals(ofxVal)) {
+    } else if ("NORMAL" === ofxVal) {
       return UnitedStatesAccountType.NORMAL;
-    } else if ("TDA".equals(ofxVal)) {
+    } else if ("TDA" === ofxVal) {
       return UnitedStatesAccountType.TDA;
-    } else if ("TRUST".equals(ofxVal)) {
+    } else if ("TRUST" === ofxVal) {
       return UnitedStatesAccountType.TRUST;
-    } else if ("UGMA".equals(ofxVal)) {
+    } else if ("UGMA" === ofxVal) {
       return UnitedStatesAccountType.UGMA;
     } else {
       return null;

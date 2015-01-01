@@ -19,21 +19,21 @@
  *
  * @class
  */
-function OFXParseEvent () {
+function OFXParseEvent (/*Type*/ eventType, /*String*/ eventValue) {
 
   /**
    * @name OFXParseEvent#eventType
    * @type Type
    * @access private
    */
-  this.eventType = null;
+  this.eventType = eventType;
 
   /**
    * @name OFXParseEvent#eventValue
    * @type String
    * @access private
    */
-  this.eventValue = null;
+  this.eventValue = eventValue;
 }
 
 
@@ -45,11 +45,6 @@ OFXParseEvent.Type = {
   CHARACTERS: 0,
 
   ELEMENT: 1
-};
-
-OFXParseEvent.prototype.OFXParseEvent = function(/*Type*/ eventType, /*String*/ eventValue) {
-  this.eventType = eventType;
-  this.eventValue = eventValue;
 };
 
 

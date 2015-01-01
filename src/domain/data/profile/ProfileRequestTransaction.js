@@ -26,6 +26,7 @@ var ProfileRequest = require("./ProfileRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function ProfileRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name ProfileRequestTransaction#message
@@ -35,7 +36,7 @@ function ProfileRequestTransaction () {
   this.message = null;
 }
 
-inherit(ProfileRequestTransaction, "extends", new TransactionWrappedRequestMessage(ProfileRequest));
+inherit(ProfileRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("PROFTRNRQ", ProfileRequestTransaction);

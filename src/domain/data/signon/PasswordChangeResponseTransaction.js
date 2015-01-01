@@ -26,6 +26,7 @@ var PasswordChangeResponse = require("./PasswordChangeResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function PasswordChangeResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name PasswordChangeResponseTransaction#message
@@ -35,7 +36,7 @@ function PasswordChangeResponseTransaction () {
   this.message = null;
 }
 
-inherit(PasswordChangeResponseTransaction, "extends", new TransactionWrappedResponseMessage(PasswordChangeResponse));
+inherit(PasswordChangeResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("PINCHTRNRS", PasswordChangeResponseTransaction);

@@ -50,12 +50,6 @@ inherit(BaseSellInvestmentTransaction, "implements", TransactionWithSecurity);
 
 
 
-
-BaseSellInvestmentTransaction.prototype.BaseSellInvestmentTransaction = function(/*TransactionType*/ transactionType) {
-  super(transactionType);
-};
-
-
 /**
  * Gets the sell investment transaction child aggregate.
  *

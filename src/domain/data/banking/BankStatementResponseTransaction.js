@@ -26,6 +26,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedResponseMessage
  */
 function BankStatementResponseTransaction () {
+  TransactionWrappedResponseMessage.apply(this, arguments);
 
   /**
    * @name BankStatementResponseTransaction#message
@@ -35,7 +36,7 @@ function BankStatementResponseTransaction () {
   this.message = null;
 }
 
-inherit(BankStatementResponseTransaction, "extends", new TransactionWrappedResponseMessage(BankStatementResponse));
+inherit(BankStatementResponseTransaction, "extends", TransactionWrappedResponseMessage);
 
 
 Aggregate.add("STMTTRNRS", BankStatementResponseTransaction);

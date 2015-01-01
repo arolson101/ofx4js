@@ -25,9 +25,9 @@ var BuyType = {
   BUY_TO_COVER: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("BUY".equals(ofxVal)) {
+    if ("BUY" === ofxVal) {
       return BuyType.BUY;
-    } else if ("BUYTOCOVER".equals(ofxVal)) {
+    } else if ("BUYTOCOVER" === ofxVal) {
       return BuyType.BUY_TO_COVER;
     } else {
       return null;

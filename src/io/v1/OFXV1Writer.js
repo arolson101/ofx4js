@@ -121,7 +121,7 @@ OFXV1Writer.prototype.writeStartAggregate = function(/*String*/ aggregateName) {
 
 
 OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value) {
-  if ((value === null) || ("".equals(value))) {
+  if ((value === null) || ("" === value)) {
     throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
   }
 

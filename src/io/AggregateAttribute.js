@@ -152,14 +152,14 @@ AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(chil
     this.name = null;
     this.collectionEntryType = childAggregate.collectionEntryType;
   }
-  else if ("##not_specified##".equals(childAggregate.name)) {
+  else if ("##not_specified##" === childAggregate.name) {
     var aggregateInfo = AggregateIntrospector.getAggregateInfo(childAggregate.attributeType);
     if (aggregateInfo === null) {
       throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': no aggregate information available.");
     }
 
     this.name = aggregateInfo.getName();
-    if ("##not_specified##".equals(this.name)) {
+    if ("##not_specified##" === this.name) {
       throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': a child aggregate name must be specified.");
     }
     this.collectionEntryType = null;
@@ -169,15 +169,16 @@ AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(chil
     this.collectionEntryType = null;
   }
 
-  this.order = childAggregate.order();
-  this.required = childAggregate.required();
+  this.order = childAggregate.order;
+  this.required = childAggregate.required;
   this.type = Type.CHILD_AGGREGATE;
   this.toString_ = "ChildAggregate '" + this.name + "'";
 };
 
 
 AggregateAttribute.prototype.get = function(/*Object*/ instance) {
-  return this.readMethod.invoke(instance);
+  var readMethod = instance[this.readMethod];
+  return readMethod.call(instance);
 };
 
 
@@ -191,7 +192,8 @@ AggregateAttribute.prototype.set = function(/*Object*/ value, /*Object*/ instanc
     value = collection;
   }
 
-  this.writeMethod.invoke(instance, value);
+  var writeMethod = instance[this.writeMethod];
+  writeMethod.call(instance, value);
 };
 
 

@@ -25,6 +25,7 @@ var Tax1099Request = require("./Tax1099Request");
  * @augments TransactionWrappedRequestMessage
  */
 function Tax1099RequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name Tax1099RequestTransaction#tax1099Request
@@ -34,7 +35,7 @@ function Tax1099RequestTransaction () {
   this.tax1099Request = null;
 }
 
-inherit(Tax1099RequestTransaction, "extends", new TransactionWrappedRequestMessage(Tax1099Request));
+inherit(Tax1099RequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("TAX1099TRNRQ", Tax1099RequestTransaction);

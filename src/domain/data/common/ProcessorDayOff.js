@@ -32,19 +32,19 @@ var ProcessorDayOff = {
   SUNDAY: 6,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("MONDAY".equals(ofxVal)) {
+    if ("MONDAY" === ofxVal) {
       return this.MONDAY;
-    } else if ("TUESDAY".equals(ofxVal)) {
+    } else if ("TUESDAY" === ofxVal) {
       return this.TUESDAY;
-    } else if ("WEDNESDAY".equals(ofxVal)) {
+    } else if ("WEDNESDAY" === ofxVal) {
       return this.WEDNESDAY;
-    } else if ("THURSDAY".equals(ofxVal)) {
+    } else if ("THURSDAY" === ofxVal) {
       return this.THURSDAY;
-    } else if ("FRIDAY".equals(ofxVal)) {
+    } else if ("FRIDAY" === ofxVal) {
       return this.FRIDAY;
-    } else if ("SATURDAY".equals(ofxVal)) {
+    } else if ("SATURDAY" === ofxVal) {
       return this.SATURDAY;
-    } else if ("SUNDAY".equals(ofxVal)) {
+    } else if ("SUNDAY" === ofxVal) {
       return this.SUNDAY;
     } else {
       return null;

@@ -25,9 +25,9 @@ var OptionType = {
   CALL: 1,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("PUT".equals(ofxVal)) {
+    if ("PUT" === ofxVal) {
       return OptionType.PUT;
-    } else if ("CALL".equals(ofxVal)) {
+    } else if ("CALL" === ofxVal) {
       return OptionType.CALL;
     } else {
       return null;

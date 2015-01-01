@@ -18,13 +18,9 @@ var inherit = require("../util/inherit");
 var DefaultHandler = require("./DefaultHandler");
 var OFXReader = require("./OFXReader");
 var OFXV2ContentHandler = require("./OFXV2ContentHandler");
+var StringReader = require("../util/StringReader");
 var sax = require("sax");
 
-
-/**
- * @type Log
- */
-var LOG = function() { console.log.apply(console, arguments); };
 
 /**
  * @type RegExp
@@ -86,12 +82,13 @@ function arraysEqual(a1, a2) {
 
 
 /**
- * Parse the reader, including the headers.
+ * Parse the text, including the headers.
  *
- * @param {Reader} reader The reader to parse.
+ * @param {String} text The text to parse.
  */
-BaseOFXReader.prototype.parse = function(reader) {
+BaseOFXReader.prototype.parse = function(text) {
   var header = "";
+  var reader = new StringReader(text);
   var firstElementStart = this.getFirstElementStart();
   var buffer = new Array(firstElementStart.length);
   reader.mark(firstElementStart.length);
@@ -110,18 +107,18 @@ BaseOFXReader.prototype.parse = function(reader) {
     throw new Error("Invalid OFX: no root <OFX> element!");
   }
   else {
-    var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.match(header);
+    var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
     if (matches) {
-      LOG("Processing OFX 2 header...");
+      console.log("Processing OFX 2 header...");
       this.processOFXv2Headers(matches[1]);
       reader.reset();
-      this.parseV2FromFirstElement(reader);
+      this.parseV2FromFirstElement(reader.remainder());
     }
     else {
-      LOG("Processing OFX 1 headers...");
+      console.log("Processing OFX 1 headers...");
       this.processOFXv1Headers(header);
       reader.reset();
-      this.parseV1FromFirstElement(reader);
+      this.parseV1FromFirstElement(reader.remainder());
     }
   }
 };
@@ -145,7 +142,8 @@ BaseOFXReader.prototype.getFirstElementStart = function() {
  * @return {boolean} Whether the specified buffer contains the specified character.
  */
 BaseOFXReader.prototype.contains = function(buffer, /*char*/ c) {
-  for (var ch in buffer) {
+  for (var i=0; i<buffer.length; i++) {
+    var ch = buffer[i];
     if (ch === c) {
       return true;
     }
@@ -202,7 +200,7 @@ BaseOFXReader.prototype.processOFXv1Headers = function(chars) {
     var colonIndex = line.indexOf(':');
     if (colonIndex >= 0) {
       var name = line.substring(0, colonIndex);
-      var value = line.length() > colonIndex ? line.substring(colonIndex + 1) : "";
+      var value = line.length > colonIndex ? line.substring(colonIndex + 1) : "";
       this.contentHandler.onHeader(name, value);
     }
   }
@@ -219,7 +217,7 @@ BaseOFXReader.prototype.processOFXv2Headers = function(chars) {
     var equalsIndex = nameValuePair.indexOf('=');
     if (equalsIndex >= 0) {
       var name = nameValuePair.substring(0, equalsIndex);
-      var value = nameValuePair.length() > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
+      var value = nameValuePair.length > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
       value = value.replace('"', ' ');
       value = value.replace('\'', ' ');
       value = value.trim();

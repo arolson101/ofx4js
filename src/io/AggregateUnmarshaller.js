@@ -25,6 +25,7 @@ var BaseOFXReader = require("./BaseOFXReader");
  * @class
  */
 function AggregateUnmarshaller (clazz) {
+  console.assert(clazz);
 
   /**
    * @name AggregateUnmarshaller#clazz
@@ -45,7 +46,7 @@ function AggregateUnmarshaller (clazz) {
 
 
 AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
-  var aggregate = this.clazz.newInstance();
+  var aggregate = new this.clazz();
   var reader = this.newReader();
   reader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
   reader.parse(stream);
@@ -54,7 +55,7 @@ AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
 
 
 AggregateUnmarshaller.prototype.unmarshal = function(/*Reader*/ reader) {
-  var aggregate = this.clazz.newInstance();
+  var aggregate = new this.clazz();
   var ofxReader = this.newReader();
   ofxReader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
   ofxReader.parse(reader);

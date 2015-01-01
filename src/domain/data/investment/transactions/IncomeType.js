@@ -28,15 +28,15 @@ var IncomeType = {
   MISC: 4,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("CGLONG".equals(ofxVal)) {
+    if ("CGLONG" === ofxVal) {
       return IncomeType.LONG_TERM_CAP_GAINS;
-    } else if ("CGSHORT".equals(ofxVal)) {
+    } else if ("CGSHORT" === ofxVal) {
       return IncomeType.SHORT_TERM_CAP_GAINS;
-    } else if ("DIV".equals(ofxVal)) {
+    } else if ("DIV" === ofxVal) {
       return IncomeType.DIVIDEND;
-    } else if ("INTEREST".equals(ofxVal)) {
+    } else if ("INTEREST" === ofxVal) {
       return IncomeType.INTEREST;
-    } else if ("MISC".equals(ofxVal)) {
+    } else if ("MISC" === ofxVal) {
       return IncomeType.MISC;
     } else {
       return null;

@@ -28,15 +28,15 @@ var CouponFrequency = {
   OTHER: 4,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("MONTHLY".equals(ofxVal)) {
+    if ("MONTHLY" === ofxVal) {
       return CouponFrequency.MONTHLY;
-    } else if ("QUARTERLY".equals(ofxVal)) {
+    } else if ("QUARTERLY" === ofxVal) {
       return CouponFrequency.QUARTERLY;
-    } else if ("SEMIANNUAL".equals(ofxVal)) {
+    } else if ("SEMIANNUAL" === ofxVal) {
       return CouponFrequency.SEMIANNUAL;
-    } else if ("ANNUAL".equals(ofxVal)) {
+    } else if ("ANNUAL" === ofxVal) {
       return CouponFrequency.ANNUAL;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return CouponFrequency.OTHER;
     } else {
       return null;

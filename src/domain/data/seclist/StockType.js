@@ -27,13 +27,13 @@ var StockType = {
   OTHER: 3,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("COMMON".equals(ofxVal)) {
+    if ("COMMON" === ofxVal) {
       return StockType.COMMON;
-    } else if ("PREFERRED".equals(ofxVal)) {
+    } else if ("PREFERRED" === ofxVal) {
       return StockType.PREFERRED;
-    } else if ("CONVERTIBLE".equals(ofxVal)) {
+    } else if ("CONVERTIBLE" === ofxVal) {
       return StockType.CONVERTIBLE;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return StockType.OTHER;
     } else {
       return null;

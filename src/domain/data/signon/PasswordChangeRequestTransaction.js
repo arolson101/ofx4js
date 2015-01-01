@@ -26,6 +26,7 @@ var PasswordChangeRequest = require("./PasswordChangeRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function PasswordChangeRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name PasswordChangeRequestTransaction#message
@@ -35,7 +36,7 @@ function PasswordChangeRequestTransaction () {
   this.message = null;
 }
 
-inherit(PasswordChangeRequestTransaction, "extends", new TransactionWrappedRequestMessage(PasswordChangeRequest));
+inherit(PasswordChangeRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("PINCHTRNRQ", PasswordChangeRequestTransaction);

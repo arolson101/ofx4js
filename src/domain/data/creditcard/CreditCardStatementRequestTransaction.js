@@ -26,6 +26,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function CreditCardStatementRequestTransaction () {
+  TransactionWrappedRequestMessage.apply(this, arguments);
 
   /**
    * @name CreditCardStatementRequestTransaction#message
@@ -35,7 +36,7 @@ function CreditCardStatementRequestTransaction () {
   this.message = null;
 }
 
-inherit(CreditCardStatementRequestTransaction, "extends", new TransactionWrappedRequestMessage(CreditCardStatementRequest));
+inherit(CreditCardStatementRequestTransaction, "extends", TransactionWrappedRequestMessage);
 
 
 Aggregate.add("CCSTMTTRNRQ", CreditCardStatementRequestTransaction);

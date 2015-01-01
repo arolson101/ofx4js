@@ -61,10 +61,6 @@ inherit(JournalFundTransaction, "extends", BaseOtherInvestmentTransaction);
 Aggregate.add("JRNLFUND", JournalFundTransaction);
 
 
-JournalFundTransaction.prototype.JournalFundTransaction = function() {
-  super(TransactionType.JOURNAL_FUND);
-};
-
 
 /**
  * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).

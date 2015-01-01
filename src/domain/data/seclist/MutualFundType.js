@@ -26,11 +26,11 @@ var MutualFundType = {
   OTHER: 2,
 
   fromOfx: function(/*String*/ ofxVal) {
-    if ("OPENEND".equals(ofxVal)) {
+    if ("OPENEND" === ofxVal) {
       return MutualFundType.OPEN_END;
-    } else if ("CLOSEEND".equals(ofxVal)) {
+    } else if ("CLOSEEND" === ofxVal) {
       return MutualFundType.CLOSE_END;
-    } else if ("OTHER".equals(ofxVal)) {
+    } else if ("OTHER" === ofxVal) {
       return MutualFundType.OTHER;
     } else {
       return null;
