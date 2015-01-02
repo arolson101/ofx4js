@@ -46,16 +46,16 @@ OFXV2Writer.prototype.writeHeaders = function(/*object*/ headers) {
   //write out the XML PI
   this.print("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
   var security = headers.get("SECURITY");
-  if (security === null) {
+  if (!security) {
     security = "NONE";
   }
   var olduid = headers.get("OLDFILEUID");
-  if (olduid === null) {
+  if (!olduid) {
     olduid = "NONE";
   }
   // println(olduid);
   var uid = headers.get("NEWFILEUID");
-  if (uid === null) {
+  if (!uid) {
     uid = "NONE";
   }
 

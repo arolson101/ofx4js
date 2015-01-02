@@ -99,7 +99,7 @@ MarginInterestTransaction.prototype.setSubAccountFund = function(subAccountFund)
  */
 MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
   var type = this.getSubAccountFund();
-  return type !== null ? SubAccountType.valueOf(type) : null;
+  return type ? SubAccountType.valueOf(type) : null;
 };
 
 

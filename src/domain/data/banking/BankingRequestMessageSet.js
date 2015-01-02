@@ -71,7 +71,7 @@ BankingRequestMessageSet.prototype.setStatementRequest = function(statementReque
 // Inherited.
 BankingRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getStatementRequest() !== null) {
+  if (this.getStatementRequest()) {
     requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;

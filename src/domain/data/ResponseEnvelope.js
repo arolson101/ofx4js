@@ -134,7 +134,7 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
   var type = MessageSetType.signon;
   var message = this.getMessageSet(type);
 
-  if (message !== null) {
+  if (message) {
     return message.getSignonResponse();
   }
   else {
@@ -151,7 +151,7 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
  */
 ResponseEnvelope.prototype.getMessageSet = function(type) {
   var message = null;
-  if (this.messageSets !== null) {
+  if (this.messageSets) {
     for (var i=0; i<this.messageSets.length; i++) {
       var messageSet = this.messageSets[i];
       if (messageSet.getType() == type) {

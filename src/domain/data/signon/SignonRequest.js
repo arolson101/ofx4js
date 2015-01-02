@@ -20,7 +20,7 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var RequestMessage = require("../RequestMessage");
-var FinancialInstitution = require("../../../client/FinancialInstitution");
+var FinancialInstitution = require("./FinancialInstitution");
 
 /**
  * Sign-on request

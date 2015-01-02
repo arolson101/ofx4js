@@ -65,10 +65,10 @@ inherit(FinancialInstitutionImpl, "implements", FinancialInstitution);
 
 
 FinancialInstitutionImpl.prototype.FinancialInstitutionImpl = function(/*FinancialInstitutionData*/ data, /*OFXConnection*/ connection) {
-  if (data === null) {
+  if (!data) {
     throw new Error("Data cannot be null");
   }
-  if (connection === null) {
+  if (!connection) {
     throw new Error("An OFX connection must be supplied");
   }
 
@@ -169,17 +169,17 @@ FinancialInstitutionImpl.prototype.sendRequest = function(request, url) {
 FinancialInstitutionImpl.prototype.getProfile = function(response) {
 
   var profileSet = response.getMessageSet(MessageSetType.profile);
-  if (profileSet === null) {
+  if (!profileSet) {
     throw new Error("No profile response set.");
   }
 
   var transactionResponse = profileSet.getProfileResponse();
-  if (transactionResponse === null) {
+  if (!transactionResponse) {
     throw new Error("No profile transaction wrapper.");
   }
 
   var message = transactionResponse.getMessage();
-  if (message === null) {
+  if (!message) {
     throw new Error("No profile message.");
   }
   return message;
@@ -206,14 +206,14 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
   for (var messageSetsIdx=0; messageSetsIdx<messageSets.length; messageSetsIdx++) {
     var requestSet = messageSets[messageSetsIdx];
     var responseSet = response.getMessageSet(requestSet.getType());
-    if (responseSet === null) {
+    if (!responseSet) {
       throw new Error("No response for the " + requestSet.getType() + " request.");
     }
 
     if (responseSet.getType() === MessageSetType.signon) {
       var signonResponse = responseSet.getSignonResponse();
 
-      if (signonResponse === null) {
+      if (!signonResponse) {
         throw new Error("No signon response.");
       }
     }
@@ -236,7 +236,7 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
 
       if (responseMessage instanceof TransactionWrappedResponseMessage) {
         var uid = responseMessage.getUID();
-        if (uid === null) {
+        if (!uid) {
           throw new Error("Invalid response transaction: no UID.");
         }
         else if (!transactionIds.remove(uid)) {
@@ -259,16 +259,16 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
  */
 FinancialInstitutionImpl.prototype.validateStatus = function(statusHolder) {
   var status = statusHolder.getStatus();
-  if (status === null) {
+  if (!status) {
     throw new Error("Invalid OFX response: no status returned in the " + statusHolder.getStatusHolderName() + " response.");
   }
 
   if (Status.KnownCode.SUCCESS !== status.getCode()) {
     var message = status.getMessage();
-    if (message === null) {
+    if (!message) {
       message = "No response status code.";
 
-      if (status.getCode() !== null) {
+      if (status.getCode()) {
         message = status.getCode().getMessage();
       }
     }
@@ -354,17 +354,17 @@ FinancialInstitutionImpl.prototype.createAccountInfoRequest = function() {
  */
 FinancialInstitutionImpl.prototype.getAccountProfiles = function(response) {
   var messageSet = response.getMessageSet(MessageSetType.signup);
-  if (messageSet === null) {
+  if (!messageSet) {
     throw new Error("No signup response message set.");
   }
 
   var transaction = messageSet.getAccountInfoResponse();
-  if (transaction === null) {
+  if (!transaction) {
     throw new Error("No account info transaction in the signup response.");
   }
 
   var infoResponse = transaction.getMessage();
-  if (infoResponse === null) {
+  if (!infoResponse) {
     throw new Error("No account info response in the transaction.");
   }
 

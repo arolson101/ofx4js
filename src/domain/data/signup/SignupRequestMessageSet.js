@@ -76,7 +76,7 @@ SignupRequestMessageSet.prototype.setAccountInfoRequest = function(accountInfoRe
 SignupRequestMessageSet.prototype.getRequestMessages = function() {
   var messages = [];
 
-  if (this.getAccountInfoRequest() !== null) {
+  if (this.getAccountInfoRequest()) {
     messages.push(this.getAccountInfoRequest());
   }
   

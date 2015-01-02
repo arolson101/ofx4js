@@ -46,12 +46,12 @@ inherit(FinancialInstitutionServiceImpl, "implements", FinancialInstitutionServi
 
 
 FinancialInstitutionServiceImpl.prototype.getFinancialInstitution = function(/*String*/ fid) {
-  return this.dataStore === null ? null : this.getFinancialInstitution(this.getDataStore().getInstitutionData(fid));
+  return (!this.dataStore) ? null : this.getFinancialInstitution(this.getDataStore().getInstitutionData(fid));
 };
 
 
 FinancialInstitutionServiceImpl.prototype.getFinancialInstitution = function(/*FinancialInstitutionData*/ data) {
-  if (data === null) {
+  if (!data) {
     return null;
   }
 

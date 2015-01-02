@@ -71,7 +71,7 @@ CreditCardRequestMessageSet.prototype.setStatementRequest = function(statementRe
 // Inherited.
 CreditCardRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getStatementRequest() !== null) {
+  if (this.getStatementRequest()) {
     requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;

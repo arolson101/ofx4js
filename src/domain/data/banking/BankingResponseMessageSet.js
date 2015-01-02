@@ -85,7 +85,7 @@ BankingResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 BankingResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
+  return !this.statementResponses || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 

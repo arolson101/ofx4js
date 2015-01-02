@@ -70,39 +70,39 @@ VersionSpecificMessageSetInfo.prototype.setCore = function(core) {
 VersionSpecificMessageSetInfo.prototype.getMessageSetType = function() { throw new Error("not implemented"); };
 
 VersionSpecificMessageSetInfo.prototype.getVersion = function() {
-  return this.core !== null ? this.core.getVersion() : null;
+  return this.core ? this.core.getVersion() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getServiceProviderName = function() {
-  return this.core !== null ? this.core.getServiceProviderName() : null;
+  return this.core ? this.core.getServiceProviderName() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getUrl = function() {
-  return this.core !== null ? this.core.getUrl() : null;
+  return this.core ? this.core.getUrl() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getSecurity = function() {
-  return this.core !== null ? this.core.getSecurity() : null;
+  return this.core ? this.core.getSecurity() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.isSslRequired = function() {
-  return this.core !== null && this.core.getSslRequired() !== null ? this.core.getSslRequired() : true;
+  return this.core && this.core.getSslRequired() ? this.core.getSslRequired() : true;
 };
 
 VersionSpecificMessageSetInfo.prototype.getRealm = function() {
-  return this.core !== null ? this.core.getRealm() : null;
+  return this.core ? this.core.getRealm() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getLanguage = function() {
-  return this.core !== null ? this.core.getLanguage() : null;
+  return this.core ? this.core.getLanguage() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getSyncCapability = function() {
-  return this.core !== null ? this.core.getSyncCapability() : null;
+  return this.core ? this.core.getSyncCapability() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.hasFileBasedErrorRecoverySupport = function() {
-  return this.core !== null && this.core.getFileBasedErrorRecoverySupport() !== null ? this.core.getFileBasedErrorRecoverySupport() : false;
+  return this.core && this.core.getFileBasedErrorRecoverySupport() ? this.core.getFileBasedErrorRecoverySupport() : false;
 };
 
 

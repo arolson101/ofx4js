@@ -38,17 +38,17 @@ inherit(BankingAccountImpl, "implements", BankAccount);
 
 BankingAccountImpl.prototype.unwrapStatementResponse = function(/*ResponseEnvelope*/ response) {
   var bankingSet = response.getMessageSet(MessageSetType.banking);
-  if (bankingSet === null) {
+  if (!bankingSet) {
     throw new Error("No banking response message set.");
   }
 
   var statementTransactionResponse = bankingSet.getStatementResponse();
-  if (statementTransactionResponse === null) {
+  if (!statementTransactionResponse) {
     throw new Error("No banking statement response transaction.");
   }
 
   var statement = statementTransactionResponse.getMessage();
-  if (statement === null) {
+  if (!statement) {
     throw new Error("No banking statement in the transaction.");
   }
   

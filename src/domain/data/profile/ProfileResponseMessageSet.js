@@ -73,7 +73,7 @@ ProfileResponseMessageSet.prototype.setProfileResponse = function(profileRespons
 ProfileResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
-  if (this.getProfileResponse() !== null) {
+  if (this.getProfileResponse()) {
     messages.add(this.getProfileResponse());
   }
 

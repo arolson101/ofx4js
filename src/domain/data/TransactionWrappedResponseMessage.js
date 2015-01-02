@@ -97,7 +97,7 @@ TransactionWrappedResponseMessage.prototype.getStatusHolderName = function() {
 // Inherited.
 TransactionWrappedResponseMessage.prototype.getResponseMessageName = function() {
   var name = "transaction response";
-  if (this.getWrappedMessage() !== null) {
+  if (this.getWrappedMessage()) {
     name = this.getWrappedMessage().getResponseMessageName() + " transaction";
   }
   else {

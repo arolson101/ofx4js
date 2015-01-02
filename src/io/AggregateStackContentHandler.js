@@ -70,7 +70,7 @@ function AggregateInfoHolder() {
  * @returns boolean
  */
 AggregateInfoHolder.prototype.isBeingSkipped = function() {
-  return this.aggregate === null || this.info === null;
+  return !this.aggregate || !this.info;
 };
 
 /**
@@ -115,7 +115,7 @@ function AggregateStackContentHandler(root, conversion) {
   this.parsingRoot = false;
 
   var aggregateInfo = AggregateIntrospector.getAggregateInfo(root.constructor);
-  if (aggregateInfo === null) {
+  if (!aggregateInfo) {
     throw new Error("Unable to marshal object of type '" + root.constructor.name + "' (no aggregate metadata found).");
   }
 
@@ -132,7 +132,7 @@ inherit(AggregateStackContentHandler, 'implements', OFXHandler);
  */
 AggregateStackContentHandler.prototype.onHeader = function(name, value) {
   var headerType = this.stack.peek().info.getHeaderType(name);
-  if (headerType !== null) {
+  if (headerType) {
     this.stack.peek().info.setHeader(this.stack.peek().aggregate, name, this.conversion.fromString(headerType, value));
   }
 };
@@ -144,7 +144,7 @@ AggregateStackContentHandler.prototype.onHeader = function(name, value) {
 AggregateStackContentHandler.prototype.onElement = function(name, value) {
   if (!this.stack.peek().isBeingSkipped()) {
     var attribute = this.stack.peek().info.getAttribute(name, this.stack.peek().currentAttributeIndex);
-    if (attribute !== null && attribute.getType() === AggregateAttribute.Type.ELEMENT) {
+    if (attribute && attribute.getType() === AggregateAttribute.Type.ELEMENT) {
       try {
         attribute.set(this.conversion.fromString(attribute.getAttributeType(), value), this.stack.peek().aggregate);
       }
@@ -177,7 +177,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
     var infoHolder;
 
     var attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex);
-    if (attribute !== null) {
+    if (attribute) {
       if (attribute.getType() == AggregateAttribute.Type.CHILD_AGGREGATE) {
         var aggregateType;
         if (attribute.isCollection()) {
@@ -187,9 +187,9 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
           aggregateType = attribute.getAttributeType();
         }
 
-        if (aggregateType !== null) {
+        if (aggregateType) {
           var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregateType);
-          if (aggregateInfo === null) {
+          if (!aggregateInfo) {
             throw new Error("Unable to locate aggregate info for type " + aggregateType.getName());
           }
 
@@ -246,7 +246,7 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
       var attribute = this.stack.peek().info.getAttribute(
           aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
       try {
-        if (attribute !== null) {
+        if (attribute) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
           if (LOG) {

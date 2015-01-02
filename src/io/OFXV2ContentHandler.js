@@ -26,7 +26,7 @@ var LOG = true;
  * @param {OFXHandler} ofxHandler
  */
 function OFXV2ContentHandler(ofxHandler) {
-  if (ofxHandler === null) {
+  if (!ofxHandler) {
     throw new Error("An OFX handler must be supplied.");
   }
   

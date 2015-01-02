@@ -38,17 +38,17 @@ inherit(CreditCardAccountImpl, "implements", CreditCardAccount);
 
 CreditCardAccountImpl.prototype.unwrapStatementResponse = function(/*ResponseEnvelope*/ response) {
   var creditCardSet = response.getMessageSet(MessageSetType.creditcard);
-  if (creditCardSet === null) {
+  if (!creditCardSet) {
     throw new Error("No credit card response message set.");
   }
 
   var statementTransactionResponse = creditCardSet.getStatementResponse();
-  if (statementTransactionResponse === null) {
+  if (!statementTransactionResponse) {
     throw new Error("No credit card statement response transaction.");
   }
 
   var statement = statementTransactionResponse.getMessage();
-  if (statement === null) {
+  if (!statement) {
     throw new Error("No credit card statement in the transaction.");
   }
 

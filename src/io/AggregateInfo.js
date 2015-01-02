@@ -133,7 +133,7 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
           continue;
         }
       }
-      if (collectionBucket === null || collectionBucket.getOrder() < orderHint) {
+      if (!collectionBucket || collectionBucket.getOrder() < orderHint) {
         //the default is the first collection that comes after the order hint, or the latest if there are none that come after the order hint.
         collectionBucket = attribute;
       }

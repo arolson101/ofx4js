@@ -6807,17 +6807,17 @@ inherit(BankingAccountImpl, "implements", BankAccount);
 
 BankingAccountImpl.prototype.unwrapStatementResponse = function(/*ResponseEnvelope*/ response) {
   var bankingSet = response.getMessageSet(MessageSetType.banking);
-  if (bankingSet === null) {
+  if (!bankingSet) {
     throw new Error("No banking response message set.");
   }
 
   var statementTransactionResponse = bankingSet.getStatementResponse();
-  if (statementTransactionResponse === null) {
+  if (!statementTransactionResponse) {
     throw new Error("No banking statement response transaction.");
   }
 
   var statement = statementTransactionResponse.getMessage();
-  if (statement === null) {
+  if (!statement) {
     throw new Error("No banking statement in the transaction.");
   }
   
@@ -7217,17 +7217,17 @@ inherit(CreditCardAccountImpl, "implements", CreditCardAccount);
 
 CreditCardAccountImpl.prototype.unwrapStatementResponse = function(/*ResponseEnvelope*/ response) {
   var creditCardSet = response.getMessageSet(MessageSetType.creditcard);
-  if (creditCardSet === null) {
+  if (!creditCardSet) {
     throw new Error("No credit card response message set.");
   }
 
   var statementTransactionResponse = creditCardSet.getStatementResponse();
-  if (statementTransactionResponse === null) {
+  if (!statementTransactionResponse) {
     throw new Error("No credit card statement response transaction.");
   }
 
   var statement = statementTransactionResponse.getMessage();
-  if (statement === null) {
+  if (!statement) {
     throw new Error("No credit card statement in the transaction.");
   }
 
@@ -7375,10 +7375,10 @@ inherit(FinancialInstitutionImpl, "implements", FinancialInstitution);
 
 
 FinancialInstitutionImpl.prototype.FinancialInstitutionImpl = function(/*FinancialInstitutionData*/ data, /*OFXConnection*/ connection) {
-  if (data === null) {
+  if (!data) {
     throw new Error("Data cannot be null");
   }
-  if (connection === null) {
+  if (!connection) {
     throw new Error("An OFX connection must be supplied");
   }
 
@@ -7479,17 +7479,17 @@ FinancialInstitutionImpl.prototype.sendRequest = function(request, url) {
 FinancialInstitutionImpl.prototype.getProfile = function(response) {
 
   var profileSet = response.getMessageSet(MessageSetType.profile);
-  if (profileSet === null) {
+  if (!profileSet) {
     throw new Error("No profile response set.");
   }
 
   var transactionResponse = profileSet.getProfileResponse();
-  if (transactionResponse === null) {
+  if (!transactionResponse) {
     throw new Error("No profile transaction wrapper.");
   }
 
   var message = transactionResponse.getMessage();
-  if (message === null) {
+  if (!message) {
     throw new Error("No profile message.");
   }
   return message;
@@ -7516,14 +7516,14 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
   for (var messageSetsIdx=0; messageSetsIdx<messageSets.length; messageSetsIdx++) {
     var requestSet = messageSets[messageSetsIdx];
     var responseSet = response.getMessageSet(requestSet.getType());
-    if (responseSet === null) {
+    if (!responseSet) {
       throw new Error("No response for the " + requestSet.getType() + " request.");
     }
 
     if (responseSet.getType() === MessageSetType.signon) {
       var signonResponse = responseSet.getSignonResponse();
 
-      if (signonResponse === null) {
+      if (!signonResponse) {
         throw new Error("No signon response.");
       }
     }
@@ -7546,7 +7546,7 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
 
       if (responseMessage instanceof TransactionWrappedResponseMessage) {
         var uid = responseMessage.getUID();
-        if (uid === null) {
+        if (!uid) {
           throw new Error("Invalid response transaction: no UID.");
         }
         else if (!transactionIds.remove(uid)) {
@@ -7569,16 +7569,16 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
  */
 FinancialInstitutionImpl.prototype.validateStatus = function(statusHolder) {
   var status = statusHolder.getStatus();
-  if (status === null) {
+  if (!status) {
     throw new Error("Invalid OFX response: no status returned in the " + statusHolder.getStatusHolderName() + " response.");
   }
 
   if (Status.KnownCode.SUCCESS !== status.getCode()) {
     var message = status.getMessage();
-    if (message === null) {
+    if (!message) {
       message = "No response status code.";
 
-      if (status.getCode() !== null) {
+      if (status.getCode()) {
         message = status.getCode().getMessage();
       }
     }
@@ -7664,17 +7664,17 @@ FinancialInstitutionImpl.prototype.createAccountInfoRequest = function() {
  */
 FinancialInstitutionImpl.prototype.getAccountProfiles = function(response) {
   var messageSet = response.getMessageSet(MessageSetType.signup);
-  if (messageSet === null) {
+  if (!messageSet) {
     throw new Error("No signup response message set.");
   }
 
   var transaction = messageSet.getAccountInfoResponse();
-  if (transaction === null) {
+  if (!transaction) {
     throw new Error("No account info transaction in the signup response.");
   }
 
   var infoResponse = transaction.getMessage();
-  if (infoResponse === null) {
+  if (!infoResponse) {
     throw new Error("No account info response in the transaction.");
   }
 
@@ -7755,12 +7755,12 @@ inherit(FinancialInstitutionServiceImpl, "implements", FinancialInstitutionServi
 
 
 FinancialInstitutionServiceImpl.prototype.getFinancialInstitution = function(/*String*/ fid) {
-  return this.dataStore === null ? null : this.getFinancialInstitution(this.getDataStore().getInstitutionData(fid));
+  return (!this.dataStore) ? null : this.getFinancialInstitution(this.getDataStore().getInstitutionData(fid));
 };
 
 
 FinancialInstitutionServiceImpl.prototype.getFinancialInstitution = function(/*FinancialInstitutionData*/ data) {
-  if (data === null) {
+  if (!data) {
     return null;
   }
 
@@ -7898,23 +7898,23 @@ InvestmentAccountImpl.prototype.getDetails = function() {
 
 InvestmentAccountImpl.prototype.unwrapStatementResponse = function(/*ResponseEnvelope*/ response) {
   var investmentStatementSet = response.getMessageSet(MessageSetType.investment);
-  if (investmentStatementSet === null) {
+  if (!investmentStatementSet) {
     throw new Error("No investment response message set.");
   }
 
   var statementTransactionResponse = investmentStatementSet.getStatementResponse();
-  if (statementTransactionResponse === null) {
+  if (!statementTransactionResponse) {
     throw new Error("No investment statement response transaction.");
   }
 
   var statement = statementTransactionResponse.getMessage();
-  if (statement === null) {
+  if (!statement) {
     throw new Error("No investment statement in the transaction.");
   }
 
   // See if there's a security list -- often sent back with an account statement by servers.
   var securityListMessageSet = response.getMessageSet(MessageSetType.investment_security);
-  if (securityListMessageSet !== null) {
+  if (securityListMessageSet) {
     statement.setSecurityList(securityListMessageSet.getSecurityList());
   }
 
@@ -7954,12 +7954,12 @@ InvestmentAccountImpl.prototype.createSecurityListRequest = function(/*SecurityR
 
 InvestmentAccountImpl.prototype.unwrapSecurityList = function(/*ResponseEnvelope*/ response) {
   var securityListSet = response.getMessageSet(MessageSetType.investment_security);
-  if (securityListSet === null) {
+  if (!securityListSet) {
     throw new Error("No security list response message set.");
   }
 
   var securityList = securityListSet.getSecurityList();
-  if (securityList === null) {
+  if (!securityList) {
     throw new Error("No security list response transaction.");
   }
 
@@ -9309,7 +9309,7 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
   var type = MessageSetType.signon;
   var message = this.getMessageSet(type);
 
-  if (message !== null) {
+  if (message) {
     return message.getSignonResponse();
   }
   else {
@@ -9326,7 +9326,7 @@ ResponseEnvelope.prototype.getSignonResponse = function() {
  */
 ResponseEnvelope.prototype.getMessageSet = function(type) {
   var message = null;
-  if (this.messageSets !== null) {
+  if (this.messageSets) {
     for (var i=0; i<this.messageSets.length; i++) {
       var messageSet = this.messageSets[i];
       if (messageSet.getType() == type) {
@@ -9826,7 +9826,7 @@ TransactionWrappedResponseMessage.prototype.getStatusHolderName = function() {
 // Inherited.
 TransactionWrappedResponseMessage.prototype.getResponseMessageName = function() {
   var name = "transaction response";
-  if (this.getWrappedMessage() !== null) {
+  if (this.getWrappedMessage()) {
     name = this.getWrappedMessage().getResponseMessageName() + " transaction";
   }
   else {
@@ -10667,7 +10667,7 @@ BankingRequestMessageSet.prototype.setStatementRequest = function(statementReque
 // Inherited.
 BankingRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getStatementRequest() !== null) {
+  if (this.getStatementRequest()) {
     requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;
@@ -10766,7 +10766,7 @@ BankingResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 BankingResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
+  return !this.statementResponses || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 
@@ -12240,7 +12240,7 @@ Element.add(Status, {name: "CODE", required: true, order: 0, attributeType: Stat
  */
 Status.prototype.setCode = function(code) {
   this.code = code;
-  if (this.severity === null) {
+  if (!this.severity) {
     this.severity = code.getDefaultSeverity();
   }
 };
@@ -14152,7 +14152,7 @@ CreditCardRequestMessageSet.prototype.setStatementRequest = function(statementRe
 // Inherited.
 CreditCardRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getStatementRequest() !== null) {
+  if (this.getStatementRequest()) {
     requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;
@@ -14245,7 +14245,7 @@ CreditCardResponseMessageSet.prototype.setStatementResponses = function(statemen
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 CreditCardResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
+  return !this.statementResponses || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 
@@ -17130,7 +17130,7 @@ InvestmentStatementRequestMessageSet.prototype.setStatementRequest = function(st
 // Inherited.
 InvestmentStatementRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getStatementRequest() !== null) {
+  if (this.getStatementRequest()) {
     requestMessages.push(this.getStatementRequest());
   }
   return requestMessages;
@@ -17538,7 +17538,7 @@ InvestmentStatementResponseMessageSet.prototype.setStatementResponses = function
  * @return {InvestmentStatementResponseTransaction} the first investment statement response.
  */
 InvestmentStatementResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
+  return !this.statementResponses || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 
@@ -21515,7 +21515,7 @@ MarginInterestTransaction.prototype.setSubAccountFund = function(subAccountFund)
  */
 MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
   var type = this.getSubAccountFund();
-  return type !== null ? SubAccountType.valueOf(type) : null;
+  return type ? SubAccountType.valueOf(type) : null;
 };
 
 
@@ -25769,7 +25769,7 @@ ProfileRequestMessageSet.prototype.setProfileRequest = function(profileRequest) 
 // Inherited.
 ProfileRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getProfileRequest() !== null) {
+  if (this.getProfileRequest()) {
     requestMessages.push(this.getProfileRequest());
   }
   return requestMessages;
@@ -26381,11 +26381,11 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
  */
 ProfileResponse.prototype.getProfiles = function(type) {
   var profiles = [];
-  if (this.getMessageSetList() !== null && this.getMessageSetList().getInformationList() !== null) {
+  if (this.getMessageSetList() && this.getMessageSetList().getInformationList()) {
     var informationList = this.getMessageSetList().getInformationList();
     for (var informationListIdx=0; informationListIdx<informationList.length; informationListIdx++) {
       var info = informationList[informationListIdx];
-      if (info.getVersionSpecificInformationList() !== null) {
+      if (info.getVersionSpecificInformationList()) {
         var versionSpecificInformationList = info.getVersionSpecificInformationList();
         for (var versionSpecificInformationListIdx=0; versionSpecificInformationListIdx<versionSpecificInformationList.length; versionSpecificInformationListIdx++) {
           var versionSpecificInfo = versionSpecificInformationList[versionSpecificInformationListIdx];
@@ -26404,8 +26404,8 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
   var profiles = this.getProfiles(type);
   for (var i=0; i<profiles.length; i++) {
     var profile = profiles[i];
-    if (version === null) {
-      if (profile.getVersion() === null) {
+    if (!version) {
+      if (!profile.getVersion()) {
         return profile;
       }
     }
@@ -26419,12 +26419,12 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 
 
 ProfileResponse.prototype.getSignonProfile = function(/*MessageSetProfile*/ messageSet) {
-  if (this.getSignonInfoList() !== null && this.getSignonInfoList().getInfoList() !== null) {
+  if (this.getSignonInfoList() && this.getSignonInfoList().getInfoList()) {
     var infoList = this.getSignonInfoList().getInfoList();
     for (var infoListIdx=0; infoListIdx<infoList.length; infoListIdx++) {
       var signonInfo = infoList[infoListIdx];
-      if (messageSet.getRealm() === null) {
-        if (signonInfo.getRealm() === null) {
+      if (!messageSet.getRealm()) {
+        if (!signonInfo.getRealm()) {
           return signonInfo;
         }
       }
@@ -26517,7 +26517,7 @@ ProfileResponseMessageSet.prototype.setProfileResponse = function(profileRespons
 ProfileResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
-  if (this.getProfileResponse() !== null) {
+  if (this.getProfileResponse()) {
     messages.add(this.getProfileResponse());
   }
 
@@ -27298,39 +27298,39 @@ VersionSpecificMessageSetInfo.prototype.setCore = function(core) {
 VersionSpecificMessageSetInfo.prototype.getMessageSetType = function() { throw new Error("not implemented"); };
 
 VersionSpecificMessageSetInfo.prototype.getVersion = function() {
-  return this.core !== null ? this.core.getVersion() : null;
+  return this.core ? this.core.getVersion() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getServiceProviderName = function() {
-  return this.core !== null ? this.core.getServiceProviderName() : null;
+  return this.core ? this.core.getServiceProviderName() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getUrl = function() {
-  return this.core !== null ? this.core.getUrl() : null;
+  return this.core ? this.core.getUrl() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getSecurity = function() {
-  return this.core !== null ? this.core.getSecurity() : null;
+  return this.core ? this.core.getSecurity() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.isSslRequired = function() {
-  return this.core !== null && this.core.getSslRequired() !== null ? this.core.getSslRequired() : true;
+  return this.core && this.core.getSslRequired() ? this.core.getSslRequired() : true;
 };
 
 VersionSpecificMessageSetInfo.prototype.getRealm = function() {
-  return this.core !== null ? this.core.getRealm() : null;
+  return this.core ? this.core.getRealm() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getLanguage = function() {
-  return this.core !== null ? this.core.getLanguage() : null;
+  return this.core ? this.core.getLanguage() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.getSyncCapability = function() {
-  return this.core !== null ? this.core.getSyncCapability() : null;
+  return this.core ? this.core.getSyncCapability() : null;
 };
 
 VersionSpecificMessageSetInfo.prototype.hasFileBasedErrorRecoverySupport = function() {
-  return this.core !== null && this.core.getFileBasedErrorRecoverySupport() !== null ? this.core.getFileBasedErrorRecoverySupport() : false;
+  return this.core && this.core.getFileBasedErrorRecoverySupport() ? this.core.getFileBasedErrorRecoverySupport() : false;
 };
 
 
@@ -32568,7 +32568,7 @@ SecurityListRequestMessageSet.prototype.setSecurityListRequest = function(statem
 // Inherited.
 SecurityListRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getSecurityListRequest() !== null) {
+  if (this.getSecurityListRequest()) {
     requestMessages.push(this.getSecurityListRequest());
   }
   return requestMessages;
@@ -33745,7 +33745,7 @@ var Aggregate = require("../../../meta/Aggregate");
 var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var RequestMessage = require("../RequestMessage");
-var FinancialInstitution = require("../../../client/FinancialInstitution");
+var FinancialInstitution = require("./FinancialInstitution");
 
 /**
  * Sign-on request
@@ -34194,7 +34194,7 @@ SignonRequest.prototype.setAccessKey = function(accessKey) {
 
 module.exports = SignonRequest;
 
-},{"../../../client/FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js":[function(require,module,exports){
+},{"../../../meta/Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","../../../meta/ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","../../../meta/Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","../../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../RequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestMessage.js","./FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/FinancialInstitution.js"}],"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34302,11 +34302,11 @@ SignonRequestMessageSet.prototype.setPasswordChangeRequest = function(passwordCh
 SignonRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
 
-  if (this.getSignonRequest() !== null) {
+  if (this.getSignonRequest()) {
     requestMessages.push(this.getSignonRequest());
   }
 
-  if (this.getPasswordChangeRequest() !== null) {
+  if (this.getPasswordChangeRequest()) {
     requestMessages.this(this.getPasswordChangeRequest());
   }
 
@@ -34766,7 +34766,7 @@ SignonResponseMessageSet.prototype.setPasswordChangeResponse = function(password
 SignonResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
-  if (this.getSignonResponse() !== null) {
+  if (this.getSignonResponse()) {
     messages.push(this.getSignonResponse());
   }
 
@@ -35233,12 +35233,12 @@ AccountProfile.prototype.setPhone = function(phone) {
  * @return {net.sf.ofx4j.domain.data.common.AccountInfo} Account specifics.
  */
 AccountProfile.prototype.getSpecifics = function() {
-  if (this.getBankSpecifics() !== null && this.getCreditCardSpecifics() !== null) {
+  if (this.getBankSpecifics() && this.getCreditCardSpecifics()) {
     throw new Error("Only one account specifics aggregate can be set at a time.");
   }
-  else if (this.getBankSpecifics() !== null) {
+  else if (this.getBankSpecifics()) {
     return this.getBankSpecifics();
-  } else if (this.getInvestmentSpecifics() !== null) {
+  } else if (this.getInvestmentSpecifics()) {
     return this.getInvestmentSpecifics();
   }
   else {
@@ -35419,7 +35419,7 @@ SignupRequestMessageSet.prototype.setAccountInfoRequest = function(accountInfoRe
 SignupRequestMessageSet.prototype.getRequestMessages = function() {
   var messages = [];
 
-  if (this.getAccountInfoRequest() !== null) {
+  if (this.getAccountInfoRequest()) {
     messages.push(this.getAccountInfoRequest());
   }
   
@@ -35510,7 +35510,7 @@ SignupResponseMessageSet.prototype.setAccountInfoResponse = function(accountInfo
 SignupResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
-  if (this.getAccountInfoResponse() !== null) {
+  if (this.getAccountInfoResponse()) {
     messages.push(this.getAccountInfoResponse());
   }
 
@@ -38714,7 +38714,7 @@ Tax1099RequestMessageSet.prototype.setTaxRequestTransaction = function(taxReques
 // Inherited.
 Tax1099RequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getTaxRequestTransaction() !== null) {
+  if (this.getTaxRequestTransaction()) {
     requestMessages.push(this.getTaxRequestTransaction());
   }
   return requestMessages;
@@ -39090,7 +39090,7 @@ Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 Tax1099ResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.taxResponseTransaction === null || this.taxResponseTransaction.length === 0 ? null : this.taxResponseTransaction.get(0);
+  return !this.taxResponseTransaction || this.taxResponseTransaction.length === 0 ? null : this.taxResponseTransaction.get(0);
 };
 
 
@@ -39224,8 +39224,6 @@ module.exports = {
 
 "use strict";
 
-var AggregateIntrospector = require("./AggregateIntrospector");
-
 /**
  * A generic descriptor for an attribute of an OFX aggregate.
  *
@@ -39301,7 +39299,7 @@ function AggregateAttribute(type, info) {
    * @type boolean
    * @access private
    */
-  this.collection = null;
+  this.collection = false;
   
   switch(type) {
     case AggregateAttribute.Type.CHILD_AGGREGATE:
@@ -39327,10 +39325,10 @@ var Type = AggregateAttribute.Type = {
 AggregateAttribute.prototype.AggregateAttributeForElement = function(elementInfo) {
   this.readMethod = elementInfo.readMethod;
   this.writeMethod = elementInfo.writeMethod;
-  if (this.readMethod === null) {
+  if (!this.readMethod) {
     throw new Error("Illegal property '" + elementInfo.name + "' for aggregate: no read method.");
   }
-  else if (this.writeMethod === null) {
+  else if (!this.writeMethod) {
     throw new Error("Illegal property '" + elementInfo.name + "' for aggregate: no write method.");
   }
 
@@ -39350,21 +39348,24 @@ AggregateAttribute.prototype.AggregateAttributeForElement = function(elementInfo
 AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(childAggregate) {
   this.readMethod = childAggregate.readMethod;
   this.writeMethod = childAggregate.writeMethod;
-  if (this.readMethod === null) {
+  if (!this.readMethod) {
     throw new Error("Illegal property '" + childAggregate.name + "' for aggregate: no read method.");
   }
-  else if (this.writeMethod === null) {
+  else if (!this.writeMethod) {
     throw new Error("Illegal property '" + childAggregate.name + "' for aggregate: no write method.");
   }
 
-  this.collection = (childAggregate.collectionEntryType !== null);
-  if (this.collection) {
+  this.attributeType = childAggregate.attributeType;
+  this.collection = false;
+  if (childAggregate.collectionEntryType) {
+    this.collection = true;
     this.name = null;
     this.collectionEntryType = childAggregate.collectionEntryType;
   }
   else if ("##not_specified##" === childAggregate.name) {
+    var AggregateIntrospector = require("./AggregateIntrospector");
     var aggregateInfo = AggregateIntrospector.getAggregateInfo(childAggregate.attributeType);
-    if (aggregateInfo === null) {
+    if (!aggregateInfo) {
       throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': no aggregate information available.");
     }
 
@@ -39395,7 +39396,7 @@ AggregateAttribute.prototype.get = function(/*Object*/ instance) {
 AggregateAttribute.prototype.set = function(/*Object*/ value, /*Object*/ instance) {
   if (this.collection) {
     var collection = this.get(instance);
-    if (collection === null) {
+    if (!collection) {
       collection = [];
     }
     collection.push(value);
@@ -39593,7 +39594,7 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
           continue;
         }
       }
-      if (collectionBucket === null || collectionBucket.getOrder() < orderHint) {
+      if (!collectionBucket || collectionBucket.getOrder() < orderHint) {
         //the default is the first collection that comes after the order hint, or the latest if there are none that come after the order hint.
         collectionBucket = attribute;
       }
@@ -39860,7 +39861,7 @@ function AggregateMarshaller () {
  */
 AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
   var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.constructor);
-  if (aggregateInfo === null) {
+  if (!aggregateInfo) {
     throw new Error("Unable to marshal object: no aggregate metadata found.");
   }
 
@@ -39891,7 +39892,7 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
   for (var i=0; i<aggregateAttributes.length; i++) {
     var aggregateAttribute = aggregateAttributes[i];
     var childValue = aggregateAttribute.get(aggregate);
-    if (childValue !== null) {
+    if (childValue) {
       switch (aggregateAttribute.getType()) {
         case AggregateAttribute.Type.CHILD_AGGREGATE:
           var childValues;
@@ -39904,7 +39905,7 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
 
           for (var value in childValues) {
             var aggregateInfo = AggregateIntrospector.getAggregateInfo(value.constructor);
-            if (aggregateInfo === null) {
+            if (!aggregateInfo) {
               throw new Error("Unable to marshal object of type " + value.constructor.name + " (no aggregate metadata found).");
             }
 
@@ -39921,7 +39922,7 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
         case AggregateAttribute.Type.ELEMENT:
           /*jshint -W004*/
           var value = this.getConversion().toString(childValue);
-          if ((value !== null) && ("" !== value.trim())) {
+          if ((value) && ("" !== value.trim())) {
             writer.writeElement(aggregateAttribute.getName(), value);
           }
           break;
@@ -40033,7 +40034,7 @@ function AggregateInfoHolder() {
  * @returns boolean
  */
 AggregateInfoHolder.prototype.isBeingSkipped = function() {
-  return this.aggregate === null || this.info === null;
+  return !this.aggregate || !this.info;
 };
 
 /**
@@ -40078,7 +40079,7 @@ function AggregateStackContentHandler(root, conversion) {
   this.parsingRoot = false;
 
   var aggregateInfo = AggregateIntrospector.getAggregateInfo(root.constructor);
-  if (aggregateInfo === null) {
+  if (!aggregateInfo) {
     throw new Error("Unable to marshal object of type '" + root.constructor.name + "' (no aggregate metadata found).");
   }
 
@@ -40095,7 +40096,7 @@ inherit(AggregateStackContentHandler, 'implements', OFXHandler);
  */
 AggregateStackContentHandler.prototype.onHeader = function(name, value) {
   var headerType = this.stack.peek().info.getHeaderType(name);
-  if (headerType !== null) {
+  if (headerType) {
     this.stack.peek().info.setHeader(this.stack.peek().aggregate, name, this.conversion.fromString(headerType, value));
   }
 };
@@ -40107,7 +40108,7 @@ AggregateStackContentHandler.prototype.onHeader = function(name, value) {
 AggregateStackContentHandler.prototype.onElement = function(name, value) {
   if (!this.stack.peek().isBeingSkipped()) {
     var attribute = this.stack.peek().info.getAttribute(name, this.stack.peek().currentAttributeIndex);
-    if (attribute !== null && attribute.getType() === AggregateAttribute.Type.ELEMENT) {
+    if (attribute && attribute.getType() === AggregateAttribute.Type.ELEMENT) {
       try {
         attribute.set(this.conversion.fromString(attribute.getAttributeType(), value), this.stack.peek().aggregate);
       }
@@ -40140,7 +40141,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
     var infoHolder;
 
     var attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex);
-    if (attribute !== null) {
+    if (attribute) {
       if (attribute.getType() == AggregateAttribute.Type.CHILD_AGGREGATE) {
         var aggregateType;
         if (attribute.isCollection()) {
@@ -40150,9 +40151,9 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
           aggregateType = attribute.getAttributeType();
         }
 
-        if (aggregateType !== null) {
+        if (aggregateType) {
           var aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregateType);
-          if (aggregateInfo === null) {
+          if (!aggregateInfo) {
             throw new Error("Unable to locate aggregate info for type " + aggregateType.getName());
           }
 
@@ -40209,7 +40210,7 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
       var attribute = this.stack.peek().info.getAttribute(
           aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
       try {
-        if (attribute !== null) {
+        if (attribute) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
           if (LOG) {
@@ -40674,7 +40675,7 @@ inherit(DefaultStringConversion, "implements", StringConversion);
 
 
 DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
-  if (value === null) {
+  if (!value) {
     return null;
   }
   else if (value instanceof Boolean) {
@@ -40690,13 +40691,13 @@ DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
 
 
 DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*String*/ value) {
-  if (value === null) {
+  if (!value) {
     return null;
   }
   else if (clazz.prototype instanceof StatusCode) {
     var code = value;
     var statusCode = Status.KnownCode.fromCode(code);
-    if (statusCode === null) {
+    if (!statusCode) {
       statusCode = new UnknownStatusCode(code, "Unknown status code.", Status.Severity.ERROR);
     }
     
@@ -41098,7 +41099,7 @@ var LOG = true;
  * @param {OFXHandler} ofxHandler
  */
 function OFXV2ContentHandler(ofxHandler) {
-  if (ofxHandler === null) {
+  if (!ofxHandler) {
     throw new Error("An OFX handler must be supplied.");
   }
   
@@ -41466,7 +41467,7 @@ OFXV1Writer.prototype.writeHeaders = function(/*object*/ headers) {
 
   this.print("SECURITY:");
   var security = headers["SECURITY"];
-  if (security === null) {
+  if (!security) {
     security = "NONE";
   }
   this.println(security);
@@ -41475,13 +41476,13 @@ OFXV1Writer.prototype.writeHeaders = function(/*object*/ headers) {
   this.println("COMPRESSION:NONE");
   this.print("OLDFILEUID:");
   var olduid = headers["OLDFILEUID"];
-  if (olduid === null) {
+  if (!olduid) {
     olduid = "NONE";
   }
   this.println(olduid);
   this.print("NEWFILEUID:");
   var uid = headers["NEWFILEUID"];
-  if (uid === null) {
+  if (!uid) {
     uid = "NONE";
   }
   this.println(uid);
@@ -41502,7 +41503,7 @@ OFXV1Writer.prototype.writeStartAggregate = function(/*String*/ aggregateName) {
 
 
 OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value) {
-  if ((value === null) || ("" === value)) {
+  if (!value) {
     throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
   }
 
@@ -41572,7 +41573,7 @@ OFXV1Writer.prototype.println = function() {
 
 
 OFXV1Writer.prototype.print = function(/*String*/ line) {
-  this.writer.write(line === null ? "null" : line);
+  this.writer.write(!line ? "null" : line);
 };
 
 
@@ -41634,16 +41635,16 @@ OFXV2Writer.prototype.writeHeaders = function(/*object*/ headers) {
   //write out the XML PI
   this.print("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
   var security = headers.get("SECURITY");
-  if (security === null) {
+  if (!security) {
     security = "NONE";
   }
   var olduid = headers.get("OLDFILEUID");
-  if (olduid === null) {
+  if (!olduid) {
     olduid = "NONE";
   }
   // println(olduid);
   var uid = headers.get("NEWFILEUID");
-  if (uid === null) {
+  if (!uid) {
     uid = "NONE";
   }
 

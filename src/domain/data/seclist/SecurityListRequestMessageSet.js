@@ -75,7 +75,7 @@ SecurityListRequestMessageSet.prototype.setSecurityListRequest = function(statem
 // Inherited.
 SecurityListRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getSecurityListRequest() !== null) {
+  if (this.getSecurityListRequest()) {
     requestMessages.push(this.getSecurityListRequest());
   }
   return requestMessages;

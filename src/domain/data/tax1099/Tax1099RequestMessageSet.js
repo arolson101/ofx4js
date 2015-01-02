@@ -70,7 +70,7 @@ Tax1099RequestMessageSet.prototype.setTaxRequestTransaction = function(taxReques
 // Inherited.
 Tax1099RequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getTaxRequestTransaction() !== null) {
+  if (this.getTaxRequestTransaction()) {
     requestMessages.push(this.getTaxRequestTransaction());
   }
   return requestMessages;

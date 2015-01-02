@@ -78,7 +78,7 @@ InvestmentStatementResponseMessageSet.prototype.setStatementResponses = function
  * @return {InvestmentStatementResponseTransaction} the first investment statement response.
  */
 InvestmentStatementResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
+  return !this.statementResponses || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 

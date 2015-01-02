@@ -142,37 +142,6 @@ var ofxResponsev1 =
 
 describe("test", function() {
   it("should load an ofx string", function() {
-    
-//    function Base() {
-//    }
-//    Base.prototype.foo = function() {
-//      console.log("Base.foo");
-//    };
-//    
-//    function Derived() {
-//    }
-//    Derived.prototype = Object.create(Base);
-//    Derived.prototype.constructor = Derived;
-//    Derived.prototype.bar = function() {
-//      console.log("Derived.bar");
-//    };
-//    
-//    function C() {
-//    };
-//    C.prototype = Object.create(Derived);
-//    C.prototype.constructor = C;
-//    
-//    var c = new C();
-//    c.bar();
-//    c.foo();
-    
-    //var FinancialInstitutionData = ofx4js.client.FinancialInstitutionData;
-    var BankStatementRequestTransaction = ofx4js.domain.data.banking.BankStatementRequestTransaction;
-    assert(BankStatementRequestTransaction);
-    var b = new BankStatementRequestTransaction();
-    b.setUID('asdf');
-    
-    
     var AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
     assert(AggregateUnmarshaller);
     var RequestEnvelope = ofx4js.domain.data.RequestEnvelope;

@@ -14,8 +14,6 @@
 
 "use strict";
 
-var AggregateIntrospector = require("./AggregateIntrospector");
-
 /**
  * A generic descriptor for an attribute of an OFX aggregate.
  *
@@ -91,7 +89,7 @@ function AggregateAttribute(type, info) {
    * @type boolean
    * @access private
    */
-  this.collection = null;
+  this.collection = false;
   
   switch(type) {
     case AggregateAttribute.Type.CHILD_AGGREGATE:
@@ -117,10 +115,10 @@ var Type = AggregateAttribute.Type = {
 AggregateAttribute.prototype.AggregateAttributeForElement = function(elementInfo) {
   this.readMethod = elementInfo.readMethod;
   this.writeMethod = elementInfo.writeMethod;
-  if (this.readMethod === null) {
+  if (!this.readMethod) {
     throw new Error("Illegal property '" + elementInfo.name + "' for aggregate: no read method.");
   }
-  else if (this.writeMethod === null) {
+  else if (!this.writeMethod) {
     throw new Error("Illegal property '" + elementInfo.name + "' for aggregate: no write method.");
   }
 
@@ -140,21 +138,24 @@ AggregateAttribute.prototype.AggregateAttributeForElement = function(elementInfo
 AggregateAttribute.prototype.AggregateAttributeForChildAggregate = function(childAggregate) {
   this.readMethod = childAggregate.readMethod;
   this.writeMethod = childAggregate.writeMethod;
-  if (this.readMethod === null) {
+  if (!this.readMethod) {
     throw new Error("Illegal property '" + childAggregate.name + "' for aggregate: no read method.");
   }
-  else if (this.writeMethod === null) {
+  else if (!this.writeMethod) {
     throw new Error("Illegal property '" + childAggregate.name + "' for aggregate: no write method.");
   }
 
-  this.collection = (childAggregate.collectionEntryType !== null);
-  if (this.collection) {
+  this.attributeType = childAggregate.attributeType;
+  this.collection = false;
+  if (childAggregate.collectionEntryType) {
+    this.collection = true;
     this.name = null;
     this.collectionEntryType = childAggregate.collectionEntryType;
   }
   else if ("##not_specified##" === childAggregate.name) {
+    var AggregateIntrospector = require("./AggregateIntrospector");
     var aggregateInfo = AggregateIntrospector.getAggregateInfo(childAggregate.attributeType);
-    if (aggregateInfo === null) {
+    if (!aggregateInfo) {
       throw new Error("Illegal child aggregate type '" + childAggregate.attributeType + "': no aggregate information available.");
     }
 
@@ -185,7 +186,7 @@ AggregateAttribute.prototype.get = function(/*Object*/ instance) {
 AggregateAttribute.prototype.set = function(/*Object*/ value, /*Object*/ instance) {
   if (this.collection) {
     var collection = this.get(instance);
-    if (collection === null) {
+    if (!collection) {
       collection = [];
     }
     collection.push(value);

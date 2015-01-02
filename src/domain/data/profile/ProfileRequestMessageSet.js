@@ -72,7 +72,7 @@ ProfileRequestMessageSet.prototype.setProfileRequest = function(profileRequest) 
 // Inherited.
 ProfileRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
-  if (this.getProfileRequest() !== null) {
+  if (this.getProfileRequest()) {
     requestMessages.push(this.getProfileRequest());
   }
   return requestMessages;

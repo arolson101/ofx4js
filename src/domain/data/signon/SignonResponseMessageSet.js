@@ -105,7 +105,7 @@ SignonResponseMessageSet.prototype.setPasswordChangeResponse = function(password
 SignonResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
-  if (this.getSignonResponse() !== null) {
+  if (this.getSignonResponse()) {
     messages.push(this.getSignonResponse());
   }
 

@@ -115,12 +115,12 @@ AccountProfile.prototype.setPhone = function(phone) {
  * @return {net.sf.ofx4j.domain.data.common.AccountInfo} Account specifics.
  */
 AccountProfile.prototype.getSpecifics = function() {
-  if (this.getBankSpecifics() !== null && this.getCreditCardSpecifics() !== null) {
+  if (this.getBankSpecifics() && this.getCreditCardSpecifics()) {
     throw new Error("Only one account specifics aggregate can be set at a time.");
   }
-  else if (this.getBankSpecifics() !== null) {
+  else if (this.getBankSpecifics()) {
     return this.getBankSpecifics();
-  } else if (this.getInvestmentSpecifics() !== null) {
+  } else if (this.getInvestmentSpecifics()) {
     return this.getInvestmentSpecifics();
   }
   else {

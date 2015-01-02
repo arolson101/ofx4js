@@ -105,11 +105,11 @@ SignonRequestMessageSet.prototype.setPasswordChangeRequest = function(passwordCh
 SignonRequestMessageSet.prototype.getRequestMessages = function() {
   var requestMessages = [];
 
-  if (this.getSignonRequest() !== null) {
+  if (this.getSignonRequest()) {
     requestMessages.push(this.getSignonRequest());
   }
 
-  if (this.getPasswordChangeRequest() !== null) {
+  if (this.getPasswordChangeRequest()) {
     requestMessages.this(this.getPasswordChangeRequest());
   }
 

@@ -79,7 +79,7 @@ CreditCardResponseMessageSet.prototype.setStatementResponses = function(statemen
  * @deprecated Use getStatementResponses() because sometimes there are multiple responses
  */
 CreditCardResponseMessageSet.prototype.getStatementResponse = function() {
-  return this.statementResponses === null || this.statementResponses.length === 0 ? null : this.statementResponses[0];
+  return !this.statementResponses || this.statementResponses.length === 0 ? null : this.statementResponses[0];
 };
 
 

@@ -522,11 +522,11 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
  */
 ProfileResponse.prototype.getProfiles = function(type) {
   var profiles = [];
-  if (this.getMessageSetList() !== null && this.getMessageSetList().getInformationList() !== null) {
+  if (this.getMessageSetList() && this.getMessageSetList().getInformationList()) {
     var informationList = this.getMessageSetList().getInformationList();
     for (var informationListIdx=0; informationListIdx<informationList.length; informationListIdx++) {
       var info = informationList[informationListIdx];
-      if (info.getVersionSpecificInformationList() !== null) {
+      if (info.getVersionSpecificInformationList()) {
         var versionSpecificInformationList = info.getVersionSpecificInformationList();
         for (var versionSpecificInformationListIdx=0; versionSpecificInformationListIdx<versionSpecificInformationList.length; versionSpecificInformationListIdx++) {
           var versionSpecificInfo = versionSpecificInformationList[versionSpecificInformationListIdx];
@@ -545,8 +545,8 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
   var profiles = this.getProfiles(type);
   for (var i=0; i<profiles.length; i++) {
     var profile = profiles[i];
-    if (version === null) {
-      if (profile.getVersion() === null) {
+    if (!version) {
+      if (!profile.getVersion()) {
         return profile;
       }
     }
@@ -560,12 +560,12 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
 
 
 ProfileResponse.prototype.getSignonProfile = function(/*MessageSetProfile*/ messageSet) {
-  if (this.getSignonInfoList() !== null && this.getSignonInfoList().getInfoList() !== null) {
+  if (this.getSignonInfoList() && this.getSignonInfoList().getInfoList()) {
     var infoList = this.getSignonInfoList().getInfoList();
     for (var infoListIdx=0; infoListIdx<infoList.length; infoListIdx++) {
       var signonInfo = infoList[infoListIdx];
-      if (messageSet.getRealm() === null) {
-        if (signonInfo.getRealm() === null) {
+      if (!messageSet.getRealm()) {
+        if (!signonInfo.getRealm()) {
           return signonInfo;
         }
       }

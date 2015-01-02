@@ -103,23 +103,23 @@ InvestmentAccountImpl.prototype.getDetails = function() {
 
 InvestmentAccountImpl.prototype.unwrapStatementResponse = function(/*ResponseEnvelope*/ response) {
   var investmentStatementSet = response.getMessageSet(MessageSetType.investment);
-  if (investmentStatementSet === null) {
+  if (!investmentStatementSet) {
     throw new Error("No investment response message set.");
   }
 
   var statementTransactionResponse = investmentStatementSet.getStatementResponse();
-  if (statementTransactionResponse === null) {
+  if (!statementTransactionResponse) {
     throw new Error("No investment statement response transaction.");
   }
 
   var statement = statementTransactionResponse.getMessage();
-  if (statement === null) {
+  if (!statement) {
     throw new Error("No investment statement in the transaction.");
   }
 
   // See if there's a security list -- often sent back with an account statement by servers.
   var securityListMessageSet = response.getMessageSet(MessageSetType.investment_security);
-  if (securityListMessageSet !== null) {
+  if (securityListMessageSet) {
     statement.setSecurityList(securityListMessageSet.getSecurityList());
   }
 
@@ -159,12 +159,12 @@ InvestmentAccountImpl.prototype.createSecurityListRequest = function(/*SecurityR
 
 InvestmentAccountImpl.prototype.unwrapSecurityList = function(/*ResponseEnvelope*/ response) {
   var securityListSet = response.getMessageSet(MessageSetType.investment_security);
-  if (securityListSet === null) {
+  if (!securityListSet) {
     throw new Error("No security list response message set.");
   }
 
   var securityList = securityListSet.getSecurityList();
-  if (securityList === null) {
+  if (!securityList) {
     throw new Error("No security list response transaction.");
   }
 

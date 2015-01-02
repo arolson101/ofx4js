@@ -76,7 +76,7 @@ SignupResponseMessageSet.prototype.setAccountInfoResponse = function(accountInfo
 SignupResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
-  if (this.getAccountInfoResponse() !== null) {
+  if (this.getAccountInfoResponse()) {
     messages.push(this.getAccountInfoResponse());
   }
 

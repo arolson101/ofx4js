@@ -173,7 +173,7 @@ Element.add(Status, {name: "CODE", required: true, order: 0, attributeType: Stat
  */
 Status.prototype.setCode = function(code) {
   this.code = code;
-  if (this.severity === null) {
+  if (!this.severity) {
     this.severity = code.getDefaultSeverity();
   }
 };

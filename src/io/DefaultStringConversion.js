@@ -53,7 +53,7 @@ inherit(DefaultStringConversion, "implements", StringConversion);
 
 
 DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
-  if (value === null) {
+  if (!value) {
     return null;
   }
   else if (value instanceof Boolean) {
@@ -69,13 +69,13 @@ DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
 
 
 DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*String*/ value) {
-  if (value === null) {
+  if (!value) {
     return null;
   }
   else if (clazz.prototype instanceof StatusCode) {
     var code = value;
     var statusCode = Status.KnownCode.fromCode(code);
-    if (statusCode === null) {
+    if (!statusCode) {
       statusCode = new UnknownStatusCode(code, "Unknown status code.", Status.Severity.ERROR);
     }
     

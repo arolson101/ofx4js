@@ -85,7 +85,7 @@ OFXV1Writer.prototype.writeHeaders = function(/*object*/ headers) {
 
   this.print("SECURITY:");
   var security = headers["SECURITY"];
-  if (security === null) {
+  if (!security) {
     security = "NONE";
   }
   this.println(security);
@@ -94,13 +94,13 @@ OFXV1Writer.prototype.writeHeaders = function(/*object*/ headers) {
   this.println("COMPRESSION:NONE");
   this.print("OLDFILEUID:");
   var olduid = headers["OLDFILEUID"];
-  if (olduid === null) {
+  if (!olduid) {
     olduid = "NONE";
   }
   this.println(olduid);
   this.print("NEWFILEUID:");
   var uid = headers["NEWFILEUID"];
-  if (uid === null) {
+  if (!uid) {
     uid = "NONE";
   }
   this.println(uid);
@@ -121,7 +121,7 @@ OFXV1Writer.prototype.writeStartAggregate = function(/*String*/ aggregateName) {
 
 
 OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value) {
-  if ((value === null) || ("" === value)) {
+  if (!value) {
     throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
   }
 
@@ -191,7 +191,7 @@ OFXV1Writer.prototype.println = function() {
 
 
 OFXV1Writer.prototype.print = function(/*String*/ line) {
-  this.writer.write(line === null ? "null" : line);
+  this.writer.write(!line ? "null" : line);
 };
 
 
