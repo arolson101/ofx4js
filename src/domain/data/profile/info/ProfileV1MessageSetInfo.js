@@ -25,6 +25,7 @@ var Aggregate = require("../../../../meta/Aggregate");
  * @augments VersionSpecificMessageSetInfo
  */
 function ProfileV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 }
 
 inherit(ProfileV1MessageSetInfo, "extends", VersionSpecificMessageSetInfo);

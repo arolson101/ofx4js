@@ -24,6 +24,7 @@ var Aggregate = require("../../../meta/Aggregate");
  * @augments ResponseMessage
  */
 function T1099Request () {
+  RequestMessage.call(this);
 }
 
 inherit(T1099Request, "extends", RequestMessage);

@@ -30,6 +30,7 @@ var Tax1099OID = require("./Tax1099OID");
  * @augments T1099Response
  */
 function Tax1099Response () {
+  T1099Response.call(this);
 
   /**
    * @name Tax1099Response#tax1099div
@@ -40,42 +41,42 @@ function Tax1099Response () {
 
   /**
    * @name Tax1099Response#lstTax1099DIV
-   * @type List<Tax1099DIV>
+   * @type Tax1099DIV[]
    * @access private
    */
   this.lstTax1099DIV = null;
 
   /**
    * @name Tax1099Response#lstTax1099INT
-   * @type List<Tax1099INT>
+   * @type Tax1099INT[]
    * @access private
    */
   this.lstTax1099INT = null;
 
   /**
    * @name Tax1099Response#lstTax1099R
-   * @type List<Tax1099R>
+   * @type Tax1099R[]
    * @access private
    */
   this.lstTax1099R = null;
 
   /**
    * @name Tax1099Response#lstTax1099B
-   * @type List<Tax1099B>
+   * @type Tax1099B[]
    * @access private
    */
   this.lstTax1099B = null;
 
   /**
    * @name Tax1099Response#lstTax1099MISC
-   * @type List<Tax1099MISC>
+   * @type Tax1099MISC[]
    * @access private
    */
   this.lstTax1099MISC = null;
 
   /**
    * @name Tax1099Response#lstTax1099OID
-   * @type List<Tax1099OID>
+   * @type Tax1099OID[]
    * @access private
    */
   this.lstTax1099OID = null;

@@ -28,7 +28,7 @@ function InvestmentPositionList () {
 
   /**
    * @name InvestmentPositionList#positions
-   * @type List<BasePosition>
+   * @type BasePosition[]
    * @access private
    */
   this.positions = null;

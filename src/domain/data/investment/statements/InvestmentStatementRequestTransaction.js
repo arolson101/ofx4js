@@ -29,7 +29,7 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function InvestmentStatementRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name InvestmentStatementRequestTransaction#message

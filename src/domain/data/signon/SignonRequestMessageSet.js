@@ -31,6 +31,7 @@ var PasswordChangeRequestTransaction = require("./PasswordChangeRequestTransacti
  * @see "Section 2.5, OFX Spec."
  */
 function SignonRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name SignonRequestMessageSet#signonRequest

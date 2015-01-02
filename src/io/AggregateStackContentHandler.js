@@ -19,6 +19,7 @@ var Stack = require("../util/stack");
 var AggregateIntrospector = require("./AggregateIntrospector");
 var OFXHandler = require("./OFXHandler");
 var AggregateAttribute = require("./AggregateAttribute");
+var LOG = require("../util/log");
 
 function AggregateInfoHolder() {
 
@@ -82,15 +83,13 @@ AggregateInfoHolder.prototype.isSkipping = function(aggregateName) {
 };
 
 
-var LOG = true;
-
 
 /**
  * Content handler that manages the aggregate using a stack-based implementation.
  * @param {Object} root
  * @param {StringConversion} conversion
  *
- * @author Ryan Heaton
+ * @class
  */
 function AggregateStackContentHandler(root, conversion) {
   /**
@@ -198,7 +197,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
           infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
         }
         else {
-          if (LOG) {
+          if (LOG.enabled) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
           }
 
@@ -209,7 +208,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
         this.stack.peek().currentAttributeIndex = attribute.getOrder();
       }
       else {
-        if (LOG) {
+        if (LOG.enabled) {
           console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
         }
 
@@ -218,7 +217,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
       }
     }
     else {
-      if (LOG) {
+      if (LOG.enabled) {
         console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
       }
 
@@ -249,8 +248,10 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
         if (attribute) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
-          if (LOG) {
+          if (LOG.enabled) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
+            
+            attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
           }
         }
       }

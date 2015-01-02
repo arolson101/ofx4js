@@ -25,9 +25,10 @@ var RequestMessage = require("./ResponseMessage");
  *
  * @class
  * @see "Section 2.4.6, OFX Spec"
- * @param {RequestMessage} M
  */
-function TransactionWrappedRequestMessage(/*M*/) {
+function TransactionWrappedRequestMessage() {
+  RequestMessage.call(this);
+
   var UID;
   if(arguments.length === 1) {
     UID = arguments[0];
@@ -51,7 +52,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   this.transactionAuthorizationNumber = null;
 }
 
-inherit(TransactionWrappedRequestMessage, 'extends', RequestMessage);
+inherit(TransactionWrappedRequestMessage, "extends", RequestMessage);
 
 
 /**

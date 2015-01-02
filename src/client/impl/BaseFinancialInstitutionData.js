@@ -19,9 +19,9 @@ var inherit = require("../../util/inherit");
 var FinancialInstitutionData = require("../FinancialInstitutionData");
 
 /**
- * Base bean for FI data.
+ * Base class for FI data.
  *
- * @author Ryan Heaton
+ * @class
  */
 function BaseFinancialInstitutionData () {
 

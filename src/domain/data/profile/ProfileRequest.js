@@ -22,10 +22,11 @@ var Element = require("../../../meta/Element");
 var ClientRoutingCapability = require("./ClientRoutingCapability");
 
 /**
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.1.5, OFX Spec"
  */
 function ProfileRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name ProfileRequest#routingCapability

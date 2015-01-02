@@ -29,6 +29,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function OtherSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name OtherSecurityInfo#typeDesc

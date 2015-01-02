@@ -30,10 +30,11 @@ var InvestmentStatementResponseTransaction = require("./InvestmentStatementRespo
  * @augments ResponseMessageSet
  */
 function InvestmentStatementResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name InvestmentStatementResponseMessageSet#statementResponses
-   * @type List<InvestmentStatementResponseTransaction>
+   * @type InvestmentStatementResponseTransaction[]
    * @access private
    */
   this.statementResponses = null;

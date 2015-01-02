@@ -26,6 +26,7 @@ var SecurityListV1MessageSetInfo = require("./SecurityListV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function SecurityListMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name SecurityListMessageSetInfo#version1Info

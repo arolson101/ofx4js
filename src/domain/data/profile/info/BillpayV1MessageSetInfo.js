@@ -29,6 +29,7 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * @see "Section 12.11.2 OFX Spec"
  */
 function BillpayV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name BillpayV1MessageSetInfo#daysWith
@@ -60,7 +61,7 @@ function BillpayV1MessageSetInfo () {
 
   /**
    * @name BillpayV1MessageSetInfo#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;

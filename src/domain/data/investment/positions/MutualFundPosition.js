@@ -28,6 +28,7 @@ var BasePosition = require("./BasePosition");
  * @augments BasePosition
  */
 function MutualFundPosition () {
+  BasePosition.call(this);
 
   /**
    * @name MutualFundPosition#unitsStreet

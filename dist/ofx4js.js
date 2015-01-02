@@ -6253,7 +6253,7 @@ module.exports = FinancialInstitutionAccount;
  * Interface for core FI data.  This is the base set of information
  * required in order to initiate a connection to an FI server.
  *
- * @author Ryan Heaton
+ * @class
  */
 function FinancialInstitutionData() {
 }
@@ -7049,9 +7049,9 @@ var inherit = require("../../util/inherit");
 var FinancialInstitutionData = require("../FinancialInstitutionData");
 
 /**
- * Base bean for FI data.
+ * Base class for FI data.
  *
- * @author Ryan Heaton
+ * @class
  */
 function BaseFinancialInstitutionData () {
 
@@ -7277,7 +7277,7 @@ module.exports = CreditCardAccountImpl;
 "use strict";
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function FIDataList () {
 
@@ -8440,7 +8440,7 @@ module.exports = {
 /**
  * Connection to an OFX interface.
  *
- * @author Ryan Heaton
+ * @class
  */
 function OFXConnection() {
 }
@@ -9627,9 +9627,10 @@ var RequestMessage = require("./ResponseMessage");
  *
  * @class
  * @see "Section 2.4.6, OFX Spec"
- * @param {RequestMessage} M
  */
-function TransactionWrappedRequestMessage(/*M*/) {
+function TransactionWrappedRequestMessage() {
+  RequestMessage.call(this);
+
   var UID;
   if(arguments.length === 1) {
     UID = arguments[0];
@@ -9653,7 +9654,7 @@ function TransactionWrappedRequestMessage(/*M*/) {
   this.transactionAuthorizationNumber = null;
 }
 
-inherit(TransactionWrappedRequestMessage, 'extends', RequestMessage);
+inherit(TransactionWrappedRequestMessage, "extends", RequestMessage);
 
 
 /**
@@ -9759,7 +9760,9 @@ var Status = require("./common/Status");
  * @augments StatusHolder
  * @see "Section 2.4.6, OFX Spec"
  */
-function TransactionWrappedResponseMessage(/*M*/) {
+function TransactionWrappedResponseMessage() {
+  ResponseMessage.call(this);
+
   /**
    * @type String
    */
@@ -9776,8 +9779,8 @@ function TransactionWrappedResponseMessage(/*M*/) {
   this.status = null;
 }
 
-inherit(TransactionWrappedResponseMessage, 'extends', ResponseMessage);
-inherit(TransactionWrappedResponseMessage, 'implements', StatusHolder);
+inherit(TransactionWrappedResponseMessage, "extends", ResponseMessage);
+inherit(TransactionWrappedResponseMessage, "implements", StatusHolder);
 
 
 /**
@@ -10326,6 +10329,7 @@ var BankAccountDetails = require("./BankAccountDetails");
  * @augments StatementRequest
  */
 function BankStatementRequest () {
+  StatementRequest.call(this);
 
   /**
    * @name BankStatementRequest#account
@@ -10395,7 +10399,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function BankStatementRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name BankStatementRequestTransaction#message
@@ -10472,6 +10476,7 @@ var BankAccountDetails = require("./BankAccountDetails");
  * @augments StatementResponse
  */
 function BankStatementResponse () {
+  StatementResponse.call(this);
 
   /**
    * @name BankStatementResponse#account
@@ -10546,7 +10551,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedResponseMessage
  */
 function BankStatementResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name BankStatementResponseTransaction#message
@@ -10623,6 +10628,7 @@ var BankStatementRequestTransaction = require("./BankStatementRequestTransaction
  * @augments BankingRequestMessageSet
  */
 function BankingRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name BankingRequestMessageSet#statementRequest
@@ -10708,10 +10714,11 @@ var BankStatementResponseTransaction = require("./BankStatementResponseTransacti
  * @augments ResponseMessageSet
  */
 function BankingResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name BankingResponseMessageSet#statementResponses
-   * @type List<BankStatementResponseTransaction>
+   * @type BankStatementResponseTransaction[]
    * @access private
    */
   this.statementResponses = null;
@@ -11839,6 +11846,7 @@ var StatementRange = require("./StatementRange");
  * @augments RequestMessage
  */
 function StatementRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name StatementRequest#statementRange
@@ -11911,6 +11919,7 @@ var BalanceInfo = require("./BalanceInfo");
  * @augments AccountStatement
  */
 function StatementResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name StatementResponse#currencyCode
@@ -12393,6 +12402,7 @@ var Aggregate = require("../../../meta/Aggregate");
  * @augments ResponseMessage
  */
 function T1099Request () {
+  RequestMessage.call(this);
 }
 
 inherit(T1099Request, "extends", RequestMessage);
@@ -12431,6 +12441,7 @@ var ResponseMessage = require("../ResponseMessage");
  * @augments ResponseMessage
  */
 function T1099Response () {
+  ResponseMessage.call(this);
 }
 
 inherit(T1099Response, "extends", ResponseMessage);
@@ -13107,7 +13118,7 @@ function TransactionList () {
 
   /**
    * @name TransactionList#transactions
-   * @type List<Transaction>
+   * @type Transaction[]
    * @access private
    */
   this.transactions = null;
@@ -14108,6 +14119,7 @@ var CreditCardStatementRequestTransaction = require("./CreditCardStatementReques
  * @augments CreditCardRequestMessageSet
  */
 function CreditCardRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name CreditCardRequestMessageSet#statementRequest
@@ -14193,10 +14205,11 @@ var CreditCardStatementResponseTransaction = require("./CreditCardStatementRespo
  * @augments ResponseMessageSet
  */
 function CreditCardResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name CreditCardResponseMessageSet#statementResponses
-   * @type List<CreditCardStatementResponseTransaction>
+   * @type CreditCardStatementResponseTransaction[]
    * @access private
    */
   this.statementResponses = null;
@@ -14298,6 +14311,7 @@ var CreditCardAccountDetails = require("./CreditCardAccountDetails");
  * @augments StatementRequest
  */
 function CreditCardStatementRequest () {
+  StatementRequest.call(this);
 
   /**
    * @name CreditCardStatementRequest#account
@@ -14367,7 +14381,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function CreditCardStatementRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name CreditCardStatementRequestTransaction#message
@@ -14444,6 +14458,7 @@ var CreditCardAccountDetails = require("./CreditCardAccountDetails");
  * @augments StatementResponse
  */
 function CreditCardStatementResponse () {
+  StatementResponse.call(this);
 
   /**
    * @name CreditCardStatementResponse#account
@@ -14518,7 +14533,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedResponseMessage
  */
 function CreditCardStatementResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name CreditCardStatementResponseTransaction#message
@@ -15501,6 +15516,7 @@ var BasePosition = require("./BasePosition");
  * @augments BasePosition
  */
 function DebtPosition () {
+  BasePosition.call(this);
 }
 
 inherit(DebtPosition, "extends", BasePosition);
@@ -15998,7 +16014,7 @@ function InvestmentPositionList () {
 
   /**
    * @name InvestmentPositionList#positions
-   * @type List<BasePosition>
+   * @type BasePosition[]
    * @access private
    */
   this.positions = null;
@@ -16065,6 +16081,7 @@ var BasePosition = require("./BasePosition");
  * @augments BasePosition
  */
 function MutualFundPosition () {
+  BasePosition.call(this);
 
   /**
    * @name MutualFundPosition#unitsStreet
@@ -16221,6 +16238,7 @@ var ShortOptionSecurity = require("./ShortOptionSecurity");
  * @augments BasePosition
  */
 function OptionsPosition () {
+  BasePosition.call(this);
 
   /**
    * @name OptionsPosition#secured
@@ -16301,6 +16319,7 @@ var BasePosition = require("./BasePosition");
  * @augments BasePosition
  */
 function OtherPosition () {
+  BasePosition.call(this);
 }
 
 inherit(OtherPosition, "extends", BasePosition);
@@ -16425,6 +16444,7 @@ var Element = require("../../../../meta/Element");
  * @augments BasePosition
  */
 function StockPosition () {
+  BasePosition.call(this);
 
   /**
    * @name StockPosition#unitsStreet
@@ -16568,7 +16588,7 @@ function BalanceList () {
 
   /**
    * @name BalanceList#balanceRecords
-   * @type List<BalanceRecord>
+   * @type BalanceRecord[]
    * @access private
    */
   this.balanceRecords = null;
@@ -16923,6 +16943,7 @@ var IncludePosition = require("./IncludePosition");
  * @augments StatementRequest
  */
 function InvestmentStatementRequest () {
+  StatementRequest.call(this);
 
   /**
    * @name InvestmentStatementRequest#account
@@ -17086,6 +17107,7 @@ var InvestmentStatementRequestTransaction = require("./InvestmentStatementReques
  * @augments RequestMessageSet
  */
 function InvestmentStatementRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name InvestmentStatementRequestMessageSet#statementRequest
@@ -17173,7 +17195,7 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function InvestmentStatementRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name InvestmentStatementRequestTransaction#message
@@ -17257,6 +17279,7 @@ var InvestmentBalance = require("./InvestmentBalance");
  * @augments StatementResponse
  */
 function InvestmentStatementResponse () {
+  StatementResponse.call(this);
 
   /**
    * @name InvestmentStatementResponse#dateOfStatement
@@ -17490,10 +17513,11 @@ var InvestmentStatementResponseTransaction = require("./InvestmentStatementRespo
  * @augments ResponseMessageSet
  */
 function InvestmentStatementResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name InvestmentStatementResponseMessageSet#statementResponses
-   * @type List<InvestmentStatementResponseTransaction>
+   * @type InvestmentStatementResponseTransaction[]
    * @access private
    */
   this.statementResponses = null;
@@ -17594,7 +17618,7 @@ var InvestmentStatementResponse = require("./InvestmentStatementResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function InvestmentStatementResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name InvestmentStatementResponseTransaction#message
@@ -20952,14 +20976,14 @@ function InvestmentTransactionList () {
 
   /**
    * @name InvestmentTransactionList#transactions
-   * @type List<BaseInvestmentTransaction>
+   * @type BaseInvestmentTransaction[]
    * @access private
    */
   this.transactions = null;
 
   /**
    * @name InvestmentTransactionList#bankTransactions
-   * @type List<InvestmentBankTransaction>
+   * @type InvestmentBankTransaction[]
    * @access private
    */
   this.bankTransactions = null;
@@ -25106,7 +25130,7 @@ function AbstractMessageSetInfo () {
 
   /**
    * @name AbstractMessageSetInfo#versionSpecificInformationList
-   * @type List<VersionSpecificMessageSetInfo>
+   * @type VersionSpecificMessageSetInfo[]
    * @access private
    */
   this.versionSpecificInformationList = null;
@@ -25561,7 +25585,7 @@ function MessageSetInfoList () {
 
   /**
    * @name MessageSetInfoList#informationList
-   * @type List<AbstractMessageSetInfo>
+   * @type AbstractMessageSetInfo[]
    * @access private
    */
   this.informationList = null;
@@ -25622,10 +25646,11 @@ var Element = require("../../../meta/Element");
 var ClientRoutingCapability = require("./ClientRoutingCapability");
 
 /**
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.1.5, OFX Spec"
  */
 function ProfileRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name ProfileRequest#routingCapability
@@ -25725,6 +25750,7 @@ var ProfileRequestTransaction = require("./ProfileRequestTransaction");
  * @see "Section 7 OFX Spec"
  */
 function ProfileRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name ProfileRequestMessageSet#profileRequest
@@ -25809,7 +25835,7 @@ var ProfileRequest = require("./ProfileRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function ProfileRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name ProfileRequestTransaction#message
@@ -25890,6 +25916,7 @@ var SignonInfoList = require("./SignonInfoList");
  * @see "Section 7.2 OFX Spec"
  */
 function ProfileResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name ProfileResponse#messageSetList
@@ -26472,6 +26499,7 @@ var ProfileResponseTransaction = require("./ProfileResponseTransaction");
  * @see "Section 7 OFX Spec"
  */
 function ProfileResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name ProfileResponseMessageSet#profileResponse
@@ -26558,7 +26586,7 @@ var ProfileResponse = require("./ProfileResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function ProfileResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name ProfileResponseTransaction#message
@@ -27158,7 +27186,7 @@ function SignonInfoList () {
 
   /**
    * @name SignonInfoList#infoList
-   * @type List<SignonInfo>
+   * @type SignonInfo[]
    * @access private
    */
   this.infoList = null;
@@ -27251,7 +27279,7 @@ var CoreMessageSetInfo = require("./CoreMessageSetInfo");
 /**
  * Information specific to a version of a message set.
  *
- * @author Ryan Heaton
+ * @class
  * @see "Section 7.2.1, OFX Spec"
  */
 function VersionSpecificMessageSetInfo () {
@@ -27389,6 +27417,7 @@ var BankingV1MessageSetInfo = require("./BankingV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function BankingMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name BankingMessageSetInfo#version1Info
@@ -27456,10 +27485,11 @@ var ImageProfile = require("./common/ImageProfile");
  * @see "Section 11.13.2.1 OFX Spec"
  */
 function BankingV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name BankingV1MessageSetInfo#invalidAccountTypes
-   * @type List<AccountType>
+   * @type AccountType[]
    * @access private
    */
   this.invalidAccountTypes = null;
@@ -27630,6 +27660,7 @@ var BillpayV1MessageSetInfo = require("./BillpayV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function BillpayMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name BillpayMessageSetInfo#version1Info
@@ -27692,6 +27723,7 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * @see "Section 12.11.2 OFX Spec"
  */
 function BillpayV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name BillpayV1MessageSetInfo#daysWith
@@ -27723,7 +27755,7 @@ function BillpayV1MessageSetInfo () {
 
   /**
    * @name BillpayV1MessageSetInfo#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;
@@ -28080,6 +28112,7 @@ var CreditCardV1MessageSetInfo = require("./CreditCardV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function CreditCardMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name CreditCardMessageSetInfo#version1Info
@@ -28143,6 +28176,7 @@ var ImageProfile = require("./common/ImageProfile");
  * @see "Section 11.13.3 OFX Spec"
  */
 function CreditCardV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name CreditCardV1MessageSetInfo#closingAvail
@@ -28233,6 +28267,7 @@ var EmailV1MessageSetInfo = require("./EmailV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function EmailMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name EmailMessageSetInfo#version1Info
@@ -28294,6 +28329,7 @@ var Element = require("../../../../meta/Element");
  * @see "Section 9.4.2 OFX Spec"
  */
 function EmailV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name EmailV1MessageSetInfo#supportsMail
@@ -28385,6 +28421,7 @@ var InterbankTransferV1MessageSetInfo = require("./InterbankTransferV1MessageSet
  * @augments AbstractMessageSetInfo
  */
 function InterbankTransferMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name InterbankTransferMessageSetInfo#version1Info
@@ -28448,6 +28485,7 @@ var TransferProfile = require("./common/TransferProfile");
  * @see "Section 11.13.4 OFX Spec"
  */
 function InterbankTransferV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name InterbankTransferV1MessageSetInfo#transferProfile
@@ -28584,6 +28622,7 @@ var InvestmentV1MessageSetInfo = require("./InvestmentV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function InvestmentMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name InvestmentMessageSetInfo#version1Info
@@ -28641,10 +28680,10 @@ var Element = require("../../../../meta/Element");
 /**
  * @see "Section 13.7.1.1, OFX Spec"
  *
- * @author Jon Perlow
- * @author Ryan Heaton
+ * @class
  */
 function InvestmentV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name InvestmentV1MessageSetInfo#supportsStatementsDownload
@@ -28817,6 +28856,7 @@ var ProfileV1MessageSetInfo = require("./ProfileV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function ProfileMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name ProfileMessageSetInfo#version1Info
@@ -28875,6 +28915,7 @@ var Aggregate = require("../../../../meta/Aggregate");
  * @augments VersionSpecificMessageSetInfo
  */
 function ProfileV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 }
 
 inherit(ProfileV1MessageSetInfo, "extends", VersionSpecificMessageSetInfo);
@@ -28921,6 +28962,7 @@ var SecurityListV1MessageSetInfo = require("./SecurityListV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function SecurityListMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name SecurityListMessageSetInfo#version1Info
@@ -28982,6 +29024,7 @@ var Element = require("../../../../meta/Element");
  * @augments VersionSpecificMessageSetInfo
  */
 function SecurityListV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name SecurityListV1MessageSetInfo#supportsSecurityListDownload
@@ -29046,6 +29089,7 @@ var SignOnV1MessageSetInfo = require("./SignOnV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function SignOnMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name SignOnMessageSetInfo#version1Info
@@ -29104,6 +29148,7 @@ var Aggregate = require("../../../../meta/Aggregate");
  * @augments VersionSpecificMessageSetInfo
  */
 function SignOnV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 }
 
 inherit(SignOnV1MessageSetInfo, "extends", VersionSpecificMessageSetInfo);
@@ -29150,6 +29195,7 @@ var SignupV1MessageSetInfo = require("./SignupV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function SignupMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name SignupMessageSetInfo#version1Info
@@ -29219,6 +29265,7 @@ var OtherEnrollment = require("./signup/OtherEnrollment");
  * @see "Section 8.8 OFX Spec"
  */
 function SignupV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name SignupV1MessageSetInfo#clientEnrollment
@@ -29388,6 +29435,7 @@ var WireTransferV1MessageSetInfo = require("./WireTransferV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function WireTransferMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name WireTransferMessageSetInfo#version1Info
@@ -29450,10 +29498,11 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * @see "Section 11.13.5 OFX Spec"
  */
 function WireTransferV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name WireTransferV1MessageSetInfo#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;
@@ -29664,7 +29713,7 @@ function StopCheckProfile () {
 
   /**
    * @name StopCheckProfile#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;
@@ -29892,14 +29941,14 @@ var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 
 /**
  * Funds Transfer Profile
- * @author Scott Priddy
+ * @class
  * @see "Section 11.13.2.2 OFX Spec"
  */
 function TransferProfile () {
 
   /**
    * @name TransferProfile#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;
@@ -30511,7 +30560,7 @@ var SecurityInfo = require("./SecurityInfo");
  * common to all security info as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
  */
 function BaseSecurityInfo () {
 
@@ -30828,6 +30877,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function DebtSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name DebtSecurityInfo#parValue
@@ -31315,7 +31365,7 @@ module.exports = DebtSecurityInfo;
  * The type of debt.
  * @see "Section 13.8.5.2, OFX Spec"
  *
- * @author Jon Perlow
+ * @class
  */
 var DebtType = {
   COUPON: 0,
@@ -31367,6 +31417,7 @@ var MutualFundType = require("./MutualFundType");
  * @augments BaseSecurityInfo
  */
 function MutualFundSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name MutualFundSecurityInfo#mfType
@@ -31553,6 +31604,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function OptionSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name OptionSecurityInfo#optionType
@@ -31862,6 +31914,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function OtherSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name OtherSecurityInfo#typeDesc
@@ -32088,7 +32141,6 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var SecurityId = require("./SecurityId");
 
-//import java.util.Date;
 
 /**
  * Info about a security.
@@ -32403,7 +32455,7 @@ function SecurityList () {
 
   /**
    * @name SecurityList#securityInfos
-   * @type List<BaseSecurityInfo>
+   * @type BaseSecurityInfo[]
    * @access private
    */
   this.securityInfos = null;
@@ -32460,10 +32512,11 @@ var SecurityRequest = require("./SecurityRequest");
  * @class
  */
 function SecurityListRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name SecurityListRequest#securityRequests
-   * @type List<SecurityRequest>
+   * @type SecurityRequest[]
    * @access private
    */
   this.securityRequests = null;
@@ -32524,6 +32577,7 @@ var SecurityListRequestTransaction = require("./SecurityListRequestTransaction")
  * @augments RequestMessageSet
  */
 function SecurityListRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name SecurityListRequestMessageSet#securityListRequest
@@ -32611,7 +32665,7 @@ var SecurityListRequest = require("./SecurityListRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function SecurityListRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name SecurityListRequestTransaction#message
@@ -32690,6 +32744,7 @@ var Aggregate = require("../../../meta/Aggregate");
  * @augments ResponseMessage
  */
 function SecurityListResponse () {
+  ResponseMessage.call(this);
 }
 
 inherit(SecurityListResponse, "extends", ResponseMessage);
@@ -32738,6 +32793,7 @@ var SecurityList = require("./SecurityList");
  * @augments ResponseMessageSet
  */
 function SecurityListResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name SecurityListResponseMessageSet#securityListResponse
@@ -32842,7 +32898,7 @@ var SecurityListResponse = require("./SecurityListResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function SecurityListResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name SecurityListResponseTransaction#message
@@ -33021,6 +33077,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function StockSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name StockSecurityInfo#stockType
@@ -33397,6 +33454,7 @@ var Element = require("../../../meta/Element");
  * @see "Section 2.5.2.1, OFX Spec."
  */
 function PasswordChangeRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name PasswordChangeRequest#userId
@@ -33494,7 +33552,7 @@ var PasswordChangeRequest = require("./PasswordChangeRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function PasswordChangeRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name PasswordChangeRequestTransaction#message
@@ -33572,6 +33630,7 @@ var Element = require("../../../meta/Element");
  * @see "Section 2.5.2.2, OFX Spec."
  */
 function PasswordChangeResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name PasswordChangeResponse#userId
@@ -33675,7 +33734,7 @@ var PasswordChangeResponse = require("./PasswordChangeResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function PasswordChangeResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name PasswordChangeResponseTransaction#message
@@ -33755,12 +33814,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  * @see "Section 2.5.1.2, OFX Spec."
  */
 function SignonRequest () {
-
-  /**
-   * @name SignonRequest#ANONYMOUS_USER
-   * @type String
-   */
-  this.ANONYMOUS_USER = "anonymous00000000000000000000000";
+  RequestMessage.call(this);
 
   /**
    * @name SignonRequest#timestamp
@@ -33872,6 +33926,14 @@ inherit(SignonRequest, "extends", RequestMessage);
 
 
 Aggregate.add("SONRQ", SignonRequest);
+
+
+
+/**
+ * @name SignonRequest.ANONYMOUS_USER
+ * @type String
+ */
+SignonRequest.ANONYMOUS_USER = "anonymous00000000000000000000000";
 
 
 /**
@@ -34228,6 +34290,7 @@ var PasswordChangeRequestTransaction = require("./PasswordChangeRequestTransacti
  * @see "Section 2.5, OFX Spec."
  */
 function SignonRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name SignonRequestMessageSet#signonRequest
@@ -34354,6 +34417,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  * @see "Section 2.5.1.2, OFX Spec."
  */
 function SignonResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name SignonResponse#status
@@ -34692,6 +34756,7 @@ var PasswordChangeResponseTransaction = require("./PasswordChangeResponseTransac
  * @see "Section 2.5, OFX Spec."
  */
 function SignonResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name SignonResponseMessageSet#signonResponse
@@ -34821,6 +34886,7 @@ var Element = require("../../../meta/Element");
  * @augments RequestMessage
  */
 function AccountInfoRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name AccountInfoRequest#lastUpdated
@@ -34890,7 +34956,7 @@ var AccountInfoRequest = require("./AccountInfoRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function AccountInfoRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name AccountInfoRequestTransaction#message
@@ -34966,6 +35032,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments ResponseMessage
  */
 function AccountInfoResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name AccountInfoResponse#lastUpdated
@@ -35068,7 +35135,7 @@ var AccountInfoResponse = require("./AccountInfoResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function AccountInfoResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name AccountInfoResponseTransaction#message
@@ -35370,6 +35437,7 @@ var AccountInfoRequestTransaction = require("./AccountInfoRequestTransaction");
  * @augments RequestMessageSet
  */
 function SignupRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name SignupRequestMessageSet#accountInfoRequest
@@ -35461,6 +35529,7 @@ var AccountInfoResponseTransaction = require("./AccountInfoResponseTransaction")
  * @augments ResponseMessageSet
  */
 function SignupResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name SignupResponseMessageSet#accountInfoResponse
@@ -35563,7 +35632,7 @@ function ExtDBInfo () {
 
   /**
    * @name ExtDBInfo#procDet
-   * @type List<ProcDet>
+   * @type ProcDet[]
    * @access private
    */
   this.procDet = null;
@@ -38611,6 +38680,7 @@ var Element = require("../../../meta/Element");
  * @augments T1099Request
  */
 function Tax1099Request () {
+  T1099Request.call(this);
 
   /**
    * @name Tax1099Request#taxYear
@@ -38670,6 +38740,7 @@ var Tax1099RequestTransaction = require("./Tax1099RequestTransaction");
  * @augments RequestMessageSet
  */
 function Tax1099RequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name Tax1099RequestMessageSet#taxRequestTransaction
@@ -38753,7 +38824,7 @@ var Tax1099Request = require("./Tax1099Request");
  * @augments TransactionWrappedRequestMessage
  */
 function Tax1099RequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name Tax1099RequestTransaction#tax1099Request
@@ -38834,6 +38905,7 @@ var Tax1099OID = require("./Tax1099OID");
  * @augments T1099Response
  */
 function Tax1099Response () {
+  T1099Response.call(this);
 
   /**
    * @name Tax1099Response#tax1099div
@@ -38844,42 +38916,42 @@ function Tax1099Response () {
 
   /**
    * @name Tax1099Response#lstTax1099DIV
-   * @type List<Tax1099DIV>
+   * @type Tax1099DIV[]
    * @access private
    */
   this.lstTax1099DIV = null;
 
   /**
    * @name Tax1099Response#lstTax1099INT
-   * @type List<Tax1099INT>
+   * @type Tax1099INT[]
    * @access private
    */
   this.lstTax1099INT = null;
 
   /**
    * @name Tax1099Response#lstTax1099R
-   * @type List<Tax1099R>
+   * @type Tax1099R[]
    * @access private
    */
   this.lstTax1099R = null;
 
   /**
    * @name Tax1099Response#lstTax1099B
-   * @type List<Tax1099B>
+   * @type Tax1099B[]
    * @access private
    */
   this.lstTax1099B = null;
 
   /**
    * @name Tax1099Response#lstTax1099MISC
-   * @type List<Tax1099MISC>
+   * @type Tax1099MISC[]
    * @access private
    */
   this.lstTax1099MISC = null;
 
   /**
    * @name Tax1099Response#lstTax1099OID
-   * @type List<Tax1099OID>
+   * @type Tax1099OID[]
    * @access private
    */
   this.lstTax1099OID = null;
@@ -39032,10 +39104,11 @@ var Tax1099ResponseTransaction = require("./Tax1099ResponseTransaction");
  * @augments ResponseMessageSet
  */
 function Tax1099ResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name Tax1099ResponseMessageSet#taxResponseTransaction
-   * @type List<Tax1099ResponseTransaction>
+   * @type Tax1099ResponseTransaction[]
    * @access private
    */
   this.taxResponseTransaction = null;
@@ -39131,7 +39204,7 @@ var Tax1099Response = require("./Tax1099Response");
  * @augments TransactionWrappedResponseMessage
  */
 function Tax1099ResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name Tax1099ResponseTransaction#tax1099Response
@@ -39560,7 +39633,8 @@ AggregateInfo.prototype.getAttributes = function() {
 
 
 function isAssignableFrom(entryType, assignableTo) {
-  return (assignableTo.prototype instanceof entryType);
+  return (assignableTo === entryType) ||
+    (assignableTo.prototype instanceof entryType);
 }
 
 
@@ -39589,7 +39663,7 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
       if (assignableTo) {
         // Verify it's the right generic type.
         var entryType = attribute.getCollectionEntryType();
-        if (entryType && !isAssignableFrom(entryType, assignableTo)) { //ARO_TODO
+        if (entryType && !isAssignableFrom(entryType, assignableTo)) {
           // Collection is of wrong type.
           continue;
         }
@@ -39983,6 +40057,7 @@ var Stack = require("../util/stack");
 var AggregateIntrospector = require("./AggregateIntrospector");
 var OFXHandler = require("./OFXHandler");
 var AggregateAttribute = require("./AggregateAttribute");
+var LOG = require("../util/log");
 
 function AggregateInfoHolder() {
 
@@ -40046,15 +40121,13 @@ AggregateInfoHolder.prototype.isSkipping = function(aggregateName) {
 };
 
 
-var LOG = true;
-
 
 /**
  * Content handler that manages the aggregate using a stack-based implementation.
  * @param {Object} root
  * @param {StringConversion} conversion
  *
- * @author Ryan Heaton
+ * @class
  */
 function AggregateStackContentHandler(root, conversion) {
   /**
@@ -40162,7 +40235,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
           infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
         }
         else {
-          if (LOG) {
+          if (LOG.enabled) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
           }
 
@@ -40173,7 +40246,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
         this.stack.peek().currentAttributeIndex = attribute.getOrder();
       }
       else {
-        if (LOG) {
+        if (LOG.enabled) {
           console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
         }
 
@@ -40182,7 +40255,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
       }
     }
     else {
-      if (LOG) {
+      if (LOG.enabled) {
         console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
       }
 
@@ -40213,8 +40286,10 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
         if (attribute) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
-          if (LOG) {
+          if (LOG.enabled) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
+            
+            attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
           }
         }
       }
@@ -40232,7 +40307,7 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
 
 module.exports = AggregateStackContentHandler;
 
-},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../util/stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js","./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateUnmarshaller.js":[function(require,module,exports){
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../util/log":"/Users/aolson/Developer/ofx4js/src/util/log.js","../util/stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js","./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js","./AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","./OFXHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXHandler.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateUnmarshaller.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40354,6 +40429,7 @@ var DefaultHandler = require("./DefaultHandler");
 var OFXReader = require("./OFXReader");
 var OFXV2ContentHandler = require("./OFXV2ContentHandler");
 var StringReader = require("../util/StringReader");
+var LOG = require("../util/log");
 var sax = require("sax");
 
 
@@ -40444,13 +40520,17 @@ BaseOFXReader.prototype.parse = function(text) {
   else {
     var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
     if (matches) {
-      console.log("Processing OFX 2 header...");
+      if (LOG.enabled) {
+        console.log("Processing OFX 2 header...");
+      }
       this.processOFXv2Headers(matches[1]);
       reader.reset();
       this.parseV2FromFirstElement(reader.remainder());
     }
     else {
-      console.log("Processing OFX 1 headers...");
+      if (LOG.enabled) {
+        console.log("Processing OFX 1 headers...");
+      }
       this.processOFXv1Headers(header);
       reader.reset();
       this.parseV1FromFirstElement(reader.remainder());
@@ -40566,7 +40646,7 @@ BaseOFXReader.prototype.processOFXv2Headers = function(chars) {
 
 module.exports = BaseOFXReader;
 
-},{"../util/StringReader":"/Users/aolson/Developer/ofx4js/src/util/StringReader.js","../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","sax":"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js"}],"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js":[function(require,module,exports){
+},{"../util/StringReader":"/Users/aolson/Developer/ofx4js/src/util/StringReader.js","../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../util/log":"/Users/aolson/Developer/ofx4js/src/util/log.js","./DefaultHandler":"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js","./OFXReader":"/Users/aolson/Developer/ofx4js/src/io/OFXReader.js","./OFXV2ContentHandler":"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js","sax":"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js"}],"/Users/aolson/Developer/ofx4js/src/io/DefaultHandler.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40646,7 +40726,7 @@ var StringConversion = require("./StringConversion");
 /**
  * Utility class for conversion to/from OFX strings.
  *
- * @author Ryan Heaton
+ * @class
  */
 function DefaultStringConversion () {
 
@@ -40923,7 +41003,7 @@ module.exports = OFXAggregate;
 /**
  * Handler for events during OFX parsing.
  *
- * @author Ryan Heaton
+ * @class
  */
 function OFXHandler() {
 }
@@ -41048,7 +41128,7 @@ var inherit = require("../util/inherit");
 /**
  * Basic interface for reading an OFX document.
  *
- * @author Ryan Heaton
+ * @class
  */
 function OFXReader() {
 }
@@ -41089,9 +41169,8 @@ module.exports = OFXReader;
 
 var Stack = require("../util/stack");
 var OFXParseEvent = require("./OFXParseEvent");
+var LOG = require("../util/log");
 
-//ARO_TODO
-var LOG = true;
 
 /**
  * @class
@@ -41119,7 +41198,7 @@ function OFXV2ContentHandler(ofxHandler) {
 
   /**
    * @name OFXV2ContentHandler#startedEvents
-   * @type List<OFXParseEvent>
+   * @type OFXParseEvent[]
    * @access private
    */
   this.startedEvents = [];
@@ -41140,13 +41219,13 @@ OFXV2ContentHandler.prototype.install = function(parser) {
 OFXV2ContentHandler.prototype.onopentag = function(params) {
   var qName = params.name;
 
-  if (LOG) {
+  if (LOG.enabled) {
     console.log("START ELEMENT: " + qName);
   }
 
   if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
     var eventValue = this.eventStack.peek().getEventValue();
-    if (LOG) {
+    if (LOG.enabled) {
       console.log("Element " + qName + " is starting aggregate " + eventValue);
     }
 
@@ -41172,7 +41251,7 @@ OFXV2ContentHandler.prototype.isAlreadyStarted = function(event) {
 
 // @Override
 OFXV2ContentHandler.prototype.onclosetag = function(qName) {
-  if (LOG) {
+  if (LOG.enabled) {
     console.log("END ELEMENT: " + qName);
   }
 
@@ -41190,7 +41269,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       }
       else {
         var value = elementEvent.getEventValue();
-        if (LOG) {
+        if (LOG.enabled) {
           console.log("Element " + value + " processed with value " + chars);
         }
         this.ofxHandler.onElement(value, chars);
@@ -41203,7 +41282,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       //the last element on the stack is ours; we're ending an OFX aggregate.
       /*jshint -W004*/
       var value = eventToFinish.getEventValue();
-      if (LOG) {
+      if (LOG.enabled) {
         console.log("Ending aggregate " + value);
       }
       this.ofxHandler.endAggregate(value);
@@ -41243,7 +41322,7 @@ OFXV2ContentHandler.prototype.ontext = function(value) {
 
 module.exports = OFXV2ContentHandler;
 
-},{"../util/stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js","./OFXParseEvent":"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js":[function(require,module,exports){
+},{"../util/log":"/Users/aolson/Developer/ofx4js/src/util/log.js","../util/stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js","./OFXParseEvent":"/Users/aolson/Developer/ofx4js/src/io/OFXParseEvent.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXWriter.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41614,7 +41693,7 @@ var OutputStreamWriter = require("../../util/OutputStreamWriter");
  * @class
  */
 function OFXV2Writer () {
-  OFXV1Writer.apply(this, arguments);
+  OFXV1Writer.call(this);
 }
 
 inherit(OFXV2Writer, "extends", OFXV1Writer);
@@ -41864,12 +41943,13 @@ module.exports = StringReader;
 
 module.exports = {
   inherit: require("./inherit"),
+  log: require("./log"),
   OutputStreamWriter: require("./OutputStreamWriter"),
   stack: require("./stack"),
   StringReader: require("./StringReader"),
 };
 
-},{"./OutputStreamWriter":"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js","./StringReader":"/Users/aolson/Developer/ofx4js/src/util/StringReader.js","./inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js"}],"/Users/aolson/Developer/ofx4js/src/util/inherit.js":[function(require,module,exports){
+},{"./OutputStreamWriter":"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js","./StringReader":"/Users/aolson/Developer/ofx4js/src/util/StringReader.js","./inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./log":"/Users/aolson/Developer/ofx4js/src/util/log.js","./stack":"/Users/aolson/Developer/ofx4js/src/util/stack.js"}],"/Users/aolson/Developer/ofx4js/src/util/inherit.js":[function(require,module,exports){
 "use strict";
 
 var inherits = require("inherits");
@@ -41897,7 +41977,14 @@ function inherit(child, type, parent) {
 
 module.exports = inherit;
 
-},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/src/util/stack.js":[function(require,module,exports){
+},{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/src/util/log.js":[function(require,module,exports){
+
+
+module.exports = {
+  enabled: false,
+};
+
+},{}],"/Users/aolson/Developer/ofx4js/src/util/stack.js":[function(require,module,exports){
 "use strict";
 
 function Stack() {

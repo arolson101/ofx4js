@@ -40,7 +40,7 @@ function TransactionList () {
 
   /**
    * @name TransactionList#transactions
-   * @type List<Transaction>
+   * @type Transaction[]
    * @access private
    */
   this.transactions = null;

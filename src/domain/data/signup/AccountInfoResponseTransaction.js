@@ -26,7 +26,7 @@ var AccountInfoResponse = require("./AccountInfoResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function AccountInfoResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name AccountInfoResponseTransaction#message

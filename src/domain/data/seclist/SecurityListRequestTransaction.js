@@ -29,7 +29,7 @@ var SecurityListRequest = require("./SecurityListRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function SecurityListRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name SecurityListRequestTransaction#message

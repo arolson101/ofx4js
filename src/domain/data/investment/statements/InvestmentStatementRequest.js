@@ -31,6 +31,7 @@ var IncludePosition = require("./IncludePosition");
  * @augments StatementRequest
  */
 function InvestmentStatementRequest () {
+  StatementRequest.call(this);
 
   /**
    * @name InvestmentStatementRequest#account

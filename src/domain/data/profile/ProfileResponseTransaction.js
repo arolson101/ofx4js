@@ -26,7 +26,7 @@ var ProfileResponse = require("./ProfileResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function ProfileResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name ProfileResponseTransaction#message

@@ -26,7 +26,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments TransactionWrappedRequestMessage
  */
 function CreditCardStatementRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name CreditCardStatementRequestTransaction#message

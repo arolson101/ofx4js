@@ -30,7 +30,9 @@ var Status = require("./common/Status");
  * @augments StatusHolder
  * @see "Section 2.4.6, OFX Spec"
  */
-function TransactionWrappedResponseMessage(/*M*/) {
+function TransactionWrappedResponseMessage() {
+  ResponseMessage.call(this);
+
   /**
    * @type String
    */
@@ -47,8 +49,8 @@ function TransactionWrappedResponseMessage(/*M*/) {
   this.status = null;
 }
 
-inherit(TransactionWrappedResponseMessage, 'extends', ResponseMessage);
-inherit(TransactionWrappedResponseMessage, 'implements', StatusHolder);
+inherit(TransactionWrappedResponseMessage, "extends", ResponseMessage);
+inherit(TransactionWrappedResponseMessage, "implements", StatusHolder);
 
 
 /**

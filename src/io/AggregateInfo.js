@@ -99,7 +99,8 @@ AggregateInfo.prototype.getAttributes = function() {
 
 
 function isAssignableFrom(entryType, assignableTo) {
-  return (assignableTo.prototype instanceof entryType);
+  return (assignableTo === entryType) ||
+    (assignableTo.prototype instanceof entryType);
 }
 
 
@@ -128,7 +129,7 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
       if (assignableTo) {
         // Verify it's the right generic type.
         var entryType = attribute.getCollectionEntryType();
-        if (entryType && !isAssignableFrom(entryType, assignableTo)) { //ARO_TODO
+        if (entryType && !isAssignableFrom(entryType, assignableTo)) {
           // Collection is of wrong type.
           continue;
         }

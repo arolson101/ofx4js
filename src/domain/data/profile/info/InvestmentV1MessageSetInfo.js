@@ -24,10 +24,10 @@ var Element = require("../../../../meta/Element");
 /**
  * @see "Section 13.7.1.1, OFX Spec"
  *
- * @author Jon Perlow
- * @author Ryan Heaton
+ * @class
  */
 function InvestmentV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name InvestmentV1MessageSetInfo#supportsStatementsDownload

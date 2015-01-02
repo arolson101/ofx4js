@@ -28,6 +28,7 @@ var ProfileRequestTransaction = require("./ProfileRequestTransaction");
  * @see "Section 7 OFX Spec"
  */
 function ProfileRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name ProfileRequestMessageSet#profileRequest

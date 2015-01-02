@@ -31,6 +31,7 @@ var SecurityListRequestTransaction = require("./SecurityListRequestTransaction")
  * @augments RequestMessageSet
  */
 function SecurityListRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name SecurityListRequestMessageSet#securityListRequest

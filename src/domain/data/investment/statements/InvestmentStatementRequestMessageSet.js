@@ -30,6 +30,7 @@ var InvestmentStatementRequestTransaction = require("./InvestmentStatementReques
  * @augments RequestMessageSet
  */
 function InvestmentStatementRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name InvestmentStatementRequestMessageSet#statementRequest

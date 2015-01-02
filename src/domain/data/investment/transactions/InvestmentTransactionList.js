@@ -44,14 +44,14 @@ function InvestmentTransactionList () {
 
   /**
    * @name InvestmentTransactionList#transactions
-   * @type List<BaseInvestmentTransaction>
+   * @type BaseInvestmentTransaction[]
    * @access private
    */
   this.transactions = null;
 
   /**
    * @name InvestmentTransactionList#bankTransactions
-   * @type List<InvestmentBankTransaction>
+   * @type InvestmentBankTransaction[]
    * @access private
    */
   this.bankTransactions = null;

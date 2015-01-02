@@ -25,6 +25,7 @@ var Aggregate = require("../../../../meta/Aggregate");
  * @augments VersionSpecificMessageSetInfo
  */
 function SignOnV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 }
 
 inherit(SignOnV1MessageSetInfo, "extends", VersionSpecificMessageSetInfo);

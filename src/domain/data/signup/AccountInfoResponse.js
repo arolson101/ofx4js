@@ -26,6 +26,7 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
  * @augments ResponseMessage
  */
 function AccountInfoResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name AccountInfoResponse#lastUpdated

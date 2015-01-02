@@ -19,7 +19,7 @@ var inherit = require("../util/inherit");
 /**
  * Basic interface for reading an OFX document.
  *
- * @author Ryan Heaton
+ * @class
  */
 function OFXReader() {
 }

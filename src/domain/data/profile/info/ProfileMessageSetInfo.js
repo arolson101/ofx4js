@@ -26,6 +26,7 @@ var ProfileV1MessageSetInfo = require("./ProfileV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function ProfileMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name ProfileMessageSetInfo#version1Info

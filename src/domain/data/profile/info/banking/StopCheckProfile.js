@@ -29,7 +29,7 @@ function StopCheckProfile () {
 
   /**
    * @name StopCheckProfile#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;

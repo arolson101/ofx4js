@@ -41,7 +41,7 @@ import java.util.Collection;
 /**
  * Downloads account information.
  *
- * @author Ryan Heaton
+ * @class
  */
 public class DownloadAccountInfo {
 

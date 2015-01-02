@@ -26,6 +26,7 @@ var BankingV1MessageSetInfo = require("./BankingV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function BankingMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name BankingMessageSetInfo#version1Info

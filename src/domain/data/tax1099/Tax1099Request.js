@@ -24,6 +24,7 @@ var Element = require("../../../meta/Element");
  * @augments T1099Request
  */
 function Tax1099Request () {
+  T1099Request.call(this);
 
   /**
    * @name Tax1099Request#taxYear

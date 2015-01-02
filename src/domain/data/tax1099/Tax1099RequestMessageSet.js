@@ -26,6 +26,7 @@ var Tax1099RequestTransaction = require("./Tax1099RequestTransaction");
  * @augments RequestMessageSet
  */
 function Tax1099RequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name Tax1099RequestMessageSet#taxRequestTransaction

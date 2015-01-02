@@ -28,6 +28,7 @@ var SecurityList = require("./SecurityList");
  * @augments ResponseMessageSet
  */
 function SecurityListResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name SecurityListResponseMessageSet#securityListResponse

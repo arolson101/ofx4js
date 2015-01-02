@@ -28,7 +28,7 @@ function SignonInfoList () {
 
   /**
    * @name SignonInfoList#infoList
-   * @type List<SignonInfo>
+   * @type SignonInfo[]
    * @access private
    */
   this.infoList = null;

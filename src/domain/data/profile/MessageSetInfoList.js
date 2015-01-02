@@ -26,7 +26,7 @@ function MessageSetInfoList () {
 
   /**
    * @name MessageSetInfoList#informationList
-   * @type List<AbstractMessageSetInfo>
+   * @type AbstractMessageSetInfo[]
    * @access private
    */
   this.informationList = null;

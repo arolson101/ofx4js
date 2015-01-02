@@ -27,7 +27,7 @@ function AbstractMessageSetInfo () {
 
   /**
    * @name AbstractMessageSetInfo#versionSpecificInformationList
-   * @type List<VersionSpecificMessageSetInfo>
+   * @type VersionSpecificMessageSetInfo[]
    * @access private
    */
   this.versionSpecificInformationList = null;

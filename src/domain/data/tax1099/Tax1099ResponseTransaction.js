@@ -25,7 +25,7 @@ var Tax1099Response = require("./Tax1099Response");
  * @augments TransactionWrappedResponseMessage
  */
 function Tax1099ResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name Tax1099ResponseTransaction#tax1099Response

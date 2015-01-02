@@ -26,6 +26,7 @@ var SignOnV1MessageSetInfo = require("./SignOnV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function SignOnMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name SignOnMessageSetInfo#version1Info

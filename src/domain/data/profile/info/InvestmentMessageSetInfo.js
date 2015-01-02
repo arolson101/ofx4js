@@ -26,6 +26,7 @@ var InvestmentV1MessageSetInfo = require("./InvestmentV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function InvestmentMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name InvestmentMessageSetInfo#version1Info

@@ -29,7 +29,7 @@ var InvestmentStatementResponse = require("./InvestmentStatementResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function InvestmentStatementResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name InvestmentStatementResponseTransaction#message

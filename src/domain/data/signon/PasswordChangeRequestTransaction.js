@@ -26,7 +26,7 @@ var PasswordChangeRequest = require("./PasswordChangeRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function PasswordChangeRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name PasswordChangeRequestTransaction#message

@@ -30,6 +30,7 @@ var ImageProfile = require("./common/ImageProfile");
  * @see "Section 11.13.3 OFX Spec"
  */
 function CreditCardV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name CreditCardV1MessageSetInfo#closingAvail

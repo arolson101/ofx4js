@@ -22,14 +22,14 @@ var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 
 /**
  * Funds Transfer Profile
- * @author Scott Priddy
+ * @class
  * @see "Section 11.13.2.2 OFX Spec"
  */
 function TransferProfile () {
 
   /**
    * @name TransferProfile#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;

@@ -26,7 +26,7 @@ var PasswordChangeResponse = require("./PasswordChangeResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function PasswordChangeResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name PasswordChangeResponseTransaction#message

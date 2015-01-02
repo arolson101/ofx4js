@@ -27,6 +27,7 @@ var BasePosition = require("./BasePosition");
  * @augments BasePosition
  */
 function OtherPosition () {
+  BasePosition.call(this);
 }
 
 inherit(OtherPosition, "extends", BasePosition);

@@ -29,10 +29,11 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * @see "Section 11.13.5 OFX Spec"
  */
 function WireTransferV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name WireTransferV1MessageSetInfo#processorDaysOff
-   * @type List<ProcessorDayOff>
+   * @type ProcessorDayOff[]
    * @access private
    */
   this.processorDaysOff = null;

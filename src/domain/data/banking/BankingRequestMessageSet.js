@@ -27,6 +27,7 @@ var BankStatementRequestTransaction = require("./BankStatementRequestTransaction
  * @augments BankingRequestMessageSet
  */
 function BankingRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name BankingRequestMessageSet#statementRequest

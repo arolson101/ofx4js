@@ -26,7 +26,7 @@ var AccountInfoRequest = require("./AccountInfoRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function AccountInfoRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name AccountInfoRequestTransaction#message

@@ -25,7 +25,7 @@ var OutputStreamWriter = require("../../util/OutputStreamWriter");
  * @class
  */
 function OFXV2Writer () {
-  OFXV1Writer.apply(this, arguments);
+  OFXV1Writer.call(this);
 }
 
 inherit(OFXV2Writer, "extends", OFXV1Writer);

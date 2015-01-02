@@ -28,10 +28,11 @@ var SecurityRequest = require("./SecurityRequest");
  * @class
  */
 function SecurityListRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name SecurityListRequest#securityRequests
-   * @type List<SecurityRequest>
+   * @type SecurityRequest[]
    * @access private
    */
   this.securityRequests = null;

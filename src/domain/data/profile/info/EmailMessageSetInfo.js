@@ -26,6 +26,7 @@ var EmailV1MessageSetInfo = require("./EmailV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function EmailMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name EmailMessageSetInfo#version1Info

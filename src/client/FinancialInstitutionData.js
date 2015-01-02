@@ -18,7 +18,7 @@
  * Interface for core FI data.  This is the base set of information
  * required in order to initiate a connection to an FI server.
  *
- * @author Ryan Heaton
+ * @class
  */
 function FinancialInstitutionData() {
 }

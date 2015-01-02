@@ -22,7 +22,7 @@ import net.sf.ofx4j.io.v2.OFXV2Writer;
 import java.io.OutputStream;
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 public class OFXV2Connection extends OFXV1Connection {
 

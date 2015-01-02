@@ -34,6 +34,7 @@ var InvestmentBalance = require("./InvestmentBalance");
  * @augments StatementResponse
  */
 function InvestmentStatementResponse () {
+  StatementResponse.call(this);
 
   /**
    * @name InvestmentStatementResponse#dateOfStatement

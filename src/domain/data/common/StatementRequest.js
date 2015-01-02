@@ -26,6 +26,7 @@ var StatementRange = require("./StatementRange");
  * @augments RequestMessage
  */
 function StatementRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name StatementRequest#statementRange

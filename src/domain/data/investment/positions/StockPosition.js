@@ -28,6 +28,7 @@ var Element = require("../../../../meta/Element");
  * @augments BasePosition
  */
 function StockPosition () {
+  BasePosition.call(this);
 
   /**
    * @name StockPosition#unitsStreet

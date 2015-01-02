@@ -31,6 +31,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function OptionSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name OptionSecurityInfo#optionType

@@ -17,7 +17,7 @@
 /**
  * Connection to an OFX interface.
  *
- * @author Ryan Heaton
+ * @class
  */
 function OFXConnection() {
 }

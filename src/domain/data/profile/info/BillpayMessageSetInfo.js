@@ -26,6 +26,7 @@ var BillpayV1MessageSetInfo = require("./BillpayV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function BillpayMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name BillpayMessageSetInfo#version1Info

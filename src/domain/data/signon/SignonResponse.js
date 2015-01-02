@@ -33,6 +33,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  * @see "Section 2.5.1.2, OFX Spec."
  */
 function SignonResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name SignonResponse#status

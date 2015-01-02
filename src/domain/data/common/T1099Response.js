@@ -23,6 +23,7 @@ var ResponseMessage = require("../ResponseMessage");
  * @augments ResponseMessage
  */
 function T1099Response () {
+  ResponseMessage.call(this);
 }
 
 inherit(T1099Response, "extends", ResponseMessage);

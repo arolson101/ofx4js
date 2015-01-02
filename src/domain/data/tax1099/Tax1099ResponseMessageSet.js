@@ -26,10 +26,11 @@ var Tax1099ResponseTransaction = require("./Tax1099ResponseTransaction");
  * @augments ResponseMessageSet
  */
 function Tax1099ResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name Tax1099ResponseMessageSet#taxResponseTransaction
-   * @type List<Tax1099ResponseTransaction>
+   * @type Tax1099ResponseTransaction[]
    * @access private
    */
   this.taxResponseTransaction = null;

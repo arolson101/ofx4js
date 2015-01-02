@@ -29,6 +29,7 @@ var BalanceInfo = require("./BalanceInfo");
  * @augments AccountStatement
  */
 function StatementResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name StatementResponse#currencyCode

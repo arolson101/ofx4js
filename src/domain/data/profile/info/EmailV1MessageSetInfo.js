@@ -28,6 +28,7 @@ var Element = require("../../../../meta/Element");
  * @see "Section 9.4.2 OFX Spec"
  */
 function EmailV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name EmailV1MessageSetInfo#supportsMail

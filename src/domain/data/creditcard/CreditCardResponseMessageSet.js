@@ -27,10 +27,11 @@ var CreditCardStatementResponseTransaction = require("./CreditCardStatementRespo
  * @augments ResponseMessageSet
  */
 function CreditCardResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name CreditCardResponseMessageSet#statementResponses
-   * @type List<CreditCardStatementResponseTransaction>
+   * @type CreditCardStatementResponseTransaction[]
    * @access private
    */
   this.statementResponses = null;

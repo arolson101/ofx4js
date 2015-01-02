@@ -17,7 +17,7 @@
 /**
  * Handler for events during OFX parsing.
  *
- * @author Ryan Heaton
+ * @class
  */
 function OFXHandler() {
 }

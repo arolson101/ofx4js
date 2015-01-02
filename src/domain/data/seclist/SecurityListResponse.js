@@ -28,6 +28,7 @@ var Aggregate = require("../../../meta/Aggregate");
  * @augments ResponseMessage
  */
 function SecurityListResponse () {
+  ResponseMessage.call(this);
 }
 
 inherit(SecurityListResponse, "extends", ResponseMessage);

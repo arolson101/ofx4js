@@ -27,6 +27,7 @@ var Element = require("../../../meta/Element");
  * @see "Section 2.5.2.1, OFX Spec."
  */
 function PasswordChangeRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name PasswordChangeRequest#userId

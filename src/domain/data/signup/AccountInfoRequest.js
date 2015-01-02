@@ -25,6 +25,7 @@ var Element = require("../../../meta/Element");
  * @augments RequestMessage
  */
 function AccountInfoRequest () {
+  RequestMessage.call(this);
 
   /**
    * @name AccountInfoRequest#lastUpdated

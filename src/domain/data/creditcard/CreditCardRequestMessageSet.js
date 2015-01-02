@@ -27,6 +27,7 @@ var CreditCardStatementRequestTransaction = require("./CreditCardStatementReques
  * @augments CreditCardRequestMessageSet
  */
 function CreditCardRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name CreditCardRequestMessageSet#statementRequest

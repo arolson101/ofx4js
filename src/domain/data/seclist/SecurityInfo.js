@@ -19,7 +19,6 @@ var ChildAggregate = require("../../../meta/ChildAggregate");
 var Element = require("../../../meta/Element");
 var SecurityId = require("./SecurityId");
 
-//import java.util.Date;
 
 /**
  * Info about a security.

@@ -26,6 +26,7 @@ var WireTransferV1MessageSetInfo = require("./WireTransferV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function WireTransferMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name WireTransferMessageSetInfo#version1Info

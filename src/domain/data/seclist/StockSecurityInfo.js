@@ -30,6 +30,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function StockSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name StockSecurityInfo#stockType

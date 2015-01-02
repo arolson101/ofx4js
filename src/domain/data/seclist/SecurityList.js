@@ -28,7 +28,7 @@ function SecurityList () {
 
   /**
    * @name SecurityList#securityInfos
-   * @type List<BaseSecurityInfo>
+   * @type BaseSecurityInfo[]
    * @access private
    */
   this.securityInfos = null;

@@ -25,7 +25,7 @@ var SecurityInfo = require("./SecurityInfo");
  * common to all security info as a convenience to application
  * developers who may not find the ofx aggregation model intuitive.
  *
- * @author Jon Perlow
+ * @class
  */
 function BaseSecurityInfo () {
 

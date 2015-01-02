@@ -26,6 +26,7 @@ var CreditCardV1MessageSetInfo = require("./CreditCardV1MessageSetInfo");
  * @augments AbstractMessageSetInfo
  */
 function CreditCardMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name CreditCardMessageSetInfo#version1Info

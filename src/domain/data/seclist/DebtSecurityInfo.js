@@ -33,6 +33,7 @@ var AssetClass = require("./AssetClass");
  * @augments BaseSecurityInfo
  */
 function DebtSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name DebtSecurityInfo#parValue

@@ -30,6 +30,7 @@ var TransferProfile = require("./common/TransferProfile");
  * @see "Section 11.13.4 OFX Spec"
  */
 function InterbankTransferV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name InterbankTransferV1MessageSetInfo#transferProfile

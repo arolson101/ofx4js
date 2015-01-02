@@ -15,7 +15,7 @@
 "use strict";
 
 /**
- * @author Ryan Heaton
+ * @class
  */
 function FIDataList () {
 

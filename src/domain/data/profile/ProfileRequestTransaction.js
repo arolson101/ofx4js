@@ -26,7 +26,7 @@ var ProfileRequest = require("./ProfileRequest");
  * @augments TransactionWrappedRequestMessage
  */
 function ProfileRequestTransaction () {
-  TransactionWrappedRequestMessage.apply(this, arguments);
+  TransactionWrappedRequestMessage.call(this);
 
   /**
    * @name ProfileRequestTransaction#message

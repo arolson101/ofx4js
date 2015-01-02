@@ -27,6 +27,7 @@ var AccountInfoRequestTransaction = require("./AccountInfoRequestTransaction");
  * @augments RequestMessageSet
  */
 function SignupRequestMessageSet () {
+  RequestMessageSet.call(this);
 
   /**
    * @name SignupRequestMessageSet#accountInfoRequest

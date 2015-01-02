@@ -27,6 +27,7 @@ var BasePosition = require("./BasePosition");
  * @augments BasePosition
  */
 function DebtPosition () {
+  BasePosition.call(this);
 }
 
 inherit(DebtPosition, "extends", BasePosition);

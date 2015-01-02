@@ -26,6 +26,7 @@ var BankAccountDetails = require("./BankAccountDetails");
  * @augments StatementRequest
  */
 function BankStatementRequest () {
+  StatementRequest.call(this);
 
   /**
    * @name BankStatementRequest#account

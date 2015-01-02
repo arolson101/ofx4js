@@ -29,6 +29,7 @@ var MutualFundType = require("./MutualFundType");
  * @augments BaseSecurityInfo
  */
 function MutualFundSecurityInfo () {
+  BaseSecurityInfo.call(this);
 
   /**
    * @name MutualFundSecurityInfo#mfType

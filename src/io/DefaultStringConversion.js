@@ -24,7 +24,7 @@ var StringConversion = require("./StringConversion");
 /**
  * Utility class for conversion to/from OFX strings.
  *
- * @author Ryan Heaton
+ * @class
  */
 function DefaultStringConversion () {
 

@@ -6,7 +6,6 @@
 /* jshint -W098 */
 var assert = chai.assert;
 var expect = chai.expect;
-chai.should();
 
 // http://www.ofx.net/OFXExamplesPage/OFXExamples.aspx
 
@@ -140,15 +139,82 @@ var ofxResponsev1 =
     "  </BANKMSGSRSV1>\n" +
     "</OFX>\n";
 
-describe("test", function() {
-  it("should load an ofx string", function() {
-    var AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
-    assert(AggregateUnmarshaller);
-    var RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-    assert(RequestEnvelope);
+var AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
+var RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+var ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+
+function enableLog(enabled) {
+  ofx4js.util.log.enabled = enabled;
+}
+
+describe("ofx parsing", function() {
+  it("should parse an ofx statement request", function() {
     var m = new AggregateUnmarshaller(RequestEnvelope);
     var data = m.unmarshal(ofxStatementDownloadv1);
-    console.log(data);
+    expect(data).to.be.ok();
+
+    var messageSets = data.getMessageSets();
+    expect(messageSets).to.have.length(2);
+    expect(messageSets[0]).to.be.an.instanceOf(ofx4js.domain.data.signon.SignonRequestMessageSet);
+    expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingRequestMessageSet);
+
+    var signonRequest = messageSets[0].getSignonRequest();
+    expect(signonRequest.getUserId()).to.equal("Greg123");
+    expect(signonRequest.getPassword()).to.equal("Greg");
+    expect(signonRequest.getApplicationId()).to.equal("QWIN");
+    expect(signonRequest.getApplicationVersion()).to.equal("0900");
+    expect(signonRequest.getLanguage()).to.equal("ENG");
+    //ARO_TODO: date
+    
+    var fi = signonRequest.getFinancialInstitution();
+    expect(fi).to.be.ok();
+    expect(fi.getOrganization()).to.equal("MYBANK");
+    expect(fi.getId()).to.equal("01234");
+    
+    var bankStatementRequest = messageSets[1].getStatementRequest().getMessage();
+    var account = bankStatementRequest.getAccount();
+    expect(account.getAccountNumber()).to.equal("098-121");
+    expect(account.getAccountType()).to.equal("SAVINGS");
+    expect(account.getBankId()).to.equal("987654321");
+  });
+  
+  it("should parse an ofx response", function() {
+    var m = new AggregateUnmarshaller(ResponseEnvelope);
+    var data = m.unmarshal(ofxResponsev1);
+    expect(data).to.be.ok();
+
+    var messageSets = data.getMessageSets();
+    expect(messageSets).to.have.length(2);
+    expect(messageSets[0]).to.be.an.instanceOf(ofx4js.domain.data.signon.SignonResponseMessageSet);
+    expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingResponseMessageSet);
+    
+    var signonResponse = messageSets[0].getSignonResponse();
+    expect(signonResponse.getStatus().getCode()).to.equal("0");
+
+    var fi = signonResponse.getFinancialInstitution();
+    expect(fi).to.be.ok();
+    expect(fi.getOrganization()).to.equal("MYBANK");
+    expect(fi.getId()).to.equal("01234");
+    
+    expect(messageSets[1].getStatementResponses()).to.have.length(1);
+    var bankingResponse = messageSets[1].getStatementResponse();
+    expect(bankingResponse).to.be.an.instanceOf(ofx4js.domain.data.banking.BankStatementResponseTransaction);
+    expect(bankingResponse.getStatus().getCode()).to.equal("0");
+    
+    var message = bankingResponse.getMessage();
+    var account = message.getAccount();
+    expect(account.getAccountNumber()).to.equal("098-121");
+    expect(account.getAccountType()).to.equal("SAVINGS");
+    expect(account.getBankId()).to.equal("987654321");
+    expect(message.getCurrencyCode()).to.equal("USD");
+    expect(message.getAvailableBalance().getAmount()).to.equal("5250.00");
+    expect(message.getLedgerBalance().getAmount()).to.equal("5250.00");
+
+    var transactions = message.getTransactionList().transactions;
+    expect(transactions).to.have.length(3);
+    expect(transactions[0].getAmount()).to.equal("200.00");
+    expect(transactions[1].getAmount()).to.equal("150.00");
+    expect(transactions[2].getAmount()).to.equal("-100.00");
   });
 });
 

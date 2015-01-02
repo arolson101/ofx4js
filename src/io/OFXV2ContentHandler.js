@@ -16,9 +16,8 @@
 
 var Stack = require("../util/stack");
 var OFXParseEvent = require("./OFXParseEvent");
+var LOG = require("../util/log");
 
-//ARO_TODO
-var LOG = true;
 
 /**
  * @class
@@ -46,7 +45,7 @@ function OFXV2ContentHandler(ofxHandler) {
 
   /**
    * @name OFXV2ContentHandler#startedEvents
-   * @type List<OFXParseEvent>
+   * @type OFXParseEvent[]
    * @access private
    */
   this.startedEvents = [];
@@ -67,13 +66,13 @@ OFXV2ContentHandler.prototype.install = function(parser) {
 OFXV2ContentHandler.prototype.onopentag = function(params) {
   var qName = params.name;
 
-  if (LOG) {
+  if (LOG.enabled) {
     console.log("START ELEMENT: " + qName);
   }
 
   if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
     var eventValue = this.eventStack.peek().getEventValue();
-    if (LOG) {
+    if (LOG.enabled) {
       console.log("Element " + qName + " is starting aggregate " + eventValue);
     }
 
@@ -99,7 +98,7 @@ OFXV2ContentHandler.prototype.isAlreadyStarted = function(event) {
 
 // @Override
 OFXV2ContentHandler.prototype.onclosetag = function(qName) {
-  if (LOG) {
+  if (LOG.enabled) {
     console.log("END ELEMENT: " + qName);
   }
 
@@ -117,7 +116,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       }
       else {
         var value = elementEvent.getEventValue();
-        if (LOG) {
+        if (LOG.enabled) {
           console.log("Element " + value + " processed with value " + chars);
         }
         this.ofxHandler.onElement(value, chars);
@@ -130,7 +129,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       //the last element on the stack is ours; we're ending an OFX aggregate.
       /*jshint -W004*/
       var value = eventToFinish.getEventValue();
-      if (LOG) {
+      if (LOG.enabled) {
         console.log("Ending aggregate " + value);
       }
       this.ofxHandler.endAggregate(value);

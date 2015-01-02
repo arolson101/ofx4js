@@ -26,6 +26,7 @@ var CreditCardAccountDetails = require("./CreditCardAccountDetails");
  * @augments StatementResponse
  */
 function CreditCardStatementResponse () {
+  StatementResponse.call(this);
 
   /**
    * @name CreditCardStatementResponse#account

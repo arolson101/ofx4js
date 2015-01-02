@@ -31,6 +31,7 @@ var SignonInfoList = require("./SignonInfoList");
  * @see "Section 7.2 OFX Spec"
  */
 function ProfileResponse () {
+  ResponseMessage.call(this);
 
   /**
    * @name ProfileResponse#messageSetList

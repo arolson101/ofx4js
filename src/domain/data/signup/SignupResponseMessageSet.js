@@ -27,6 +27,7 @@ var AccountInfoResponseTransaction = require("./AccountInfoResponseTransaction")
  * @augments ResponseMessageSet
  */
 function SignupResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name SignupResponseMessageSet#accountInfoResponse

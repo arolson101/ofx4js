@@ -19,6 +19,7 @@ var DefaultHandler = require("./DefaultHandler");
 var OFXReader = require("./OFXReader");
 var OFXV2ContentHandler = require("./OFXV2ContentHandler");
 var StringReader = require("../util/StringReader");
+var LOG = require("../util/log");
 var sax = require("sax");
 
 
@@ -109,13 +110,17 @@ BaseOFXReader.prototype.parse = function(text) {
   else {
     var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
     if (matches) {
-      console.log("Processing OFX 2 header...");
+      if (LOG.enabled) {
+        console.log("Processing OFX 2 header...");
+      }
       this.processOFXv2Headers(matches[1]);
       reader.reset();
       this.parseV2FromFirstElement(reader.remainder());
     }
     else {
-      console.log("Processing OFX 1 headers...");
+      if (LOG.enabled) {
+        console.log("Processing OFX 1 headers...");
+      }
       this.processOFXv1Headers(header);
       reader.reset();
       this.parseV1FromFirstElement(reader.remainder());

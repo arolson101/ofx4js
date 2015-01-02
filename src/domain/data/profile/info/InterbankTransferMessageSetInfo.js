@@ -26,6 +26,7 @@ var InterbankTransferV1MessageSetInfo = require("./InterbankTransferV1MessageSet
  * @augments AbstractMessageSetInfo
  */
 function InterbankTransferMessageSetInfo () {
+  AbstractMessageSetInfo.call(this);
 
   /**
    * @name InterbankTransferMessageSetInfo#version1Info

@@ -25,7 +25,7 @@ function ExtDBInfo () {
 
   /**
    * @name ExtDBInfo#procDet
-   * @type List<ProcDet>
+   * @type ProcDet[]
    * @access private
    */
   this.procDet = null;

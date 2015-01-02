@@ -27,10 +27,11 @@ var BankStatementResponseTransaction = require("./BankStatementResponseTransacti
  * @augments ResponseMessageSet
  */
 function BankingResponseMessageSet () {
+  ResponseMessageSet.call(this);
 
   /**
    * @name BankingResponseMessageSet#statementResponses
-   * @type List<BankStatementResponseTransaction>
+   * @type BankStatementResponseTransaction[]
    * @access private
    */
   this.statementResponses = null;

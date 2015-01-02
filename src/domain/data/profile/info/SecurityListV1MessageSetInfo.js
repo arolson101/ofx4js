@@ -28,6 +28,7 @@ var Element = require("../../../../meta/Element");
  * @augments VersionSpecificMessageSetInfo
  */
 function SecurityListV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name SecurityListV1MessageSetInfo#supportsSecurityListDownload

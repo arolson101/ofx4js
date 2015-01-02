@@ -30,12 +30,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  * @see "Section 2.5.1.2, OFX Spec."
  */
 function SignonRequest () {
-
-  /**
-   * @name SignonRequest#ANONYMOUS_USER
-   * @type String
-   */
-  this.ANONYMOUS_USER = "anonymous00000000000000000000000";
+  RequestMessage.call(this);
 
   /**
    * @name SignonRequest#timestamp
@@ -147,6 +142,14 @@ inherit(SignonRequest, "extends", RequestMessage);
 
 
 Aggregate.add("SONRQ", SignonRequest);
+
+
+
+/**
+ * @name SignonRequest.ANONYMOUS_USER
+ * @type String
+ */
+SignonRequest.ANONYMOUS_USER = "anonymous00000000000000000000000";
 
 
 /**

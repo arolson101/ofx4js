@@ -36,6 +36,7 @@ var OtherEnrollment = require("./signup/OtherEnrollment");
  * @see "Section 8.8 OFX Spec"
  */
 function SignupV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name SignupV1MessageSetInfo#clientEnrollment

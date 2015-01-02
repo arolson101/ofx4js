@@ -27,7 +27,7 @@ function BalanceList () {
 
   /**
    * @name BalanceList#balanceRecords
-   * @type List<BalanceRecord>
+   * @type BalanceRecord[]
    * @access private
    */
   this.balanceRecords = null;

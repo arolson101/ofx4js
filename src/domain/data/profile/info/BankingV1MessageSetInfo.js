@@ -34,10 +34,11 @@ var ImageProfile = require("./common/ImageProfile");
  * @see "Section 11.13.2.1 OFX Spec"
  */
 function BankingV1MessageSetInfo () {
+  VersionSpecificMessageSetInfo.call(this);
 
   /**
    * @name BankingV1MessageSetInfo#invalidAccountTypes
-   * @type List<AccountType>
+   * @type AccountType[]
    * @access private
    */
   this.invalidAccountTypes = null;

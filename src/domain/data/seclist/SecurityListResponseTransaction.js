@@ -28,7 +28,7 @@ var SecurityListResponse = require("./SecurityListResponse");
  * @augments TransactionWrappedResponseMessage
  */
 function SecurityListResponseTransaction () {
-  TransactionWrappedResponseMessage.apply(this, arguments);
+  TransactionWrappedResponseMessage.call(this);
 
   /**
    * @name SecurityListResponseTransaction#message

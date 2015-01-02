@@ -29,6 +29,7 @@ var ShortOptionSecurity = require("./ShortOptionSecurity");
  * @augments BasePosition
  */
 function OptionsPosition () {
+  BasePosition.call(this);
 
   /**
    * @name OptionsPosition#secured
