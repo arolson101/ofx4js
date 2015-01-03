@@ -6,7 +6,6 @@
   "dependencies": {
     "clone": "^0.2.0",
     "inherits": "^2.0.1",
-    "moment": "^2.8.4",
     "sax": "^0.6.1",
     "uuid": "^2.0.1"
   },
