@@ -21,10 +21,10 @@
  * @enum
  */
 var StockType = {
-  COMMON: 0,
-  PREFERRED: 1,
-  CONVERTIBLE: 2,
-  OTHER: 3,
+  COMMON: "COMMON",
+  PREFERRED: "PREFERRED",
+  CONVERTIBLE: "CONVERTIBLE",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("COMMON" === ofxVal) {

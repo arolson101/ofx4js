@@ -75,7 +75,7 @@ ProfileResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
   if (this.getProfileResponse()) {
-    messages.add(this.getProfileResponse());
+    messages.push(this.getProfileResponse());
   }
 
   return messages;

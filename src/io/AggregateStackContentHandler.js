@@ -197,7 +197,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
           infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
         }
         else {
-          if (LOG.enabled) {
+          if (LOG.warning) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
           }
 
@@ -208,7 +208,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
         this.stack.peek().currentAttributeIndex = attribute.getOrder();
       }
       else {
-        if (LOG.enabled) {
+        if (LOG.warning) {
           console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
         }
 
@@ -217,7 +217,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
       }
     }
     else {
-      if (LOG.enabled) {
+      if (LOG.warning) {
         console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
       }
 
@@ -248,7 +248,7 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
         if (attribute) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
-          if (LOG.enabled) {
+          if (LOG.warning) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
             
             attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);

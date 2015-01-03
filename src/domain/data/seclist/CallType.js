@@ -21,10 +21,10 @@
  * @enum
  */
 var CallType = {
-  CALL: 0,
-  PUT: 1,
-  PREFUND: 2,
-  MATURITY: 3,
+  CALL: "CALL",
+  PUT: "PUT",
+  PREFUND: "PREFUND",
+  MATURITY: "MATURITY",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CALL" === ofxVal) {

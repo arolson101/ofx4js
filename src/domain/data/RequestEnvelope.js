@@ -27,7 +27,7 @@ var UUID = require("uuid");
  * @class
  * @see "Section 2.4.3, OFX Spec"
  */
-function RequestEnvelope () {
+function RequestEnvelope (/*String*/ UID) {
 
   /**
    * @name RequestEnvelope#security
@@ -41,7 +41,7 @@ function RequestEnvelope () {
    * @type String
    * @access private
    */
-  this.UID = null;
+  this.UID = UID ? UID : UUID.v4();
 
   /**
    * @name RequestEnvelope#lastProcessedUID
@@ -62,17 +62,6 @@ function RequestEnvelope () {
 
 Aggregate.add("OFX", RequestEnvelope);
 
-
-//headers
-//content
-RequestEnvelope.prototype.RequestEnvelope = function() {
-  this.UID = UUID.v4();
-};
-
-
-RequestEnvelope.prototype.RequestEnvelope = function(/*String*/ UID) {
-  this.UID = UID;
-};
 
 
 /**

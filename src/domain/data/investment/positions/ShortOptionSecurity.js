@@ -20,8 +20,8 @@
  * @enum
  */
 var ShortOptionSecurity = {
-  NAKED: 0,
-  COVERED: 1,
+  NAKED: "NAKED",
+  COVERED: "COVERED",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("NAKED" === ofxVal) {

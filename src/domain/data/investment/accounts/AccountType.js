@@ -21,10 +21,10 @@
  * @see "OFX Spec, Section 13.6.2"
  */
 var AccountType = {
-  INDIVIDUAL: 0,
-  JOINT: 1,
-  TRUST: 2,
-  CORPORATE: 3,
+  INDIVIDUAL: "INDIVIDUAL",
+  JOINT: "JOINT",
+  TRUST: "TRUST",
+  CORPORATE: "CORPORATE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("INDIVIDUAL" === ofxVal) {

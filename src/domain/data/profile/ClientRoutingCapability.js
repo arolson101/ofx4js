@@ -20,11 +20,11 @@
  */
 var ClientRoutingCapability = {
 
-  NONE: 0,
+  NONE: "NONE",
 
-  SERVICE: 1,
+  SERVICE: "SERVICE",
 
-  MESSAGE_SET: 2
+  MESSAGE_SET: "MSGSET",
 };
 
 

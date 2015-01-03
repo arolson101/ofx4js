@@ -46,10 +46,6 @@ public class OFXV1Connection implements OFXConnection {
   // Inherited.
   public ResponseEnvelope sendRequest(RequestEnvelope request, URL url) throws OFXConnectionException {
     try {
-      if (!url.getProtocol().toLowerCase().startsWith("http")) {
-        throw new IllegalArgumentException("Invalid URL: " + url + " only http(s) is supported.");
-      }
-
       //marshal to memory so we can determine the size...
       ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
       OFXWriter ofxWriter = newOFXWriter(outBuffer);

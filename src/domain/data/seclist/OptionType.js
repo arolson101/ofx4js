@@ -21,8 +21,8 @@
  * @enum
  */
 var OptionType = {
-  PUT: 0,
-  CALL: 1,
+  PUT: "PUT",
+  CALL: "CALL",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("PUT" === ofxVal) {

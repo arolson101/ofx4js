@@ -110,7 +110,7 @@ BaseOFXReader.prototype.parse = function(text) {
   else {
     var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
     if (matches) {
-      if (LOG.enabled) {
+      if (LOG.parse) {
         console.log("Processing OFX 2 header...");
       }
       this.processOFXv2Headers(matches[1]);
@@ -118,7 +118,7 @@ BaseOFXReader.prototype.parse = function(text) {
       this.parseV2FromFirstElement(reader.remainder());
     }
     else {
-      if (LOG.enabled) {
+      if (LOG.parse) {
         console.log("Processing OFX 1 headers...");
       }
       this.processOFXv1Headers(header);
@@ -201,7 +201,8 @@ BaseOFXReader.prototype.parseV2FromFirstElement = function(text) {
  */
 BaseOFXReader.prototype.processOFXv1Headers = function(chars) {
   var lines = chars.split(/(\n|\r\n)/);
-  for(var line in lines) {
+  for(var i=0; i<lines.length; i++) {
+    var line = lines[i];
     var colonIndex = line.indexOf(':');
     if (colonIndex >= 0) {
       var name = line.substring(0, colonIndex);

@@ -23,4 +23,11 @@ function inherit(child, type, parent) {
   }
 }
 
+
+inherit.isAssignableFrom = function(entryType, assignableTo) {
+  return (assignableTo === entryType) ||
+    ((typeof entryType === "function") && (assignableTo.prototype instanceof entryType));
+};
+
+
 module.exports = inherit;

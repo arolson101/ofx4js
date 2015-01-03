@@ -21,9 +21,9 @@
  * @enum
  */
 var CloseOptionAction = {
-  EXERCISE: 0,
-  ASSIGN: 1,
-  EXPIRE: 2,
+  EXERCISE: "EXERCISE",
+  ASSIGN: "ASSIGN",
+  EXPIRE: "EXPIRE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("EXERCISE" === ofxVal) {

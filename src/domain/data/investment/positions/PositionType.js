@@ -21,8 +21,8 @@
  * @enum
  */
 var PositionType = {
-  LONG: 0,
-  SHORT: 1,
+  LONG: "LONG",
+  SHORT: "SHORT",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("LONG" === ofxVal) {

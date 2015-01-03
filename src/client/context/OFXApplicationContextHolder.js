@@ -27,6 +27,7 @@ var OFXApplicationContextHolder = {};
  * @type OFXApplicationContext
  */
 OFXApplicationContextHolder.CURRENT_CONTEXT = new DefaultApplicationContext("Money", "1600"); //some apps fail unless you're Quicken or Money...
+//OFXApplicationContextHolder.CURRENT_CONTEXT = new DefaultApplicationContext("QWIN", "0900"); //some apps fail unless you're Quicken or Money...
 
 
 

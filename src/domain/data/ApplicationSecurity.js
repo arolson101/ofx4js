@@ -20,9 +20,9 @@
  */
 var ApplicationSecurity = {
 
-  NONE: 0,
+  NONE: "NONE",
 
-  TYPE1: 1
+  TYPE1: "TYPE1"
 };
 
 

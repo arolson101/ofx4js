@@ -21,13 +21,13 @@
  * @enum
  */
 var Inv401KSource = {
-  PRETAX: 0,
-  AFTER_TAX: 1,
-  MATCH: 2,
-  PROFIT_SHARING: 3,
-  ROLLOVER: 4,
-  OTHER_VEST: 5,
-  OTHER_NONVEST: 6,
+  PRETAX: "PRETAX",
+  AFTER_TAX: "AFTER_TAX",
+  MATCH: "MATCH",
+  PROFIT_SHARING: "PROFIT_SHARING",
+  ROLLOVER: "ROLLOVER",
+  OTHER_VEST: "OTHER_VEST",
+  OTHER_NONVEST: "OTHER_NONVEST",
   
   fromOfx: function(/*String*/ ofxVal) {
     if ("PRETAX" === ofxVal) {

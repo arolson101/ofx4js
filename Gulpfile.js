@@ -81,8 +81,6 @@ gulp.task('jsdoc', function() {
   var template = {
     path            : 'ink-docstrap',
     systemName      : 'Ofx4js',
-    //footer          : "Updraft",
-    //copyright       : "Something",
     navType         : "vertical",
     theme           : "journal",
     linenums        : false,
@@ -95,7 +93,7 @@ gulp.task('jsdoc', function() {
     debug: true,
     verbose: true
   };
-  return gulp.src(['./src/*.js', 'README.md'])
+  return gulp.src(['./src/**/*.js', 'README.md'])
     .pipe(jsdoc('./docs', template, infos, options));
 });
 

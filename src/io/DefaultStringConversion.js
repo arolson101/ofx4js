@@ -20,6 +20,7 @@ var Status = require("../domain/data/common/Status");
 var StatusCode = require("../domain/data/common/StatusCode");
 var UnknownStatusCode = require("../domain/data/common/UnknownStatusCode");
 var StringConversion = require("./StringConversion");
+var moment = require("moment");
 
 /**
  * Utility class for conversion to/from OFX strings.
@@ -33,22 +34,13 @@ function DefaultStringConversion () {
 //   * @type TimeZone
 //   */
 //  this.GMT_TIME_ZONE = TimeZone.getTimeZone("GMT");
-
-  /**
-   * @name DefaultStringConversion#DATE_FORMAT_LENGTH
-   * @type int
-   */
-  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length;
-
-  /**
-   * @name DefaultStringConversion#TIME_FORMAT_LENGTH
-   * @type int
-   */
-  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length;
 }
 
 inherit(DefaultStringConversion, "implements", StringConversion);
 
+//var DATE_FORMAT = "YYYYMMDDHHmmss.SSS[Z]";
+//var DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length;
+//var TIME_FORMAT_LENGTH = "HHmmss.SSS".length;
 
 
 
@@ -59,8 +51,11 @@ DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
   else if (value instanceof Boolean) {
     return value ? "Y" : "N";
   }
-  else if (Date.class.isInstance(value)) {
+  else if (value instanceof Date) {
     return this.formatDate(value);
+  }
+  else if (typeof value === "number") {
+    return value + "";
   }
   else {
     return value;
@@ -72,7 +67,14 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
   if (!value) {
     return null;
   }
-  else if (clazz.prototype instanceof StatusCode) {
+  else if (typeof clazz === "object") {
+    // enum
+    console.assert(value in clazz);
+    if(value in clazz) {
+      return clazz[value];
+    }
+  }
+  else if (inherit.isAssignableFrom(StatusCode, clazz)) {
     var code = value;
     var statusCode = Status.KnownCode.fromCode(code);
     if (!statusCode) {
@@ -81,13 +83,13 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
     
     return statusCode;
   }
-  else if (clazz.prototype instanceof Boolean) {
+  else if (inherit.isAssignableFrom(Boolean, clazz)) {
     return "Y" === value.toUpperCase();
   }
 //  else if (Time.class.isAssignableFrom(clazz)) {
 //    return parseTime(value);
 //  }
-  else if (clazz.prototype instanceof Date) {
+  else if (inherit.isAssignableFrom(Date, clazz)) {
     return this.parseDate(value);
   }
   return value;
@@ -101,41 +103,44 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
  * @return {Date} The date value.
  */
 DefaultStringConversion.prototype.parseDate = function(value) {
-//  var parseableDate = new char[DATE_FORMAT_LENGTH];
-//  Arrays.fill(parseableDate, '0');
-//  parseableDate[parseableDate.length - 4] = '.';
-//  char[] valueChars = value.toCharArray();
-//  int index = 0;
-//  while (index < valueChars.length && valueChars[index] != '[') {
-//    if (index < DATE_FORMAT_LENGTH) {
-//      parseableDate[index] = valueChars[index];
-//    }
-//    
-//    index++;
-//  }
-//
-//  int year = Integer.parseInt(new String(parseableDate, 0, 4));
-//  int month = Integer.parseInt(new String(parseableDate, 4, 2)) - 1; //java month numberss are zero-based
-//  int day = Integer.parseInt(new String(parseableDate, 6, 2));
-//  int hour = Integer.parseInt(new String(parseableDate, 8, 2));
-//  int minute = Integer.parseInt(new String(parseableDate, 10, 2));
-//  int second = Integer.parseInt(new String(parseableDate, 12, 2));
-//  int milli = Integer.parseInt(new String(parseableDate, 15, 3));
-//
-//  //set up a new calendar at zero, then set all the fields.
-//  GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
-//  if (index < valueChars.length && valueChars[index] == '[') {
-//    String tzoffset = value.substring(index);
-//    calendar.setTimeZone(parseTimeZone(tzoffset));
-//  }
-//  else {
-//    calendar.setTimeZone(GMT_TIME_ZONE);
-//  }
-//  calendar.add(GregorianCalendar.MILLISECOND, milli);
-//
-//  return calendar.getTime();
-  return Date.parse(value);
+  var year = parseInt(value.substr(0, 4));
+  var month = parseInt(value.substr(4, 2)) - 1; // javascript month numbers are zero-based
+  var day = parseInt(value.substr(6, 2));
+  var hour = parseInt(value.substr(8, 2));
+  var minute = parseInt(value.substr(10, 2));
+  var second = parseInt(value.substr(12, 2));
+  var milli = parseInt(value.substr(15, 3));
+
+  // add timezone offset
+  var bracket = value.indexOf("[");
+  if(bracket != -1) {
+    var close = value.indexOf(":");
+    if(close === -1) {
+      close = value.indexOf("]");
+    }
+    var gmtOffset = value.substring(bracket+1, close);
+    hour -= 1.0 * gmtOffset;
+  }
+  
+  // create date as UTC
+  return new Date(Date.UTC(year, month, day, hour, minute, second, milli));
 };
+
+
+/**
+ * Pad a number with leading zeroes until it is of <tt>size</tt> length
+ *
+ * @param {int} num number
+ * @param {int} size number of digits in final number
+ * @return {string} padded number
+ */
+function pad(num, size) {
+  var s = num+"";
+  while (s.length < size) {
+    s = "0" + s;
+  }
+  return s;
+}
 
 
 /**
@@ -148,7 +153,18 @@ DefaultStringConversion.prototype.formatDate = function(date) {
 //  GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
 //  calendar.setTime(date);
 //  return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.%1$tL", calendar);
-  return date.toUTCString();
+  
+  return pad(date.getFullYear(), 4) +
+    pad(date.getMonth() + 1, 2) +
+    pad(date.getDay(), 2) +
+    pad(date.getHours(), 2) +
+    pad(date.getMinutes(), 2) +
+    pad(date.getSeconds(), 2) +
+    "." +
+    date.getMilliseconds() +
+    "[" +
+    (date.getTimezoneOffset() / 60) +
+    "]";
 };
 
 
@@ -195,7 +211,8 @@ DefaultStringConversion.prototype.formatTime = function(time) {
 //  GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
 //  calendar.setTime(time);
 //  return String.format("%1$tH%1$tM%1$tS.%1$tL", calendar);
-  return time.toTimeString();
+  return moment(time).format("YYYYMMDDHHmmss.SSS[Z]");
+  //return time.toTimeString();
 };
 
 

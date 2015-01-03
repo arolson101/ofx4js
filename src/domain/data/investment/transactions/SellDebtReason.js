@@ -21,9 +21,9 @@
  * @enum
  */
 var SellDebtReason = {
-  CALL: 0,
-  SELL: 1,
-  MATURITY: 2,
+  CALL: "CALL",
+  SELL: "SELL",
+  MATURITY: "MATURITY",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CALL" === ofxVal) {

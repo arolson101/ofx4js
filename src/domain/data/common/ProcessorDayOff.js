@@ -23,13 +23,13 @@
  * @see "OFX Spec, Section 13.6.2"
  */
 var ProcessorDayOff = {
-  MONDAY: 0,
-  TUESDAY: 1,
-  WEDNESDAY: 2,
-  THURSDAY: 3,
-  FRIDAY: 4,
-  SATURDAY: 5,
-  SUNDAY: 6,
+  MONDAY: "MONDAY",
+  TUESDAY: "TUESDAY",
+  WEDNESDAY: "WEDNESDAY",
+  THURSDAY: "THURSDAY",
+  FRIDAY: "FRIDAY",
+  SATURDAY: "SATURDAY",
+  SUNDAY: "SUNDAY",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("MONDAY" === ofxVal) {

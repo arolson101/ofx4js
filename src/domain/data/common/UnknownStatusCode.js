@@ -23,40 +23,33 @@ var StatusCode = require("./StatusCode");
  * @class
  * @augments StatusCode
  */
-function UnknownStatusCode () {
+function UnknownStatusCode (/*int*/ code, /*String*/ message, /*Severity*/ defaultSeverity) {
 
   /**
    * @name UnknownStatusCode#code
    * @type int
    * @access private
    */
-  this.code = null;
+  this.code = code;
 
   /**
    * @name UnknownStatusCode#message
    * @type String
    * @access private
    */
-  this.message = null;
+  this.message = message;
 
   /**
    * @name UnknownStatusCode#defaultSeverity
    * @type Status.Severity
    * @access private
    */
-  this.defaultSeverity = null;
+  this.defaultSeverity = defaultSeverity;
 }
 
 inherit(UnknownStatusCode, "implements", StatusCode);
 
 
-
-
-UnknownStatusCode.prototype.UnknownStatusCode = function(/*int*/ code, /*String*/ message, /*Severity*/ defaultSeverity) {
-  this.code = code;
-  this.message = message;
-  this.defaultSeverity = defaultSeverity;
-};
 
 
 UnknownStatusCode.prototype.getCode = function() {

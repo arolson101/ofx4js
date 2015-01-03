@@ -21,38 +21,38 @@
  */
 var UnitedStatesAccountType = {
 
-  /** A: 0 401(k) retirement account */
-  R401K: 1,
+  /** A 401(k) retirement account */
+  R401K: "401K",
 
-  /** A: 2 403(B) retirement account */
-  R403B: 3,
+  /** A 403(B) retirement account */
+  R403B: "403B",
 
-  /** An: 4 IRA retirement account */
-  IRA: 5,
+  /** An IRA retirement account */
+  IRA: "IRA",
 
-  /** Keough: 6 (money purchase/profit sharing) account */
-  KEOUGH: 7,
+  /** Keough (money purchase/profit sharing) account */
+  KEOUGH: "KEOUGH",
 
-  /** Other: 8 account type */
-  OTHER: 9,
+  /** Other account type */
+  OTHER: "OTHER",
 
-  /** Salary: 10 Reduction Employer Pension Plan */
-  SARSEP: 11,
+  /** Salary Reduction Employer Pension Plan */
+  SARSEP: "SARSEP",
 
-  /** Savings: 12 Incentive Match Plan for Employees*/
-  SIMPLE: 13,
+  /** Savings Incentive Match Plan for Employees*/
+  SIMPLE: "SIMPLE",
 
-  /** Regular: 14 investment account */
-  NORMAL: 15,
+  /** Regular investment account */
+  NORMAL: "NORMAL",
 
-  /** Tax: 16 Deferred Annuity */
-  TDA: 17,
+  /** Tax Deferred Annuity */
+  TDA: "TDA",
 
-  /** Trust: 18 (including UTMA) */
-  TRUST: 19,
+  /** Trust (including UTMA) */
+  TRUST: "TRUST",
 
-  /** Custodial: 20 account */
-  UGMA: 21,
+  /** Custodial account */
+  UGMA: "UGMA",
   
   fromOfx: function(/*String*/ ofxVal) {
     if ("401K" === ofxVal) {

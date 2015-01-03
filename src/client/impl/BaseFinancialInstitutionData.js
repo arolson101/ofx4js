@@ -23,14 +23,14 @@ var FinancialInstitutionData = require("../FinancialInstitutionData");
  *
  * @class
  */
-function BaseFinancialInstitutionData () {
+function BaseFinancialInstitutionData (/*string*/ id) {
 
   /**
    * @name BaseFinancialInstitutionData#id
    * @type String
    * @access private
    */
-  this.id = null;
+  this.id = id;
 
   /**
    * @name BaseFinancialInstitutionData#fid
@@ -70,16 +70,6 @@ function BaseFinancialInstitutionData () {
 
 inherit(BaseFinancialInstitutionData, "implements", FinancialInstitutionData);
 
-
-
-
-BaseFinancialInstitutionData.prototype.BaseFinancialInstitutionData = function() {
-};
-
-
-BaseFinancialInstitutionData.prototype.BaseFinancialInstitutionData = function(/*String*/ id) {
-  this.id = id;
-};
 
 
 BaseFinancialInstitutionData.prototype.getId = function() {

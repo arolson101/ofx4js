@@ -20,9 +20,9 @@
  */
 var SynchronizationCapability = {
 
-  FULL: 0,
+  FULL: "FULL",
 
-  LITE: 1
+  LITE: "LITE"
 };
 
 

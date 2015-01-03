@@ -20,8 +20,8 @@
  * @enum
  */
 var SellType = {
-  SELL: 0,
-  SELL_SHORT: 1,
+  SELL: "SELL",
+  SELL_SHORT: "SELLSHORT",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SELL" === ofxVal) {

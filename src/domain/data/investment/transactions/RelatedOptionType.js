@@ -20,10 +20,10 @@
  * @enum
  */
 var RelatedOptionType = {
-  SPREAD: 0,
-  STRADDLE: 1,
-  NONE: 2,
-  OTHER: 3,
+  SPREAD: "SPREAD",
+  STRADDLE: "STRADDLE",
+  NONE: "NONE",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SPREAD" === ofxVal) {

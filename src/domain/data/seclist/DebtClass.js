@@ -21,10 +21,10 @@
  * @enum
  */
 var DebtClass = {
-  TREASURY: 0,
-  MUNICIPAL: 1,
-  CORPORATE: 2,
-  OTHER: 3,
+  TREASURY: "TREASURY",
+  MUNICIPAL: "MUNICIPAL",
+  CORPORATE: "CORPORATE",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("TREASURY" === ofxVal) {

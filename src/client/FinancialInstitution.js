@@ -18,19 +18,20 @@
  * @class
  */
 function FinancialInstitution() {
+  throw new Error("interface");
 }
 
 /**
  * The financial institution data defining this FI.
  *
- * @return {FinancialInstitutionData} The financial institution data.
+ * @return {Promise<FinancialInstitutionData>} The financial institution data.
  */
 FinancialInstitution.prototype.getData = function() { throw new Error("not implemented"); };
 
 /**
  * Read the specified financial institution profile. Implies a network call.
  *
- * @return {FinancialInstitutionProfile} The profile.
+ * @return {Promise<FinancialInstitutionProfile>} The profile.
  * @throws OFXException if something goes awry.
  */
 FinancialInstitution.prototype.readProfile = function() { throw new Error("not implemented"); };
@@ -40,7 +41,7 @@ FinancialInstitution.prototype.readProfile = function() { throw new Error("not i
  *
  * @param {String} username The username.
  * @param {String} password The password.
- * @return {Collection<AccountProfile>} The profiles.
+ * @return {Promise<AccountProfile[]>} The profiles.
  */
 FinancialInstitution.prototype.readAccountProfiles = function(/*username, password*/) { throw new Error("not implemented"); };
 

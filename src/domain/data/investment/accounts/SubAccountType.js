@@ -21,10 +21,10 @@
  * @enum
  */
 var SubAccountType = {
-  CASH: 0,
-  MARGIN: 1,
-  SHORT: 2,
-  OTHER: 3,
+  CASH: "CASH",
+  MARGIN: "MARGIN",
+  SHORT: "SHORT",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CASH" === ofxVal) {

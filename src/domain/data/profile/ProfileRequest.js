@@ -29,11 +29,12 @@ function ProfileRequest () {
   RequestMessage.call(this);
 
   /**
+   * Note: I don't know why, but ClientRoutingCapability.NONE causes the request to be rejected by my bank
    * @name ProfileRequest#routingCapability
    * @type ClientRoutingCapability
    * @access private
    */
-  this.routingCapability = ClientRoutingCapability.NONE;
+  this.routingCapability = ClientRoutingCapability.MESSAGE_SET;
 
   /**
    * @name ProfileRequest#profileLastUpdated

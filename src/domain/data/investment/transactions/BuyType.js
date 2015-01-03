@@ -21,8 +21,8 @@
  * @enum
  */
 var BuyType = {
-  BUY: 0,
-  BUY_TO_COVER: 1,
+  BUY: "BUY",
+  BUY_TO_COVER: "BUYTOCOVER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("BUY" === ofxVal) {

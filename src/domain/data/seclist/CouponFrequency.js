@@ -21,11 +21,11 @@
  * @enum
  */
 var CouponFrequency = {
-  MONTHLY: 0,
-  QUARTERLY: 1,
-  SEMIANNUAL: 2,
-  ANNUAL: 3,
-  OTHER: 4,
+  MONTHLY: "MONTHLY",
+  QUARTERLY: "QUARTERLY",
+  SEMIANNUAL: "SEMIANNUAL",
+  ANNUAL: "ANNUAL",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("MONTHLY" === ofxVal) {

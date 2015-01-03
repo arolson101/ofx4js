@@ -22,8 +22,6 @@ sub processDir
       
       if($js =~ /\.js$/i)
       {
-        print "$js\n";
-        
         convert($js);
       }
     }
@@ -37,38 +35,25 @@ processDir("src");
 sub convert
 {
   my $js = shift;
+  #print "$js\n";
   
   open my $hfile, $js or die "Can't open $js for reading: $!";
   my $doc = "";
   my $found = 0;
   while(my $line = <$hfile>)
   {
-    #Element.add({name: "CURDEF", required: true, order: 0, owner: StatementResponse, /*type: String,*/ fcn: "getCurrencyCode"});
-    if($line =~ s/(\.add\()\s*(\{.*)owner: (\w+), /$1$3, $2/)
+    if($line =~ /(\w+)\.prototype\.(\w+)/)
     {
-      $found = 1;
-    }
-    if($line =~ s/\/\*type: ([^,]+,)\*\//attributeType: $1/)
-    {
-      $line =~ s/boolean/bool/i;
-      $line =~ s/(\w+)\[\]/Array, collectionEntryType: $1/;
-      $found = 1;
-    }
-    $doc .= $line;
-    
-    if($found)
-    {
-#      print $line;
-#      $found = 0;
+      if($1 eq $2)
+      {
+        if(!$found)
+        {
+          print "*****\n$js\n";
+          $found = 1;
+        }
+        print $line;
+      }
     }
   }
   close $hfile;
-
-#return;
-  if($found)
-  {
-    open my $hout, ">$js" or die "Can't open $js for writing: $!";
-    print $hout $doc;
-    close $hout;
-  }
 }

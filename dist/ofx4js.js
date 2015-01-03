@@ -4360,6 +4360,2946 @@ clone.clonePrototype = function(parent) {
 }).call(this,require("buffer").Buffer)
 },{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
 arguments[4]["/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"][0].apply(exports,arguments)
+},{}],"/Users/aolson/Developer/ofx4js/node_modules/moment/moment.js":[function(require,module,exports){
+(function (global){
+//! moment.js
+//! version : 2.8.4
+//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
+//! license : MIT
+//! momentjs.com
+
+(function (undefined) {
+    /************************************
+        Constants
+    ************************************/
+
+    var moment,
+        VERSION = '2.8.4',
+        // the global-scope this is NOT the global object in Node.js
+        globalScope = typeof global !== 'undefined' ? global : this,
+        oldGlobalMoment,
+        round = Math.round,
+        hasOwnProperty = Object.prototype.hasOwnProperty,
+        i,
+
+        YEAR = 0,
+        MONTH = 1,
+        DATE = 2,
+        HOUR = 3,
+        MINUTE = 4,
+        SECOND = 5,
+        MILLISECOND = 6,
+
+        // internal storage for locale config files
+        locales = {},
+
+        // extra moment internal properties (plugins register props here)
+        momentProperties = [],
+
+        // check for nodeJS
+        hasModule = (typeof module !== 'undefined' && module && module.exports),
+
+        // ASP.NET json date format regex
+        aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
+        aspNetTimeSpanJsonRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/,
+
+        // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
+        // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
+        isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
+
+        // format tokens
+        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g,
+        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,
+
+        // parsing token regexes
+        parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
+        parseTokenOneToThreeDigits = /\d{1,3}/, // 0 - 999
+        parseTokenOneToFourDigits = /\d{1,4}/, // 0 - 9999
+        parseTokenOneToSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
+        parseTokenDigits = /\d+/, // nonzero number of digits
+        parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
+        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
+        parseTokenT = /T/i, // T (ISO separator)
+        parseTokenOffsetMs = /[\+\-]?\d+/, // 1234567890123
+        parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
+
+        //strict parsing regexes
+        parseTokenOneDigit = /\d/, // 0 - 9
+        parseTokenTwoDigits = /\d\d/, // 00 - 99
+        parseTokenThreeDigits = /\d{3}/, // 000 - 999
+        parseTokenFourDigits = /\d{4}/, // 0000 - 9999
+        parseTokenSixDigits = /[+-]?\d{6}/, // -999,999 - 999,999
+        parseTokenSignedNumber = /[+-]?\d+/, // -inf - inf
+
+        // iso 8601 regex
+        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+        isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
+
+        isoFormat = 'YYYY-MM-DDTHH:mm:ssZ',
+
+        isoDates = [
+            ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
+            ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
+            ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
+            ['GGGG-[W]WW', /\d{4}-W\d{2}/],
+            ['YYYY-DDD', /\d{4}-\d{3}/]
+        ],
+
+        // iso time formats and regexes
+        isoTimes = [
+            ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
+            ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
+            ['HH:mm', /(T| )\d\d:\d\d/],
+            ['HH', /(T| )\d\d/]
+        ],
+
+        // timezone chunker '+10:00' > ['10', '00'] or '-1530' > ['-15', '30']
+        parseTimezoneChunker = /([\+\-]|\d\d)/gi,
+
+        // getter and setter names
+        proxyGettersAndSetters = 'Date|Hours|Minutes|Seconds|Milliseconds'.split('|'),
+        unitMillisecondFactors = {
+            'Milliseconds' : 1,
+            'Seconds' : 1e3,
+            'Minutes' : 6e4,
+            'Hours' : 36e5,
+            'Days' : 864e5,
+            'Months' : 2592e6,
+            'Years' : 31536e6
+        },
+
+        unitAliases = {
+            ms : 'millisecond',
+            s : 'second',
+            m : 'minute',
+            h : 'hour',
+            d : 'day',
+            D : 'date',
+            w : 'week',
+            W : 'isoWeek',
+            M : 'month',
+            Q : 'quarter',
+            y : 'year',
+            DDD : 'dayOfYear',
+            e : 'weekday',
+            E : 'isoWeekday',
+            gg: 'weekYear',
+            GG: 'isoWeekYear'
+        },
+
+        camelFunctions = {
+            dayofyear : 'dayOfYear',
+            isoweekday : 'isoWeekday',
+            isoweek : 'isoWeek',
+            weekyear : 'weekYear',
+            isoweekyear : 'isoWeekYear'
+        },
+
+        // format function strings
+        formatFunctions = {},
+
+        // default relative time thresholds
+        relativeTimeThresholds = {
+            s: 45,  // seconds to minute
+            m: 45,  // minutes to hour
+            h: 22,  // hours to day
+            d: 26,  // days to month
+            M: 11   // months to year
+        },
+
+        // tokens to ordinalize and pad
+        ordinalizeTokens = 'DDD w W M D d'.split(' '),
+        paddedTokens = 'M D H h m s w W'.split(' '),
+
+        formatTokenFunctions = {
+            M    : function () {
+                return this.month() + 1;
+            },
+            MMM  : function (format) {
+                return this.localeData().monthsShort(this, format);
+            },
+            MMMM : function (format) {
+                return this.localeData().months(this, format);
+            },
+            D    : function () {
+                return this.date();
+            },
+            DDD  : function () {
+                return this.dayOfYear();
+            },
+            d    : function () {
+                return this.day();
+            },
+            dd   : function (format) {
+                return this.localeData().weekdaysMin(this, format);
+            },
+            ddd  : function (format) {
+                return this.localeData().weekdaysShort(this, format);
+            },
+            dddd : function (format) {
+                return this.localeData().weekdays(this, format);
+            },
+            w    : function () {
+                return this.week();
+            },
+            W    : function () {
+                return this.isoWeek();
+            },
+            YY   : function () {
+                return leftZeroFill(this.year() % 100, 2);
+            },
+            YYYY : function () {
+                return leftZeroFill(this.year(), 4);
+            },
+            YYYYY : function () {
+                return leftZeroFill(this.year(), 5);
+            },
+            YYYYYY : function () {
+                var y = this.year(), sign = y >= 0 ? '+' : '-';
+                return sign + leftZeroFill(Math.abs(y), 6);
+            },
+            gg   : function () {
+                return leftZeroFill(this.weekYear() % 100, 2);
+            },
+            gggg : function () {
+                return leftZeroFill(this.weekYear(), 4);
+            },
+            ggggg : function () {
+                return leftZeroFill(this.weekYear(), 5);
+            },
+            GG   : function () {
+                return leftZeroFill(this.isoWeekYear() % 100, 2);
+            },
+            GGGG : function () {
+                return leftZeroFill(this.isoWeekYear(), 4);
+            },
+            GGGGG : function () {
+                return leftZeroFill(this.isoWeekYear(), 5);
+            },
+            e : function () {
+                return this.weekday();
+            },
+            E : function () {
+                return this.isoWeekday();
+            },
+            a    : function () {
+                return this.localeData().meridiem(this.hours(), this.minutes(), true);
+            },
+            A    : function () {
+                return this.localeData().meridiem(this.hours(), this.minutes(), false);
+            },
+            H    : function () {
+                return this.hours();
+            },
+            h    : function () {
+                return this.hours() % 12 || 12;
+            },
+            m    : function () {
+                return this.minutes();
+            },
+            s    : function () {
+                return this.seconds();
+            },
+            S    : function () {
+                return toInt(this.milliseconds() / 100);
+            },
+            SS   : function () {
+                return leftZeroFill(toInt(this.milliseconds() / 10), 2);
+            },
+            SSS  : function () {
+                return leftZeroFill(this.milliseconds(), 3);
+            },
+            SSSS : function () {
+                return leftZeroFill(this.milliseconds(), 3);
+            },
+            Z    : function () {
+                var a = -this.zone(),
+                    b = '+';
+                if (a < 0) {
+                    a = -a;
+                    b = '-';
+                }
+                return b + leftZeroFill(toInt(a / 60), 2) + ':' + leftZeroFill(toInt(a) % 60, 2);
+            },
+            ZZ   : function () {
+                var a = -this.zone(),
+                    b = '+';
+                if (a < 0) {
+                    a = -a;
+                    b = '-';
+                }
+                return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
+            },
+            z : function () {
+                return this.zoneAbbr();
+            },
+            zz : function () {
+                return this.zoneName();
+            },
+            x    : function () {
+                return this.valueOf();
+            },
+            X    : function () {
+                return this.unix();
+            },
+            Q : function () {
+                return this.quarter();
+            }
+        },
+
+        deprecations = {},
+
+        lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'];
+
+    // Pick the first defined of two or three arguments. dfl comes from
+    // default.
+    function dfl(a, b, c) {
+        switch (arguments.length) {
+            case 2: return a != null ? a : b;
+            case 3: return a != null ? a : b != null ? b : c;
+            default: throw new Error('Implement me');
+        }
+    }
+
+    function hasOwnProp(a, b) {
+        return hasOwnProperty.call(a, b);
+    }
+
+    function defaultParsingFlags() {
+        // We need to deep clone this object, and es5 standard is not very
+        // helpful.
+        return {
+            empty : false,
+            unusedTokens : [],
+            unusedInput : [],
+            overflow : -2,
+            charsLeftOver : 0,
+            nullInput : false,
+            invalidMonth : null,
+            invalidFormat : false,
+            userInvalidated : false,
+            iso: false
+        };
+    }
+
+    function printMsg(msg) {
+        if (moment.suppressDeprecationWarnings === false &&
+                typeof console !== 'undefined' && console.warn) {
+            console.warn('Deprecation warning: ' + msg);
+        }
+    }
+
+    function deprecate(msg, fn) {
+        var firstTime = true;
+        return extend(function () {
+            if (firstTime) {
+                printMsg(msg);
+                firstTime = false;
+            }
+            return fn.apply(this, arguments);
+        }, fn);
+    }
+
+    function deprecateSimple(name, msg) {
+        if (!deprecations[name]) {
+            printMsg(msg);
+            deprecations[name] = true;
+        }
+    }
+
+    function padToken(func, count) {
+        return function (a) {
+            return leftZeroFill(func.call(this, a), count);
+        };
+    }
+    function ordinalizeToken(func, period) {
+        return function (a) {
+            return this.localeData().ordinal(func.call(this, a), period);
+        };
+    }
+
+    while (ordinalizeTokens.length) {
+        i = ordinalizeTokens.pop();
+        formatTokenFunctions[i + 'o'] = ordinalizeToken(formatTokenFunctions[i], i);
+    }
+    while (paddedTokens.length) {
+        i = paddedTokens.pop();
+        formatTokenFunctions[i + i] = padToken(formatTokenFunctions[i], 2);
+    }
+    formatTokenFunctions.DDDD = padToken(formatTokenFunctions.DDD, 3);
+
+
+    /************************************
+        Constructors
+    ************************************/
+
+    function Locale() {
+    }
+
+    // Moment prototype object
+    function Moment(config, skipOverflow) {
+        if (skipOverflow !== false) {
+            checkOverflow(config);
+        }
+        copyConfig(this, config);
+        this._d = new Date(+config._d);
+    }
+
+    // Duration Constructor
+    function Duration(duration) {
+        var normalizedInput = normalizeObjectUnits(duration),
+            years = normalizedInput.year || 0,
+            quarters = normalizedInput.quarter || 0,
+            months = normalizedInput.month || 0,
+            weeks = normalizedInput.week || 0,
+            days = normalizedInput.day || 0,
+            hours = normalizedInput.hour || 0,
+            minutes = normalizedInput.minute || 0,
+            seconds = normalizedInput.second || 0,
+            milliseconds = normalizedInput.millisecond || 0;
+
+        // representation for dateAddRemove
+        this._milliseconds = +milliseconds +
+            seconds * 1e3 + // 1000
+            minutes * 6e4 + // 1000 * 60
+            hours * 36e5; // 1000 * 60 * 60
+        // Because of dateAddRemove treats 24 hours as different from a
+        // day when working around DST, we need to store them separately
+        this._days = +days +
+            weeks * 7;
+        // It is impossible translate months into days without knowing
+        // which months you are are talking about, so we have to store
+        // it separately.
+        this._months = +months +
+            quarters * 3 +
+            years * 12;
+
+        this._data = {};
+
+        this._locale = moment.localeData();
+
+        this._bubble();
+    }
+
+    /************************************
+        Helpers
+    ************************************/
+
+
+    function extend(a, b) {
+        for (var i in b) {
+            if (hasOwnProp(b, i)) {
+                a[i] = b[i];
+            }
+        }
+
+        if (hasOwnProp(b, 'toString')) {
+            a.toString = b.toString;
+        }
+
+        if (hasOwnProp(b, 'valueOf')) {
+            a.valueOf = b.valueOf;
+        }
+
+        return a;
+    }
+
+    function copyConfig(to, from) {
+        var i, prop, val;
+
+        if (typeof from._isAMomentObject !== 'undefined') {
+            to._isAMomentObject = from._isAMomentObject;
+        }
+        if (typeof from._i !== 'undefined') {
+            to._i = from._i;
+        }
+        if (typeof from._f !== 'undefined') {
+            to._f = from._f;
+        }
+        if (typeof from._l !== 'undefined') {
+            to._l = from._l;
+        }
+        if (typeof from._strict !== 'undefined') {
+            to._strict = from._strict;
+        }
+        if (typeof from._tzm !== 'undefined') {
+            to._tzm = from._tzm;
+        }
+        if (typeof from._isUTC !== 'undefined') {
+            to._isUTC = from._isUTC;
+        }
+        if (typeof from._offset !== 'undefined') {
+            to._offset = from._offset;
+        }
+        if (typeof from._pf !== 'undefined') {
+            to._pf = from._pf;
+        }
+        if (typeof from._locale !== 'undefined') {
+            to._locale = from._locale;
+        }
+
+        if (momentProperties.length > 0) {
+            for (i in momentProperties) {
+                prop = momentProperties[i];
+                val = from[prop];
+                if (typeof val !== 'undefined') {
+                    to[prop] = val;
+                }
+            }
+        }
+
+        return to;
+    }
+
+    function absRound(number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
+        }
+    }
+
+    // left zero fill a number
+    // see http://jsperf.com/left-zero-filling for performance comparison
+    function leftZeroFill(number, targetLength, forceSign) {
+        var output = '' + Math.abs(number),
+            sign = number >= 0;
+
+        while (output.length < targetLength) {
+            output = '0' + output;
+        }
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
+    }
+
+    function positiveMomentsDifference(base, other) {
+        var res = {milliseconds: 0, months: 0};
+
+        res.months = other.month() - base.month() +
+            (other.year() - base.year()) * 12;
+        if (base.clone().add(res.months, 'M').isAfter(other)) {
+            --res.months;
+        }
+
+        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
+
+        return res;
+    }
+
+    function momentsDifference(base, other) {
+        var res;
+        other = makeAs(other, base);
+        if (base.isBefore(other)) {
+            res = positiveMomentsDifference(base, other);
+        } else {
+            res = positiveMomentsDifference(other, base);
+            res.milliseconds = -res.milliseconds;
+            res.months = -res.months;
+        }
+
+        return res;
+    }
+
+    // TODO: remove 'name' arg after deprecation is removed
+    function createAdder(direction, name) {
+        return function (val, period) {
+            var dur, tmp;
+            //invert the arguments, but complain about it
+            if (period !== null && !isNaN(+period)) {
+                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period).');
+                tmp = val; val = period; period = tmp;
+            }
+
+            val = typeof val === 'string' ? +val : val;
+            dur = moment.duration(val, period);
+            addOrSubtractDurationFromMoment(this, dur, direction);
+            return this;
+        };
+    }
+
+    function addOrSubtractDurationFromMoment(mom, duration, isAdding, updateOffset) {
+        var milliseconds = duration._milliseconds,
+            days = duration._days,
+            months = duration._months;
+        updateOffset = updateOffset == null ? true : updateOffset;
+
+        if (milliseconds) {
+            mom._d.setTime(+mom._d + milliseconds * isAdding);
+        }
+        if (days) {
+            rawSetter(mom, 'Date', rawGetter(mom, 'Date') + days * isAdding);
+        }
+        if (months) {
+            rawMonthSetter(mom, rawGetter(mom, 'Month') + months * isAdding);
+        }
+        if (updateOffset) {
+            moment.updateOffset(mom, days || months);
+        }
+    }
+
+    // check if is an array
+    function isArray(input) {
+        return Object.prototype.toString.call(input) === '[object Array]';
+    }
+
+    function isDate(input) {
+        return Object.prototype.toString.call(input) === '[object Date]' ||
+            input instanceof Date;
+    }
+
+    // compare two arrays, return the number of differences
+    function compareArrays(array1, array2, dontConvert) {
+        var len = Math.min(array1.length, array2.length),
+            lengthDiff = Math.abs(array1.length - array2.length),
+            diffs = 0,
+            i;
+        for (i = 0; i < len; i++) {
+            if ((dontConvert && array1[i] !== array2[i]) ||
+                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
+                diffs++;
+            }
+        }
+        return diffs + lengthDiff;
+    }
+
+    function normalizeUnits(units) {
+        if (units) {
+            var lowered = units.toLowerCase().replace(/(.)s$/, '$1');
+            units = unitAliases[units] || camelFunctions[lowered] || lowered;
+        }
+        return units;
+    }
+
+    function normalizeObjectUnits(inputObject) {
+        var normalizedInput = {},
+            normalizedProp,
+            prop;
+
+        for (prop in inputObject) {
+            if (hasOwnProp(inputObject, prop)) {
+                normalizedProp = normalizeUnits(prop);
+                if (normalizedProp) {
+                    normalizedInput[normalizedProp] = inputObject[prop];
+                }
+            }
+        }
+
+        return normalizedInput;
+    }
+
+    function makeList(field) {
+        var count, setter;
+
+        if (field.indexOf('week') === 0) {
+            count = 7;
+            setter = 'day';
+        }
+        else if (field.indexOf('month') === 0) {
+            count = 12;
+            setter = 'month';
+        }
+        else {
+            return;
+        }
+
+        moment[field] = function (format, index) {
+            var i, getter,
+                method = moment._locale[field],
+                results = [];
+
+            if (typeof format === 'number') {
+                index = format;
+                format = undefined;
+            }
+
+            getter = function (i) {
+                var m = moment().utc().set(setter, i);
+                return method.call(moment._locale, m, format || '');
+            };
+
+            if (index != null) {
+                return getter(index);
+            }
+            else {
+                for (i = 0; i < count; i++) {
+                    results.push(getter(i));
+                }
+                return results;
+            }
+        };
+    }
+
+    function toInt(argumentForCoercion) {
+        var coercedNumber = +argumentForCoercion,
+            value = 0;
+
+        if (coercedNumber !== 0 && isFinite(coercedNumber)) {
+            if (coercedNumber >= 0) {
+                value = Math.floor(coercedNumber);
+            } else {
+                value = Math.ceil(coercedNumber);
+            }
+        }
+
+        return value;
+    }
+
+    function daysInMonth(year, month) {
+        return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    }
+
+    function weeksInYear(year, dow, doy) {
+        return weekOfYear(moment([year, 11, 31 + dow - doy]), dow, doy).week;
+    }
+
+    function daysInYear(year) {
+        return isLeapYear(year) ? 366 : 365;
+    }
+
+    function isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    }
+
+    function checkOverflow(m) {
+        var overflow;
+        if (m._a && m._pf.overflow === -2) {
+            overflow =
+                m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH :
+                m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE :
+                m._a[HOUR] < 0 || m._a[HOUR] > 24 ||
+                    (m._a[HOUR] === 24 && (m._a[MINUTE] !== 0 ||
+                                           m._a[SECOND] !== 0 ||
+                                           m._a[MILLISECOND] !== 0)) ? HOUR :
+                m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE :
+                m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND :
+                m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND :
+                -1;
+
+            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+                overflow = DATE;
+            }
+
+            m._pf.overflow = overflow;
+        }
+    }
+
+    function isValid(m) {
+        if (m._isValid == null) {
+            m._isValid = !isNaN(m._d.getTime()) &&
+                m._pf.overflow < 0 &&
+                !m._pf.empty &&
+                !m._pf.invalidMonth &&
+                !m._pf.nullInput &&
+                !m._pf.invalidFormat &&
+                !m._pf.userInvalidated;
+
+            if (m._strict) {
+                m._isValid = m._isValid &&
+                    m._pf.charsLeftOver === 0 &&
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
+            }
+        }
+        return m._isValid;
+    }
+
+    function normalizeLocale(key) {
+        return key ? key.toLowerCase().replace('_', '-') : key;
+    }
+
+    // pick the locale from the array
+    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
+    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
+    function chooseLocale(names) {
+        var i = 0, j, next, locale, split;
+
+        while (i < names.length) {
+            split = normalizeLocale(names[i]).split('-');
+            j = split.length;
+            next = normalizeLocale(names[i + 1]);
+            next = next ? next.split('-') : null;
+            while (j > 0) {
+                locale = loadLocale(split.slice(0, j).join('-'));
+                if (locale) {
+                    return locale;
+                }
+                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
+                    //the next array item is better than a shallower substring of this one
+                    break;
+                }
+                j--;
+            }
+            i++;
+        }
+        return null;
+    }
+
+    function loadLocale(name) {
+        var oldLocale = null;
+        if (!locales[name] && hasModule) {
+            try {
+                oldLocale = moment.locale();
+                require('./locale/' + name);
+                // because defineLocale currently also sets the global locale, we want to undo that for lazy loaded locales
+                moment.locale(oldLocale);
+            } catch (e) { }
+        }
+        return locales[name];
+    }
+
+    // Return a moment from input, that is local/utc/zone equivalent to model.
+    function makeAs(input, model) {
+        var res, diff;
+        if (model._isUTC) {
+            res = model.clone();
+            diff = (moment.isMoment(input) || isDate(input) ?
+                    +input : +moment(input)) - (+res);
+            // Use low-level api, because this fn is low-level api.
+            res._d.setTime(+res._d + diff);
+            moment.updateOffset(res, false);
+            return res;
+        } else {
+            return moment(input).local();
+        }
+    }
+
+    /************************************
+        Locale
+    ************************************/
+
+
+    extend(Locale.prototype, {
+
+        set : function (config) {
+            var prop, i;
+            for (i in config) {
+                prop = config[i];
+                if (typeof prop === 'function') {
+                    this[i] = prop;
+                } else {
+                    this['_' + i] = prop;
+                }
+            }
+            // Lenient ordinal parsing accepts just a number in addition to
+            // number + (possibly) stuff coming from _ordinalParseLenient.
+            this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
+        },
+
+        _months : 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
+        months : function (m) {
+            return this._months[m.month()];
+        },
+
+        _monthsShort : 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
+        monthsShort : function (m) {
+            return this._monthsShort[m.month()];
+        },
+
+        monthsParse : function (monthName, format, strict) {
+            var i, mom, regex;
+
+            if (!this._monthsParse) {
+                this._monthsParse = [];
+                this._longMonthsParse = [];
+                this._shortMonthsParse = [];
+            }
+
+            for (i = 0; i < 12; i++) {
+                // make the regex if we don't have it already
+                mom = moment.utc([2000, i]);
+                if (strict && !this._longMonthsParse[i]) {
+                    this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
+                    this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
+                }
+                if (!strict && !this._monthsParse[i]) {
+                    regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
+                    this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
+                }
+                // test the regex
+                if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+                    return i;
+                } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+                    return i;
+                } else if (!strict && this._monthsParse[i].test(monthName)) {
+                    return i;
+                }
+            }
+        },
+
+        _weekdays : 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
+        weekdays : function (m) {
+            return this._weekdays[m.day()];
+        },
+
+        _weekdaysShort : 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
+        weekdaysShort : function (m) {
+            return this._weekdaysShort[m.day()];
+        },
+
+        _weekdaysMin : 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_'),
+        weekdaysMin : function (m) {
+            return this._weekdaysMin[m.day()];
+        },
+
+        weekdaysParse : function (weekdayName) {
+            var i, mom, regex;
+
+            if (!this._weekdaysParse) {
+                this._weekdaysParse = [];
+            }
+
+            for (i = 0; i < 7; i++) {
+                // make the regex if we don't have it already
+                if (!this._weekdaysParse[i]) {
+                    mom = moment([2000, 1]).day(i);
+                    regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
+                    this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
+                }
+                // test the regex
+                if (this._weekdaysParse[i].test(weekdayName)) {
+                    return i;
+                }
+            }
+        },
+
+        _longDateFormat : {
+            LTS : 'h:mm:ss A',
+            LT : 'h:mm A',
+            L : 'MM/DD/YYYY',
+            LL : 'MMMM D, YYYY',
+            LLL : 'MMMM D, YYYY LT',
+            LLLL : 'dddd, MMMM D, YYYY LT'
+        },
+        longDateFormat : function (key) {
+            var output = this._longDateFormat[key];
+            if (!output && this._longDateFormat[key.toUpperCase()]) {
+                output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
+                    return val.slice(1);
+                });
+                this._longDateFormat[key] = output;
+            }
+            return output;
+        },
+
+        isPM : function (input) {
+            // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
+            // Using charAt should be more compatible.
+            return ((input + '').toLowerCase().charAt(0) === 'p');
+        },
+
+        _meridiemParse : /[ap]\.?m?\.?/i,
+        meridiem : function (hours, minutes, isLower) {
+            if (hours > 11) {
+                return isLower ? 'pm' : 'PM';
+            } else {
+                return isLower ? 'am' : 'AM';
+            }
+        },
+
+        _calendar : {
+            sameDay : '[Today at] LT',
+            nextDay : '[Tomorrow at] LT',
+            nextWeek : 'dddd [at] LT',
+            lastDay : '[Yesterday at] LT',
+            lastWeek : '[Last] dddd [at] LT',
+            sameElse : 'L'
+        },
+        calendar : function (key, mom, now) {
+            var output = this._calendar[key];
+            return typeof output === 'function' ? output.apply(mom, [now]) : output;
+        },
+
+        _relativeTime : {
+            future : 'in %s',
+            past : '%s ago',
+            s : 'a few seconds',
+            m : 'a minute',
+            mm : '%d minutes',
+            h : 'an hour',
+            hh : '%d hours',
+            d : 'a day',
+            dd : '%d days',
+            M : 'a month',
+            MM : '%d months',
+            y : 'a year',
+            yy : '%d years'
+        },
+
+        relativeTime : function (number, withoutSuffix, string, isFuture) {
+            var output = this._relativeTime[string];
+            return (typeof output === 'function') ?
+                output(number, withoutSuffix, string, isFuture) :
+                output.replace(/%d/i, number);
+        },
+
+        pastFuture : function (diff, output) {
+            var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
+            return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
+        },
+
+        ordinal : function (number) {
+            return this._ordinal.replace('%d', number);
+        },
+        _ordinal : '%d',
+        _ordinalParse : /\d{1,2}/,
+
+        preparse : function (string) {
+            return string;
+        },
+
+        postformat : function (string) {
+            return string;
+        },
+
+        week : function (mom) {
+            return weekOfYear(mom, this._week.dow, this._week.doy).week;
+        },
+
+        _week : {
+            dow : 0, // Sunday is the first day of the week.
+            doy : 6  // The week that contains Jan 1st is the first week of the year.
+        },
+
+        _invalidDate: 'Invalid date',
+        invalidDate: function () {
+            return this._invalidDate;
+        }
+    });
+
+    /************************************
+        Formatting
+    ************************************/
+
+
+    function removeFormattingTokens(input) {
+        if (input.match(/\[[\s\S]/)) {
+            return input.replace(/^\[|\]$/g, '');
+        }
+        return input.replace(/\\/g, '');
+    }
+
+    function makeFormatFunction(format) {
+        var array = format.match(formattingTokens), i, length;
+
+        for (i = 0, length = array.length; i < length; i++) {
+            if (formatTokenFunctions[array[i]]) {
+                array[i] = formatTokenFunctions[array[i]];
+            } else {
+                array[i] = removeFormattingTokens(array[i]);
+            }
+        }
+
+        return function (mom) {
+            var output = '';
+            for (i = 0; i < length; i++) {
+                output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
+            }
+            return output;
+        };
+    }
+
+    // format date using native date object
+    function formatMoment(m, format) {
+        if (!m.isValid()) {
+            return m.localeData().invalidDate();
+        }
+
+        format = expandFormat(format, m.localeData());
+
+        if (!formatFunctions[format]) {
+            formatFunctions[format] = makeFormatFunction(format);
+        }
+
+        return formatFunctions[format](m);
+    }
+
+    function expandFormat(format, locale) {
+        var i = 5;
+
+        function replaceLongDateFormatTokens(input) {
+            return locale.longDateFormat(input) || input;
+        }
+
+        localFormattingTokens.lastIndex = 0;
+        while (i >= 0 && localFormattingTokens.test(format)) {
+            format = format.replace(localFormattingTokens, replaceLongDateFormatTokens);
+            localFormattingTokens.lastIndex = 0;
+            i -= 1;
+        }
+
+        return format;
+    }
+
+
+    /************************************
+        Parsing
+    ************************************/
+
+
+    // get the regex to find the next token
+    function getParseRegexForToken(token, config) {
+        var a, strict = config._strict;
+        switch (token) {
+        case 'Q':
+            return parseTokenOneDigit;
+        case 'DDDD':
+            return parseTokenThreeDigits;
+        case 'YYYY':
+        case 'GGGG':
+        case 'gggg':
+            return strict ? parseTokenFourDigits : parseTokenOneToFourDigits;
+        case 'Y':
+        case 'G':
+        case 'g':
+            return parseTokenSignedNumber;
+        case 'YYYYYY':
+        case 'YYYYY':
+        case 'GGGGG':
+        case 'ggggg':
+            return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
+        case 'S':
+            if (strict) {
+                return parseTokenOneDigit;
+            }
+            /* falls through */
+        case 'SS':
+            if (strict) {
+                return parseTokenTwoDigits;
+            }
+            /* falls through */
+        case 'SSS':
+            if (strict) {
+                return parseTokenThreeDigits;
+            }
+            /* falls through */
+        case 'DDD':
+            return parseTokenOneToThreeDigits;
+        case 'MMM':
+        case 'MMMM':
+        case 'dd':
+        case 'ddd':
+        case 'dddd':
+            return parseTokenWord;
+        case 'a':
+        case 'A':
+            return config._locale._meridiemParse;
+        case 'x':
+            return parseTokenOffsetMs;
+        case 'X':
+            return parseTokenTimestampMs;
+        case 'Z':
+        case 'ZZ':
+            return parseTokenTimezone;
+        case 'T':
+            return parseTokenT;
+        case 'SSSS':
+            return parseTokenDigits;
+        case 'MM':
+        case 'DD':
+        case 'YY':
+        case 'GG':
+        case 'gg':
+        case 'HH':
+        case 'hh':
+        case 'mm':
+        case 'ss':
+        case 'ww':
+        case 'WW':
+            return strict ? parseTokenTwoDigits : parseTokenOneOrTwoDigits;
+        case 'M':
+        case 'D':
+        case 'd':
+        case 'H':
+        case 'h':
+        case 'm':
+        case 's':
+        case 'w':
+        case 'W':
+        case 'e':
+        case 'E':
+            return parseTokenOneOrTwoDigits;
+        case 'Do':
+            return strict ? config._locale._ordinalParse : config._locale._ordinalParseLenient;
+        default :
+            a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), 'i'));
+            return a;
+        }
+    }
+
+    function timezoneMinutesFromString(string) {
+        string = string || '';
+        var possibleTzMatches = (string.match(parseTokenTimezone) || []),
+            tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
+            parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
+            minutes = +(parts[1] * 60) + toInt(parts[2]);
+
+        return parts[0] === '+' ? -minutes : minutes;
+    }
+
+    // function to convert string input to date
+    function addTimeToArrayFromToken(token, input, config) {
+        var a, datePartArray = config._a;
+
+        switch (token) {
+        // QUARTER
+        case 'Q':
+            if (input != null) {
+                datePartArray[MONTH] = (toInt(input) - 1) * 3;
+            }
+            break;
+        // MONTH
+        case 'M' : // fall through to MM
+        case 'MM' :
+            if (input != null) {
+                datePartArray[MONTH] = toInt(input) - 1;
+            }
+            break;
+        case 'MMM' : // fall through to MMMM
+        case 'MMMM' :
+            a = config._locale.monthsParse(input, token, config._strict);
+            // if we didn't find a month name, mark the date as invalid.
+            if (a != null) {
+                datePartArray[MONTH] = a;
+            } else {
+                config._pf.invalidMonth = input;
+            }
+            break;
+        // DAY OF MONTH
+        case 'D' : // fall through to DD
+        case 'DD' :
+            if (input != null) {
+                datePartArray[DATE] = toInt(input);
+            }
+            break;
+        case 'Do' :
+            if (input != null) {
+                datePartArray[DATE] = toInt(parseInt(
+                            input.match(/\d{1,2}/)[0], 10));
+            }
+            break;
+        // DAY OF YEAR
+        case 'DDD' : // fall through to DDDD
+        case 'DDDD' :
+            if (input != null) {
+                config._dayOfYear = toInt(input);
+            }
+
+            break;
+        // YEAR
+        case 'YY' :
+            datePartArray[YEAR] = moment.parseTwoDigitYear(input);
+            break;
+        case 'YYYY' :
+        case 'YYYYY' :
+        case 'YYYYYY' :
+            datePartArray[YEAR] = toInt(input);
+            break;
+        // AM / PM
+        case 'a' : // fall through to A
+        case 'A' :
+            config._isPm = config._locale.isPM(input);
+            break;
+        // HOUR
+        case 'h' : // fall through to hh
+        case 'hh' :
+            config._pf.bigHour = true;
+            /* falls through */
+        case 'H' : // fall through to HH
+        case 'HH' :
+            datePartArray[HOUR] = toInt(input);
+            break;
+        // MINUTE
+        case 'm' : // fall through to mm
+        case 'mm' :
+            datePartArray[MINUTE] = toInt(input);
+            break;
+        // SECOND
+        case 's' : // fall through to ss
+        case 'ss' :
+            datePartArray[SECOND] = toInt(input);
+            break;
+        // MILLISECOND
+        case 'S' :
+        case 'SS' :
+        case 'SSS' :
+        case 'SSSS' :
+            datePartArray[MILLISECOND] = toInt(('0.' + input) * 1000);
+            break;
+        // UNIX OFFSET (MILLISECONDS)
+        case 'x':
+            config._d = new Date(toInt(input));
+            break;
+        // UNIX TIMESTAMP WITH MS
+        case 'X':
+            config._d = new Date(parseFloat(input) * 1000);
+            break;
+        // TIMEZONE
+        case 'Z' : // fall through to ZZ
+        case 'ZZ' :
+            config._useUTC = true;
+            config._tzm = timezoneMinutesFromString(input);
+            break;
+        // WEEKDAY - human
+        case 'dd':
+        case 'ddd':
+        case 'dddd':
+            a = config._locale.weekdaysParse(input);
+            // if we didn't get a weekday name, mark the date as invalid
+            if (a != null) {
+                config._w = config._w || {};
+                config._w['d'] = a;
+            } else {
+                config._pf.invalidWeekday = input;
+            }
+            break;
+        // WEEK, WEEK DAY - numeric
+        case 'w':
+        case 'ww':
+        case 'W':
+        case 'WW':
+        case 'd':
+        case 'e':
+        case 'E':
+            token = token.substr(0, 1);
+            /* falls through */
+        case 'gggg':
+        case 'GGGG':
+        case 'GGGGG':
+            token = token.substr(0, 2);
+            if (input) {
+                config._w = config._w || {};
+                config._w[token] = toInt(input);
+            }
+            break;
+        case 'gg':
+        case 'GG':
+            config._w = config._w || {};
+            config._w[token] = moment.parseTwoDigitYear(input);
+        }
+    }
+
+    function dayOfYearFromWeekInfo(config) {
+        var w, weekYear, week, weekday, dow, doy, temp;
+
+        w = config._w;
+        if (w.GG != null || w.W != null || w.E != null) {
+            dow = 1;
+            doy = 4;
+
+            // TODO: We need to take the current isoWeekYear, but that depends on
+            // how we interpret now (local, utc, fixed offset). So create
+            // a now version of current config (take local/utc/offset flags, and
+            // create now).
+            weekYear = dfl(w.GG, config._a[YEAR], weekOfYear(moment(), 1, 4).year);
+            week = dfl(w.W, 1);
+            weekday = dfl(w.E, 1);
+        } else {
+            dow = config._locale._week.dow;
+            doy = config._locale._week.doy;
+
+            weekYear = dfl(w.gg, config._a[YEAR], weekOfYear(moment(), dow, doy).year);
+            week = dfl(w.w, 1);
+
+            if (w.d != null) {
+                // weekday -- low day numbers are considered next week
+                weekday = w.d;
+                if (weekday < dow) {
+                    ++week;
+                }
+            } else if (w.e != null) {
+                // local weekday -- counting starts from begining of week
+                weekday = w.e + dow;
+            } else {
+                // default to begining of week
+                weekday = dow;
+            }
+        }
+        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
+
+        config._a[YEAR] = temp.year;
+        config._dayOfYear = temp.dayOfYear;
+    }
+
+    // convert an array to a date.
+    // the array should mirror the parameters below
+    // note: all values past the year are optional and will default to the lowest possible value.
+    // [year, month, day , hour, minute, second, millisecond]
+    function dateFromConfig(config) {
+        var i, date, input = [], currentDate, yearToUse;
+
+        if (config._d) {
+            return;
+        }
+
+        currentDate = currentDateArray(config);
+
+        //compute day of the year from weeks and weekdays
+        if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
+            dayOfYearFromWeekInfo(config);
+        }
+
+        //if the day of the year is set, figure out what it is
+        if (config._dayOfYear) {
+            yearToUse = dfl(config._a[YEAR], currentDate[YEAR]);
+
+            if (config._dayOfYear > daysInYear(yearToUse)) {
+                config._pf._overflowDayOfYear = true;
+            }
+
+            date = makeUTCDate(yearToUse, 0, config._dayOfYear);
+            config._a[MONTH] = date.getUTCMonth();
+            config._a[DATE] = date.getUTCDate();
+        }
+
+        // Default to current date.
+        // * if no year, month, day of month are given, default to today
+        // * if day of month is given, default month and year
+        // * if month is given, default only year
+        // * if year is given, don't default anything
+        for (i = 0; i < 3 && config._a[i] == null; ++i) {
+            config._a[i] = input[i] = currentDate[i];
+        }
+
+        // Zero out whatever was not defaulted, including time
+        for (; i < 7; i++) {
+            config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
+        }
+
+        // Check for 24:00:00.000
+        if (config._a[HOUR] === 24 &&
+                config._a[MINUTE] === 0 &&
+                config._a[SECOND] === 0 &&
+                config._a[MILLISECOND] === 0) {
+            config._nextDay = true;
+            config._a[HOUR] = 0;
+        }
+
+        config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
+        // Apply timezone offset from input. The actual zone can be changed
+        // with parseZone.
+        if (config._tzm != null) {
+            config._d.setUTCMinutes(config._d.getUTCMinutes() + config._tzm);
+        }
+
+        if (config._nextDay) {
+            config._a[HOUR] = 24;
+        }
+    }
+
+    function dateFromObject(config) {
+        var normalizedInput;
+
+        if (config._d) {
+            return;
+        }
+
+        normalizedInput = normalizeObjectUnits(config._i);
+        config._a = [
+            normalizedInput.year,
+            normalizedInput.month,
+            normalizedInput.day || normalizedInput.date,
+            normalizedInput.hour,
+            normalizedInput.minute,
+            normalizedInput.second,
+            normalizedInput.millisecond
+        ];
+
+        dateFromConfig(config);
+    }
+
+    function currentDateArray(config) {
+        var now = new Date();
+        if (config._useUTC) {
+            return [
+                now.getUTCFullYear(),
+                now.getUTCMonth(),
+                now.getUTCDate()
+            ];
+        } else {
+            return [now.getFullYear(), now.getMonth(), now.getDate()];
+        }
+    }
+
+    // date from string and format string
+    function makeDateFromStringAndFormat(config) {
+        if (config._f === moment.ISO_8601) {
+            parseISO(config);
+            return;
+        }
+
+        config._a = [];
+        config._pf.empty = true;
+
+        // This array is used to make a Date, either with `new Date` or `Date.UTC`
+        var string = '' + config._i,
+            i, parsedInput, tokens, token, skipped,
+            stringLength = string.length,
+            totalParsedInputLength = 0;
+
+        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
+
+        for (i = 0; i < tokens.length; i++) {
+            token = tokens[i];
+            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+            if (parsedInput) {
+                skipped = string.substr(0, string.indexOf(parsedInput));
+                if (skipped.length > 0) {
+                    config._pf.unusedInput.push(skipped);
+                }
+                string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
+                totalParsedInputLength += parsedInput.length;
+            }
+            // don't parse if it's not a known token
+            if (formatTokenFunctions[token]) {
+                if (parsedInput) {
+                    config._pf.empty = false;
+                }
+                else {
+                    config._pf.unusedTokens.push(token);
+                }
+                addTimeToArrayFromToken(token, parsedInput, config);
+            }
+            else if (config._strict && !parsedInput) {
+                config._pf.unusedTokens.push(token);
+            }
+        }
+
+        // add remaining unparsed input length to the string
+        config._pf.charsLeftOver = stringLength - totalParsedInputLength;
+        if (string.length > 0) {
+            config._pf.unusedInput.push(string);
+        }
+
+        // clear _12h flag if hour is <= 12
+        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
+            config._pf.bigHour = undefined;
+        }
+        // handle am pm
+        if (config._isPm && config._a[HOUR] < 12) {
+            config._a[HOUR] += 12;
+        }
+        // if is 12 am, change hours to 0
+        if (config._isPm === false && config._a[HOUR] === 12) {
+            config._a[HOUR] = 0;
+        }
+        dateFromConfig(config);
+        checkOverflow(config);
+    }
+
+    function unescapeFormat(s) {
+        return s.replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+            return p1 || p2 || p3 || p4;
+        });
+    }
+
+    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+    function regexpEscape(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    // date from string and array of format strings
+    function makeDateFromStringAndArray(config) {
+        var tempConfig,
+            bestMoment,
+
+            scoreToBeat,
+            i,
+            currentScore;
+
+        if (config._f.length === 0) {
+            config._pf.invalidFormat = true;
+            config._d = new Date(NaN);
+            return;
+        }
+
+        for (i = 0; i < config._f.length; i++) {
+            currentScore = 0;
+            tempConfig = copyConfig({}, config);
+            if (config._useUTC != null) {
+                tempConfig._useUTC = config._useUTC;
+            }
+            tempConfig._pf = defaultParsingFlags();
+            tempConfig._f = config._f[i];
+            makeDateFromStringAndFormat(tempConfig);
+
+            if (!isValid(tempConfig)) {
+                continue;
+            }
+
+            // if there is any input that was not parsed add a penalty for that format
+            currentScore += tempConfig._pf.charsLeftOver;
+
+            //or tokens
+            currentScore += tempConfig._pf.unusedTokens.length * 10;
+
+            tempConfig._pf.score = currentScore;
+
+            if (scoreToBeat == null || currentScore < scoreToBeat) {
+                scoreToBeat = currentScore;
+                bestMoment = tempConfig;
+            }
+        }
+
+        extend(config, bestMoment || tempConfig);
+    }
+
+    // date from iso format
+    function parseISO(config) {
+        var i, l,
+            string = config._i,
+            match = isoRegex.exec(string);
+
+        if (match) {
+            config._pf.iso = true;
+            for (i = 0, l = isoDates.length; i < l; i++) {
+                if (isoDates[i][1].exec(string)) {
+                    // match[5] should be 'T' or undefined
+                    config._f = isoDates[i][0] + (match[6] || ' ');
+                    break;
+                }
+            }
+            for (i = 0, l = isoTimes.length; i < l; i++) {
+                if (isoTimes[i][1].exec(string)) {
+                    config._f += isoTimes[i][0];
+                    break;
+                }
+            }
+            if (string.match(parseTokenTimezone)) {
+                config._f += 'Z';
+            }
+            makeDateFromStringAndFormat(config);
+        } else {
+            config._isValid = false;
+        }
+    }
+
+    // date from iso format or fallback
+    function makeDateFromString(config) {
+        parseISO(config);
+        if (config._isValid === false) {
+            delete config._isValid;
+            moment.createFromInputFallback(config);
+        }
+    }
+
+    function map(arr, fn) {
+        var res = [], i;
+        for (i = 0; i < arr.length; ++i) {
+            res.push(fn(arr[i], i));
+        }
+        return res;
+    }
+
+    function makeDateFromInput(config) {
+        var input = config._i, matched;
+        if (input === undefined) {
+            config._d = new Date();
+        } else if (isDate(input)) {
+            config._d = new Date(+input);
+        } else if ((matched = aspNetJsonRegex.exec(input)) !== null) {
+            config._d = new Date(+matched[1]);
+        } else if (typeof input === 'string') {
+            makeDateFromString(config);
+        } else if (isArray(input)) {
+            config._a = map(input.slice(0), function (obj) {
+                return parseInt(obj, 10);
+            });
+            dateFromConfig(config);
+        } else if (typeof(input) === 'object') {
+            dateFromObject(config);
+        } else if (typeof(input) === 'number') {
+            // from milliseconds
+            config._d = new Date(input);
+        } else {
+            moment.createFromInputFallback(config);
+        }
+    }
+
+    function makeDate(y, m, d, h, M, s, ms) {
+        //can't just apply() to create a date:
+        //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
+        var date = new Date(y, m, d, h, M, s, ms);
+
+        //the date constructor doesn't accept years < 1970
+        if (y < 1970) {
+            date.setFullYear(y);
+        }
+        return date;
+    }
+
+    function makeUTCDate(y) {
+        var date = new Date(Date.UTC.apply(null, arguments));
+        if (y < 1970) {
+            date.setUTCFullYear(y);
+        }
+        return date;
+    }
+
+    function parseWeekday(input, locale) {
+        if (typeof input === 'string') {
+            if (!isNaN(input)) {
+                input = parseInt(input, 10);
+            }
+            else {
+                input = locale.weekdaysParse(input);
+                if (typeof input !== 'number') {
+                    return null;
+                }
+            }
+        }
+        return input;
+    }
+
+    /************************************
+        Relative Time
+    ************************************/
+
+
+    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
+    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
+        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+    }
+
+    function relativeTime(posNegDuration, withoutSuffix, locale) {
+        var duration = moment.duration(posNegDuration).abs(),
+            seconds = round(duration.as('s')),
+            minutes = round(duration.as('m')),
+            hours = round(duration.as('h')),
+            days = round(duration.as('d')),
+            months = round(duration.as('M')),
+            years = round(duration.as('y')),
+
+            args = seconds < relativeTimeThresholds.s && ['s', seconds] ||
+                minutes === 1 && ['m'] ||
+                minutes < relativeTimeThresholds.m && ['mm', minutes] ||
+                hours === 1 && ['h'] ||
+                hours < relativeTimeThresholds.h && ['hh', hours] ||
+                days === 1 && ['d'] ||
+                days < relativeTimeThresholds.d && ['dd', days] ||
+                months === 1 && ['M'] ||
+                months < relativeTimeThresholds.M && ['MM', months] ||
+                years === 1 && ['y'] || ['yy', years];
+
+        args[2] = withoutSuffix;
+        args[3] = +posNegDuration > 0;
+        args[4] = locale;
+        return substituteTimeAgo.apply({}, args);
+    }
+
+
+    /************************************
+        Week of Year
+    ************************************/
+
+
+    // firstDayOfWeek       0 = sun, 6 = sat
+    //                      the day of the week that starts the week
+    //                      (usually sunday or monday)
+    // firstDayOfWeekOfYear 0 = sun, 6 = sat
+    //                      the first week is the week that contains the first
+    //                      of this day of the week
+    //                      (eg. ISO weeks use thursday (4))
+    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
+        var end = firstDayOfWeekOfYear - firstDayOfWeek,
+            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
+            adjustedMoment;
+
+
+        if (daysToDayOfWeek > end) {
+            daysToDayOfWeek -= 7;
+        }
+
+        if (daysToDayOfWeek < end - 7) {
+            daysToDayOfWeek += 7;
+        }
+
+        adjustedMoment = moment(mom).add(daysToDayOfWeek, 'd');
+        return {
+            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
+            year: adjustedMoment.year()
+        };
+    }
+
+    //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
+    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
+        var d = makeUTCDate(year, 0, 1).getUTCDay(), daysToAdd, dayOfYear;
+
+        d = d === 0 ? 7 : d;
+        weekday = weekday != null ? weekday : firstDayOfWeek;
+        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
+        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
+
+        return {
+            year: dayOfYear > 0 ? year : year - 1,
+            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
+        };
+    }
+
+    /************************************
+        Top Level Functions
+    ************************************/
+
+    function makeMoment(config) {
+        var input = config._i,
+            format = config._f,
+            res;
+
+        config._locale = config._locale || moment.localeData(config._l);
+
+        if (input === null || (format === undefined && input === '')) {
+            return moment.invalid({nullInput: true});
+        }
+
+        if (typeof input === 'string') {
+            config._i = input = config._locale.preparse(input);
+        }
+
+        if (moment.isMoment(input)) {
+            return new Moment(input, true);
+        } else if (format) {
+            if (isArray(format)) {
+                makeDateFromStringAndArray(config);
+            } else {
+                makeDateFromStringAndFormat(config);
+            }
+        } else {
+            makeDateFromInput(config);
+        }
+
+        res = new Moment(config);
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
+    }
+
+    moment = function (input, format, locale, strict) {
+        var c;
+
+        if (typeof(locale) === 'boolean') {
+            strict = locale;
+            locale = undefined;
+        }
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c = {};
+        c._isAMomentObject = true;
+        c._i = input;
+        c._f = format;
+        c._l = locale;
+        c._strict = strict;
+        c._isUTC = false;
+        c._pf = defaultParsingFlags();
+
+        return makeMoment(c);
+    };
+
+    moment.suppressDeprecationWarnings = false;
+
+    moment.createFromInputFallback = deprecate(
+        'moment construction falls back to js Date. This is ' +
+        'discouraged and will be removed in upcoming major ' +
+        'release. Please refer to ' +
+        'https://github.com/moment/moment/issues/1407 for more info.',
+        function (config) {
+            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
+        }
+    );
+
+    // Pick a moment m from moments so that m[fn](other) is true for all
+    // other. This relies on the function fn to be transitive.
+    //
+    // moments should either be an array of moment objects or an array, whose
+    // first element is an array of moment objects.
+    function pickBy(fn, moments) {
+        var res, i;
+        if (moments.length === 1 && isArray(moments[0])) {
+            moments = moments[0];
+        }
+        if (!moments.length) {
+            return moment();
+        }
+        res = moments[0];
+        for (i = 1; i < moments.length; ++i) {
+            if (moments[i][fn](res)) {
+                res = moments[i];
+            }
+        }
+        return res;
+    }
+
+    moment.min = function () {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isBefore', args);
+    };
+
+    moment.max = function () {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isAfter', args);
+    };
+
+    // creating with utc
+    moment.utc = function (input, format, locale, strict) {
+        var c;
+
+        if (typeof(locale) === 'boolean') {
+            strict = locale;
+            locale = undefined;
+        }
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c = {};
+        c._isAMomentObject = true;
+        c._useUTC = true;
+        c._isUTC = true;
+        c._l = locale;
+        c._i = input;
+        c._f = format;
+        c._strict = strict;
+        c._pf = defaultParsingFlags();
+
+        return makeMoment(c).utc();
+    };
+
+    // creating with unix timestamp (in seconds)
+    moment.unix = function (input) {
+        return moment(input * 1000);
+    };
+
+    // duration
+    moment.duration = function (input, key) {
+        var duration = input,
+            // matching against regexp is expensive, do it on demand
+            match = null,
+            sign,
+            ret,
+            parseIso,
+            diffRes;
+
+        if (moment.isDuration(input)) {
+            duration = {
+                ms: input._milliseconds,
+                d: input._days,
+                M: input._months
+            };
+        } else if (typeof input === 'number') {
+            duration = {};
+            if (key) {
+                duration[key] = input;
+            } else {
+                duration.milliseconds = input;
+            }
+        } else if (!!(match = aspNetTimeSpanJsonRegex.exec(input))) {
+            sign = (match[1] === '-') ? -1 : 1;
+            duration = {
+                y: 0,
+                d: toInt(match[DATE]) * sign,
+                h: toInt(match[HOUR]) * sign,
+                m: toInt(match[MINUTE]) * sign,
+                s: toInt(match[SECOND]) * sign,
+                ms: toInt(match[MILLISECOND]) * sign
+            };
+        } else if (!!(match = isoDurationRegex.exec(input))) {
+            sign = (match[1] === '-') ? -1 : 1;
+            parseIso = function (inp) {
+                // We'd normally use ~~inp for this, but unfortunately it also
+                // converts floats to ints.
+                // inp may be undefined, so careful calling replace on it.
+                var res = inp && parseFloat(inp.replace(',', '.'));
+                // apply sign while we're at it
+                return (isNaN(res) ? 0 : res) * sign;
+            };
+            duration = {
+                y: parseIso(match[2]),
+                M: parseIso(match[3]),
+                d: parseIso(match[4]),
+                h: parseIso(match[5]),
+                m: parseIso(match[6]),
+                s: parseIso(match[7]),
+                w: parseIso(match[8])
+            };
+        } else if (typeof duration === 'object' &&
+                ('from' in duration || 'to' in duration)) {
+            diffRes = momentsDifference(moment(duration.from), moment(duration.to));
+
+            duration = {};
+            duration.ms = diffRes.milliseconds;
+            duration.M = diffRes.months;
+        }
+
+        ret = new Duration(duration);
+
+        if (moment.isDuration(input) && hasOwnProp(input, '_locale')) {
+            ret._locale = input._locale;
+        }
+
+        return ret;
+    };
+
+    // version number
+    moment.version = VERSION;
+
+    // default format
+    moment.defaultFormat = isoFormat;
+
+    // constant that refers to the ISO standard
+    moment.ISO_8601 = function () {};
+
+    // Plugins that add properties should also add the key here (null value),
+    // so we can properly clone ourselves.
+    moment.momentProperties = momentProperties;
+
+    // This function will be called whenever a moment is mutated.
+    // It is intended to keep the offset in sync with the timezone.
+    moment.updateOffset = function () {};
+
+    // This function allows you to set a threshold for relative time strings
+    moment.relativeTimeThreshold = function (threshold, limit) {
+        if (relativeTimeThresholds[threshold] === undefined) {
+            return false;
+        }
+        if (limit === undefined) {
+            return relativeTimeThresholds[threshold];
+        }
+        relativeTimeThresholds[threshold] = limit;
+        return true;
+    };
+
+    moment.lang = deprecate(
+        'moment.lang is deprecated. Use moment.locale instead.',
+        function (key, value) {
+            return moment.locale(key, value);
+        }
+    );
+
+    // This function will load locale and then set the global locale.  If
+    // no arguments are passed in, it will simply return the current global
+    // locale key.
+    moment.locale = function (key, values) {
+        var data;
+        if (key) {
+            if (typeof(values) !== 'undefined') {
+                data = moment.defineLocale(key, values);
+            }
+            else {
+                data = moment.localeData(key);
+            }
+
+            if (data) {
+                moment.duration._locale = moment._locale = data;
+            }
+        }
+
+        return moment._locale._abbr;
+    };
+
+    moment.defineLocale = function (name, values) {
+        if (values !== null) {
+            values.abbr = name;
+            if (!locales[name]) {
+                locales[name] = new Locale();
+            }
+            locales[name].set(values);
+
+            // backwards compat for now: also set the locale
+            moment.locale(name);
+
+            return locales[name];
+        } else {
+            // useful for testing
+            delete locales[name];
+            return null;
+        }
+    };
+
+    moment.langData = deprecate(
+        'moment.langData is deprecated. Use moment.localeData instead.',
+        function (key) {
+            return moment.localeData(key);
+        }
+    );
+
+    // returns locale data
+    moment.localeData = function (key) {
+        var locale;
+
+        if (key && key._locale && key._locale._abbr) {
+            key = key._locale._abbr;
+        }
+
+        if (!key) {
+            return moment._locale;
+        }
+
+        if (!isArray(key)) {
+            //short-circuit everything else
+            locale = loadLocale(key);
+            if (locale) {
+                return locale;
+            }
+            key = [key];
+        }
+
+        return chooseLocale(key);
+    };
+
+    // compare moment object
+    moment.isMoment = function (obj) {
+        return obj instanceof Moment ||
+            (obj != null && hasOwnProp(obj, '_isAMomentObject'));
+    };
+
+    // for typechecking Duration objects
+    moment.isDuration = function (obj) {
+        return obj instanceof Duration;
+    };
+
+    for (i = lists.length - 1; i >= 0; --i) {
+        makeList(lists[i]);
+    }
+
+    moment.normalizeUnits = function (units) {
+        return normalizeUnits(units);
+    };
+
+    moment.invalid = function (flags) {
+        var m = moment.utc(NaN);
+        if (flags != null) {
+            extend(m._pf, flags);
+        }
+        else {
+            m._pf.userInvalidated = true;
+        }
+
+        return m;
+    };
+
+    moment.parseZone = function () {
+        return moment.apply(null, arguments).parseZone();
+    };
+
+    moment.parseTwoDigitYear = function (input) {
+        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
+    };
+
+    /************************************
+        Moment Prototype
+    ************************************/
+
+
+    extend(moment.fn = Moment.prototype, {
+
+        clone : function () {
+            return moment(this);
+        },
+
+        valueOf : function () {
+            return +this._d + ((this._offset || 0) * 60000);
+        },
+
+        unix : function () {
+            return Math.floor(+this / 1000);
+        },
+
+        toString : function () {
+            return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+        },
+
+        toDate : function () {
+            return this._offset ? new Date(+this) : this._d;
+        },
+
+        toISOString : function () {
+            var m = moment(this).utc();
+            if (0 < m.year() && m.year() <= 9999) {
+                if ('function' === typeof Date.prototype.toISOString) {
+                    // native implementation is ~50x faster, use it when we can
+                    return this.toDate().toISOString();
+                } else {
+                    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+                }
+            } else {
+                return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            }
+        },
+
+        toArray : function () {
+            var m = this;
+            return [
+                m.year(),
+                m.month(),
+                m.date(),
+                m.hours(),
+                m.minutes(),
+                m.seconds(),
+                m.milliseconds()
+            ];
+        },
+
+        isValid : function () {
+            return isValid(this);
+        },
+
+        isDSTShifted : function () {
+            if (this._a) {
+                return this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0;
+            }
+
+            return false;
+        },
+
+        parsingFlags : function () {
+            return extend({}, this._pf);
+        },
+
+        invalidAt: function () {
+            return this._pf.overflow;
+        },
+
+        utc : function (keepLocalTime) {
+            return this.zone(0, keepLocalTime);
+        },
+
+        local : function (keepLocalTime) {
+            if (this._isUTC) {
+                this.zone(0, keepLocalTime);
+                this._isUTC = false;
+
+                if (keepLocalTime) {
+                    this.add(this._dateTzOffset(), 'm');
+                }
+            }
+            return this;
+        },
+
+        format : function (inputString) {
+            var output = formatMoment(this, inputString || moment.defaultFormat);
+            return this.localeData().postformat(output);
+        },
+
+        add : createAdder(1, 'add'),
+
+        subtract : createAdder(-1, 'subtract'),
+
+        diff : function (input, units, asFloat) {
+            var that = makeAs(input, this),
+                zoneDiff = (this.zone() - that.zone()) * 6e4,
+                diff, output, daysAdjust;
+
+            units = normalizeUnits(units);
+
+            if (units === 'year' || units === 'month') {
+                // average number of days in the months in the given dates
+                diff = (this.daysInMonth() + that.daysInMonth()) * 432e5; // 24 * 60 * 60 * 1000 / 2
+                // difference in months
+                output = ((this.year() - that.year()) * 12) + (this.month() - that.month());
+                // adjust by taking difference in days, average number of days
+                // and dst in the given months.
+                daysAdjust = (this - moment(this).startOf('month')) -
+                    (that - moment(that).startOf('month'));
+                // same as above but with zones, to negate all dst
+                daysAdjust -= ((this.zone() - moment(this).startOf('month').zone()) -
+                        (that.zone() - moment(that).startOf('month').zone())) * 6e4;
+                output += daysAdjust / diff;
+                if (units === 'year') {
+                    output = output / 12;
+                }
+            } else {
+                diff = (this - that);
+                output = units === 'second' ? diff / 1e3 : // 1000
+                    units === 'minute' ? diff / 6e4 : // 1000 * 60
+                    units === 'hour' ? diff / 36e5 : // 1000 * 60 * 60
+                    units === 'day' ? (diff - zoneDiff) / 864e5 : // 1000 * 60 * 60 * 24, negate dst
+                    units === 'week' ? (diff - zoneDiff) / 6048e5 : // 1000 * 60 * 60 * 24 * 7, negate dst
+                    diff;
+            }
+            return asFloat ? output : absRound(output);
+        },
+
+        from : function (time, withoutSuffix) {
+            return moment.duration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+        },
+
+        fromNow : function (withoutSuffix) {
+            return this.from(moment(), withoutSuffix);
+        },
+
+        calendar : function (time) {
+            // We want to compare the start of today, vs this.
+            // Getting start-of-today depends on whether we're zone'd or not.
+            var now = time || moment(),
+                sod = makeAs(now, this).startOf('day'),
+                diff = this.diff(sod, 'days', true),
+                format = diff < -6 ? 'sameElse' :
+                    diff < -1 ? 'lastWeek' :
+                    diff < 0 ? 'lastDay' :
+                    diff < 1 ? 'sameDay' :
+                    diff < 2 ? 'nextDay' :
+                    diff < 7 ? 'nextWeek' : 'sameElse';
+            return this.format(this.localeData().calendar(format, this, moment(now)));
+        },
+
+        isLeapYear : function () {
+            return isLeapYear(this.year());
+        },
+
+        isDST : function () {
+            return (this.zone() < this.clone().month(0).zone() ||
+                this.zone() < this.clone().month(5).zone());
+        },
+
+        day : function (input) {
+            var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
+            if (input != null) {
+                input = parseWeekday(input, this.localeData());
+                return this.add(input - day, 'd');
+            } else {
+                return day;
+            }
+        },
+
+        month : makeAccessor('Month', true),
+
+        startOf : function (units) {
+            units = normalizeUnits(units);
+            // the following switch intentionally omits break keywords
+            // to utilize falling through the cases.
+            switch (units) {
+            case 'year':
+                this.month(0);
+                /* falls through */
+            case 'quarter':
+            case 'month':
+                this.date(1);
+                /* falls through */
+            case 'week':
+            case 'isoWeek':
+            case 'day':
+                this.hours(0);
+                /* falls through */
+            case 'hour':
+                this.minutes(0);
+                /* falls through */
+            case 'minute':
+                this.seconds(0);
+                /* falls through */
+            case 'second':
+                this.milliseconds(0);
+                /* falls through */
+            }
+
+            // weeks are a special case
+            if (units === 'week') {
+                this.weekday(0);
+            } else if (units === 'isoWeek') {
+                this.isoWeekday(1);
+            }
+
+            // quarters are also special
+            if (units === 'quarter') {
+                this.month(Math.floor(this.month() / 3) * 3);
+            }
+
+            return this;
+        },
+
+        endOf: function (units) {
+            units = normalizeUnits(units);
+            if (units === undefined || units === 'millisecond') {
+                return this;
+            }
+            return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+        },
+
+        isAfter: function (input, units) {
+            var inputMs;
+            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+            if (units === 'millisecond') {
+                input = moment.isMoment(input) ? input : moment(input);
+                return +this > +input;
+            } else {
+                inputMs = moment.isMoment(input) ? +input : +moment(input);
+                return inputMs < +this.clone().startOf(units);
+            }
+        },
+
+        isBefore: function (input, units) {
+            var inputMs;
+            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+            if (units === 'millisecond') {
+                input = moment.isMoment(input) ? input : moment(input);
+                return +this < +input;
+            } else {
+                inputMs = moment.isMoment(input) ? +input : +moment(input);
+                return +this.clone().endOf(units) < inputMs;
+            }
+        },
+
+        isSame: function (input, units) {
+            var inputMs;
+            units = normalizeUnits(units || 'millisecond');
+            if (units === 'millisecond') {
+                input = moment.isMoment(input) ? input : moment(input);
+                return +this === +input;
+            } else {
+                inputMs = +moment(input);
+                return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
+            }
+        },
+
+        min: deprecate(
+                 'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
+                 function (other) {
+                     other = moment.apply(null, arguments);
+                     return other < this ? this : other;
+                 }
+         ),
+
+        max: deprecate(
+                'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
+                function (other) {
+                    other = moment.apply(null, arguments);
+                    return other > this ? this : other;
+                }
+        ),
+
+        // keepLocalTime = true means only change the timezone, without
+        // affecting the local hour. So 5:31:26 +0300 --[zone(2, true)]-->
+        // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist int zone
+        // +0200, so we adjust the time as needed, to be valid.
+        //
+        // Keeping the time actually adds/subtracts (one hour)
+        // from the actual represented time. That is why we call updateOffset
+        // a second time. In case it wants us to change the offset again
+        // _changeInProgress == true case, then we have to adjust, because
+        // there is no such time in the given timezone.
+        zone : function (input, keepLocalTime) {
+            var offset = this._offset || 0,
+                localAdjust;
+            if (input != null) {
+                if (typeof input === 'string') {
+                    input = timezoneMinutesFromString(input);
+                }
+                if (Math.abs(input) < 16) {
+                    input = input * 60;
+                }
+                if (!this._isUTC && keepLocalTime) {
+                    localAdjust = this._dateTzOffset();
+                }
+                this._offset = input;
+                this._isUTC = true;
+                if (localAdjust != null) {
+                    this.subtract(localAdjust, 'm');
+                }
+                if (offset !== input) {
+                    if (!keepLocalTime || this._changeInProgress) {
+                        addOrSubtractDurationFromMoment(this,
+                                moment.duration(offset - input, 'm'), 1, false);
+                    } else if (!this._changeInProgress) {
+                        this._changeInProgress = true;
+                        moment.updateOffset(this, true);
+                        this._changeInProgress = null;
+                    }
+                }
+            } else {
+                return this._isUTC ? offset : this._dateTzOffset();
+            }
+            return this;
+        },
+
+        zoneAbbr : function () {
+            return this._isUTC ? 'UTC' : '';
+        },
+
+        zoneName : function () {
+            return this._isUTC ? 'Coordinated Universal Time' : '';
+        },
+
+        parseZone : function () {
+            if (this._tzm) {
+                this.zone(this._tzm);
+            } else if (typeof this._i === 'string') {
+                this.zone(this._i);
+            }
+            return this;
+        },
+
+        hasAlignedHourOffset : function (input) {
+            if (!input) {
+                input = 0;
+            }
+            else {
+                input = moment(input).zone();
+            }
+
+            return (this.zone() - input) % 60 === 0;
+        },
+
+        daysInMonth : function () {
+            return daysInMonth(this.year(), this.month());
+        },
+
+        dayOfYear : function (input) {
+            var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 864e5) + 1;
+            return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+        },
+
+        quarter : function (input) {
+            return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
+        },
+
+        weekYear : function (input) {
+            var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
+            return input == null ? year : this.add((input - year), 'y');
+        },
+
+        isoWeekYear : function (input) {
+            var year = weekOfYear(this, 1, 4).year;
+            return input == null ? year : this.add((input - year), 'y');
+        },
+
+        week : function (input) {
+            var week = this.localeData().week(this);
+            return input == null ? week : this.add((input - week) * 7, 'd');
+        },
+
+        isoWeek : function (input) {
+            var week = weekOfYear(this, 1, 4).week;
+            return input == null ? week : this.add((input - week) * 7, 'd');
+        },
+
+        weekday : function (input) {
+            var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
+            return input == null ? weekday : this.add(input - weekday, 'd');
+        },
+
+        isoWeekday : function (input) {
+            // behaves the same as moment#day except
+            // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
+            // as a setter, sunday should belong to the previous week.
+            return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
+        },
+
+        isoWeeksInYear : function () {
+            return weeksInYear(this.year(), 1, 4);
+        },
+
+        weeksInYear : function () {
+            var weekInfo = this.localeData()._week;
+            return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
+        },
+
+        get : function (units) {
+            units = normalizeUnits(units);
+            return this[units]();
+        },
+
+        set : function (units, value) {
+            units = normalizeUnits(units);
+            if (typeof this[units] === 'function') {
+                this[units](value);
+            }
+            return this;
+        },
+
+        // If passed a locale key, it will set the locale for this
+        // instance.  Otherwise, it will return the locale configuration
+        // variables for this instance.
+        locale : function (key) {
+            var newLocaleData;
+
+            if (key === undefined) {
+                return this._locale._abbr;
+            } else {
+                newLocaleData = moment.localeData(key);
+                if (newLocaleData != null) {
+                    this._locale = newLocaleData;
+                }
+                return this;
+            }
+        },
+
+        lang : deprecate(
+            'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
+            function (key) {
+                if (key === undefined) {
+                    return this.localeData();
+                } else {
+                    return this.locale(key);
+                }
+            }
+        ),
+
+        localeData : function () {
+            return this._locale;
+        },
+
+        _dateTzOffset : function () {
+            // On Firefox.24 Date#getTimezoneOffset returns a floating point.
+            // https://github.com/moment/moment/pull/1871
+            return Math.round(this._d.getTimezoneOffset() / 15) * 15;
+        }
+    });
+
+    function rawMonthSetter(mom, value) {
+        var dayOfMonth;
+
+        // TODO: Move this out of here!
+        if (typeof value === 'string') {
+            value = mom.localeData().monthsParse(value);
+            // TODO: Another silent failure?
+            if (typeof value !== 'number') {
+                return mom;
+            }
+        }
+
+        dayOfMonth = Math.min(mom.date(),
+                daysInMonth(mom.year(), value));
+        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
+        return mom;
+    }
+
+    function rawGetter(mom, unit) {
+        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
+    }
+
+    function rawSetter(mom, unit, value) {
+        if (unit === 'Month') {
+            return rawMonthSetter(mom, value);
+        } else {
+            return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+        }
+    }
+
+    function makeAccessor(unit, keepTime) {
+        return function (value) {
+            if (value != null) {
+                rawSetter(this, unit, value);
+                moment.updateOffset(this, keepTime);
+                return this;
+            } else {
+                return rawGetter(this, unit);
+            }
+        };
+    }
+
+    moment.fn.millisecond = moment.fn.milliseconds = makeAccessor('Milliseconds', false);
+    moment.fn.second = moment.fn.seconds = makeAccessor('Seconds', false);
+    moment.fn.minute = moment.fn.minutes = makeAccessor('Minutes', false);
+    // Setting the hour should keep the time, because the user explicitly
+    // specified which hour he wants. So trying to maintain the same hour (in
+    // a new timezone) makes sense. Adding/subtracting hours does not follow
+    // this rule.
+    moment.fn.hour = moment.fn.hours = makeAccessor('Hours', true);
+    // moment.fn.month is defined separately
+    moment.fn.date = makeAccessor('Date', true);
+    moment.fn.dates = deprecate('dates accessor is deprecated. Use date instead.', makeAccessor('Date', true));
+    moment.fn.year = makeAccessor('FullYear', true);
+    moment.fn.years = deprecate('years accessor is deprecated. Use year instead.', makeAccessor('FullYear', true));
+
+    // add plural methods
+    moment.fn.days = moment.fn.day;
+    moment.fn.months = moment.fn.month;
+    moment.fn.weeks = moment.fn.week;
+    moment.fn.isoWeeks = moment.fn.isoWeek;
+    moment.fn.quarters = moment.fn.quarter;
+
+    // add aliased format methods
+    moment.fn.toJSON = moment.fn.toISOString;
+
+    /************************************
+        Duration Prototype
+    ************************************/
+
+
+    function daysToYears (days) {
+        // 400 years have 146097 days (taking into account leap year rules)
+        return days * 400 / 146097;
+    }
+
+    function yearsToDays (years) {
+        // years * 365 + absRound(years / 4) -
+        //     absRound(years / 100) + absRound(years / 400);
+        return years * 146097 / 400;
+    }
+
+    extend(moment.duration.fn = Duration.prototype, {
+
+        _bubble : function () {
+            var milliseconds = this._milliseconds,
+                days = this._days,
+                months = this._months,
+                data = this._data,
+                seconds, minutes, hours, years = 0;
+
+            // The following code bubbles up values, see the tests for
+            // examples of what that means.
+            data.milliseconds = milliseconds % 1000;
+
+            seconds = absRound(milliseconds / 1000);
+            data.seconds = seconds % 60;
+
+            minutes = absRound(seconds / 60);
+            data.minutes = minutes % 60;
+
+            hours = absRound(minutes / 60);
+            data.hours = hours % 24;
+
+            days += absRound(hours / 24);
+
+            // Accurately convert days to years, assume start from year 0.
+            years = absRound(daysToYears(days));
+            days -= absRound(yearsToDays(years));
+
+            // 30 days to a month
+            // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
+            months += absRound(days / 30);
+            days %= 30;
+
+            // 12 months -> 1 year
+            years += absRound(months / 12);
+            months %= 12;
+
+            data.days = days;
+            data.months = months;
+            data.years = years;
+        },
+
+        abs : function () {
+            this._milliseconds = Math.abs(this._milliseconds);
+            this._days = Math.abs(this._days);
+            this._months = Math.abs(this._months);
+
+            this._data.milliseconds = Math.abs(this._data.milliseconds);
+            this._data.seconds = Math.abs(this._data.seconds);
+            this._data.minutes = Math.abs(this._data.minutes);
+            this._data.hours = Math.abs(this._data.hours);
+            this._data.months = Math.abs(this._data.months);
+            this._data.years = Math.abs(this._data.years);
+
+            return this;
+        },
+
+        weeks : function () {
+            return absRound(this.days() / 7);
+        },
+
+        valueOf : function () {
+            return this._milliseconds +
+              this._days * 864e5 +
+              (this._months % 12) * 2592e6 +
+              toInt(this._months / 12) * 31536e6;
+        },
+
+        humanize : function (withSuffix) {
+            var output = relativeTime(this, !withSuffix, this.localeData());
+
+            if (withSuffix) {
+                output = this.localeData().pastFuture(+this, output);
+            }
+
+            return this.localeData().postformat(output);
+        },
+
+        add : function (input, val) {
+            // supports only 2.0-style add(1, 's') or add(moment)
+            var dur = moment.duration(input, val);
+
+            this._milliseconds += dur._milliseconds;
+            this._days += dur._days;
+            this._months += dur._months;
+
+            this._bubble();
+
+            return this;
+        },
+
+        subtract : function (input, val) {
+            var dur = moment.duration(input, val);
+
+            this._milliseconds -= dur._milliseconds;
+            this._days -= dur._days;
+            this._months -= dur._months;
+
+            this._bubble();
+
+            return this;
+        },
+
+        get : function (units) {
+            units = normalizeUnits(units);
+            return this[units.toLowerCase() + 's']();
+        },
+
+        as : function (units) {
+            var days, months;
+            units = normalizeUnits(units);
+
+            if (units === 'month' || units === 'year') {
+                days = this._days + this._milliseconds / 864e5;
+                months = this._months + daysToYears(days) * 12;
+                return units === 'month' ? months : months / 12;
+            } else {
+                // handle milliseconds separately because of floating point math errors (issue #1867)
+                days = this._days + Math.round(yearsToDays(this._months / 12));
+                switch (units) {
+                    case 'week': return days / 7 + this._milliseconds / 6048e5;
+                    case 'day': return days + this._milliseconds / 864e5;
+                    case 'hour': return days * 24 + this._milliseconds / 36e5;
+                    case 'minute': return days * 24 * 60 + this._milliseconds / 6e4;
+                    case 'second': return days * 24 * 60 * 60 + this._milliseconds / 1000;
+                    // Math.floor prevents floating point math errors here
+                    case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + this._milliseconds;
+                    default: throw new Error('Unknown unit ' + units);
+                }
+            }
+        },
+
+        lang : moment.fn.lang,
+        locale : moment.fn.locale,
+
+        toIsoString : deprecate(
+            'toIsoString() is deprecated. Please use toISOString() instead ' +
+            '(notice the capitals)',
+            function () {
+                return this.toISOString();
+            }
+        ),
+
+        toISOString : function () {
+            // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
+            var years = Math.abs(this.years()),
+                months = Math.abs(this.months()),
+                days = Math.abs(this.days()),
+                hours = Math.abs(this.hours()),
+                minutes = Math.abs(this.minutes()),
+                seconds = Math.abs(this.seconds() + this.milliseconds() / 1000);
+
+            if (!this.asSeconds()) {
+                // this is the same as C#'s (Noda) and python (isodate)...
+                // but not other JS (goog.date)
+                return 'P0D';
+            }
+
+            return (this.asSeconds() < 0 ? '-' : '') +
+                'P' +
+                (years ? years + 'Y' : '') +
+                (months ? months + 'M' : '') +
+                (days ? days + 'D' : '') +
+                ((hours || minutes || seconds) ? 'T' : '') +
+                (hours ? hours + 'H' : '') +
+                (minutes ? minutes + 'M' : '') +
+                (seconds ? seconds + 'S' : '');
+        },
+
+        localeData : function () {
+            return this._locale;
+        }
+    });
+
+    moment.duration.fn.toString = moment.duration.fn.toISOString;
+
+    function makeDurationGetter(name) {
+        moment.duration.fn[name] = function () {
+            return this._data[name];
+        };
+    }
+
+    for (i in unitMillisecondFactors) {
+        if (hasOwnProp(unitMillisecondFactors, i)) {
+            makeDurationGetter(i.toLowerCase());
+        }
+    }
+
+    moment.duration.fn.asMilliseconds = function () {
+        return this.as('ms');
+    };
+    moment.duration.fn.asSeconds = function () {
+        return this.as('s');
+    };
+    moment.duration.fn.asMinutes = function () {
+        return this.as('m');
+    };
+    moment.duration.fn.asHours = function () {
+        return this.as('h');
+    };
+    moment.duration.fn.asDays = function () {
+        return this.as('d');
+    };
+    moment.duration.fn.asWeeks = function () {
+        return this.as('weeks');
+    };
+    moment.duration.fn.asMonths = function () {
+        return this.as('M');
+    };
+    moment.duration.fn.asYears = function () {
+        return this.as('y');
+    };
+
+    /************************************
+        Default Locale
+    ************************************/
+
+
+    // Set default locale, other locale will inherit from English.
+    moment.locale('en', {
+        ordinalParse: /\d{1,2}(th|st|nd|rd)/,
+        ordinal : function (number) {
+            var b = number % 10,
+                output = (toInt(number % 100 / 10) === 1) ? 'th' :
+                (b === 1) ? 'st' :
+                (b === 2) ? 'nd' :
+                (b === 3) ? 'rd' : 'th';
+            return number + output;
+        }
+    });
+
+    /* EMBED_LOCALES */
+
+    /************************************
+        Exposing Moment
+    ************************************/
+
+    function makeGlobal(shouldDeprecate) {
+        /*global ender:false */
+        if (typeof ender !== 'undefined') {
+            return;
+        }
+        oldGlobalMoment = globalScope.moment;
+        if (shouldDeprecate) {
+            globalScope.moment = deprecate(
+                    'Accessing Moment through the global scope is ' +
+                    'deprecated, and will be removed in an upcoming ' +
+                    'release.',
+                    moment);
+        } else {
+            globalScope.moment = moment;
+        }
+    }
+
+    // CommonJS module is defined
+    if (hasModule) {
+        module.exports = moment;
+    } else if (typeof define === 'function' && define.amd) {
+        define('moment', function (require, exports, module) {
+            if (module.config && module.config() && module.config().noGlobal === true) {
+                // release the global variable
+                globalScope.moment = oldGlobalMoment;
+            }
+
+            return moment;
+        });
+        makeGlobal(true);
+    } else {
+        makeGlobal();
+    }
+}).call(this);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js":[function(require,module,exports){
 (function (Buffer){
 // wrapper for non-node envs
@@ -6136,19 +9076,20 @@ module.exports = CreditCardAccount;
  * @class
  */
 function FinancialInstitution() {
+  throw new Error("interface");
 }
 
 /**
  * The financial institution data defining this FI.
  *
- * @return {FinancialInstitutionData} The financial institution data.
+ * @return {Promise<FinancialInstitutionData>} The financial institution data.
  */
 FinancialInstitution.prototype.getData = function() { throw new Error("not implemented"); };
 
 /**
  * Read the specified financial institution profile. Implies a network call.
  *
- * @return {FinancialInstitutionProfile} The profile.
+ * @return {Promise<FinancialInstitutionProfile>} The profile.
  * @throws OFXException if something goes awry.
  */
 FinancialInstitution.prototype.readProfile = function() { throw new Error("not implemented"); };
@@ -6158,7 +9099,7 @@ FinancialInstitution.prototype.readProfile = function() { throw new Error("not i
  *
  * @param {String} username The username.
  * @param {String} password The password.
- * @return {Collection<AccountProfile>} The profiles.
+ * @return {Promise<AccountProfile[]>} The profiles.
  */
 FinancialInstitution.prototype.readAccountProfiles = function(/*username, password*/) { throw new Error("not implemented"); };
 
@@ -6614,32 +9555,25 @@ var OFXApplicationContext = require("./OFXApplicationContext");
  * 
  * @class
  */
-function DefaultApplicationContext () {
+function DefaultApplicationContext (/*String*/ appId, /*String*/ appVersion) {
 
   /**
    * @name DefaultApplicationContext#appId
    * @type String
    * @access private
    */
-  this.appId = null;
+  this.appId = appId;
 
   /**
    * @name DefaultApplicationContext#appVersion
    * @type String
    * @access private
    */
-  this.appVersion = null;
+  this.appVersion = appVersion;
 }
 
 inherit(DefaultApplicationContext, "implements", OFXApplicationContext);
 
-
-
-
-DefaultApplicationContext.prototype.DefaultApplicationContext = function(/*String*/ appId, /*String*/ appVersion) {
-  this.appId = appId;
-  this.appVersion = appVersion;
-};
 
 
 DefaultApplicationContext.prototype.getAppId = function() {
@@ -6728,6 +9662,7 @@ var OFXApplicationContextHolder = {};
  * @type OFXApplicationContext
  */
 OFXApplicationContextHolder.CURRENT_CONTEXT = new DefaultApplicationContext("Money", "1600"); //some apps fail unless you're Quicken or Money...
+//OFXApplicationContextHolder.CURRENT_CONTEXT = new DefaultApplicationContext("QWIN", "0900"); //some apps fail unless you're Quicken or Money...
 
 
 
@@ -6881,61 +9816,45 @@ var MessageSetType = require("../../domain/data/MessageSetType");
  *
  * @class
  */
-function BaseAccountImpl() {
+function BaseAccountImpl(/*D*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
 
   /**
    * @name BaseAccountImpl#details
    * @access private
    */
-  this.details = null;
+  this.details = details;
 
   /**
    * @name BaseAccountImpl#messageType
    * @type MessageSetType
    * @access private
    */
-  this.messageType = null;
+  this.messageType = this.getMessageSetType(details);
 
   /**
    * @name BaseAccountImpl#username
    * @type String
    * @access private
    */
-  this.username = null;
+  this.username = username;
 
   /**
    * @name BaseAccountImpl#password
    * @type String
    * @access private
    */
-  this.password = null;
+  this.password = password;
 
   /**
    * @name BaseAccountImpl#institution
    * @type FinancialInstitutionImpl
    * @access private
    */
-  this.institution = null;
-
-  /**
-   * @name BaseAccountImpl#OFXException
-   * @type throws
-   */
-  this.OFXException = null;
+  this.institution = institution;
 }
 
 inherit(BaseAccountImpl, "implements", FinancialInstitutionAccount);
 
-
-
-
-BaseAccountImpl.prototype.BaseAccountImpl = function(/*D*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
-  this.details = details;
-  this.username = username;
-  this.password = password;
-  this.institution = institution;
-  this.messageType = this.getMessageSetType(details);
-};
 
 
 /**
@@ -7053,14 +9972,14 @@ var FinancialInstitutionData = require("../FinancialInstitutionData");
  *
  * @class
  */
-function BaseFinancialInstitutionData () {
+function BaseFinancialInstitutionData (/*string*/ id) {
 
   /**
    * @name BaseFinancialInstitutionData#id
    * @type String
    * @access private
    */
-  this.id = null;
+  this.id = id;
 
   /**
    * @name BaseFinancialInstitutionData#fid
@@ -7100,16 +10019,6 @@ function BaseFinancialInstitutionData () {
 
 inherit(BaseFinancialInstitutionData, "implements", FinancialInstitutionData);
 
-
-
-
-BaseFinancialInstitutionData.prototype.BaseFinancialInstitutionData = function() {
-};
-
-
-BaseFinancialInstitutionData.prototype.BaseFinancialInstitutionData = function(/*String*/ id) {
-  this.id = id;
-};
 
 
 BaseFinancialInstitutionData.prototype.getId = function() {
@@ -7331,7 +10240,7 @@ var Status = require("../../domain/data/common/Status");
 var StatusHolder = require("../../domain/data/common/StatusHolder");
 var SignonRequest = require("../../domain/data/signon/SignonRequest");
 var SignonRequestMessageSet = require("../../domain/data/signon/SignonRequestMessageSet");
-var FinancialInstitution = require("../FinancialInstitution");
+var FinancialInstitution = require("../../domain/data/signon/FinancialInstitution");
 var ProfileRequestMessageSet = require("../../domain/data/profile/ProfileRequestMessageSet");
 var SignupRequestMessageSet = require("../../domain/data/signup/SignupRequestMessageSet");
 var BankingAccountImpl = require("./BankingAccountImpl");
@@ -7352,29 +10261,7 @@ var ProfileRequest = require("../../domain/data/profile/ProfileRequest");
  *
  * @class
  */
-function FinancialInstitutionImpl () {
-
-  /**
-   * @name FinancialInstitutionImpl#connection
-   * @type OFXConnection
-   * @access private
-   */
-  this.connection = null;
-
-  /**
-   * @name FinancialInstitutionImpl#data
-   * @type FinancialInstitutionData
-   * @access private
-   */
-  this.data = null;
-}
-
-inherit(FinancialInstitutionImpl, "implements", FinancialInstitution);
-
-
-
-
-FinancialInstitutionImpl.prototype.FinancialInstitutionImpl = function(/*FinancialInstitutionData*/ data, /*OFXConnection*/ connection) {
+function FinancialInstitutionImpl (/*FinancialInstitutionData*/ data, /*OFXConnection*/ connection) {
   if (!data) {
     throw new Error("Data cannot be null");
   }
@@ -7382,9 +10269,23 @@ FinancialInstitutionImpl.prototype.FinancialInstitutionImpl = function(/*Financi
     throw new Error("An OFX connection must be supplied");
   }
 
-  this.data = data;
+  /**
+   * @name FinancialInstitutionImpl#connection
+   * @type OFXConnection
+   * @access private
+   */
   this.connection = connection;
-};
+
+  /**
+   * @name FinancialInstitutionImpl#data
+   * @type FinancialInstitutionData
+   * @access private
+   */
+  this.data = data;
+}
+
+inherit(FinancialInstitutionImpl, "implements", FinancialInstitution);
+
 
 
 // Inherited.
@@ -7393,9 +10294,12 @@ FinancialInstitutionImpl.prototype.readProfile = function() {
   var profileRequest = new ProfileRequestMessageSet();
   profileRequest.setProfileRequest(this.createProfileTransaction());
   request.getMessageSets().push(profileRequest);
-  var response = this.sendRequest(request, this.getData().getOFXURL());
-  this.doGeneralValidationChecks(request, response);
-  return this.getProfile(response);
+  var self = this;
+  return self.sendRequest(request, self.getData().getOFXURL())
+  .then(function(response) {
+    self.doGeneralValidationChecks(request, response);
+    return self.getProfile(response);
+  });
 };
 
 
@@ -7405,9 +10309,12 @@ FinancialInstitutionImpl.prototype.readAccountProfiles = function(/*String*/ use
   var signupRequest = new SignupRequestMessageSet();
   signupRequest.setAccountInfoRequest(this.createAccountInfoTransaction());
   request.getMessageSets().push(signupRequest);
-  var response = this.sendRequest(request, this.getData().getOFXURL());
-  this.doGeneralValidationChecks(request, response);
-  return this.getAccountProfiles(response);
+  var self = this;
+  return self.sendRequest(request, self.getData().getOFXURL())
+  .then(function(response) {
+    self.doGeneralValidationChecks(request, response);
+    return self.getAccountProfiles(response);
+  });
 };
 
 
@@ -7438,10 +10345,10 @@ FinancialInstitutionImpl.prototype.loadInvestmentAccount = function(/*Investment
  */
 FinancialInstitutionImpl.prototype.createAuthenticatedRequest = function(username, password) {
   var request = new RequestEnvelope();
-  var messageSets = {};
+  var messageSets = [];
   var signonRequest = new SignonRequestMessageSet();
   signonRequest.setSignonRequest(this.createSignonRequest(username, password));
-  messageSets[signonRequest] = signonRequest;
+  messageSets.push(signonRequest);
   request.setMessageSets(messageSets);
   return request;
 };
@@ -7549,9 +10456,10 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
         if (!uid) {
           throw new Error("Invalid response transaction: no UID.");
         }
-        else if (!transactionIds.remove(uid)) {
+        else if (!(uid in transactionIds)) {
           throw new Error("Response to an unknown transaction: " + uid + ".");
         }
+        delete transactionIds[uid];
       }
     }
 
@@ -7706,7 +10614,7 @@ FinancialInstitutionImpl.prototype.getData = function() {
 
 module.exports = FinancialInstitutionImpl;
 
-},{"../../domain/data/ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/RequestEnvelope":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestEnvelope.js","../../domain/data/TransactionWrappedRequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedRequestMessage.js","../../domain/data/TransactionWrappedResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedResponseMessage.js","../../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../../domain/data/common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js","../../domain/data/profile/ProfileRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequest.js","../../domain/data/profile/ProfileRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestMessageSet.js","../../domain/data/profile/ProfileRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js","../../domain/data/signon/SignonRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequest.js","../../domain/data/signon/SignonRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js","../../domain/data/signup/AccountInfoRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequest.js","../../domain/data/signup/AccountInfoRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequestTransaction.js","../../domain/data/signup/SignupRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/SignupRequestMessageSet.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","../context/OFXApplicationContextHolder":"/Users/aolson/Developer/ofx4js/src/client/context/OFXApplicationContextHolder.js","./BankingAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BankingAccountImpl.js","./CreditCardAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/CreditCardAccountImpl.js","./InvestmentAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionServiceImpl.js":[function(require,module,exports){
+},{"../../domain/data/ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/RequestEnvelope":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestEnvelope.js","../../domain/data/TransactionWrappedRequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedRequestMessage.js","../../domain/data/TransactionWrappedResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedResponseMessage.js","../../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../../domain/data/common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js","../../domain/data/profile/ProfileRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequest.js","../../domain/data/profile/ProfileRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestMessageSet.js","../../domain/data/profile/ProfileRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js","../../domain/data/signon/FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/FinancialInstitution.js","../../domain/data/signon/SignonRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequest.js","../../domain/data/signon/SignonRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js","../../domain/data/signup/AccountInfoRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequest.js","../../domain/data/signup/AccountInfoRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequestTransaction.js","../../domain/data/signup/SignupRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/SignupRequestMessageSet.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../context/OFXApplicationContextHolder":"/Users/aolson/Developer/ofx4js/src/client/context/OFXApplicationContextHolder.js","./BankingAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BankingAccountImpl.js","./CreditCardAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/CreditCardAccountImpl.js","./InvestmentAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionServiceImpl.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7811,48 +10719,39 @@ var SecurityListRequest = require("../../domain/data/seclist/SecurityListRequest
 /**
  * @class
  */
-function InvestmentAccountImpl () {
+function InvestmentAccountImpl (/*InvestmentAccountDetails*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
 
   /**
    * @name InvestmentAccountImpl#details
    * @type InvestmentAccountDetails
    * @access private
    */
-  this.details = null;
+  this.details = details;
 
   /**
    * @name InvestmentAccountImpl#username
    * @type String
    * @access private
    */
-  this.username = null;
+  this.username = username;
 
   /**
    * @name InvestmentAccountImpl#password
    * @type String
    * @access private
    */
-  this.password = null;
+  this.password = password;
 
   /**
    * @name InvestmentAccountImpl#institution
    * @type FinancialInstitutionImpl
    * @access private
    */
-  this.institution = null;
+  this.institution = institution;
 }
 
 inherit(InvestmentAccountImpl, "implements", InvestmentAccount);
 
-
-
-
-InvestmentAccountImpl.prototype.InvestmentAccountImpl = function(/*InvestmentAccountDetails*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
-  this.details = details;
-  this.username = username;
-  this.password = password;
-  this.institution = institution;
-};
 
 
 InvestmentAccountImpl.prototype.readStatement = function(/*Date*/ start, /*Date*/ end) {
@@ -8450,7 +11349,7 @@ function OFXConnection() {
  *
  * @param {RequestEnvelope} request The request to send.
  * @param {URL} url The URL to which to send the request.
- * @return {ResponseEnvelope} The response.
+ * @return {Promise<ResponseEnvelope>} The response.
  */
 OFXConnection.prototype.sendRequest = function(/*request, url*/) { throw new Error("not implemented"); };
 
@@ -8458,265 +11357,246 @@ OFXConnection.prototype.sendRequest = function(/*request, url*/) { throw new Err
 module.exports = OFXConnection;
 
 },{}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXV1Connection.js":[function(require,module,exports){
-///*
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *   http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//"use strict";
-//
-//var inherit = require("../inherit");
-//
-//var RequestEnvelope = require("domain/data/RequestEnvelope");
-//var ResponseEnvelope = require("domain/data/ResponseEnvelope");
-//var OFXParseException = require("io/OFXParseException");
-//var OFXWriter = require("io/OFXWriter");
-//var AggregateMarshaller = require("io/AggregateMarshaller");
-//var OFXV1Writer = require("io/v1/OFXV1Writer");
-//var AggregateUnmarshaller = require("io/AggregateUnmarshaller");
-//
-///**
-// * Base implementation for an OFX connection.
-// *
-// * @class
-// */
-//function OFXV1Connection () {
-//
-//  /**
-//   * @name OFXV1Connection#LOG
-//   * @type Log
-//   */
-//  this.LOG = LogFactory.getLog(OFXV1Connection.class);
-//
-//  /**
-//   * @name OFXV1Connection#marshaller
-//   * @type AggregateMarshaller
-//   * @access private
-//   */
-//  this.marshaller = new AggregateMarshaller();
-//
-//  /**
-//   * @name OFXV1Connection#unmarshaller
-//   * @type AggregateUnmarshaller<ResponseEnvelope>
-//   * @access private
-//   */
-//  this.unmarshaller = new AggregateUnmarshaller<ResponseEnvelope>(ResponseEnvelope.class);
-//}
-//
-//inherit(OFXV1Connection, "implements", OFXConnection);
-//
-//
-//
-//
-//// Inherited.
-//OFXV1Connection.prototype.sendRequest = function(/*RequestEnvelope*/ request, /*URL*/ url) {
-//  try {
-//    if (!url.getProtocol().toLowerCase().startsWith("http")) {
-//      throw new IllegalArgumentException("Invalid URL: " + url + " only http(s) is supported.");
-//    }
-//
-//    //marshal to memory so we can determine the size...
-//    ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
-//    OFXWriter ofxWriter = newOFXWriter(outBuffer);
-//    getMarshaller().marshal(request, ofxWriter);
-//    ofxWriter.close();
-//    logRequest(outBuffer);
-//    InputStream in = sendBuffer(url, outBuffer);
-//    return unmarshal(in);
-//  }
-//  catch (IOException e) {
-//    throw new OFXConnectionException(e);
-//  }
-//};
-//
-//
-///**
-// * Log a request buffer.
-// *
-// * @param {ByteArrayOutputStream} outBuffer The buffer to log.
-// */
-//OFXV1Connection.prototype.logRequest = function(outBuffer) {
-//  if (LOG.isInfoEnabled()) {
-//    LOG.info("Marshalling " + outBuffer.size() + " bytes of the OFX request.");
-//    if (LOG.isDebugEnabled()) {
-//      LOG.debug(outBuffer.toString("utf-8"));
-//    }
-//  }
-//};
-//
-//
-///**
-// * Send the specified buffer to the specified URL.
-// *
-// * @param {URL} url The URL.
-// * @param {ByteArrayOutputStream} outBuffer The buffer.
-// * @return {InputStream} The response.
-// */
-//OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
-//  HttpURLConnection connection = openConnection(url);
-//  connection.setRequestMethod("POST");
-//  connection.setRequestProperty("Content-Type", "application/x-ofx");
-//  connection.setRequestProperty("Content-Length", String.valueOf(outBuffer.size()));
-//  connection.setRequestProperty("Accept", "*/*, application/x-ofx");
-//  connection.setDoOutput(true);
-//  connection.connect();
-//
-//  OutputStream out  = connection.getOutputStream();
-//  out.write(outBuffer.toByteArray());
-//
-//  InputStream in;
-//  int responseCode = connection.getResponseCode();
-//  if (responseCode >= 200 && responseCode < 300) {
-//    in = connection.getInputStream();
-//  }
-//  else if (responseCode >= 400 && responseCode < 500) {
-//    throw new OFXServerException("Error with client request: " + connection.getResponseMessage(), responseCode);
-//  }
-//  else {
-//    throw new OFXServerException("Invalid response code from OFX server: " + connection.getResponseMessage(), responseCode);
-//  }
-//
-//  return in;
-//};
-//
-//
-///**
-// * Unmarshal the input stream.
-// *
-// * @param {InputStream} in The input stream.
-// * @return {ResponseEnvelope} The response envelope.
-// */
-//OFXV1Connection.prototype.unmarshal = function(in) {
-//  try {
-//    return getUnmarshaller().unmarshal(in);
-//  }
-//  catch (OFXParseException e) {
-//    throw new OFXConnectionException("Unable to parse the OFX response.", e);
-//  }
-//};
-//
-//
-///**
-// * Open a connection to the specified URL.
-// *
-// * @param {URL} url The URL.
-// * @return {HttpURLConnection} The connection.
-// */
-//OFXV1Connection.prototype.openConnection = function(url) {
-//  return (HttpURLConnection) url.openConnection();
-//};
-//
-//
-///**
-// * Create a new OFX writer.
-// *
-// * @param {OutputStream} out The output stream for the writer.
-// * @return {OFXWriter} The OFX writer.
-// */
-//OFXV1Connection.prototype.newOFXWriter = function(out) {
-//  return new OFXV1Writer(out);
-//};
-//
-//
-///**
-// * The marshaller.
-// *
-// * @return {AggregateMarshaller} The marshaller.
-// */
-//OFXV1Connection.prototype.getMarshaller = function() {
-//  return marshaller;
-//};
-//
-//
-///**
-// * The marshaller.
-// *
-// * @param {AggregateMarshaller} marshaller The marshaller.
-// */
-//OFXV1Connection.prototype.setMarshaller = function(marshaller) {
-//  this.marshaller = marshaller;
-//};
-//
-//
-///**
-// * The unmarshaller.
-// *
-// * @return {AggregateUnmarshaller<ResponseEnvelope>} The unmarshaller.
-// */
-//OFXV1Connection.prototype.getUnmarshaller = function() {
-//  return unmarshaller;
-//};
-//
-//
-///**
-// * The unmarshaller.
-// *
-// * @param {AggregateUnmarshaller<ResponseEnvelope>} unmarshaller The unmarshaller.
-// */
-//OFXV1Connection.prototype.setUnmarshaller = function(unmarshaller) {
-//  this.unmarshaller = unmarshaller;
-//};
-//
-//
-//
-//
-//module.exports = OFXV1Connection;
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-},{}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXV2Connection.js":[function(require,module,exports){
-///*
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *   http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//"use strict";
-//
-//var inherit = require("../inherit");
-//
-//var OFXWriter = require("io/OFXWriter");
-//var OFXV2Writer = require("io/v2/OFXV2Writer");
-//
-////import java.io.OutputStream;
-//
-///**
-// * @author Ryan Heaton
-// */
-//function OFXV2Connection () {
-//}
-//
-//inherit(OFXV2Connection, "extends", OFXV1Connection);
-//
-//
-//
-//
-//// @Override
-//OFXV2Connection.prototype.newOFXWriter = function(/*OutputStream*/ out) {
-//  return new OFXV2Writer(out);
-//};
-//
-//
-//
-//
-//module.exports = OFXV2Connection;
+/*global XMLHttpRequest*/
 
-},{}],"/Users/aolson/Developer/ofx4js/src/client/net/index.js":[function(require,module,exports){
+"use strict";
+
+var inherit = require("../../util/inherit");
+
+var ResponseEnvelope = require("../../domain/data/ResponseEnvelope");
+var OFXConnection = require("./OFXConnection");
+var AggregateMarshaller = require("../../io/AggregateMarshaller");
+var OFXV1Writer = require("../../io/v1/OFXV1Writer");
+var AggregateUnmarshaller = require("../../io/AggregateUnmarshaller");
+var LOG = require("../../util/log");
+
+/**
+ * Base implementation for an OFX connection.
+ *
+ * @class
+ */
+function OFXV1Connection () {
+
+  /**
+   * @name OFXV1Connection#marshaller
+   * @type AggregateMarshaller
+   * @access private
+   */
+  this.marshaller = new AggregateMarshaller();
+
+  /**
+   * @name OFXV1Connection#unmarshaller
+   * @type AggregateUnmarshaller<ResponseEnvelope>
+   * @access private
+   */
+  this.unmarshaller = new AggregateUnmarshaller(ResponseEnvelope);
+}
+
+inherit(OFXV1Connection, "implements", OFXConnection);
+
+
+
+
+// Inherited.
+OFXV1Connection.prototype.sendRequest = function(/*RequestEnvelope*/ request, /*URL*/ url) {
+  //marshal to memory so we can determine the size...
+  var outBuffer = [];
+  var ofxWriter = this.newOFXWriter(outBuffer);
+  this.getMarshaller().marshal(request, ofxWriter);
+  ofxWriter.close();
+  this.logRequest(outBuffer);
+  var self = this;
+  return self.sendBuffer(url, outBuffer)
+  .then(function(in_) {
+    self.logResponse(in_);
+    return self.unmarshal(in_);
+  });
+};
+
+
+/**
+ * Log a request buffer.
+ *
+ * @param {ByteArrayOutputStream} outBuffer The buffer to log.
+ */
+OFXV1Connection.prototype.logRequest = function(outBuffer) {
+  if (LOG.network) {
+    console.log("Sending OFX request:", outBuffer.join(""));
+  }
+};
+
+
+/**
+ * Log a response buffer.
+ *
+ * @param {ByteArrayOutputStream} outBuffer The buffer to log.
+ */
+OFXV1Connection.prototype.logResponse = function(inBuffer) {
+  if (LOG.network) {
+    console.log("Received OFX response:", inBuffer);
+  }
+};
+
+
+/**
+ * Send the specified buffer to the specified URL.
+ *
+ * @param {URL} url The URL.
+ * @param {ByteArrayOutputStream} outBuffer The buffer.
+ * @return {InputStream} The response.
+ */
+OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
+  var outText = outBuffer.join("");
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest();
+    request.open("POST", url, true);
+    request.setRequestHeader("Content-Type", "application/x-ofx");
+    //request.setRequestHeader("Content-Length", outBuffer.length);
+    request.setRequestHeader("Accept", "*/*, application/x-ofx");
+    request.onload = function() {
+      if (request.status >= 200 && request.status < 300) {
+        resolve(request.response);
+      } else if (request.status >= 400 && request.status < 500) {
+        reject(Error("Error with client request: " + request.statusText));
+      } else {
+        reject(Error("Invalid response code from OFX server: " + request.statusText));
+      }
+    };
+    request.onerror = function() {
+      reject(Error("Network error"));
+    };
+    
+    request.send(outText);
+  });
+};
+
+
+/**
+ * Unmarshal the input stream.
+ *
+ * @param {InputStream} in The input stream.
+ * @return {ResponseEnvelope} The response envelope.
+ */
+OFXV1Connection.prototype.unmarshal = function(in_) {
+  return this.getUnmarshaller().unmarshal(in_);
+};
+
+
+/**
+ * Create a new OFX writer.
+ *
+ * @param {OutputStream} out The output stream for the writer.
+ * @return {OFXWriter} The OFX writer.
+ */
+OFXV1Connection.prototype.newOFXWriter = function(out) {
+  return new OFXV1Writer(out);
+};
+
+
+/**
+ * The marshaller.
+ *
+ * @return {AggregateMarshaller} The marshaller.
+ */
+OFXV1Connection.prototype.getMarshaller = function() {
+  return this.marshaller;
+};
+
+
+/**
+ * The marshaller.
+ *
+ * @param {AggregateMarshaller} marshaller The marshaller.
+ */
+OFXV1Connection.prototype.setMarshaller = function(marshaller) {
+  this.marshaller = marshaller;
+};
+
+
+/**
+ * The unmarshaller.
+ *
+ * @return {AggregateUnmarshaller<ResponseEnvelope>} The unmarshaller.
+ */
+OFXV1Connection.prototype.getUnmarshaller = function() {
+  return this.unmarshaller;
+};
+
+
+/**
+ * The unmarshaller.
+ *
+ * @param {AggregateUnmarshaller<ResponseEnvelope>} unmarshaller The unmarshaller.
+ */
+OFXV1Connection.prototype.setUnmarshaller = function(unmarshaller) {
+  this.unmarshaller = unmarshaller;
+};
+
+
+
+
+module.exports = OFXV1Connection;
+
+},{"../../domain/data/ResponseEnvelope":"/Users/aolson/Developer/ofx4js/src/domain/data/ResponseEnvelope.js","../../io/AggregateMarshaller":"/Users/aolson/Developer/ofx4js/src/io/AggregateMarshaller.js","../../io/AggregateUnmarshaller":"/Users/aolson/Developer/ofx4js/src/io/AggregateUnmarshaller.js","../../io/v1/OFXV1Writer":"/Users/aolson/Developer/ofx4js/src/io/v1/OFXV1Writer.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../../util/log":"/Users/aolson/Developer/ofx4js/src/util/log.js","./OFXConnection":"/Users/aolson/Developer/ofx4js/src/client/net/OFXConnection.js"}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXV2Connection.js":[function(require,module,exports){
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
+var inherit = require("../../util/inherit");
+
+var OFXV2Writer = require("../../io/v2/OFXV2Writer");
+var OFXV1Connection = require("./OFXV1Connection");
+
+
+/**
+ * @class
+ */
+function OFXV2Connection () {
+  OFXV2Connection.call(this);
+}
+
+inherit(OFXV2Connection, "extends", OFXV1Connection);
+
+
+
+
+// @Override
+OFXV2Connection.prototype.newOFXWriter = function(/*OutputStream*/ out) {
+  return new OFXV2Writer(out);
+};
+
+
+
+
+module.exports = OFXV2Connection;
+
+},{"../../io/v2/OFXV2Writer":"/Users/aolson/Developer/ofx4js/src/io/v2/OFXV2Writer.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./OFXV1Connection":"/Users/aolson/Developer/ofx4js/src/client/net/OFXV1Connection.js"}],"/Users/aolson/Developer/ofx4js/src/client/net/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -8748,9 +11628,9 @@ module.exports = {
  */
 var ApplicationSecurity = {
 
-  NONE: 0,
+  NONE: "NONE",
 
-  TYPE1: 1
+  TYPE1: "TYPE1"
 };
 
 
@@ -8930,7 +11810,7 @@ var UUID = require("uuid");
  * @class
  * @see "Section 2.4.3, OFX Spec"
  */
-function RequestEnvelope () {
+function RequestEnvelope (/*String*/ UID) {
 
   /**
    * @name RequestEnvelope#security
@@ -8944,7 +11824,7 @@ function RequestEnvelope () {
    * @type String
    * @access private
    */
-  this.UID = null;
+  this.UID = UID ? UID : UUID.v4();
 
   /**
    * @name RequestEnvelope#lastProcessedUID
@@ -8965,17 +11845,6 @@ function RequestEnvelope () {
 
 Aggregate.add("OFX", RequestEnvelope);
 
-
-//headers
-//content
-RequestEnvelope.prototype.RequestEnvelope = function() {
-  this.UID = UUID.v4();
-};
-
-
-RequestEnvelope.prototype.RequestEnvelope = function(/*String*/ UID) {
-  this.UID = UID;
-};
 
 
 /**
@@ -9209,7 +12078,7 @@ function ResponseEnvelope () {
    * @type ApplicationSecurity
    * @access private
    */
-  this.security = null;
+  this.security = ApplicationSecurity.NONE;
 
   /**
    * @name ResponseEnvelope#UID
@@ -9894,13 +12763,13 @@ module.exports = TransactionWrappedResponseMessage;
  */
 var AccountType = {
 
-  CHECKING: 0,
+  CHECKING: "CHECKING",
 
-  SAVINGS: 1,
+  SAVINGS: "SAVINGS",
 
-  MONEYMRKT: 2,
+  MONEYMRKT: "MONEYMRKT",
 
-  CREDITLINE: 3
+  CREDITLINE: "CREDITLINE",
   
 };
 
@@ -10901,19 +13770,19 @@ module.exports = AccountInfo;
 var AccountStatus = {
 
   /**
-   * Available: 0, but not yet requested.
+   * Available, but not yet requested.
    */
-  AVAIL: 1,
+  AVAIL: "AVAIL",
 
   /**
-   * Requested: 2, but not yet available.
+   * Requested, but not yet available.
    */
-  PEND: 3,
+  PEND: "PEND",
 
   /**
-   * Active: 4.
+   * Active.
    */
-  ACTIVE: 5
+  ACTIVE: "ACTIVE",
 
 };
 
@@ -11092,11 +13961,11 @@ Aggregate.add("BAL", BalanceRecord);
  */
 var Type = BalanceRecord.Type = {
 
-  DOLLAR: 0,
+  DOLLAR: "DOLLAR",
 
-  PERCENT: 1,
+  PERCENT: "PERCENT",
 
-  NUMBER: 2
+  NUMBER: "NUMBER"
 };
 
 /**
@@ -11251,9 +14120,9 @@ module.exports = BalanceRecord;
  */
 var CorrectionAction = {
 
-  REPLACE: 0,
+  REPLACE: "REPLACE",
 
-  DELETE: 1
+  DELETE: "DELETE"
 };
 
 
@@ -11666,13 +14535,13 @@ module.exports = Payee;
  * @see "OFX Spec, Section 13.6.2"
  */
 var ProcessorDayOff = {
-  MONDAY: 0,
-  TUESDAY: 1,
-  WEDNESDAY: 2,
-  THURSDAY: 3,
-  FRIDAY: 4,
-  SATURDAY: 5,
-  SUNDAY: 6,
+  MONDAY: "MONDAY",
+  TUESDAY: "TUESDAY",
+  WEDNESDAY: "WEDNESDAY",
+  THURSDAY: "THURSDAY",
+  FRIDAY: "FRIDAY",
+  SATURDAY: "SATURDAY",
+  SUNDAY: "SUNDAY",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("MONDAY" === ofxVal) {
@@ -13219,89 +16088,89 @@ module.exports = TransactionList;
 var TransactionType = {
 
   /**
-   * generic: 0 credit.
+   * generic credit.
    */
-  CREDIT: 1,
+  CREDIT: "CREDIT",
 
   /**
-   * genertic: 2 debit.
+   * genertic debit.
    */
-  DEBIT: 3,
+  DEBIT: "DEBIT",
 
   /**
-   * interest: 4 earned.
+   * interest earned.
    */
-  INT: 5,
+  INT: "INT",
 
   /**
-   * dividend: 6.
+   * dividend.
    */
-  DIV: 7,
+  DIV: "DIV",
 
   /**
-   * bank: 8 fee.
+   * bank fee.
    */
-  FEE: 9,
+  FEE: "FEE",
 
   /**
-   * service: 10 charge.
+   * service charge.
    */
-  SRVCHG: 11,
+  SRVCHG: "SRVCHG",
 
   /**
-   * deposit: 12.
+   * deposit.
    */
-  DEP: 13,
+  DEP: "DEP",
 
   /**
-   * ATM: 14 transaction.
+   * ATM transaction.
    */
-  ATM: 15,
+  ATM: "ATM",
 
   /**
-   * point: 16 of sale
+   * point of sale
    */
-  POS: 17,
+  POS: "POS",
 
   /**
-   * transfer: 18
+   * transfer
    */
-  XFER: 19,
+  XFER: "XFER",
 
   /**
-   * check: 20
+   * check
    */
-  CHECK: 21,
+  CHECK: "CHECK",
 
   /**
-   * electronic: 22 payment
+   * electronic payment
    */
-  PAYMENT: 23,
+  PAYMENT: "PAYMENT",
 
   /**
-   * cash: 24.
+   * cash.
    */
-  CASH: 25,
+  CASH: "CASH",
 
   /**
-   * direct: 26 deposit.
+   * direct deposit.
    */
-  DIRECTDEP: 27,
+  DIRECTDEP: "DIRECTDEP",
 
   /**
-   * merchant: 28-initiated debit
+   * merchant-initiated debit
    */
-  DIRECTDEBIT: 29,
+  DIRECTDEBIT: "DIRECTDEBIT",
 
   /**
-   * repeating: 30 payment.
+   * repeating payment.
    */
-  REPEATPMT: 31,
+  REPEATPMT: "REPEATPMT",
 
   /**
-   * other: 32
+   * other
    */
-  OTHER: 33
+  OTHER: "OTHER",
 };
 
 
@@ -13671,15 +16540,15 @@ module.exports = TransferStatus;
  */
 var TransferStatusEvent = {
 
-  WILLPROCESSON: 0,
+  WILLPROCESSON: "WILLPROCESSON",
 
-  POSTEDON: 1,
+  POSTEDON: "POSTEDON",
 
-  NOFUNDSON: 2,
+  NOFUNDSON: "NOFUNDSON",
 
-  CANCELEDON: 3,
+  CANCELEDON: "CANCELEDON",
 
-  FAILEDON: 4
+  FAILEDON: "FAILEDON",
 };
 
 
@@ -13711,40 +16580,33 @@ var StatusCode = require("./StatusCode");
  * @class
  * @augments StatusCode
  */
-function UnknownStatusCode () {
+function UnknownStatusCode (/*int*/ code, /*String*/ message, /*Severity*/ defaultSeverity) {
 
   /**
    * @name UnknownStatusCode#code
    * @type int
    * @access private
    */
-  this.code = null;
+  this.code = code;
 
   /**
    * @name UnknownStatusCode#message
    * @type String
    * @access private
    */
-  this.message = null;
+  this.message = message;
 
   /**
    * @name UnknownStatusCode#defaultSeverity
    * @type Status.Severity
    * @access private
    */
-  this.defaultSeverity = null;
+  this.defaultSeverity = defaultSeverity;
 }
 
 inherit(UnknownStatusCode, "implements", StatusCode);
 
 
-
-
-UnknownStatusCode.prototype.UnknownStatusCode = function(/*int*/ code, /*String*/ message, /*Severity*/ defaultSeverity) {
-  this.code = code;
-  this.message = message;
-  this.defaultSeverity = defaultSeverity;
-};
 
 
 UnknownStatusCode.prototype.getCode = function() {
@@ -14646,10 +17508,10 @@ module.exports = {
  * @see "OFX Spec, Section 13.6.2"
  */
 var AccountType = {
-  INDIVIDUAL: 0,
-  JOINT: 1,
-  TRUST: 2,
-  CORPORATE: 3,
+  INDIVIDUAL: "INDIVIDUAL",
+  JOINT: "JOINT",
+  TRUST: "TRUST",
+  CORPORATE: "CORPORATE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("INDIVIDUAL" === ofxVal) {
@@ -14693,9 +17555,9 @@ module.exports = AccountType;
  * @enum
  */
 var ActivationStatus = {
-  ACTIVE: 0,
-  PENDING: 1,
-  AVAILABLE: 2,
+  ACTIVE: "ACTIVE",
+  PENDING: "PENDING",
+  AVAILABLE: "AVAILABLE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("ACTIVE" === ofxVal) {
@@ -15128,10 +17990,10 @@ module.exports = InvestmentAccountInfo;
  * @enum
  */
 var SubAccountType = {
-  CASH: 0,
-  MARGIN: 1,
-  SHORT: 2,
-  OTHER: 3,
+  CASH: "CASH",
+  MARGIN: "MARGIN",
+  SHORT: "SHORT",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CASH" === ofxVal) {
@@ -15175,38 +18037,38 @@ module.exports = SubAccountType;
  */
 var UnitedStatesAccountType = {
 
-  /** A: 0 401(k) retirement account */
-  R401K: 1,
+  /** A 401(k) retirement account */
+  R401K: "401K",
 
-  /** A: 2 403(B) retirement account */
-  R403B: 3,
+  /** A 403(B) retirement account */
+  R403B: "403B",
 
-  /** An: 4 IRA retirement account */
-  IRA: 5,
+  /** An IRA retirement account */
+  IRA: "IRA",
 
-  /** Keough: 6 (money purchase/profit sharing) account */
-  KEOUGH: 7,
+  /** Keough (money purchase/profit sharing) account */
+  KEOUGH: "KEOUGH",
 
-  /** Other: 8 account type */
-  OTHER: 9,
+  /** Other account type */
+  OTHER: "OTHER",
 
-  /** Salary: 10 Reduction Employer Pension Plan */
-  SARSEP: 11,
+  /** Salary Reduction Employer Pension Plan */
+  SARSEP: "SARSEP",
 
-  /** Savings: 12 Incentive Match Plan for Employees*/
-  SIMPLE: 13,
+  /** Savings Incentive Match Plan for Employees*/
+  SIMPLE: "SIMPLE",
 
-  /** Regular: 14 investment account */
-  NORMAL: 15,
+  /** Regular investment account */
+  NORMAL: "NORMAL",
 
-  /** Tax: 16 Deferred Annuity */
-  TDA: 17,
+  /** Tax Deferred Annuity */
+  TDA: "TDA",
 
-  /** Trust: 18 (including UTMA) */
-  TRUST: 19,
+  /** Trust (including UTMA) */
+  TRUST: "TRUST",
 
-  /** Custodial: 20 account */
-  UGMA: 21,
+  /** Custodial account */
+  UGMA: "UGMA",
   
   fromOfx: function(/*String*/ ofxVal) {
     if ("401K" === ofxVal) {
@@ -15553,13 +18415,13 @@ module.exports = DebtPosition;
  * @enum
  */
 var Inv401KSource = {
-  PRETAX: 0,
-  AFTER_TAX: 1,
-  MATCH: 2,
-  PROFIT_SHARING: 3,
-  ROLLOVER: 4,
-  OTHER_VEST: 5,
-  OTHER_NONVEST: 6,
+  PRETAX: "PRETAX",
+  AFTER_TAX: "AFTER_TAX",
+  MATCH: "MATCH",
+  PROFIT_SHARING: "PROFIT_SHARING",
+  ROLLOVER: "ROLLOVER",
+  OTHER_VEST: "OTHER_VEST",
+  OTHER_NONVEST: "OTHER_NONVEST",
   
   fromOfx: function(/*String*/ ofxVal) {
     if ("PRETAX" === ofxVal) {
@@ -16356,8 +19218,8 @@ module.exports = OtherPosition;
  * @enum
  */
 var PositionType = {
-  LONG: 0,
-  SHORT: 1,
+  LONG: "LONG",
+  SHORT: "SHORT",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("LONG" === ofxVal) {
@@ -16396,8 +19258,8 @@ module.exports = PositionType;
  * @enum
  */
 var ShortOptionSecurity = {
-  NAKED: 0,
-  COVERED: 1,
+  NAKED: "NAKED",
+  COVERED: "COVERED",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("NAKED" === ofxVal) {
@@ -19480,8 +22342,8 @@ module.exports = BuyStockTransaction;
  * @enum
  */
 var BuyType = {
-  BUY: 0,
-  BUY_TO_COVER: 1,
+  BUY: "BUY",
+  BUY_TO_COVER: "BUYTOCOVER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("BUY" === ofxVal) {
@@ -19521,9 +22383,9 @@ module.exports = BuyType;
  * @enum
  */
 var CloseOptionAction = {
-  EXERCISE: 0,
-  ASSIGN: 1,
-  EXPIRE: 2,
+  EXERCISE: "EXERCISE",
+  ASSIGN: "ASSIGN",
+  EXPIRE: "EXPIRE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("EXERCISE" === ofxVal) {
@@ -20265,11 +23127,11 @@ module.exports = IncomeTransaction;
  * @enum
  */
 var IncomeType = {
-  LONG_TERM_CAP_GAINS: 0,
-  SHORT_TERM_CAP_GAINS: 1,
-  DIVIDEND: 2,
-  INTEREST: 3,
-  MISC: 4,
+  LONG_TERM_CAP_GAINS: "CGLONG",
+  SHORT_TERM_CAP_GAINS: "CGSHORT",
+  DIVIDEND: "DIV",
+  INTEREST: "INTEREST",
+  MISC: "MISC",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CGLONG" === ofxVal) {
@@ -21644,8 +24506,8 @@ module.exports = MarginInterestTransaction;
  * @enum
  */
 var OptionBuyType = {
-  BUY_TO_OPEN: 0,
-  BUY_TO_CLOSE: 1,
+  BUY_TO_OPEN: "BUYTOOPEN",
+  BUY_TO_CLOSE: "BUYTOCLOSE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("BUYTOOPEN" === ofxVal) {
@@ -21685,8 +24547,8 @@ module.exports = OptionBuyType;
  * @enum
  */
 var OptionSellType = {
-  SELL_TO_CLOSE: 0,
-  SELL_TO_OPEN: 1,
+  SELL_TO_CLOSE: "SELLTOOPEN",
+  SELL_TO_OPEN: "SELLTOCLOSE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SELLTOOPEN" === ofxVal) {
@@ -22350,10 +25212,10 @@ module.exports = ReinvestIncomeTransaction;
  * @enum
  */
 var RelatedOptionType = {
-  SPREAD: 0,
-  STRADDLE: 1,
-  NONE: 2,
-  OTHER: 3,
+  SPREAD: "SPREAD",
+  STRADDLE: "STRADDLE",
+  NONE: "NONE",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SPREAD" === ofxVal) {
@@ -22704,9 +25566,9 @@ module.exports = ReturnOfCapitalTransaction;
  * @enum
  */
 var SellDebtReason = {
-  CALL: 0,
-  SELL: 1,
-  MATURITY: 2,
+  CALL: "CALL",
+  SELL: "SELL",
+  MATURITY: "MATURITY",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CALL" === ofxVal) {
@@ -24116,8 +26978,8 @@ module.exports = SellStockTransaction;
  * @enum
  */
 var SellType = {
-  SELL: 0,
-  SELL_SHORT: 1,
+  SELL: "SELL",
+  SELL_SHORT: "SELLSHORT",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SELL" === ofxVal) {
@@ -24574,26 +27436,26 @@ module.exports = SplitTransaction;
  */
 var TransactionType = {
 
-  BUY_DEBT: 0,
-  BUY_MUTUAL_FUND: 1,
-  BUY_OPTION: 2,
-  BUY_OTHER: 3,
-  BUY_STOCK: 4,
-  CLOSE_OPTION: 5,
-  INCOME: 6,
-  INVESTMENT_EXPENSE: 7,
-  JOURNAL_FUND: 8,
-  JOURNAL_SECURITY: 9,
-  MARGIN_INTEREST: 10,
-  REINVEST_INCOME: 11,
-  RETURN_OF_CAPITAL: 12,
-  SELL_DEBT: 13,
-  SELL_MUTUAL_FUND: 14,
-  SELL_OPTION: 15,
-  SELL_OTHER: 16,
-  SELL_STOCK: 17,
-  SPLIT: 18,
-  TRANSFER: 19
+  BUY_DEBT: "BUY_DEBT",
+  BUY_MUTUAL_FUND: "BUY_MUTUAL_FUND",
+  BUY_OPTION: "BUY_OPTION",
+  BUY_OTHER: "BUY_OTHER",
+  BUY_STOCK: "BUY_STOCK",
+  CLOSE_OPTION: "CLOSE_OPTION",
+  INCOME: "INCOME",
+  INVESTMENT_EXPENSE: "INVESTMENT_EXPENSE",
+  JOURNAL_FUND: "JOURNAL_FUND",
+  JOURNAL_SECURITY: "JOURNAL_SECURITY",
+  MARGIN_INTEREST: "MARGIN_INTEREST",
+  REINVEST_INCOME: "REINVEST_INCOME",
+  RETURN_OF_CAPITAL: "RETURN_OF_CAPITAL",
+  SELL_DEBT: "SELL_DEBT",
+  SELL_MUTUAL_FUND: "SELL_MUTUAL_FUND",
+  SELL_OPTION: "SELL_OPTION",
+  SELL_OTHER: "SELL_OTHER",
+  SELL_STOCK: "SELL_STOCK",
+  SPLIT: "SPLIT",
+  TRANSFER: "TRANSFER",
 };
 
 
@@ -24658,8 +27520,8 @@ module.exports = TransactionWithSecurity;
  * @enum
  */
 var TransferAction = {
-  IN: 0,
-  OUT: 1,
+  IN: "IN",
+  OUT: "OUT",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("IN" === ofxVal) {
@@ -25188,13 +28050,13 @@ module.exports = AbstractMessageSetInfo;
  */
 var CharacterType = {
 
-  ALPHAONLY: 0,
+  ALPHAONLY: "ALPHAONLY",
 
-  NUMERICONLY: 1,
+  NUMERICONLY: "NUMERICONLY",
 
-  ALPHAORNUMERIC: 2,
+  ALPHAORNUMERIC: "ALPHAORNUMERIC",
 
-  ALPHAANDNUMERIC: 3
+  ALPHAANDNUMERIC: "ALPHAANDNUMERIC"
 };
 
 
@@ -25223,11 +28085,11 @@ module.exports = CharacterType;
  */
 var ClientRoutingCapability = {
 
-  NONE: 0,
+  NONE: "NONE",
 
-  SERVICE: 1,
+  SERVICE: "SERVICE",
 
-  MESSAGE_SET: 2
+  MESSAGE_SET: "MSGSET",
 };
 
 
@@ -25653,11 +28515,12 @@ function ProfileRequest () {
   RequestMessage.call(this);
 
   /**
+   * Note: I don't know why, but ClientRoutingCapability.NONE causes the request to be rejected by my bank
    * @name ProfileRequest#routingCapability
    * @type ClientRoutingCapability
    * @access private
    */
-  this.routingCapability = ClientRoutingCapability.NONE;
+  this.routingCapability = ClientRoutingCapability.MESSAGE_SET;
 
   /**
    * @name ProfileRequest#profileLastUpdated
@@ -26417,7 +29280,7 @@ ProfileResponse.prototype.getProfiles = function(type) {
         for (var versionSpecificInformationListIdx=0; versionSpecificInformationListIdx<versionSpecificInformationList.length; versionSpecificInformationListIdx++) {
           var versionSpecificInfo = versionSpecificInformationList[versionSpecificInformationListIdx];
           if (versionSpecificInfo.getMessageSetType() == type) {
-            profiles.add(versionSpecificInfo);
+            profiles.push(versionSpecificInfo);
           }
         }
       }
@@ -26546,7 +29409,7 @@ ProfileResponseMessageSet.prototype.getResponseMessages = function() {
   var messages = [];
 
   if (this.getProfileResponse()) {
-    messages.add(this.getProfileResponse());
+    messages.push(this.getProfileResponse());
   }
 
   return messages;
@@ -27245,9 +30108,9 @@ module.exports = SignonInfoList;
  */
 var SynchronizationCapability = {
 
-  FULL: 0,
+  FULL: "FULL",
 
-  LITE: 1
+  LITE: "LITE"
 };
 
 
@@ -30473,40 +33336,40 @@ module.exports = {
  */
 var AssetClass = {
   /**
-   * Government: 0 or corporate bonds issued in the United States.
+   * Government or corporate bonds issued in the United States.
    */
-  DOMESTIC_BOND: 1,
+  DOMESTIC_BOND: "DOMESTICBOND",
 
   /**
-   * Government: 2 or corporate bonds issued in foreign countries or the United States.
+   * Government or corporate bonds issued in foreign countries or the United States.
    */
-  INTL_BOND: 3,
+  INTL_BOND: "INTLBOND",
 
   /**
-   * Stocks: 4 for US companies with market caps of $2B or more.
+   * Stocks for US companies with market caps of $2B or more.
    */
-  LARGE_STOCK: 5,
+  LARGE_STOCK: "LARGESTOCK",
 
   /**
-   * Stocks: 6 for US companies with market caps of ~$100M to $2B.
+   * Stocks for US companies with market caps of ~$100M to $2B.
    */
-  SMALL_STOCK: 7,
+  SMALL_STOCK: "SMALLSTOCK",
 
   /**
-   * Publicallt: 8 traded stocks for companies based in foreign countries.
+   * Publicallt traded stocks for companies based in foreign countries.
    */
-  INTL_STOCK: 9,
+  INTL_STOCK: "INTLSTOCK",
 
   /**
-   * Stable: 10, short-term investments which provide income that rises and falls with short-term
-   * interest: 11 rates.
+   * Stable, short-term investments which provide income that rises and falls with short-term
+   * interest rates.
    */
-  MONEY_MARKET: 12,
+  MONEY_MARKET: "MONEYMARKET",
 
   /**
-   * Investments: 13 which do not fit into any of the other types.
+   * Investments which do not fit into any of the other types.
    */
-  OTHER: 14,
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("DOMESTICBOND" === ofxVal) {
@@ -30721,10 +33584,10 @@ module.exports = BaseSecurityInfo;
  * @enum
  */
 var CallType = {
-  CALL: 0,
-  PUT: 1,
-  PREFUND: 2,
-  MATURITY: 3,
+  CALL: "CALL",
+  PUT: "PUT",
+  PREFUND: "PREFUND",
+  MATURITY: "MATURITY",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CALL" === ofxVal) {
@@ -30768,11 +33631,11 @@ module.exports = CallType;
  * @enum
  */
 var CouponFrequency = {
-  MONTHLY: 0,
-  QUARTERLY: 1,
-  SEMIANNUAL: 2,
-  ANNUAL: 3,
-  OTHER: 4,
+  MONTHLY: "MONTHLY",
+  QUARTERLY: "QUARTERLY",
+  SEMIANNUAL: "SEMIANNUAL",
+  ANNUAL: "ANNUAL",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("MONTHLY" === ofxVal) {
@@ -30818,10 +33681,10 @@ module.exports = CouponFrequency;
  * @enum
  */
 var DebtClass = {
-  TREASURY: 0,
-  MUNICIPAL: 1,
-  CORPORATE: 2,
-  OTHER: 3,
+  TREASURY: "TREASURY",
+  MUNICIPAL: "MUNICIPAL",
+  CORPORATE: "CORPORATE",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("TREASURY" === ofxVal) {
@@ -31550,9 +34413,9 @@ module.exports = MutualFundSecurityInfo;
  * @enum
  */
 var MutualFundType = {
-  OPEN_END: 0,
-  CLOSE_END: 1,
-  OTHER: 2,
+  OPEN_END: "OPENEND",
+  CLOSE_END: "CLOSEEND",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("OPENEND" === ofxVal) {
@@ -31865,8 +34728,8 @@ module.exports = OptionSecurityInfo;
  * @enum
  */
 var OptionType = {
-  PUT: 0,
-  CALL: 1,
+  PUT: "PUT",
+  CALL: "CALL",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("PUT" === ofxVal) {
@@ -33280,10 +36143,10 @@ module.exports = StockSecurityInfo;
  * @enum
  */
 var StockType = {
-  COMMON: 0,
-  PREFERRED: 1,
-  CONVERTIBLE: 2,
-  OTHER: 3,
+  COMMON: "COMMON",
+  PREFERRED: "PREFERRED",
+  CONVERTIBLE: "CONVERTIBLE",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("COMMON" === ofxVal) {
@@ -39548,7 +42411,9 @@ module.exports = AggregateAttribute;
 
 "use strict";
 
+var inherit = null;
 var AggregateAttribute = require("./AggregateAttribute");
+
 
 /**
  * Holder for meta information about an aggregate class.
@@ -39632,11 +42497,6 @@ AggregateInfo.prototype.getAttributes = function() {
 };
 
 
-function isAssignableFrom(entryType, assignableTo) {
-  return (assignableTo === entryType) ||
-    (assignableTo.prototype instanceof entryType);
-}
-
 
 /**
  * Get the attribute by the specified name.
@@ -39652,6 +42512,9 @@ function isAssignableFrom(entryType, assignableTo) {
  * are none that come after the order hint, or null.
  */
 AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
+  if(!inherit) {
+    inherit = require("../util/inherit");
+  }
   var candidates = [];
   var collectionBucket = null;
   for (var attributeIdx=0; attributeIdx<this.attributes.length; attributeIdx++) {
@@ -39663,7 +42526,7 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
       if (assignableTo) {
         // Verify it's the right generic type.
         var entryType = attribute.getCollectionEntryType();
-        if (entryType && !isAssignableFrom(entryType, assignableTo)) {
+        if (entryType && !inherit.isAssignableFrom(entryType, assignableTo)) {
           // Collection is of wrong type.
           continue;
         }
@@ -39699,13 +42562,13 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
  * @return {boolean} Whether this aggregate has headers.
  */
 AggregateInfo.prototype.hasHeaders = function() {
-  return this.headers.length > 0;
+  return Object.keys(this.headers).length > 0;
 };
 
 
 AggregateInfo.prototype.getMethod = function(header, name) {
   console.assert(header[name]);
-  var fcn = this.clazz[header[name]];
+  var fcn = this.clazz.prototype[header[name]];
   console.assert(fcn && (typeof(fcn) === "function"));
   return fcn;
 };
@@ -39763,7 +42626,7 @@ AggregateInfo.prototype.setHeader = function(instance, name, value) {
 
 module.exports = AggregateInfo;
 
-},{"./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js":[function(require,module,exports){
+},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./AggregateAttribute":"/Users/aolson/Developer/ofx4js/src/io/AggregateAttribute.js"}],"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39943,7 +42806,7 @@ AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
     var headerValues = aggregateInfo.getHeaders(aggregate);
     var convertedValues = {};
     for (var header in headerValues) {
-      convertedValues.put(header, this.getConversion().toString(headerValues[header]));
+      convertedValues[header] = this.getConversion().toString(headerValues[header]);
     }
     writer.writeHeaders(convertedValues);
   }
@@ -39977,7 +42840,8 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
             childValues = [childValue];
           }
 
-          for (var value in childValues) {
+          for (var childValueIdx=0; childValueIdx<childValues.length; childValueIdx++) {
+            var value = childValues[childValueIdx];
             var aggregateInfo = AggregateIntrospector.getAggregateInfo(value.constructor);
             if (!aggregateInfo) {
               throw new Error("Unable to marshal object of type " + value.constructor.name + " (no aggregate metadata found).");
@@ -40235,7 +43099,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
           infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
         }
         else {
-          if (LOG.enabled) {
+          if (LOG.warning) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
           }
 
@@ -40246,7 +43110,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
         this.stack.peek().currentAttributeIndex = attribute.getOrder();
       }
       else {
-        if (LOG.enabled) {
+        if (LOG.warning) {
           console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
         }
 
@@ -40255,7 +43119,7 @@ AggregateStackContentHandler.prototype.startAggregate = function(aggregateName) 
       }
     }
     else {
-      if (LOG.enabled) {
+      if (LOG.warning) {
         console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
       }
 
@@ -40286,7 +43150,7 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
         if (attribute) {
           attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
         } else {
-          if (LOG.enabled) {
+          if (LOG.warning) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
             
             attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
@@ -40520,7 +43384,7 @@ BaseOFXReader.prototype.parse = function(text) {
   else {
     var matches = OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
     if (matches) {
-      if (LOG.enabled) {
+      if (LOG.parse) {
         console.log("Processing OFX 2 header...");
       }
       this.processOFXv2Headers(matches[1]);
@@ -40528,7 +43392,7 @@ BaseOFXReader.prototype.parse = function(text) {
       this.parseV2FromFirstElement(reader.remainder());
     }
     else {
-      if (LOG.enabled) {
+      if (LOG.parse) {
         console.log("Processing OFX 1 headers...");
       }
       this.processOFXv1Headers(header);
@@ -40611,7 +43475,8 @@ BaseOFXReader.prototype.parseV2FromFirstElement = function(text) {
  */
 BaseOFXReader.prototype.processOFXv1Headers = function(chars) {
   var lines = chars.split(/(\n|\r\n)/);
-  for(var line in lines) {
+  for(var i=0; i<lines.length; i++) {
+    var line = lines[i];
     var colonIndex = line.indexOf(':');
     if (colonIndex >= 0) {
       var name = line.substring(0, colonIndex);
@@ -40722,6 +43587,7 @@ var Status = require("../domain/data/common/Status");
 var StatusCode = require("../domain/data/common/StatusCode");
 var UnknownStatusCode = require("../domain/data/common/UnknownStatusCode");
 var StringConversion = require("./StringConversion");
+var moment = require("moment");
 
 /**
  * Utility class for conversion to/from OFX strings.
@@ -40735,22 +43601,13 @@ function DefaultStringConversion () {
 //   * @type TimeZone
 //   */
 //  this.GMT_TIME_ZONE = TimeZone.getTimeZone("GMT");
-
-  /**
-   * @name DefaultStringConversion#DATE_FORMAT_LENGTH
-   * @type int
-   */
-  this.DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length;
-
-  /**
-   * @name DefaultStringConversion#TIME_FORMAT_LENGTH
-   * @type int
-   */
-  this.TIME_FORMAT_LENGTH = "HHmmss.SSS".length;
 }
 
 inherit(DefaultStringConversion, "implements", StringConversion);
 
+//var DATE_FORMAT = "YYYYMMDDHHmmss.SSS[Z]";
+//var DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length;
+//var TIME_FORMAT_LENGTH = "HHmmss.SSS".length;
 
 
 
@@ -40761,8 +43618,11 @@ DefaultStringConversion.prototype.toString = function(/*Object*/ value) {
   else if (value instanceof Boolean) {
     return value ? "Y" : "N";
   }
-  else if (Date.class.isInstance(value)) {
+  else if (value instanceof Date) {
     return this.formatDate(value);
+  }
+  else if (typeof value === "number") {
+    return value + "";
   }
   else {
     return value;
@@ -40774,7 +43634,14 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
   if (!value) {
     return null;
   }
-  else if (clazz.prototype instanceof StatusCode) {
+  else if (typeof clazz === "object") {
+    // enum
+    console.assert(value in clazz);
+    if(value in clazz) {
+      return clazz[value];
+    }
+  }
+  else if (inherit.isAssignableFrom(StatusCode, clazz)) {
     var code = value;
     var statusCode = Status.KnownCode.fromCode(code);
     if (!statusCode) {
@@ -40783,13 +43650,13 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
     
     return statusCode;
   }
-  else if (clazz.prototype instanceof Boolean) {
+  else if (inherit.isAssignableFrom(Boolean, clazz)) {
     return "Y" === value.toUpperCase();
   }
 //  else if (Time.class.isAssignableFrom(clazz)) {
 //    return parseTime(value);
 //  }
-  else if (clazz.prototype instanceof Date) {
+  else if (inherit.isAssignableFrom(Date, clazz)) {
     return this.parseDate(value);
   }
   return value;
@@ -40803,40 +43670,29 @@ DefaultStringConversion.prototype.fromString = function(/*Class<E>*/ clazz, /*St
  * @return {Date} The date value.
  */
 DefaultStringConversion.prototype.parseDate = function(value) {
-//  var parseableDate = new char[DATE_FORMAT_LENGTH];
-//  Arrays.fill(parseableDate, '0');
-//  parseableDate[parseableDate.length - 4] = '.';
-//  char[] valueChars = value.toCharArray();
-//  int index = 0;
-//  while (index < valueChars.length && valueChars[index] != '[') {
-//    if (index < DATE_FORMAT_LENGTH) {
-//      parseableDate[index] = valueChars[index];
-//    }
-//    
-//    index++;
-//  }
-//
-//  int year = Integer.parseInt(new String(parseableDate, 0, 4));
-//  int month = Integer.parseInt(new String(parseableDate, 4, 2)) - 1; //java month numberss are zero-based
-//  int day = Integer.parseInt(new String(parseableDate, 6, 2));
-//  int hour = Integer.parseInt(new String(parseableDate, 8, 2));
-//  int minute = Integer.parseInt(new String(parseableDate, 10, 2));
-//  int second = Integer.parseInt(new String(parseableDate, 12, 2));
-//  int milli = Integer.parseInt(new String(parseableDate, 15, 3));
-//
-//  //set up a new calendar at zero, then set all the fields.
-//  GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
-//  if (index < valueChars.length && valueChars[index] == '[') {
-//    String tzoffset = value.substring(index);
-//    calendar.setTimeZone(parseTimeZone(tzoffset));
-//  }
-//  else {
-//    calendar.setTimeZone(GMT_TIME_ZONE);
-//  }
-//  calendar.add(GregorianCalendar.MILLISECOND, milli);
-//
-//  return calendar.getTime();
-  return Date.parse(value);
+  var year = parseInt(value.substr(0, 4));
+  var month = parseInt(value.substr(4, 2)) - 1; // javascript month numbers are zero-based
+  var day = parseInt(value.substr(6, 2));
+  var hour = parseInt(value.substr(8, 2));
+  var minute = parseInt(value.substr(10, 2));
+  var second = parseInt(value.substr(12, 2));
+  var milli = parseInt(value.substr(15, 3));
+  
+  // create date as UTC
+  var calendar = new Date(Date.UTC(year, month, day, hour, minute, second, milli));
+  
+  // add timezone offset
+  var bracket = value.indexOf("[");
+  if(bracket != -1) {
+    var close = value.indexOf(":");
+    if(close === -1) {
+      close = value.indexOf("]");
+    }
+    var gmtOffset = value.substring(bracket+1, close);
+    calendar = moment(calendar).add(gmtOffset * -1.0, "hours").toDate();
+  }
+
+  return calendar;
 };
 
 
@@ -40850,7 +43706,14 @@ DefaultStringConversion.prototype.formatDate = function(date) {
 //  GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
 //  calendar.setTime(date);
 //  return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.%1$tL", calendar);
-  return date.toUTCString();
+  var m = moment(date);
+  var tz = m.format("[Z]");
+  if(tz == "Z") {
+    tz = "";
+  } else {
+    tz = "[" + tz + "]";
+  }
+  return m.format("YYYYMMDDHHmmss.SSS") + tz;
 };
 
 
@@ -40897,7 +43760,8 @@ DefaultStringConversion.prototype.formatTime = function(time) {
 //  GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
 //  calendar.setTime(time);
 //  return String.format("%1$tH%1$tM%1$tS.%1$tL", calendar);
-  return time.toTimeString();
+  return moment(time).format("YYYYMMDDHHmmss.SSS[Z]");
+  //return time.toTimeString();
 };
 
 
@@ -40923,7 +43787,7 @@ DefaultStringConversion.prototype.formatTime = function(time) {
 
 module.exports = DefaultStringConversion;
 
-},{"../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../domain/data/common/StatusCode":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusCode.js","../domain/data/common/UnknownStatusCode":"/Users/aolson/Developer/ofx4js/src/domain/data/common/UnknownStatusCode.js","../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./StringConversion":"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js":[function(require,module,exports){
+},{"../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../domain/data/common/StatusCode":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusCode.js","../domain/data/common/UnknownStatusCode":"/Users/aolson/Developer/ofx4js/src/domain/data/common/UnknownStatusCode.js","../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","./StringConversion":"/Users/aolson/Developer/ofx4js/src/io/StringConversion.js","moment":"/Users/aolson/Developer/ofx4js/node_modules/moment/moment.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXAggregate.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41219,13 +44083,13 @@ OFXV2ContentHandler.prototype.install = function(parser) {
 OFXV2ContentHandler.prototype.onopentag = function(params) {
   var qName = params.name;
 
-  if (LOG.enabled) {
+  if (LOG.parse) {
     console.log("START ELEMENT: " + qName);
   }
 
   if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEvent.Type.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
     var eventValue = this.eventStack.peek().getEventValue();
-    if (LOG.enabled) {
+    if (LOG.parse) {
       console.log("Element " + qName + " is starting aggregate " + eventValue);
     }
 
@@ -41251,7 +44115,7 @@ OFXV2ContentHandler.prototype.isAlreadyStarted = function(event) {
 
 // @Override
 OFXV2ContentHandler.prototype.onclosetag = function(qName) {
-  if (LOG.enabled) {
+  if (LOG.parse) {
     console.log("END ELEMENT: " + qName);
   }
 
@@ -41269,7 +44133,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       }
       else {
         var value = elementEvent.getEventValue();
-        if (LOG.enabled) {
+        if (LOG.parse) {
           console.log("Element " + value + " processed with value " + chars);
         }
         this.ofxHandler.onElement(value, chars);
@@ -41282,7 +44146,7 @@ OFXV2ContentHandler.prototype.onclosetag = function(qName) {
       //the last element on the stack is ours; we're ending an OFX aggregate.
       /*jshint -W004*/
       var value = eventToFinish.getEventValue();
-      if (LOG.enabled) {
+      if (LOG.parse) {
         console.log("Ending aggregate " + value);
       }
       this.ofxHandler.endAggregate(value);
@@ -41484,7 +44348,7 @@ var OFXWriter = require("../OFXWriter");
  *
  * @class
  */
-function OFXV1Writer () {
+function OFXV1Writer (/*Uint8Array*/ out) {
 
   /**
    * @name OFXV1Writer#LINE_SEPARATOR
@@ -41501,10 +44365,10 @@ function OFXV1Writer () {
 
   /**
    * @name OFXV1Writer#writer
-   * @type Writer
+   * @type OutputStreamWriter
    * @access protected
    */
-  this.writer = null;
+  this.writer = this.newWriter(out);
 
   /**
    * @name OFXV1Writer#writeAttributesOnNewLine
@@ -41516,17 +44380,6 @@ function OFXV1Writer () {
 
 inherit(OFXV1Writer, "implements", OFXWriter);
 
-
-
-
-OFXV1Writer.prototype.OFXV1Writer = function(/*OutputStream*/ out) {
-  this.writer = this.newWriter(out);
-};
-
-
-OFXV1Writer.prototype.OFXV1Writer = function(/*Writer*/ writer) {
-  this.writer = writer;
-};
 
 
 OFXV1Writer.prototype.newWriter = function(/*OutputStream*/ out) {
@@ -41641,12 +44494,9 @@ OFXV1Writer.prototype.flush = function() {
 
 
 OFXV1Writer.prototype.println = function(/*String*/ line) {
-  this.print(line);
-  this.println();
-};
-
-
-OFXV1Writer.prototype.println = function() {
+  if(line !== undefined && line !== null) {
+    this.print(line);
+  }
   this.writer.write(this.LINE_SEPARATOR);
 };
 
@@ -41656,9 +44506,9 @@ OFXV1Writer.prototype.print = function(/*String*/ line) {
 };
 
 
-OFXV1Writer.prototype.print = function(/*char*/ ch) {
-  this.writer.write(ch);
-};
+//OFXV1Writer.prototype.print = function(/*char*/ ch) {
+//  this.writer.write(ch);
+//};
 
 
 
@@ -41876,6 +44726,29 @@ module.exports = {
 };
 
 },{"./Aggregate":"/Users/aolson/Developer/ofx4js/src/meta/Aggregate.js","./ChildAggregate":"/Users/aolson/Developer/ofx4js/src/meta/ChildAggregate.js","./Element":"/Users/aolson/Developer/ofx4js/src/meta/Element.js","./Header":"/Users/aolson/Developer/ofx4js/src/meta/Header.js"}],"/Users/aolson/Developer/ofx4js/src/util/OutputStreamWriter.js":[function(require,module,exports){
+"use strict";
+
+function OutputStreamWriter(/*array*/ out, /*string*/ encoding) {
+  this.out = out;
+  this.encoding = encoding;
+}
+
+
+OutputStreamWriter.prototype.flush = function() {
+};
+
+
+OutputStreamWriter.prototype.close = function() {
+};
+
+
+OutputStreamWriter.prototype.write = function(data) {
+  Array.prototype.push.apply(this.out, data.split(''));
+};
+
+
+
+module.exports = OutputStreamWriter;
 
 },{}],"/Users/aolson/Developer/ofx4js/src/util/StringReader.js":[function(require,module,exports){
 "use strict";
@@ -41975,13 +44848,38 @@ function inherit(child, type, parent) {
   }
 }
 
+
+inherit.isAssignableFrom = function(entryType, assignableTo) {
+  return (assignableTo === entryType) ||
+    ((typeof entryType === "function") && (assignableTo.prototype instanceof entryType));
+};
+
+
 module.exports = inherit;
 
 },{"../io/AggregateIntrospector":"/Users/aolson/Developer/ofx4js/src/io/AggregateIntrospector.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/src/util/log.js":[function(require,module,exports){
 
 
 module.exports = {
-  enabled: false,
+  /**
+   * recoverable but possibly problematic messages
+   */
+  warning: true,
+  
+  /**
+   * informational status messages
+   */
+  info: false,
+  
+  /**
+   * full text of messages sent & received
+   */
+  network: false,
+  
+  /**
+   * detailed ofx parsing status messages
+   */
+  parse: false,
 };
 
 },{}],"/Users/aolson/Developer/ofx4js/src/util/stack.js":[function(require,module,exports){

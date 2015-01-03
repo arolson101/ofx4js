@@ -34,7 +34,7 @@ function ResponseEnvelope () {
    * @type ApplicationSecurity
    * @access private
    */
-  this.security = null;
+  this.security = ApplicationSecurity.NONE;
 
   /**
    * @name ResponseEnvelope#UID

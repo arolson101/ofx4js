@@ -27,7 +27,7 @@ function OFXConnection() {
  *
  * @param {RequestEnvelope} request The request to send.
  * @param {URL} url The URL to which to send the request.
- * @return {ResponseEnvelope} The response.
+ * @return {Promise<ResponseEnvelope>} The response.
  */
 OFXConnection.prototype.sendRequest = function(/*request, url*/) { throw new Error("not implemented"); };
 

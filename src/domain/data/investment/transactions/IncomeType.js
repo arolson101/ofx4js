@@ -21,11 +21,11 @@
  * @enum
  */
 var IncomeType = {
-  LONG_TERM_CAP_GAINS: 0,
-  SHORT_TERM_CAP_GAINS: 1,
-  DIVIDEND: 2,
-  INTEREST: 3,
-  MISC: 4,
+  LONG_TERM_CAP_GAINS: "CGLONG",
+  SHORT_TERM_CAP_GAINS: "CGSHORT",
+  DIVIDEND: "DIV",
+  INTEREST: "INTEREST",
+  MISC: "MISC",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("CGLONG" === ofxVal) {

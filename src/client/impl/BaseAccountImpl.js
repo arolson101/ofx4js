@@ -29,61 +29,45 @@ var MessageSetType = require("../../domain/data/MessageSetType");
  *
  * @class
  */
-function BaseAccountImpl() {
+function BaseAccountImpl(/*D*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
 
   /**
    * @name BaseAccountImpl#details
    * @access private
    */
-  this.details = null;
+  this.details = details;
 
   /**
    * @name BaseAccountImpl#messageType
    * @type MessageSetType
    * @access private
    */
-  this.messageType = null;
+  this.messageType = this.getMessageSetType(details);
 
   /**
    * @name BaseAccountImpl#username
    * @type String
    * @access private
    */
-  this.username = null;
+  this.username = username;
 
   /**
    * @name BaseAccountImpl#password
    * @type String
    * @access private
    */
-  this.password = null;
+  this.password = password;
 
   /**
    * @name BaseAccountImpl#institution
    * @type FinancialInstitutionImpl
    * @access private
    */
-  this.institution = null;
-
-  /**
-   * @name BaseAccountImpl#OFXException
-   * @type throws
-   */
-  this.OFXException = null;
+  this.institution = institution;
 }
 
 inherit(BaseAccountImpl, "implements", FinancialInstitutionAccount);
 
-
-
-
-BaseAccountImpl.prototype.BaseAccountImpl = function(/*D*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
-  this.details = details;
-  this.username = username;
-  this.password = password;
-  this.institution = institution;
-  this.messageType = this.getMessageSetType(details);
-};
 
 
 /**

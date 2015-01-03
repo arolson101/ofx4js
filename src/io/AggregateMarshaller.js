@@ -49,7 +49,7 @@ AggregateMarshaller.prototype.marshal = function(aggregate, writer) {
     var headerValues = aggregateInfo.getHeaders(aggregate);
     var convertedValues = {};
     for (var header in headerValues) {
-      convertedValues.put(header, this.getConversion().toString(headerValues[header]));
+      convertedValues[header] = this.getConversion().toString(headerValues[header]);
     }
     writer.writeHeaders(convertedValues);
   }
@@ -83,7 +83,8 @@ AggregateMarshaller.prototype.writeAggregateAttributes = function(aggregate, wri
             childValues = [childValue];
           }
 
-          for (var value in childValues) {
+          for (var childValueIdx=0; childValueIdx<childValues.length; childValueIdx++) {
+            var value = childValues[childValueIdx];
             var aggregateInfo = AggregateIntrospector.getAggregateInfo(value.constructor);
             if (!aggregateInfo) {
               throw new Error("Unable to marshal object of type " + value.constructor.name + " (no aggregate metadata found).");

@@ -19,9 +19,9 @@
  */
 var CorrectionAction = {
 
-  REPLACE: 0,
+  REPLACE: "REPLACE",
 
-  DELETE: 1
+  DELETE: "DELETE"
 };
 
 

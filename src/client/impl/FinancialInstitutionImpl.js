@@ -21,7 +21,7 @@ var Status = require("../../domain/data/common/Status");
 var StatusHolder = require("../../domain/data/common/StatusHolder");
 var SignonRequest = require("../../domain/data/signon/SignonRequest");
 var SignonRequestMessageSet = require("../../domain/data/signon/SignonRequestMessageSet");
-var FinancialInstitution = require("../FinancialInstitution");
+var FinancialInstitution = require("../../domain/data/signon/FinancialInstitution");
 var ProfileRequestMessageSet = require("../../domain/data/profile/ProfileRequestMessageSet");
 var SignupRequestMessageSet = require("../../domain/data/signup/SignupRequestMessageSet");
 var BankingAccountImpl = require("./BankingAccountImpl");
@@ -42,29 +42,7 @@ var ProfileRequest = require("../../domain/data/profile/ProfileRequest");
  *
  * @class
  */
-function FinancialInstitutionImpl () {
-
-  /**
-   * @name FinancialInstitutionImpl#connection
-   * @type OFXConnection
-   * @access private
-   */
-  this.connection = null;
-
-  /**
-   * @name FinancialInstitutionImpl#data
-   * @type FinancialInstitutionData
-   * @access private
-   */
-  this.data = null;
-}
-
-inherit(FinancialInstitutionImpl, "implements", FinancialInstitution);
-
-
-
-
-FinancialInstitutionImpl.prototype.FinancialInstitutionImpl = function(/*FinancialInstitutionData*/ data, /*OFXConnection*/ connection) {
+function FinancialInstitutionImpl (/*FinancialInstitutionData*/ data, /*OFXConnection*/ connection) {
   if (!data) {
     throw new Error("Data cannot be null");
   }
@@ -72,9 +50,23 @@ FinancialInstitutionImpl.prototype.FinancialInstitutionImpl = function(/*Financi
     throw new Error("An OFX connection must be supplied");
   }
 
-  this.data = data;
+  /**
+   * @name FinancialInstitutionImpl#connection
+   * @type OFXConnection
+   * @access private
+   */
   this.connection = connection;
-};
+
+  /**
+   * @name FinancialInstitutionImpl#data
+   * @type FinancialInstitutionData
+   * @access private
+   */
+  this.data = data;
+}
+
+inherit(FinancialInstitutionImpl, "implements", FinancialInstitution);
+
 
 
 // Inherited.
@@ -83,9 +75,12 @@ FinancialInstitutionImpl.prototype.readProfile = function() {
   var profileRequest = new ProfileRequestMessageSet();
   profileRequest.setProfileRequest(this.createProfileTransaction());
   request.getMessageSets().push(profileRequest);
-  var response = this.sendRequest(request, this.getData().getOFXURL());
-  this.doGeneralValidationChecks(request, response);
-  return this.getProfile(response);
+  var self = this;
+  return self.sendRequest(request, self.getData().getOFXURL())
+  .then(function(response) {
+    self.doGeneralValidationChecks(request, response);
+    return self.getProfile(response);
+  });
 };
 
 
@@ -95,9 +90,12 @@ FinancialInstitutionImpl.prototype.readAccountProfiles = function(/*String*/ use
   var signupRequest = new SignupRequestMessageSet();
   signupRequest.setAccountInfoRequest(this.createAccountInfoTransaction());
   request.getMessageSets().push(signupRequest);
-  var response = this.sendRequest(request, this.getData().getOFXURL());
-  this.doGeneralValidationChecks(request, response);
-  return this.getAccountProfiles(response);
+  var self = this;
+  return self.sendRequest(request, self.getData().getOFXURL())
+  .then(function(response) {
+    self.doGeneralValidationChecks(request, response);
+    return self.getAccountProfiles(response);
+  });
 };
 
 
@@ -128,10 +126,10 @@ FinancialInstitutionImpl.prototype.loadInvestmentAccount = function(/*Investment
  */
 FinancialInstitutionImpl.prototype.createAuthenticatedRequest = function(username, password) {
   var request = new RequestEnvelope();
-  var messageSets = {};
+  var messageSets = [];
   var signonRequest = new SignonRequestMessageSet();
   signonRequest.setSignonRequest(this.createSignonRequest(username, password));
-  messageSets[signonRequest] = signonRequest;
+  messageSets.push(signonRequest);
   request.setMessageSets(messageSets);
   return request;
 };
@@ -239,9 +237,10 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
         if (!uid) {
           throw new Error("Invalid response transaction: no UID.");
         }
-        else if (!transactionIds.remove(uid)) {
+        else if (!(uid in transactionIds)) {
           throw new Error("Response to an unknown transaction: " + uid + ".");
         }
+        delete transactionIds[uid];
       }
     }
 

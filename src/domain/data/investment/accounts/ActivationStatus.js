@@ -21,9 +21,9 @@
  * @enum
  */
 var ActivationStatus = {
-  ACTIVE: 0,
-  PENDING: 1,
-  AVAILABLE: 2,
+  ACTIVE: "ACTIVE",
+  PENDING: "PENDING",
+  AVAILABLE: "AVAILABLE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("ACTIVE" === ofxVal) {

@@ -21,8 +21,8 @@
  * @enum
  */
 var OptionBuyType = {
-  BUY_TO_OPEN: 0,
-  BUY_TO_CLOSE: 1,
+  BUY_TO_OPEN: "BUYTOOPEN",
+  BUY_TO_CLOSE: "BUYTOCLOSE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("BUYTOOPEN" === ofxVal) {

@@ -78,11 +78,11 @@ Aggregate.add("BAL", BalanceRecord);
  */
 var Type = BalanceRecord.Type = {
 
-  DOLLAR: 0,
+  DOLLAR: "DOLLAR",
 
-  PERCENT: 1,
+  PERCENT: "PERCENT",
 
-  NUMBER: 2
+  NUMBER: "NUMBER"
 };
 
 /**

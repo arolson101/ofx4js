@@ -21,8 +21,8 @@
  * @enum
  */
 var TransferAction = {
-  IN: 0,
-  OUT: 1,
+  IN: "IN",
+  OUT: "OUT",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("IN" === ofxVal) {

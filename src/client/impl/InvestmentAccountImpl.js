@@ -16,48 +16,39 @@ var SecurityListRequest = require("../../domain/data/seclist/SecurityListRequest
 /**
  * @class
  */
-function InvestmentAccountImpl () {
+function InvestmentAccountImpl (/*InvestmentAccountDetails*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
 
   /**
    * @name InvestmentAccountImpl#details
    * @type InvestmentAccountDetails
    * @access private
    */
-  this.details = null;
+  this.details = details;
 
   /**
    * @name InvestmentAccountImpl#username
    * @type String
    * @access private
    */
-  this.username = null;
+  this.username = username;
 
   /**
    * @name InvestmentAccountImpl#password
    * @type String
    * @access private
    */
-  this.password = null;
+  this.password = password;
 
   /**
    * @name InvestmentAccountImpl#institution
    * @type FinancialInstitutionImpl
    * @access private
    */
-  this.institution = null;
+  this.institution = institution;
 }
 
 inherit(InvestmentAccountImpl, "implements", InvestmentAccount);
 
-
-
-
-InvestmentAccountImpl.prototype.InvestmentAccountImpl = function(/*InvestmentAccountDetails*/ details, /*String*/ username, /*String*/ password, /*FinancialInstitutionImpl*/ institution) {
-  this.details = details;
-  this.username = username;
-  this.password = password;
-  this.institution = institution;
-};
 
 
 InvestmentAccountImpl.prototype.readStatement = function(/*Date*/ start, /*Date*/ end) {

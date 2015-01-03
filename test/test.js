@@ -1,4 +1,4 @@
-/*global ofx4js, chai, sinon, describe, before, beforeEach, after, afterEach, it */
+/*global ofx4js, chai, sinon, describe, before, beforeEach, after, afterEach, it, xit */
 /*jshint -W106*/
 
 'use strict';
@@ -142,9 +142,15 @@ var ofxResponsev1 =
 var AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
 var RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
 var ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+var FinancialInstitutionImpl = ofx4js.client.impl.FinancialInstitutionImpl;
+var BaseFinancialInstitutionData = ofx4js.client.impl.BaseFinancialInstitutionData;
+var OFXV1Connection = ofx4js.client.net.OFXV1Connection;
+var Status = ofx4js.domain.data.common.Status;
 
 function enableLog(enabled) {
-  ofx4js.util.log.enabled = enabled;
+  ofx4js.util.log.info = enabled;
+  ofx4js.util.log.network = enabled;
+  ofx4js.util.log.parse = enabled;
 }
 
 describe("ofx parsing", function() {
@@ -164,7 +170,8 @@ describe("ofx parsing", function() {
     expect(signonRequest.getApplicationId()).to.equal("QWIN");
     expect(signonRequest.getApplicationVersion()).to.equal("0900");
     expect(signonRequest.getLanguage()).to.equal("ENG");
-    //ARO_TODO: date
+    var date = new Date(Date.UTC(2007, 10-1, 15, 2+8, 15, 29, 0)); // 20071015021529.000[-8:PST]
+    expect(signonRequest.getTimestamp()).to.equalDate(date);
     
     var fi = signonRequest.getFinancialInstitution();
     expect(fi).to.be.ok();
@@ -189,7 +196,7 @@ describe("ofx parsing", function() {
     expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingResponseMessageSet);
     
     var signonResponse = messageSets[0].getSignonResponse();
-    expect(signonResponse.getStatus().getCode()).to.equal("0");
+    expect(signonResponse.getStatus().getCode()).to.equal(Status.KnownCode.SUCCESS);
 
     var fi = signonResponse.getFinancialInstitution();
     expect(fi).to.be.ok();
@@ -199,7 +206,7 @@ describe("ofx parsing", function() {
     expect(messageSets[1].getStatementResponses()).to.have.length(1);
     var bankingResponse = messageSets[1].getStatementResponse();
     expect(bankingResponse).to.be.an.instanceOf(ofx4js.domain.data.banking.BankStatementResponseTransaction);
-    expect(bankingResponse.getStatus().getCode()).to.equal("0");
+    expect(bankingResponse.getStatus().getCode()).to.equal(Status.KnownCode.SUCCESS);
     
     var message = bankingResponse.getMessage();
     var account = message.getAccount();
@@ -215,6 +222,25 @@ describe("ofx parsing", function() {
     expect(transactions[0].getAmount()).to.equal("200.00");
     expect(transactions[1].getAmount()).to.equal("150.00");
     expect(transactions[2].getAmount()).to.equal("-100.00");
+  });
+  
+  it("should download profile info from a bank", function() {
+//    enableLog(true);
+//    var bank = new BaseFinancialInstitutionData();
+//
+//    // TODO- input your information.  See http://www.ofxhome.com/
+//    bank.setFinancialInstitutionId("");
+//    bank.setOrganization("");
+//    bank.setOFXURL("");
+//    bank.setName("");
+//    
+//    var connection = new OFXV1Connection();
+//
+//    var service = new FinancialInstitutionImpl(bank, connection);
+//    return service.readProfile()
+//    .then(function(data) {
+//      console.log(data);
+//    });
   });
 });
 

@@ -20,13 +20,13 @@
  */
 var AccountType = {
 
-  CHECKING: 0,
+  CHECKING: "CHECKING",
 
-  SAVINGS: 1,
+  SAVINGS: "SAVINGS",
 
-  MONEYMRKT: 2,
+  MONEYMRKT: "MONEYMRKT",
 
-  CREDITLINE: 3
+  CREDITLINE: "CREDITLINE",
   
 };
 

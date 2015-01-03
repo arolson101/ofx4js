@@ -20,89 +20,89 @@
 var TransactionType = {
 
   /**
-   * generic: 0 credit.
+   * generic credit.
    */
-  CREDIT: 1,
+  CREDIT: "CREDIT",
 
   /**
-   * genertic: 2 debit.
+   * genertic debit.
    */
-  DEBIT: 3,
+  DEBIT: "DEBIT",
 
   /**
-   * interest: 4 earned.
+   * interest earned.
    */
-  INT: 5,
+  INT: "INT",
 
   /**
-   * dividend: 6.
+   * dividend.
    */
-  DIV: 7,
+  DIV: "DIV",
 
   /**
-   * bank: 8 fee.
+   * bank fee.
    */
-  FEE: 9,
+  FEE: "FEE",
 
   /**
-   * service: 10 charge.
+   * service charge.
    */
-  SRVCHG: 11,
+  SRVCHG: "SRVCHG",
 
   /**
-   * deposit: 12.
+   * deposit.
    */
-  DEP: 13,
+  DEP: "DEP",
 
   /**
-   * ATM: 14 transaction.
+   * ATM transaction.
    */
-  ATM: 15,
+  ATM: "ATM",
 
   /**
-   * point: 16 of sale
+   * point of sale
    */
-  POS: 17,
+  POS: "POS",
 
   /**
-   * transfer: 18
+   * transfer
    */
-  XFER: 19,
+  XFER: "XFER",
 
   /**
-   * check: 20
+   * check
    */
-  CHECK: 21,
+  CHECK: "CHECK",
 
   /**
-   * electronic: 22 payment
+   * electronic payment
    */
-  PAYMENT: 23,
+  PAYMENT: "PAYMENT",
 
   /**
-   * cash: 24.
+   * cash.
    */
-  CASH: 25,
+  CASH: "CASH",
 
   /**
-   * direct: 26 deposit.
+   * direct deposit.
    */
-  DIRECTDEP: 27,
+  DIRECTDEP: "DIRECTDEP",
 
   /**
-   * merchant: 28-initiated debit
+   * merchant-initiated debit
    */
-  DIRECTDEBIT: 29,
+  DIRECTDEBIT: "DIRECTDEBIT",
 
   /**
-   * repeating: 30 payment.
+   * repeating payment.
    */
-  REPEATPMT: 31,
+  REPEATPMT: "REPEATPMT",
 
   /**
-   * other: 32
+   * other
    */
-  OTHER: 33
+  OTHER: "OTHER",
 };
 
 

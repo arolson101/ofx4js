@@ -21,9 +21,9 @@
  * @enum
  */
 var MutualFundType = {
-  OPEN_END: 0,
-  CLOSE_END: 1,
-  OTHER: 2,
+  OPEN_END: "OPENEND",
+  CLOSE_END: "CLOSEEND",
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("OPENEND" === ofxVal) {

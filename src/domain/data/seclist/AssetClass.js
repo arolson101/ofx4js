@@ -21,40 +21,40 @@
  */
 var AssetClass = {
   /**
-   * Government: 0 or corporate bonds issued in the United States.
+   * Government or corporate bonds issued in the United States.
    */
-  DOMESTIC_BOND: 1,
+  DOMESTIC_BOND: "DOMESTICBOND",
 
   /**
-   * Government: 2 or corporate bonds issued in foreign countries or the United States.
+   * Government or corporate bonds issued in foreign countries or the United States.
    */
-  INTL_BOND: 3,
+  INTL_BOND: "INTLBOND",
 
   /**
-   * Stocks: 4 for US companies with market caps of $2B or more.
+   * Stocks for US companies with market caps of $2B or more.
    */
-  LARGE_STOCK: 5,
+  LARGE_STOCK: "LARGESTOCK",
 
   /**
-   * Stocks: 6 for US companies with market caps of ~$100M to $2B.
+   * Stocks for US companies with market caps of ~$100M to $2B.
    */
-  SMALL_STOCK: 7,
+  SMALL_STOCK: "SMALLSTOCK",
 
   /**
-   * Publicallt: 8 traded stocks for companies based in foreign countries.
+   * Publicallt traded stocks for companies based in foreign countries.
    */
-  INTL_STOCK: 9,
+  INTL_STOCK: "INTLSTOCK",
 
   /**
-   * Stable: 10, short-term investments which provide income that rises and falls with short-term
-   * interest: 11 rates.
+   * Stable, short-term investments which provide income that rises and falls with short-term
+   * interest rates.
    */
-  MONEY_MARKET: 12,
+  MONEY_MARKET: "MONEYMARKET",
 
   /**
-   * Investments: 13 which do not fit into any of the other types.
+   * Investments which do not fit into any of the other types.
    */
-  OTHER: 14,
+  OTHER: "OTHER",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("DOMESTICBOND" === ofxVal) {

@@ -532,7 +532,7 @@ ProfileResponse.prototype.getProfiles = function(type) {
         for (var versionSpecificInformationListIdx=0; versionSpecificInformationListIdx<versionSpecificInformationList.length; versionSpecificInformationListIdx++) {
           var versionSpecificInfo = versionSpecificInformationList[versionSpecificInformationListIdx];
           if (versionSpecificInfo.getMessageSetType() == type) {
-            profiles.add(versionSpecificInfo);
+            profiles.push(versionSpecificInfo);
           }
         }
       }

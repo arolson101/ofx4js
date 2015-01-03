@@ -22,32 +22,25 @@ var OFXApplicationContext = require("./OFXApplicationContext");
  * 
  * @class
  */
-function DefaultApplicationContext () {
+function DefaultApplicationContext (/*String*/ appId, /*String*/ appVersion) {
 
   /**
    * @name DefaultApplicationContext#appId
    * @type String
    * @access private
    */
-  this.appId = null;
+  this.appId = appId;
 
   /**
    * @name DefaultApplicationContext#appVersion
    * @type String
    * @access private
    */
-  this.appVersion = null;
+  this.appVersion = appVersion;
 }
 
 inherit(DefaultApplicationContext, "implements", OFXApplicationContext);
 
-
-
-
-DefaultApplicationContext.prototype.DefaultApplicationContext = function(/*String*/ appId, /*String*/ appVersion) {
-  this.appId = appId;
-  this.appVersion = appVersion;
-};
 
 
 DefaultApplicationContext.prototype.getAppId = function() {

@@ -20,19 +20,19 @@
 var AccountStatus = {
 
   /**
-   * Available: 0, but not yet requested.
+   * Available, but not yet requested.
    */
-  AVAIL: 1,
+  AVAIL: "AVAIL",
 
   /**
-   * Requested: 2, but not yet available.
+   * Requested, but not yet available.
    */
-  PEND: 3,
+  PEND: "PEND",
 
   /**
-   * Active: 4.
+   * Active.
    */
-  ACTIVE: 5
+  ACTIVE: "ACTIVE",
 
 };
 

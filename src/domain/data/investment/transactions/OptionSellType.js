@@ -21,8 +21,8 @@
  * @enum
  */
 var OptionSellType = {
-  SELL_TO_CLOSE: 0,
-  SELL_TO_OPEN: 1,
+  SELL_TO_CLOSE: "SELLTOOPEN",
+  SELL_TO_OPEN: "SELLTOCLOSE",
 
   fromOfx: function(/*String*/ ofxVal) {
     if ("SELLTOOPEN" === ofxVal) {

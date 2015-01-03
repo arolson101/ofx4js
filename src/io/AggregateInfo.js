@@ -14,7 +14,9 @@
 
 "use strict";
 
+var inherit = null;
 var AggregateAttribute = require("./AggregateAttribute");
+
 
 /**
  * Holder for meta information about an aggregate class.
@@ -98,11 +100,6 @@ AggregateInfo.prototype.getAttributes = function() {
 };
 
 
-function isAssignableFrom(entryType, assignableTo) {
-  return (assignableTo === entryType) ||
-    (assignableTo.prototype instanceof entryType);
-}
-
 
 /**
  * Get the attribute by the specified name.
@@ -118,6 +115,9 @@ function isAssignableFrom(entryType, assignableTo) {
  * are none that come after the order hint, or null.
  */
 AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
+  if(!inherit) {
+    inherit = require("../util/inherit");
+  }
   var candidates = [];
   var collectionBucket = null;
   for (var attributeIdx=0; attributeIdx<this.attributes.length; attributeIdx++) {
@@ -129,7 +129,7 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
       if (assignableTo) {
         // Verify it's the right generic type.
         var entryType = attribute.getCollectionEntryType();
-        if (entryType && !isAssignableFrom(entryType, assignableTo)) {
+        if (entryType && !inherit.isAssignableFrom(entryType, assignableTo)) {
           // Collection is of wrong type.
           continue;
         }
@@ -165,13 +165,13 @@ AggregateInfo.prototype.getAttribute = function(name, orderHint, assignableTo) {
  * @return {boolean} Whether this aggregate has headers.
  */
 AggregateInfo.prototype.hasHeaders = function() {
-  return this.headers.length > 0;
+  return Object.keys(this.headers).length > 0;
 };
 
 
 AggregateInfo.prototype.getMethod = function(header, name) {
   console.assert(header[name]);
-  var fcn = this.clazz[header[name]];
+  var fcn = this.clazz.prototype[header[name]];
   console.assert(fcn && (typeof(fcn) === "function"));
   return fcn;
 };

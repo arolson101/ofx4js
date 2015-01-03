@@ -23,7 +23,7 @@ var OFXWriter = require("../OFXWriter");
  *
  * @class
  */
-function OFXV1Writer () {
+function OFXV1Writer (/*Uint8Array*/ out) {
 
   /**
    * @name OFXV1Writer#LINE_SEPARATOR
@@ -40,10 +40,10 @@ function OFXV1Writer () {
 
   /**
    * @name OFXV1Writer#writer
-   * @type Writer
+   * @type OutputStreamWriter
    * @access protected
    */
-  this.writer = null;
+  this.writer = this.newWriter(out);
 
   /**
    * @name OFXV1Writer#writeAttributesOnNewLine
@@ -55,17 +55,6 @@ function OFXV1Writer () {
 
 inherit(OFXV1Writer, "implements", OFXWriter);
 
-
-
-
-OFXV1Writer.prototype.OFXV1Writer = function(/*OutputStream*/ out) {
-  this.writer = this.newWriter(out);
-};
-
-
-OFXV1Writer.prototype.OFXV1Writer = function(/*Writer*/ writer) {
-  this.writer = writer;
-};
 
 
 OFXV1Writer.prototype.newWriter = function(/*OutputStream*/ out) {
@@ -180,12 +169,9 @@ OFXV1Writer.prototype.flush = function() {
 
 
 OFXV1Writer.prototype.println = function(/*String*/ line) {
-  this.print(line);
-  this.println();
-};
-
-
-OFXV1Writer.prototype.println = function() {
+  if(line !== undefined && line !== null) {
+    this.print(line);
+  }
   this.writer.write(this.LINE_SEPARATOR);
 };
 
@@ -195,9 +181,9 @@ OFXV1Writer.prototype.print = function(/*String*/ line) {
 };
 
 
-OFXV1Writer.prototype.print = function(/*char*/ ch) {
-  this.writer.write(ch);
-};
+//OFXV1Writer.prototype.print = function(/*char*/ ch) {
+//  this.writer.write(ch);
+//};
 
 
 
