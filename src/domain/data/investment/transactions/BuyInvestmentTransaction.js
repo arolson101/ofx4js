@@ -24,7 +24,7 @@ var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Buy investment transaction aggregate ("INVBUY").
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @class
  */
@@ -158,7 +158,7 @@ BuyInvestmentTransaction.prototype.setInvestmentTransaction = function(investmen
 /**
  * Gets the id of the security that was bought. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -171,7 +171,7 @@ ChildAggregate.add(BuyInvestmentTransaction, {required: true, order: 20, attribu
 /**
  * Sets the id of the security that was bought. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was bought
  */
@@ -185,7 +185,7 @@ BuyInvestmentTransaction.prototype.setSecurityId = function(securityId) {
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased.
  */
@@ -200,7 +200,7 @@ Element.add(BuyInvestmentTransaction, {name: "UNITS", required: true, order: 30,
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units purchased.
  */
@@ -213,7 +213,7 @@ BuyInvestmentTransaction.prototype.setUnits = function(units) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -227,7 +227,7 @@ Element.add(BuyInvestmentTransaction, {name: "UNITPRICE", required: true, order:
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -239,7 +239,7 @@ BuyInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markup. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markeup price
  */
@@ -252,7 +252,7 @@ Element.add(BuyInvestmentTransaction, {name: "MARKUP", order: 50, attributeType:
 /**
  * Sets the portion of the unit price that is attributed to the dealer markup. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} markup the per unit markeup price
  */
@@ -264,7 +264,7 @@ BuyInvestmentTransaction.prototype.setMarkup = function(markup) {
 /**
  * Gets the transaction commission for the purchase. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -277,7 +277,7 @@ Element.add(BuyInvestmentTransaction, {name: "COMMISSION", order: 60, attributeT
 /**
  * Sets the transaction commission for the purchase. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} commission the transaction commision
  */
@@ -288,7 +288,7 @@ BuyInvestmentTransaction.prototype.setCommission = function(commission) {
 
 /**
  * Gets the taxes for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -300,7 +300,7 @@ Element.add(BuyInvestmentTransaction, {name: "TAXES", order: 70, attributeType: 
 
 /**
  * Sets the taxes for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} taxes the transaction taxes
  */
@@ -311,7 +311,7 @@ BuyInvestmentTransaction.prototype.setTaxes = function(taxes) {
 
 /**
  * Gets the fees for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -323,7 +323,7 @@ Element.add(BuyInvestmentTransaction, {name: "FEES", order: 80, attributeType: N
 
 /**
  * Sets the fees for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} fees the transaction fees
  */
@@ -334,7 +334,7 @@ BuyInvestmentTransaction.prototype.setFees = function(fees) {
 
 /**
  * Gets the load for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -346,7 +346,7 @@ Element.add(BuyInvestmentTransaction, {name: "LOAD", order: 90, attributeType: N
 
 /**
  * Sets the load for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} load the load
  */
@@ -359,7 +359,7 @@ BuyInvestmentTransaction.prototype.setLoad = function(load) {
  * Gets the total for the purchase. Should be equal to
  * (units * (unitPrice + markup)) + (commision + fees + taxes) according to the OFX
  * spec. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -373,7 +373,7 @@ Element.add(BuyInvestmentTransaction, {name: "TOTAL", required: true, order: 100
  * Sets the total for the purchase. Should be equal to
  * (units * (unitPrice + markup)) + (commision + fees + taxes) according to the OFX
  * spec. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -385,7 +385,7 @@ BuyInvestmentTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction.
  */
@@ -398,7 +398,7 @@ Element.add(BuyInvestmentTransaction, {name: "CURRENCY", order: 110, attributeTy
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info may be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction.
  */
@@ -410,7 +410,7 @@ BuyInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -422,7 +422,7 @@ ChildAggregate.add(BuyInvestmentTransaction, {order: 120, attributeType: Origina
 
 /**
  * Sets the original currency info for the transaction
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction
  */
@@ -434,7 +434,7 @@ BuyInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalCu
 
  /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -446,7 +446,7 @@ Element.add(BuyInvestmentTransaction, {name: "SUBACCTSEC", order: 130, attribute
 
 /**
   * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
-  * @see "Section 13.9.2.4.3, OFX Spec"
+  * See "Section 13.9.2.4.3, OFX Spec"
   *
   * @param {String} subAccountSecurity the sub account type
   */
@@ -467,7 +467,7 @@ BuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the money came from. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -479,7 +479,7 @@ Element.add(BuyInvestmentTransaction, {name: "SUBACCTFUND", order: 140, attribut
 
 /**
  * Sets the sub account type that the money came from. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAcctFund the sub account fund
  */

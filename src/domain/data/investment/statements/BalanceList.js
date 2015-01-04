@@ -19,7 +19,7 @@ var BalanceRecord = require("../../common/BalanceRecord");
 
 /**
  * Aggregate for the investment balance list.
- * @see "Section 13.9.2.7, OFX Spec"
+ * See "Section 13.9.2.7, OFX Spec"
  *
  * @class
  */

@@ -24,7 +24,7 @@ var SellType = require("./SellType");
 
 /**
  * Transaction for selling mutual fund.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -62,7 +62,7 @@ Aggregate.add("SELLMF", SellMutualFundTransaction);
 
 /**
  * Gets the type of sale. One of "SELL" or "SELLSHORT".
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The type of sale
  */
@@ -74,7 +74,7 @@ Element.add(SellMutualFundTransaction, {name: "SELLTYPE", order: 20, attributeTy
 
 /**
  * Sets the type of sale. One of "SELL" or "SELLSHORT".
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} sellType The type of sale
  */
@@ -95,7 +95,7 @@ SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
 
 /**
  * Gets the average cost basis of the sale.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} The average cost basis of the sale
  */
@@ -107,7 +107,7 @@ Element.add(SellMutualFundTransaction, {name: "AVGCOSTBASIS", order: 30, attribu
 
 /**
  * Sets the average cost basis of the sale.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} averageCostBasis The average cost basis of the sale
  */
@@ -119,7 +119,7 @@ SellMutualFundTransaction.prototype.setAverageCostBasis = function(averageCostBa
 /**
  * Gets any related transaction id for a mutual fund sale (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the related transaction id
  */
@@ -132,7 +132,7 @@ Element.add(SellMutualFundTransaction, {name: "RELFITID", order: 40, attributeTy
 /**
  * Sets any related transaction id for a mutual fund sale (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId the related transaction id
  */

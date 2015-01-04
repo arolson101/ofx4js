@@ -25,7 +25,7 @@ var SecurityListRequestTransaction = require("./SecurityListRequestTransaction")
 
 /**
  * Security list request message set.
- * @see "Section 13.7.2.2.1, OFX Spec"
+ * See "Section 13.7.2.2.1, OFX Spec"
  *
  * @class
  * @augments RequestMessageSet

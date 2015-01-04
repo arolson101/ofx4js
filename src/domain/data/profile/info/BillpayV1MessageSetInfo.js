@@ -26,7 +26,7 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * BillPay Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 12.11.2 OFX Spec"
+ * See "Section 12.11.2 OFX Spec"
  */
 function BillpayV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);

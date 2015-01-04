@@ -22,7 +22,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Client Enrollment option, contains indicator as to whether the account number is required as part of enrollment
  * @class
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 function ClientEnrollment () {
 

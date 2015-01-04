@@ -21,7 +21,7 @@ var BalanceList = require("./BalanceList");
 
 /**
  * Aggregate for the investment balance.
- * @see "Section 13.9.2.7, OFX Spec"
+ * See "Section 13.9.2.7, OFX Spec"
  *
  * @class
  */

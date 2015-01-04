@@ -20,7 +20,7 @@ var BaseSecurityInfo = require("./BaseSecurityInfo");
 
 /**
  * Aggregate for a list of securities.
- * @see "Section 13.8.4, OFX Spec"
+ * See "Section 13.8.4, OFX Spec"
  *
  * @class
  */

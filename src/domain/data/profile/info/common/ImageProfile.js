@@ -22,7 +22,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Image Profile
  * @class
- * @see "Section 3.1.6.2 OFX Spec"
+ * See "Section 3.1.6.2 OFX Spec"
  */
 function ImageProfile () {
 

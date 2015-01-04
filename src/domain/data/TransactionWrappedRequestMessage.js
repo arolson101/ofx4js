@@ -24,7 +24,7 @@ var RequestMessage = require("./ResponseMessage");
  * A request message wrapped in a transaction.
  *
  * @class
- * @see "Section 2.4.6, OFX Spec"
+ * See "Section 2.4.6, OFX Spec"
  */
 function TransactionWrappedRequestMessage() {
   RequestMessage.call(this);

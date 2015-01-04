@@ -30,7 +30,7 @@ var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for reinvestment transactions.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -148,7 +148,7 @@ Aggregate.add("REINVEST", ReinvestIncomeTransaction);
 /**
  * Gets the id of the security that was reinvested in. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was reinvested in
  */
@@ -161,7 +161,7 @@ ChildAggregate.add(ReinvestIncomeTransaction, {required: true, order: 20, attrib
 /**
  * Sets the id of the security that was reinvested in. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was reinvested in
  */
@@ -174,7 +174,7 @@ ReinvestIncomeTransaction.prototype.setSecurityId = function(securityId) {
  * Gets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @return {String} the type of income
  */
@@ -188,7 +188,7 @@ Element.add(ReinvestIncomeTransaction, {name: "INCOMETYPE", required: true, orde
  * Sets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @param {String} incomeType the type of income
  */
@@ -209,7 +209,7 @@ ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
 
 /**
  * Gets the total income received. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -221,7 +221,7 @@ Element.add(ReinvestIncomeTransaction, {name: "TOTAL", required: true, order: 40
 
 /**
  * Sets the total income received. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -233,7 +233,7 @@ ReinvestIncomeTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -246,7 +246,7 @@ Element.add(ReinvestIncomeTransaction, {name: "SUBACCTSEC", order: 50, attribute
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -268,7 +268,7 @@ ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 /**
  * Gets the number of units of the security that was reinvested in. This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased
  */
@@ -281,7 +281,7 @@ Element.add(ReinvestIncomeTransaction, {name: "UNITS", required: true, order: 60
 /**
  * Sets the number of units of the security that was reinvested in. This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units purchased
  */
@@ -292,7 +292,7 @@ ReinvestIncomeTransaction.prototype.setUnits = function(units) {
 
 /**
  * Gets the price per commonly-quoted unit. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -304,7 +304,7 @@ Element.add(ReinvestIncomeTransaction, {name: "UNITPRICE", required: true, order
 
 /**
  * Sets the price per commonly-quoted unit. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -316,7 +316,7 @@ ReinvestIncomeTransaction.prototype.setUnitPrice = function(unitPrice) {
 /**
  * Gets the transaction commission for the reinvestment. This is an optional field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -329,7 +329,7 @@ Element.add(ReinvestIncomeTransaction, {name: "COMMISSION", order: 80, attribute
 /**
  * Sets the transaction commission for the reinvestment. This is an optional field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} commission the transaction commision
  */
@@ -340,7 +340,7 @@ ReinvestIncomeTransaction.prototype.setCommission = function(commission) {
 
 /**
  * Gets the taxes for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -352,7 +352,7 @@ Element.add(ReinvestIncomeTransaction, {name: "TAXES", order: 90, attributeType:
 
 /**
  * Sets the taxes for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} taxes the transaction taxes
  */
@@ -363,7 +363,7 @@ ReinvestIncomeTransaction.prototype.setTaxes = function(taxes) {
 
 /**
  * Gets the fees for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -375,7 +375,7 @@ Element.add(ReinvestIncomeTransaction, {name: "FEES", order: 100, attributeType:
 
 /**
  * Sets the fees for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} fees the transaction fees
  */
@@ -386,7 +386,7 @@ ReinvestIncomeTransaction.prototype.setFees = function(fees) {
 
 /**
  * Gets the load for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -398,7 +398,7 @@ Element.add(ReinvestIncomeTransaction, {name: "LOAD", order: 110, attributeType:
 
 /**
  * Sets the load for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} load the load
  */
@@ -409,7 +409,7 @@ ReinvestIncomeTransaction.prototype.setLoad = function(load) {
 
 /**
  * Gets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -421,7 +421,7 @@ Element.add(ReinvestIncomeTransaction, {name: "TAXEXEMPT", order: 120, attribute
 
 /**
  * Sets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Boolean} taxExempt whether the transaction was tax exempt
  */
@@ -433,7 +433,7 @@ ReinvestIncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -446,7 +446,7 @@ Element.add(ReinvestIncomeTransaction, {name: "CURRENCY", order: 130, attributeT
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -458,7 +458,7 @@ ReinvestIncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction.
  */
@@ -470,7 +470,7 @@ Element.add(ReinvestIncomeTransaction, {name: "ORIGCURRENCY", order: 140, attrib
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction.
  */
@@ -484,7 +484,7 @@ ReinvestIncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalC
  * Gets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -498,7 +498,7 @@ Element.add(ReinvestIncomeTransaction, {name: "INV401KSOURCE", order: 150, attri
  * Sets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */

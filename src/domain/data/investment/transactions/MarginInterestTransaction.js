@@ -26,7 +26,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
  * account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -71,7 +71,7 @@ Aggregate.add("MARGININTEREST", MarginInterestTransaction);
 
 /**
  * Gets the sub account type the margin interest affects (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -83,7 +83,7 @@ Element.add(MarginInterestTransaction, {name: "SUBACCTFUND", order: 30, attribut
 
 /**
  * Sets the sub account type the margin interest affects (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountFund the sub account type
  */
@@ -105,7 +105,7 @@ MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
 
 /**
  * Gets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -117,7 +117,7 @@ Element.add(MarginInterestTransaction, {name: "TOTAL", order: 40, attributeType:
 
 /**
  * Sets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -129,7 +129,7 @@ MarginInterestTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction.
  */
@@ -142,7 +142,7 @@ Element.add(MarginInterestTransaction, {name: "CURRENCY", order: 110, attributeT
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction.
  */
@@ -154,7 +154,7 @@ MarginInterestTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction.
  */
@@ -166,7 +166,7 @@ Element.add(MarginInterestTransaction, {name: "ORIGCURRENCY", order: 120, attrib
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrency the original currency info for the transaction.
  */

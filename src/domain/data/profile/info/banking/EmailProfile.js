@@ -22,7 +22,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Email Profile
  * @class
- * @see "Section 11.13.2.3 OFX Spec"
+ * See "Section 11.13.2.3 OFX Spec"
  */
 function EmailProfile () {
 

@@ -29,7 +29,7 @@ var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for closing an option position due to expiration, exercise, or assignment.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -99,7 +99,7 @@ Aggregate.add("CLOSUREOPT", CloseOptionTransaction);
 
 /**
  * Gets the security id of the option.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {SecurityId} the security id of the option
  */
@@ -111,7 +111,7 @@ ChildAggregate.add(CloseOptionTransaction, {order: 20, attributeType: SecurityId
 
 /**
  * Sets the security id of the option.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the option
  */
@@ -123,7 +123,7 @@ CloseOptionTransaction.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the action being performed (i.e. "EXERCISE", "ASSIGN", "EXPIRE" This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the option action
  */
@@ -136,7 +136,7 @@ Element.add(CloseOptionTransaction, {name: "OPTACTION", required: true, order: 3
 /**
  * Sets the action being performed (i.e. "EXERCISE", "ASSIGN", "EXPIRE" This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} optionAction the option action
  */
@@ -158,7 +158,7 @@ CloseOptionTransaction.prototype.getOptionActionEnum = function() {
 /**
  * Gets the number of units of the option that were closed. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the number of units closed
  */
@@ -171,7 +171,7 @@ Element.add(CloseOptionTransaction, {name: "UNITS", required: true, order: 40, a
 /**
  * Sets the number of units of the option that were closed. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} units the number of units closed
  */
@@ -182,7 +182,7 @@ CloseOptionTransaction.prototype.setUnits = function(units) {
 
 /**
  * Gets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Integer} the number of shares per contact
  */
@@ -194,7 +194,7 @@ Element.add(CloseOptionTransaction, {name: "SHPERCTRCT", required: true, order: 
 
 /**
  * Sets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Integer} sharesPerContact the number of shares per contact
  */
@@ -205,7 +205,7 @@ CloseOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -217,7 +217,7 @@ Element.add(CloseOptionTransaction, {name: "SUBACCTSEC", required: true, order: 
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -240,7 +240,7 @@ CloseOptionTransaction.prototype.getSubAccountSecurityEnum = function() {
  * Gets the related transaction id for the related buy or sell corresponding to the
  * EXERCISE or ASSIGN action. This is a required field according to the OFX spec if the
  * action or EXERCISE or ASSIGN.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the related transaction id
  */
@@ -254,7 +254,7 @@ Element.add(CloseOptionTransaction, {name: "RELFITID", order: 70, attributeType:
  * Sets the related transaction id for the related buy or sell corresponding to the
  * EXERCISE or ASSIGN action. This is a required field according to the OFX spec if the
  * action or EXERCISE or ASSIGN.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId the related transaction id
  */
@@ -265,7 +265,7 @@ CloseOptionTransaction.prototype.setRelatedTransactionId = function(relatedTrans
 
 /**
  * Gets the gain related to the transaction. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the gain related to the transaction
  */
@@ -277,7 +277,7 @@ Element.add(CloseOptionTransaction, {name: "GAIN", order: 80, attributeType: Num
 
 /**
  * Sets the gain related to the transaction. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} gain the gain related to the transaction
  */

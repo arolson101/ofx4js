@@ -25,7 +25,7 @@ var Element = require("../../../meta/Element");
  *
  * @class
  * @augments ResponseMessage
- * @see "Section 2.5.2.2, OFX Spec."
+ * See "Section 2.5.2.2, OFX Spec."
  */
 function PasswordChangeResponse () {
   ResponseMessage.call(this);

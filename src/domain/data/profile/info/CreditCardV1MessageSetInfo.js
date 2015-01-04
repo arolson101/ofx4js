@@ -27,7 +27,7 @@ var ImageProfile = require("./common/ImageProfile");
  * Credit Card Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.3 OFX Spec"
+ * See "Section 11.13.3 OFX Spec"
  */
 function CreditCardV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);

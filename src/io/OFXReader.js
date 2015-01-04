@@ -34,9 +34,9 @@ OFXReader.prototype.setContentHandler = function(handler) { throw new Error("not
 /**
  * Parse a stream.
  *
- * @param {InputStream or Reader} stream The stream or reader to parse.
+ * @param {string} text The stream or reader to parse.
  */
-OFXReader.prototype.parse = function(stream) { throw new Error("not implemented"); };
+OFXReader.prototype.parse = function(text) { throw new Error("not implemented"); };
 
 
 module.exports = OFXReader;

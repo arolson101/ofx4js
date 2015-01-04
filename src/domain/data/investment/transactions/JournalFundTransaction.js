@@ -25,7 +25,7 @@ var TransactionType = require("./TransactionType");
 /**
  * Transaction for journal fund transactions between sub-accounts within the same investment
  * account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -64,7 +64,7 @@ Aggregate.add("JRNLFUND", JournalFundTransaction);
 
 /**
  * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -76,7 +76,7 @@ Element.add(JournalFundTransaction, {name: "SUBACCTFROM", order: 20, attributeTy
 
 /**
  * Sets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountFrom the sub account type
  */
@@ -97,7 +97,7 @@ JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
 
 /**
  * Gets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -109,7 +109,7 @@ Element.add(JournalFundTransaction, {name: "SUBACCTTO", order: 30, attributeType
 
 /**
  * Sets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountTo the sub account fund
  */
@@ -130,7 +130,7 @@ JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
 
 /**
  * Gets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -142,7 +142,7 @@ Element.add(JournalFundTransaction, {name: "TOTAL", order: 40, attributeType: Nu
 
 /**
  * Sets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */

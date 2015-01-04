@@ -20,7 +20,7 @@ sub processDir
     {
       my $js = $_;
       
-      if($js =~ /\.js$/i)
+      if($js =~ /\.java$/i)
       {
         convert($js);
       }
@@ -29,7 +29,8 @@ sub processDir
 }
 
 
-processDir("src");
+#processDir("src");
+processDir("/Users/aolson/Desktop/ofx4j-code/src");
 
 
 sub convert
@@ -40,19 +41,17 @@ sub convert
   open my $hfile, $js or die "Can't open $js for reading: $!";
   my $doc = "";
   my $found = 0;
+  my %fcns;
   while(my $line = <$hfile>)
   {
-    if($line =~ /(\w+)\.prototype\.(\w+)/)
+    if($line =~ /static/)
     {
-      if($1 eq $2)
+      if(!$found)
       {
-        if(!$found)
-        {
-          print "*****\n$js\n";
-          $found = 1;
-        }
-        print $line;
+        print "*****\n$js\n";
+        $found = 1;
       }
+      print $line;
     }
   }
   close $hfile;

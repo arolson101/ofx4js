@@ -22,7 +22,7 @@ var Element = require("../../../../meta/Element");
  * the financial institution can report the transaction as converted into the default currency
  * and then include this child aggregate to report what the original currency was and what the
  * rate of conversion was.
- * @see "Section 5.2, OFX Spec"
+ * See "Section 5.2, OFX Spec"
  *
  * @class
  */

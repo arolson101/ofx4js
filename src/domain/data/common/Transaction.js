@@ -343,9 +343,9 @@ Transaction.prototype.setCorrectionId = function(correctionId) {
 
 
 /**
- * The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  *
- * @return {CorrectionAction} The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * @return {CorrectionAction} The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  */
 Transaction.prototype.getCorrectionAction = function() {
   return this.correctionAction;
@@ -354,9 +354,9 @@ Element.add(Transaction, {name: "CORRECTACTION", order: 70, attributeType: Corre
 
 
 /**
- * The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  *
- * @param {CorrectionAction} correctionAction The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * @param {CorrectionAction} correctionAction The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  */
 Transaction.prototype.setCorrectionAction = function(correctionAction) {
   this.correctionAction = correctionAction;

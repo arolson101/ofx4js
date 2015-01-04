@@ -22,7 +22,7 @@ var Transaction = require("../../common/Transaction");
 
 /**
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
- * @see "Section 13.9.2.3, OFX Spec"
+ * See "Section 13.9.2.3, OFX Spec"
  *
  * @class
  */
@@ -69,7 +69,7 @@ InvestmentBankTransaction.prototype.setTransaction = function(transaction) {
 
 /**
  * Gets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @return {String} the sub account fund for the transaction
  */
@@ -81,7 +81,7 @@ Element.add(InvestmentBankTransaction, {name: "SUBACCTFUND", required: true, ord
 
 /**
  * Sets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund for the transaction
  */

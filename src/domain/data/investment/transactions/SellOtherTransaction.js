@@ -22,7 +22,7 @@ var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying other types of securities.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction

@@ -30,7 +30,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -121,7 +121,7 @@ Aggregate.add("INCOME", IncomeTransaction);
 /**
  * Gets the id of the security that the income was for. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that the income was for
  */
@@ -134,7 +134,7 @@ ChildAggregate.add(IncomeTransaction, {required: true, order: 20, attributeType:
 /**
  * Sets the id of the security that the income was for. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that the income was for
  */
@@ -146,7 +146,7 @@ IncomeTransaction.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC>
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @return {String} the type of income
  */
@@ -159,7 +159,7 @@ Element.add(IncomeTransaction, {name: "INCOMETYPE", required: true, order: 30, a
 /**
  * Sets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC>
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @param {String} incomeType the type of income
  */
@@ -180,7 +180,7 @@ IncomeTransaction.prototype.getIncomeTypeEnum = function() {
 
 /**
  * Gets the total income received.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -192,7 +192,7 @@ Element.add(IncomeTransaction, {name: "TOTAL", required: true, order: 40, attrib
 
 /**
  * Sets the total income received.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -203,7 +203,7 @@ IncomeTransaction.prototype.setTotal = function(total) {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -215,7 +215,7 @@ Element.add(IncomeTransaction, {name: "SUBACCTSEC", order: 50, attributeType: St
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAcctSec the sub account type
  */
@@ -236,7 +236,7 @@ IncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund for the transaction
  */
@@ -248,7 +248,7 @@ Element.add(IncomeTransaction, {name: "SUBACCTFUND", order: 60, attributeType: S
 
 /**
  * Sets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAcctFund the sub account fund for the transaction
  */
@@ -269,7 +269,7 @@ IncomeTransaction.prototype.getSubAccountFundEnum = function() {
 
 /**
  * Gets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -281,7 +281,7 @@ Element.add(IncomeTransaction, {name: "TAXEXEMPT", order: 70, attributeType: Boo
 
 /**
  * Sets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Boolean} taxExempt whether the transaction was tax exempt
  */
@@ -292,7 +292,7 @@ IncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 
 /**
  * Gets the withholding for the income. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the withholding
  */
@@ -304,7 +304,7 @@ Element.add(IncomeTransaction, {name: "WITHHOLDING", order: 80, attributeType: N
 
 /**
  * Sets the withholding for the income. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} withholding the withholding
  */
@@ -316,7 +316,7 @@ IncomeTransaction.prototype.setWithholding = function(withholding) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -329,7 +329,7 @@ Element.add(IncomeTransaction, {name: "CURRENCY", order: 90, attributeType: Stri
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -341,7 +341,7 @@ IncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the currency info for the transaction
  */
@@ -353,7 +353,7 @@ ChildAggregate.add(IncomeTransaction, {order: 120, attributeType: OriginalCurren
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the currency info for the transaction
  */
@@ -367,7 +367,7 @@ IncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalCurrencyI
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -381,7 +381,7 @@ Element.add(IncomeTransaction, {name: "INV401KSOURCE", order: 110, attributeType
  * Sets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */

@@ -28,7 +28,7 @@ var Status = require("./common/Status");
  * @class
  * @augments ResponseMessage
  * @augments StatusHolder
- * @see "Section 2.4.6, OFX Spec"
+ * See "Section 2.4.6, OFX Spec"
  */
 function TransactionWrappedResponseMessage() {
   ResponseMessage.call(this);

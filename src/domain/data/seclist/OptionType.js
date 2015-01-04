@@ -16,7 +16,7 @@
 
 /**
  * Type of option.
- * @see "Section 13.8.5.4, OFX Spec"
+ * See "Section 13.8.5.4, OFX Spec"
  *
  * @enum
  */

@@ -29,7 +29,7 @@ var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for transfers.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -111,7 +111,7 @@ Aggregate.add("TRANSFER", TransferInvestmentTransaction);
 /**
  * Gets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was transferred
  */
@@ -124,7 +124,7 @@ ChildAggregate.add(TransferInvestmentTransaction, {required: true, order: 20, at
 /**
  * Sets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was transferred
  */
@@ -135,7 +135,7 @@ TransferInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
   * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
-  * @see "Section 13.9.2.4.3, OFX Spec"
+  * See "Section 13.9.2.4.3, OFX Spec"
   *
   * @return {String} the sub account type
   */
@@ -147,7 +147,7 @@ Element.add(TransferInvestmentTransaction, {name: "SUBACCTSEC", order: 30, attri
 
 /**
   * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
-  * @see "Section 13.9.2.4.3, OFX Spec"
+  * See "Section 13.9.2.4.3, OFX Spec"
   *
   * @param {String} subAccountSecurity the sub account type
   */
@@ -171,7 +171,7 @@ TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units transferred
  */
@@ -186,7 +186,7 @@ Element.add(TransferInvestmentTransaction, {name: "UNITS", required: true, order
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units transferred
  */
@@ -288,7 +288,7 @@ TransferInvestmentTransaction.prototype.setAverageCostBasis = function(averageCo
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -302,7 +302,7 @@ Element.add(TransferInvestmentTransaction, {name: "UNITPRICE", required: true, o
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -338,7 +338,7 @@ TransferInvestmentTransaction.prototype.setPurchaseDate = function(purchaseDate)
  * Gets the 401K source for the transfer. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -352,7 +352,7 @@ Element.add(TransferInvestmentTransaction, {name: "INV401KSOURCE", order: 100, a
  * Sets the 401K source for the transfer. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */

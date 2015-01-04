@@ -28,7 +28,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for a stock split.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -123,7 +123,7 @@ Aggregate.add("SPLIT", SplitTransaction);
 /**
  * Gets the id of the security for the split. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security for the expsense
  */
@@ -136,7 +136,7 @@ ChildAggregate.add(SplitTransaction, {required: true, order: 20, attributeType: 
 /**
  * Sets the id of the security for the split. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security for the expsense
  */
@@ -148,7 +148,7 @@ SplitTransaction.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -161,7 +161,7 @@ Element.add(SplitTransaction, {name: "SUBACCTSEC", order: 30, attributeType: Str
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -271,7 +271,7 @@ SplitTransaction.prototype.setDenominator = function(denominator) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -284,7 +284,7 @@ Element.add(SplitTransaction, {name: "CURRENCY", order: 80, attributeType: Strin
 /**
  * sets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {void} the currency code for the transaction
  */
@@ -296,7 +296,7 @@ SplitTransaction.prototype.setCurrencyCode = function(/*String*/ currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -308,7 +308,7 @@ Element.add(SplitTransaction, {name: "ORIGCURRENCY", order: 90, attributeType: O
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {void} the original currency info for the transaction
  */
@@ -341,7 +341,7 @@ SplitTransaction.prototype.setCashForFractionalUnits = function(cashForFractiona
 
 /**
  * Gets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -353,7 +353,7 @@ Element.add(SplitTransaction, {name: "SUBACCTFUND", order: 110, attributeType: S
 
 /**
  * Sets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -376,7 +376,7 @@ SplitTransaction.prototype.getSubAccountFundEnum = function() {
  * Gets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -390,7 +390,7 @@ Element.add(SplitTransaction, {name: "INV401KSOURCE", order: 120, attributeType:
  * Sets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */

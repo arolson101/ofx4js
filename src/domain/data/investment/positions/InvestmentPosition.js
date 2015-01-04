@@ -24,7 +24,7 @@ var Inv401KSource = require("./Inv401KSource");
 
 /**
  * Class for the investment position aggregate.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -109,7 +109,7 @@ Aggregate.add("INVPOS", InvestmentPosition);
 
 /**
  * Gets the security id for the position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SecurityId} the security id for the position
  */
@@ -121,7 +121,7 @@ ChildAggregate.add(InvestmentPosition, {required: true, order: 10, attributeType
 
 /**
  * Sets the security id for the position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {SecurityId} securityId the security id for the position
  */
@@ -133,7 +133,7 @@ InvestmentPosition.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the sub-account type. One of "CASH", "MARGIN", "SHORT", "OTHER". This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the sub-account type
  */
@@ -146,7 +146,7 @@ Element.add(InvestmentPosition, {name: "HELDINACCT", required: true, order: 20, 
 /**
  * Sets the sub-account type. One of "CASH", "MARGIN", "SHORT", "OTHER". This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} heldInAccount the sub-account type
  */
@@ -157,7 +157,7 @@ InvestmentPosition.prototype.setHeldInAccount = function(heldInAccount) {
 
 /**
  * Gets the sub-account type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SubAccountType} the sub-account type or null if it's not one of the well-known types
  */
@@ -169,7 +169,7 @@ InvestmentPosition.prototype.getHeldInAccountEnum = function() {
 /**
  * Gets the position type. One of SHORT or LONG. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the position type
  */
@@ -182,7 +182,7 @@ Element.add(InvestmentPosition, {name: "POSTYPE", required: true, order: 30, att
 /**
  * Sets the position type. One of SHORT or LONG. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} positionType the position type
  */
@@ -193,7 +193,7 @@ InvestmentPosition.prototype.setPositionType = function(positionType) {
 
 /**
  * Gets the position type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {PositionType} the position type or null if it's not one of the well-known types
  */
@@ -206,7 +206,7 @@ InvestmentPosition.prototype.getPositionTypeEnum = function() {
  * Gets the number of units in the position. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the number of units in the position
  */
@@ -220,7 +220,7 @@ Element.add(InvestmentPosition, {name: "UNITS", required: true, order: 40, attri
  * Sets the number of units in the position. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Double} units the number of units in the position
  */
@@ -233,7 +233,7 @@ InvestmentPosition.prototype.setUnits = function(units) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -247,7 +247,7 @@ Element.add(InvestmentPosition, {name: "UNITPRICE", required: true, order: 50, a
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -258,7 +258,7 @@ InvestmentPosition.prototype.setUnitPrice = function(unitPrice) {
 
 /**
  * Gets the market value of this position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the market value of the position
  */
@@ -270,7 +270,7 @@ Element.add(InvestmentPosition, {name: "MKTVAL", required: true, order: 60, attr
 
 /**
  * Sets the market value of this position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Double} marketValue the market value of the position
  */
@@ -282,7 +282,7 @@ InvestmentPosition.prototype.setMarketValue = function(marketValue) {
 /**
  * Gets the date and time of the unit price and market value. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Date} the market value date
  */
@@ -295,7 +295,7 @@ Element.add(InvestmentPosition, {name: "DTPRICEASOF", required: true, order: 70,
 /**
  * Sets the date and time of the unit price and market value. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Date} marketValueDate the market value date
  */
@@ -307,7 +307,7 @@ InvestmentPosition.prototype.setMarketValueDate = function(marketValueDate) {
 /**
  * Gets the currency code of the position. This is an optional field according to the OFX spec.
  * If not present, it's the default currency of the account.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the currency code of the position or null for the default currency
  */
@@ -320,7 +320,7 @@ Element.add(InvestmentPosition, {name: "CURRENCY", order: 80, attributeType: Str
 /**
  * Sets the currency code of the position. This is an optional field according to the OFX spec.
  * If not present, it's the default currency of the account.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} currencyCode the currency code of the position or null for the default currency
  */
@@ -332,7 +332,7 @@ InvestmentPosition.prototype.setCurrencyCode = function(currencyCode) {
 /**
  * Gets the memo associated with the position. This is an optional field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -345,7 +345,7 @@ Element.add(InvestmentPosition, {name: "MEMO", order: 90, attributeType: String,
 /**
  * Sets the memo associated with the position. This is an optional field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} memo the memo
  */
@@ -358,7 +358,7 @@ InvestmentPosition.prototype.setMemo = function(memo) {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -372,7 +372,7 @@ Element.add(InvestmentPosition, {name: "INV401KSOURCE", order: 100, attributeTyp
  * Sets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */

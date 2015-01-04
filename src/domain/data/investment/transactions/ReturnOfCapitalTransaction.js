@@ -29,7 +29,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for return of capital transactions.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -98,7 +98,7 @@ Aggregate.add("RETOFCAP", ReturnOfCapitalTransaction);
 /**
  * Gets the id of the security that capital was returned from. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that capital was returned from
  */
@@ -111,7 +111,7 @@ ChildAggregate.add(ReturnOfCapitalTransaction, {required: true, order: 20, attri
 /**
  * Sets the id of the security that capital was returned from. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that capital was returned from
  */
@@ -122,7 +122,7 @@ ReturnOfCapitalTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
  * Gets the total amount of capital returned. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -134,7 +134,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "TOTAL", required: true, order: 4
 
 /**
  * Sets the total amount of capital returned. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -146,7 +146,7 @@ ReturnOfCapitalTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -159,7 +159,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "SUBACCTSEC", order: 50, attribut
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -181,7 +181,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountSecurityEnum = function() {
 /**
  * Gets the sub account type that the transaction affects.
  * (e.g. CASH, MARGIN, SHORT, OTHER). This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -194,7 +194,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "SUBACCTFUND", order: 140, attrib
 /**
  * Sets the sub account type that the transaction affects.
  * (e.g. CASH, MARGIN, SHORT, OTHER). This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -216,7 +216,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -229,7 +229,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "CURRENCY", order: 110, attribute
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -241,7 +241,7 @@ ReturnOfCapitalTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the currency code for the transaction.
  */
@@ -253,7 +253,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "ORIGCURRENCY", order: 120, attri
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the currency code for the transaction.
  */
@@ -267,7 +267,7 @@ ReturnOfCapitalTransaction.prototype.setOriginalCurrencyInfo = function(original
  * Gets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -281,7 +281,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "INV401KSOURCE", order: 180, attr
  * Sets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */

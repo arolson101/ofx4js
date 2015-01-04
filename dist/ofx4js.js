@@ -6304,47 +6304,6 @@ FinancialInstitutionData.prototype.getBrokerId = function() { throw new Error("n
 
 module.exports = FinancialInstitutionData;
 
-},{}],"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionDataStore.js":[function(require,module,exports){
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-"use strict";
-
-/**
- * @class
- */
-function FinancialInstitutionDataStore() {
-}
-
-/**
- * Get the data for the financial institution of the specified id.
- *
- * @param {String} fid The id of the financial institution.
- * @return {FinancialInstitutionData} The financial institution data, or null if none exists for the specified id.
- */
-FinancialInstitutionDataStore.prototype.getInstitutionData = function(/*fid*/) { throw new Error("not implemented"); };
-
-/**
- * Get the whole list of financial institution data.
- *
- * @return {FinancialInstitutionData[]} The whole list of financial institution data.
- */
-FinancialInstitutionDataStore.prototype.getInstitutionDataList = function() { throw new Error("not implemented"); };
-
-
-module.exports = FinancialInstitutionDataStore;
-
 },{}],"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -7228,55 +7187,7 @@ CreditCardAccountImpl.prototype.createStatementRequest = function(/*CreditCardAc
 
 module.exports = CreditCardAccountImpl;
 
-},{"../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/creditcard/CreditCardRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardRequestMessageSet.js","../../domain/data/creditcard/CreditCardStatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequest.js","../../domain/data/creditcard/CreditCardStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequestTransaction.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../CreditCardAccount":"/Users/aolson/Developer/ofx4js/src/client/CreditCardAccount.js","./BaseAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BaseAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/FIDataList.js":[function(require,module,exports){
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-"use strict";
-
-/**
- * @class
- */
-function FIDataList () {
-
-  /**
-   * @name FIDataList#data
-   * @type BaseFinancialInstitutionData[]
-   * @access private
-   */
-  this.data = null;
-}
-
-
-
-
-
-FIDataList.prototype.getData = function() {
-  return this.data;
-};
-
-
-FIDataList.prototype.setData = function(/*Collection<BaseFinancialInstitutionData>*/ data) {
-  this.data = data;
-};
-
-
-
-
-module.exports = FIDataList;
-
-},{}],"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionImpl.js":[function(require,module,exports){
+},{"../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/creditcard/CreditCardRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardRequestMessageSet.js","../../domain/data/creditcard/CreditCardStatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequest.js","../../domain/data/creditcard/CreditCardStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/creditcard/CreditCardStatementRequestTransaction.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../CreditCardAccount":"/Users/aolson/Developer/ofx4js/src/client/CreditCardAccount.js","./BaseAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BaseAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionImpl.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7628,7 +7539,7 @@ FinancialInstitutionImpl.prototype.createAccountInfoRequest = function() {
  * Get the account profiles for the specified response envelope.
  *
  * @param {ResponseEnvelope} response The response envelope.
- * @return {Collection<AccountProfile>} The account profiles.
+ * @return {AccountProfile[]} The account profiles.
  */
 FinancialInstitutionImpl.prototype.getAccountProfiles = function(response) {
   var messageSet = response.getMessageSet(MessageSetType.signup);
@@ -7674,93 +7585,7 @@ FinancialInstitutionImpl.prototype.getData = function() {
 
 module.exports = FinancialInstitutionImpl;
 
-},{"../../domain/data/ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/RequestEnvelope":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestEnvelope.js","../../domain/data/TransactionWrappedRequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedRequestMessage.js","../../domain/data/TransactionWrappedResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedResponseMessage.js","../../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../../domain/data/common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js","../../domain/data/profile/ProfileRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequest.js","../../domain/data/profile/ProfileRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestMessageSet.js","../../domain/data/profile/ProfileRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js","../../domain/data/signon/FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/FinancialInstitution.js","../../domain/data/signon/SignonRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequest.js","../../domain/data/signon/SignonRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js","../../domain/data/signup/AccountInfoRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequest.js","../../domain/data/signup/AccountInfoRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequestTransaction.js","../../domain/data/signup/SignupRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/SignupRequestMessageSet.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../context/OFXApplicationContextHolder":"/Users/aolson/Developer/ofx4js/src/client/context/OFXApplicationContextHolder.js","./BankingAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BankingAccountImpl.js","./CreditCardAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/CreditCardAccountImpl.js","./InvestmentAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionServiceImpl.js":[function(require,module,exports){
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-"use strict";
-
-var inherit = require("../../util/inherit");
-
-var FinancialInstitutionImpl = require("./FinancialInstitutionImpl");
-var FinancialInstitutionService = require("../FinancialInstitutionService");
-var OFXV1Connection = require("../net/OFXV1Connection");
-
-/**
- * @class
- */
-function FinancialInstitutionServiceImpl () {
-
-  /**
-   * @name FinancialInstitutionServiceImpl#connection
-   * @type OFXConnection
-   * @access private
-   */
-  this.connection = new OFXV1Connection();
-
-  /**
-   * @name FinancialInstitutionServiceImpl#dataStore
-   * @type FinancialInstitutionDataStore
-   * @access private
-   */
-  this.dataStore = null;
-}
-
-inherit(FinancialInstitutionServiceImpl, "implements", FinancialInstitutionService);
-
-
-
-
-FinancialInstitutionServiceImpl.prototype.getFinancialInstitution = function(/*String*/ fid) {
-  return (!this.dataStore) ? null : this.getFinancialInstitution(this.getDataStore().getInstitutionData(fid));
-};
-
-
-FinancialInstitutionServiceImpl.prototype.getFinancialInstitution = function(/*FinancialInstitutionData*/ data) {
-  if (!data) {
-    return null;
-  }
-
-  return new FinancialInstitutionImpl(data, this.getConnection());
-};
-
-
-FinancialInstitutionServiceImpl.prototype.getDataStore = function() {
-  return this.dataStore;
-};
-
-
-FinancialInstitutionServiceImpl.prototype.setDataStore = function(/*FinancialInstitutionDataStore*/ dataStore) {
-  this.dataStore = dataStore;
-};
-
-
-FinancialInstitutionServiceImpl.prototype.getConnection = function() {
-  return this.connection;
-};
-
-
-FinancialInstitutionServiceImpl.prototype.setConnection = function(/*OFXConnection*/ connection) {
-  this.connection = connection;
-};
-
-
-
-
-module.exports = FinancialInstitutionServiceImpl;
-
-},{"../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../FinancialInstitutionService":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionService.js","../net/OFXV1Connection":"/Users/aolson/Developer/ofx4js/src/client/net/OFXV1Connection.js","./FinancialInstitutionImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js":[function(require,module,exports){
+},{"../../domain/data/ApplicationSecurity":"/Users/aolson/Developer/ofx4js/src/domain/data/ApplicationSecurity.js","../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/RequestEnvelope":"/Users/aolson/Developer/ofx4js/src/domain/data/RequestEnvelope.js","../../domain/data/TransactionWrappedRequestMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedRequestMessage.js","../../domain/data/TransactionWrappedResponseMessage":"/Users/aolson/Developer/ofx4js/src/domain/data/TransactionWrappedResponseMessage.js","../../domain/data/common/Status":"/Users/aolson/Developer/ofx4js/src/domain/data/common/Status.js","../../domain/data/common/StatusHolder":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatusHolder.js","../../domain/data/profile/ProfileRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequest.js","../../domain/data/profile/ProfileRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestMessageSet.js","../../domain/data/profile/ProfileRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/profile/ProfileRequestTransaction.js","../../domain/data/signon/FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/FinancialInstitution.js","../../domain/data/signon/SignonRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequest.js","../../domain/data/signon/SignonRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signon/SignonRequestMessageSet.js","../../domain/data/signup/AccountInfoRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequest.js","../../domain/data/signup/AccountInfoRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/AccountInfoRequestTransaction.js","../../domain/data/signup/SignupRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/signup/SignupRequestMessageSet.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../context/OFXApplicationContextHolder":"/Users/aolson/Developer/ofx4js/src/client/context/OFXApplicationContextHolder.js","./BankingAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BankingAccountImpl.js","./CreditCardAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/CreditCardAccountImpl.js","./InvestmentAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js":[function(require,module,exports){
 "use strict";
 
 var inherit = require("../../util/inherit");
@@ -7930,411 +7755,7 @@ InvestmentAccountImpl.prototype.unwrapSecurityList = function(/*ResponseEnvelope
 
 module.exports = InvestmentAccountImpl;
 
-},{"../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/common/StatementRange":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRange.js","../../domain/data/investment/statements/IncludePosition":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/IncludePosition.js","../../domain/data/investment/statements/InvestmentStatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequest.js","../../domain/data/investment/statements/InvestmentStatementRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestMessageSet.js","../../domain/data/investment/statements/InvestmentStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestTransaction.js","../../domain/data/seclist/SecurityListRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequest.js","../../domain/data/seclist/SecurityListRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestMessageSet.js","../../domain/data/seclist/SecurityListRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestTransaction.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../InvestmentAccount":"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/LocalResourceFIDataStore.js":[function(require,module,exports){
-///*
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *   http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//"use strict";
-//
-//var inherit = require("../inherit");
-//
-//var FinancialInstitutionData = require("client/FinancialInstitutionData");
-//var FinancialInstitutionDataStore = require("client/FinancialInstitutionDataStore");
-////import org.apache.commons.logging.Log;
-////import org.apache.commons.logging.LogFactory;
-//
-////import javax.xml.bind.JAXBContext;
-////import javax.xml.bind.JAXBException;
-////import java.io.*;
-////import java.util.ArrayList;
-////import java.util.HashMap;
-////import java.util.List;
-////import java.util.Map;
-//
-///**
-// * Implementation of a FI data store that loads its FI data from a local resource.
-// *
-// * @author Ryan Heaton
-// */
-//function LocalResourceFIDataStore () {
-//
-//  /**
-//   * @name LocalResourceFIDataStore#LOG
-//   * @type Log
-//   */
-//  this.LOG = LogFactory.getLog(LocalResourceFIDataStore.class);
-//
-//  /**
-//   * @name LocalResourceFIDataStore#fiData
-//   * @type FinancialInstitutionData>
-//   */
-//  this.fiData = null;
-//}
-//
-//inherit(LocalResourceFIDataStore, "implements", FinancialInstitutionDataStore);
-//
-//
-//
-//
-///**
-// * Load the default set of institution data (found at classpath:/institutions.xml).
-// *
-// * @throws IOException If the resource is unreadable or malformed.
-// */
-//LocalResourceFIDataStore.prototype.LocalResourceFIDataStore = function() {
-//  this(LocalResourceFIDataStore.class.getResourceAsStream("/META-INF/ofx4j/institutions.xml"));
-//};
-//
-//
-///**
-// * Load the institution data from a file.
-// *
-// * @param {File} in The file to read.
-// * @throws IOException If the resource is unreadable or malformed.
-// */
-//LocalResourceFIDataStore.prototype.LocalResourceFIDataStore = function(in) {
-//  this(new FileInputStream(in));
-//};
-//
-//
-///**
-// * Load the institution data from a specific stream.
-// *
-// * @param {InputStream} in The stream.
-// * @throws IOException If the resource is unreadable or malformed.
-// */
-//LocalResourceFIDataStore.prototype.LocalResourceFIDataStore = function(in) {
-//  Map<String, FinancialInstitutionData> fiData = new HashMap<String, FinancialInstitutionData>();
-//  if (in != null) {
-//    try {
-//      FIDataList list = (FIDataList) JAXBContext.newInstance(FIDataList.class).createUnmarshaller().unmarshal(in);
-//      if (list != null && list.getData() != null) {
-//        for (BaseFinancialInstitutionData fi : list.getData()) {
-//          fiData.put(fi.getId(), fi);
-//        }
-//      }
-//    }
-//    catch (JAXBException e) {
-//      throw new IOException(e.getMessage());
-//    }
-//
-//    if (LOG.isInfoEnabled()) {
-//      LOG.info(fiData.size() + " institutions loaded.");
-//    }
-//  }
-//
-//  this.fiData = fiData;
-//};
-//
-//
-//// Inherited.
-//LocalResourceFIDataStore.prototype.getInstitutionData = function(/*String*/ fid) {
-//  return fiData.get(fid);
-//};
-//
-//
-//// Inherited.
-//LocalResourceFIDataStore.prototype.getInstitutionDataList = function() {
-//  return new ArrayList<FinancialInstitutionData>(fiData.values());
-//};
-//
-//
-///**
-// * Add a financial institution.
-// *
-// * @param {BaseFinancialInstitutionData} data The data to add.
-// */
-//LocalResourceFIDataStore.prototype.add = function(data) {
-//  this.fiData.put(data.getId(), data);
-//};
-//
-//
-///**
-// * Store the data somewhere.
-// *
-// * @param {OutputStream} out The output stream.
-// * @throws IOException If an error occurs.
-// */
-//LocalResourceFIDataStore.prototype.storeData = function(out) {
-//  try {
-//    FIDataList dataList = new FIDataList();
-//    ArrayList<BaseFinancialInstitutionData> data = new ArrayList<BaseFinancialInstitutionData>();
-//    for (FinancialInstitutionData datum : fiData.values()) {
-//      if (datum instanceof BaseFinancialInstitutionData) {
-//        data.add((BaseFinancialInstitutionData) datum);
-//      }
-//    }
-//    dataList.setData(data);
-//    JAXBContext.newInstance(FIDataList.class).createMarshaller().marshal(dataList, out);
-//  }
-//  catch (JAXBException e) {
-//    throw new IOException(e.getMessage());
-//  }
-//};
-//
-//
-//
-//
-//module.exports = LocalResourceFIDataStore;
-
-},{}],"/Users/aolson/Developer/ofx4js/src/client/impl/OFXHomeFIDataStore.js":[function(require,module,exports){
-///*
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *   http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//"use strict";
-//
-//var inherit = require("../inherit");
-//
-//var FinancialInstitutionData = require("client/FinancialInstitutionData");
-//var FinancialInstitutionDataStore = require("client/FinancialInstitutionDataStore");
-////import org.apache.commons.logging.Log;
-////import org.apache.commons.logging.LogFactory;
-////import org.ccil.cowan.tagsoup.Parser;
-////import org.xml.sax.Attributes;
-////import org.xml.sax.InputSource;
-////import org.xml.sax.SAXException;
-////import org.xml.sax.XMLReader;
-////import org.xml.sax.helpers.DefaultHandler;
-//
-////import java.io.IOException;
-////import java.net.MalformedURLException;
-////import java.net.URL;
-////import java.util.*;
-////import java.util.regex.Matcher;
-////import java.util.regex.Pattern;
-//
-///**
-// * Implementation of a financial institution data store that reads its FI data from <a href="http://www.ofxhome.com">OFX Home</a>.
-// *
-// * @author Ryan Heaton
-// */
-//public class OFXHomeFIDataStore implements FinancialInstitutionDataStore {
-//
-//  private static final Log LOG = LogFactory.getLog(OFXHomeFIDataStore.class);
-//  public static final Pattern INSTITUTION_HREF_PATTERN = Pattern.compile("http\\://www.ofxhome.com/index.php/institution/view/\\w+");
-//  private String url = "http://www.ofxhome.com/index.php/home/directory/all";
-//  private Map<String, FinancialInstitutionData> fiData;
-//
-//  public FinancialInstitutionData getInstitutionData(String fid) {
-//    return getFiData().get(fid);
-//  }
-//
-//  public List<FinancialInstitutionData> getInstitutionDataList() {
-//    return new ArrayList<FinancialInstitutionData>(getFiData().values());
-//  }
-//
-//  public synchronized Map<String, FinancialInstitutionData> getFiData() {
-//    if (this.fiData == null) {
-//      this.fiData = new HashMap<String, FinancialInstitutionData>();
-//      try {
-//        initializeFIData();
-//        if (LOG.isInfoEnabled()) {
-//          LOG.info(this.fiData.size() + " institutions loaded from " + getUrl());
-//        }
-//      }
-//      catch (Exception e) {
-//        fiData = Collections.emptyMap();
-//      }
-//    }
-//
-//    return fiData;
-//  }
-//
-//  private void initializeFIData() throws IOException, SAXException {
-//    URL url = new URL(getUrl());
-//    XMLReader xmlReader = new Parser();
-//    xmlReader.setFeature("http://xml.org/sax/features/namespaces", false);
-//    xmlReader.setFeature("http://xml.org/sax/features/validation", false);
-//    xmlReader.setContentHandler(new DirectoryContentHandler());
-//    xmlReader.parse(new InputSource(url.openStream()));
-//  }
-//
-//  private BaseFinancialInstitutionData loadInstitutionData(String href) throws IOException, SAXException {
-//    if (LOG.isInfoEnabled()) {
-//      LOG.info("Loading institution data from: " + href);
-//    }
-//    
-//    URL url = new URL(href);
-//    XMLReader xmlReader = new Parser();
-//    xmlReader.setFeature("http://xml.org/sax/features/namespaces", false);
-//    xmlReader.setFeature("http://xml.org/sax/features/validation", false);
-//    InstitutionContentHandler institutionHandler = new InstitutionContentHandler();
-//    xmlReader.setContentHandler(institutionHandler);
-//    xmlReader.parse(new InputSource(url.openStream()));
-//    return institutionHandler.data;
-//  }
-//
-//  /**
-//   * The URL of the OFX home directory.
-//   *
-//   * @return The URL of the OFX home directory.
-//   */
-//  public String getUrl() {
-//    return url;
-//  }
-//
-//  /**
-//   * The URL of the OFX home directory.
-//   *
-//   * @param url The URL of the OFX home directory.
-//   */
-//  public void setUrl(String url) {
-//    this.url = url;
-//  }
-//
-//  private class DirectoryContentHandler extends DefaultHandler {
-//
-//    private Set<String> visited = new TreeSet<String>();
-//
-//    @Override
-//    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-//      if ("a".equalsIgnoreCase(qName) || "a".equalsIgnoreCase(localName)) {
-//        for (int i = 0; i < attributes.getLength(); i++) {
-//          String href = attributes.getValue("href");
-//          if (href != null) {
-//            Matcher matcher = INSTITUTION_HREF_PATTERN.matcher(href);
-//            if (matcher.matches() && visited.add(href)) {
-//              try {
-//                BaseFinancialInstitutionData data = loadInstitutionData(href);
-//                data.setName(attributes.getValue("title"));
-//                fiData.put(data.getId(), data);
-//              }
-//              catch (IOException e) {
-//                throw new SAXException(e);
-//              }
-//            }
-//          }
-//        }
-//      }
-//    }
-//  }
-//
-//  private enum FIField {
-//    ID,
-//
-//    ORG,
-//
-//    URL,
-//
-//    BROKERID
-//  }
-//
-//  private class InstitutionContentHandler extends DefaultHandler {
-//
-//    private FIField currentField = null;
-//    private StringBuilder fieldNameBuffer = null;
-//    private StringBuilder fieldValueBuffer = null;
-//    private BaseFinancialInstitutionData data;
-//
-//    @Override
-//    public void startDocument() throws SAXException {
-//      this.data = new BaseFinancialInstitutionData(UUID.randomUUID().toString());
-//    }
-//
-//    @Override
-//    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-//      if ("td".equalsIgnoreCase(qName)) {
-//        if (this.fieldNameBuffer == null) {
-//          this.fieldNameBuffer = new StringBuilder();
-//        }
-//        else if (currentField != null) {
-//          this.fieldValueBuffer = new StringBuilder();
-//        }
-//      }
-//    }
-//
-//    @Override
-//    public void endElement(String uri, String localName, String qName) throws SAXException {
-//      if ("td".equalsIgnoreCase(qName)) {
-//        if (currentField == null) {
-//          if (fieldNameBuffer != null) {
-//            String fieldName = this.fieldNameBuffer.toString().toLowerCase();
-//            if (fieldName.contains("fi id")) {
-//              this.currentField = FIField.ID;
-//              return;
-//            }
-//            else if (fieldName.contains("fi org")) {
-//              this.currentField = FIField.ORG;
-//              return;
-//            }
-//            else if (fieldName.contains("fi url")) {
-//              this.currentField = FIField.URL;
-//              return;
-//            }
-//            else if (fieldName.contains("fi broker id")) {
-//              this.currentField = FIField.BROKERID;
-//              return;
-//            }
-//          }
-//        }
-//        else if (this.fieldValueBuffer != null) {
-//          String fieldValue = this.fieldValueBuffer.toString().trim();
-//          if ("" === fieldValue) {
-//            fieldValue = null;
-//          }
-//
-//          switch (currentField) {
-//            case ID:
-//              this.data.setFinancialInstitutionId(fieldValue);
-//              break;
-//            case BROKERID:
-//              this.data.setBrokerId(fieldValue);
-//              break;
-//            case ORG:
-//              this.data.setOrganization(fieldValue);
-//              break;
-//            case URL:
-//              try {
-//                this.data.setOFXURL(new URL(fieldValue));
-//              }
-//              catch (MalformedURLException e) {
-//                //fall through...
-//              }
-//          }
-//        }
-//
-//        this.currentField = null;
-//        this.fieldNameBuffer = null;
-//        this.fieldValueBuffer = null;
-//      }
-//    }
-//
-//    @Override
-//    public void characters(char ch[], int start, int length) throws SAXException {
-//      if (this.currentField != null && fieldValueBuffer != null) {
-//        fieldValueBuffer.append(ch, start, length);
-//      }
-//      else if (fieldNameBuffer != null) {
-//        fieldNameBuffer.append(ch, start, length);
-//      }
-//    }
-//  }
-//
-//}
-
-},{}],"/Users/aolson/Developer/ofx4js/src/client/impl/index.js":[function(require,module,exports){
+},{"../../domain/data/MessageSetType":"/Users/aolson/Developer/ofx4js/src/domain/data/MessageSetType.js","../../domain/data/common/StatementRange":"/Users/aolson/Developer/ofx4js/src/domain/data/common/StatementRange.js","../../domain/data/investment/statements/IncludePosition":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/IncludePosition.js","../../domain/data/investment/statements/InvestmentStatementRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequest.js","../../domain/data/investment/statements/InvestmentStatementRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestMessageSet.js","../../domain/data/investment/statements/InvestmentStatementRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/investment/statements/InvestmentStatementRequestTransaction.js","../../domain/data/seclist/SecurityListRequest":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequest.js","../../domain/data/seclist/SecurityListRequestMessageSet":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestMessageSet.js","../../domain/data/seclist/SecurityListRequestTransaction":"/Users/aolson/Developer/ofx4js/src/domain/data/seclist/SecurityListRequestTransaction.js","../../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js","../InvestmentAccount":"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js"}],"/Users/aolson/Developer/ofx4js/src/client/impl/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -8342,21 +7763,16 @@ module.exports = {
   BaseAccountImpl: require("./BaseAccountImpl"),
   BaseFinancialInstitutionData: require("./BaseFinancialInstitutionData"),
   CreditCardAccountImpl: require("./CreditCardAccountImpl"),
-  FIDataList: require("./FIDataList"),
   FinancialInstitutionImpl: require("./FinancialInstitutionImpl"),
-  FinancialInstitutionServiceImpl: require("./FinancialInstitutionServiceImpl"),
   InvestmentAccountImpl: require("./InvestmentAccountImpl"),
-  LocalResourceFIDataStore: require("./LocalResourceFIDataStore"),
-  OFXHomeFIDataStore: require("./OFXHomeFIDataStore"),
 };
 
-},{"./BankingAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BankingAccountImpl.js","./BaseAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BaseAccountImpl.js","./BaseFinancialInstitutionData":"/Users/aolson/Developer/ofx4js/src/client/impl/BaseFinancialInstitutionData.js","./CreditCardAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/CreditCardAccountImpl.js","./FIDataList":"/Users/aolson/Developer/ofx4js/src/client/impl/FIDataList.js","./FinancialInstitutionImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionImpl.js","./FinancialInstitutionServiceImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionServiceImpl.js","./InvestmentAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js","./LocalResourceFIDataStore":"/Users/aolson/Developer/ofx4js/src/client/impl/LocalResourceFIDataStore.js","./OFXHomeFIDataStore":"/Users/aolson/Developer/ofx4js/src/client/impl/OFXHomeFIDataStore.js"}],"/Users/aolson/Developer/ofx4js/src/client/index.js":[function(require,module,exports){
+},{"./BankingAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BankingAccountImpl.js","./BaseAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/BaseAccountImpl.js","./BaseFinancialInstitutionData":"/Users/aolson/Developer/ofx4js/src/client/impl/BaseFinancialInstitutionData.js","./CreditCardAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/CreditCardAccountImpl.js","./FinancialInstitutionImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/FinancialInstitutionImpl.js","./InvestmentAccountImpl":"/Users/aolson/Developer/ofx4js/src/client/impl/InvestmentAccountImpl.js"}],"/Users/aolson/Developer/ofx4js/src/client/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = {
   context: require("./context/index"),
   impl: require("./impl/index"),
-  main: require("./main/index"),
   net: require("./net/index"),
 
   AccountStatement: require("./AccountStatement"),
@@ -8365,21 +7781,12 @@ module.exports = {
   FinancialInstitution: require("./FinancialInstitution"),
   FinancialInstitutionAccount: require("./FinancialInstitutionAccount"),
   FinancialInstitutionData: require("./FinancialInstitutionData"),
-  FinancialInstitutionDataStore: require("./FinancialInstitutionDataStore"),
   FinancialInstitutionProfile: require("./FinancialInstitutionProfile"),
   FinancialInstitutionService: require("./FinancialInstitutionService"),
   InvestmentAccount: require("./InvestmentAccount"),
 };
 
-},{"./AccountStatement":"/Users/aolson/Developer/ofx4js/src/client/AccountStatement.js","./BankAccount":"/Users/aolson/Developer/ofx4js/src/client/BankAccount.js","./CreditCardAccount":"/Users/aolson/Developer/ofx4js/src/client/CreditCardAccount.js","./FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","./FinancialInstitutionAccount":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionAccount.js","./FinancialInstitutionData":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionData.js","./FinancialInstitutionDataStore":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionDataStore.js","./FinancialInstitutionProfile":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js","./FinancialInstitutionService":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionService.js","./InvestmentAccount":"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js","./context/index":"/Users/aolson/Developer/ofx4js/src/client/context/index.js","./impl/index":"/Users/aolson/Developer/ofx4js/src/client/impl/index.js","./main/index":"/Users/aolson/Developer/ofx4js/src/client/main/index.js","./net/index":"/Users/aolson/Developer/ofx4js/src/client/net/index.js"}],"/Users/aolson/Developer/ofx4js/src/client/main/index.js":[function(require,module,exports){
-"use strict";
-
-module.exports = {
-//  DownloadAccountInfo: require("./DownloadAccountInfo"),
-//  DownloadStatement: require("./DownloadStatement"),
-};
-
-},{}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXConnection.js":[function(require,module,exports){
+},{"./AccountStatement":"/Users/aolson/Developer/ofx4js/src/client/AccountStatement.js","./BankAccount":"/Users/aolson/Developer/ofx4js/src/client/BankAccount.js","./CreditCardAccount":"/Users/aolson/Developer/ofx4js/src/client/CreditCardAccount.js","./FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","./FinancialInstitutionAccount":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionAccount.js","./FinancialInstitutionData":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionData.js","./FinancialInstitutionProfile":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js","./FinancialInstitutionService":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionService.js","./InvestmentAccount":"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js","./context/index":"/Users/aolson/Developer/ofx4js/src/client/context/index.js","./impl/index":"/Users/aolson/Developer/ofx4js/src/client/impl/index.js","./net/index":"/Users/aolson/Developer/ofx4js/src/client/net/index.js"}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXConnection.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26327,7 +25734,7 @@ ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ typ
  * Get all the profiles of the specified type.
  *
  * @param {MessageSetType} type The type.
- * @return {Collection<MessageSetProfile>} The profiles.
+ * @return {MessageSetProfile[]} The profiles.
  */
 ProfileResponse.prototype.getProfiles = function(type) {
   var profiles = [];
@@ -34966,7 +34373,7 @@ function AccountInfoResponse () {
 
   /**
    * @name AccountInfoResponse#accounts
-   * @type Collection<AccountProfile>
+   * @type AccountProfile[]
    * @access private
    */
   this.accounts = null;
@@ -35007,7 +34414,7 @@ AccountInfoResponse.prototype.setLastUpdated = function(lastUpdated) {
 /**
  * The accounts.
  *
- * @return {Collection<AccountProfile>} The accounts.
+ * @return {AccountProfile[]} The accounts.
  */
 AccountInfoResponse.prototype.getAccounts = function() {
   return this.accounts;
@@ -35018,7 +34425,7 @@ ChildAggregate.add(AccountInfoResponse, {order: 10, attributeType: Array, collec
 /**
  * The accounts.
  *
- * @param {Collection<AccountProfile>} accounts The accounts.
+ * @param {AccountProfile[]} accounts The accounts.
  */
 AccountInfoResponse.prototype.setAccounts = function(accounts) {
   this.accounts = accounts;

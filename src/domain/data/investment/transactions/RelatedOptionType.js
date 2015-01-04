@@ -15,7 +15,7 @@
 
 /**
  * Related option transaction type.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @enum
  */

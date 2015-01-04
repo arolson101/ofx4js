@@ -168,7 +168,7 @@ BaseOFXReader.prototype.shiftAndAppend = function(buffer, /*char*/ c) {
 
 
 /**
- * Parse an OFX version 1 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
+ * Parse an OFX version 1 stream from the first OFX element (defined by the {@link BaseOFXReader#getFirstElementStart() first element characters}).
  *
  * @param {Reader} reader The reader.
  */
@@ -182,7 +182,7 @@ BaseOFXReader.prototype.parseV1FromFirstElement = function(text) {
 
 
 /**
- * Parse an OFX version 2 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
+ * Parse an OFX version 2 stream from the first OFX element (defined by the {@link BaseOFXReader#getFirstElementStart() first element characters}).
  *
  * @param {string} text The text.
  */

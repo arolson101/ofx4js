@@ -25,7 +25,7 @@ var Element = require("../../../../meta/Element");
  * Email Message Set Profile Information
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 9.4.2 OFX Spec"
+ * See "Section 9.4.2 OFX Spec"
  */
 function EmailV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);

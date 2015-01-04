@@ -18,7 +18,7 @@
  * The message set type, used to define message set order in the envelope.
  *
  * @enum
- * @see "Section 2.4.5.2, OFX spec"
+ * See "Section 2.4.5.2, OFX spec"
  */
 var MessageSetType = {
 

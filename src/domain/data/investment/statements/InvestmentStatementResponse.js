@@ -28,7 +28,7 @@ var InvestmentBalance = require("./InvestmentBalance");
 
 /**
  * Aggregate for the investment statement download response.
- * @see "Section 13.9.2.2, OFX Spec"
+ * See "Section 13.9.2.2, OFX Spec"
  *
  * @class
  * @augments StatementResponse

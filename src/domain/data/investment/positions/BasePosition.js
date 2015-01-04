@@ -66,7 +66,7 @@ BasePosition.prototype.setInvestmentPosition = function(investmentPosition) {
 
 /**
  * Gets the security id for the position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SecurityId} the security id for the position
  */
@@ -78,7 +78,7 @@ BasePosition.prototype.getSecurityId = function() {
 /**
  * Gets the sub-account type. One of "CASH", "MARGIN", "SHORT", "OTHER". This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the sub-account type
  */
@@ -89,7 +89,7 @@ BasePosition.prototype.getHeldInAccount = function() {
 
 /**
  * Gets the sub-account type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SubAccountType} the sub-account type or null if it's not one of the well-known types
  */
@@ -101,7 +101,7 @@ BasePosition.prototype.getHeldInAccountEnum = function() {
 /**
  * Gets the position type. One of SHORT or LONG. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the position type
  */
@@ -112,7 +112,7 @@ BasePosition.prototype.getPositionType = function() {
 
 /**
  * Gets the position type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {PositionType} the position type or null if it's not one of the well-known types
  */
@@ -125,7 +125,7 @@ BasePosition.prototype.getPositionTypeEnum = function() {
  * Gets the number of units in the position. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the number of units in the position
  */
@@ -138,7 +138,7 @@ BasePosition.prototype.getUnits = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -149,7 +149,7 @@ BasePosition.prototype.getUnitPrice = function() {
 
 /**
  * Gets the market value of this position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the market value of the position
  */
@@ -161,7 +161,7 @@ BasePosition.prototype.getMarketValue = function() {
 /**
  * Gets the date and time of the unit price and market value. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Date} the market value date
  */
@@ -173,7 +173,7 @@ BasePosition.prototype.getMarketValueDate = function() {
 /**
  * Gets the currency code of the position. This is an optional field according to the OFX spec.
  * If not present, it's the default currency of the account.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the currency code of the position or null for the default currency
  */
@@ -185,7 +185,7 @@ BasePosition.prototype.getCurrencyCode = function() {
 /**
  * Gets the memo associated with the position. This is an optional field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -198,7 +198,7 @@ BasePosition.prototype.getMemo = function() {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */

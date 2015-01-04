@@ -44,16 +44,6 @@ function AggregateUnmarshaller (clazz) {
 
 
 
-
-AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
-  var aggregate = new this.clazz();
-  var reader = this.newReader();
-  reader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
-  reader.parse(stream);
-  return aggregate;
-};
-
-
 AggregateUnmarshaller.prototype.unmarshal = function(/*Reader*/ reader) {
   var aggregate = new this.clazz();
   var ofxReader = this.newReader();

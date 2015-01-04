@@ -25,7 +25,7 @@ var AssetClass = require("./AssetClass");
 
 /**
  * Info about an option security.
- * @see "Section 13.8.5.4, OFX Spec"
+ * See "Section 13.8.5.4, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo

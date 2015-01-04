@@ -16,7 +16,7 @@
 
 /**
  * @enum
- * @see "Section 7.2.2, OFX Spec"
+ * See "Section 7.2.2, OFX Spec"
  */
 var CharacterType = {
 

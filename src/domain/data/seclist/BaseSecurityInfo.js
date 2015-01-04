@@ -19,7 +19,7 @@ var SecurityInfo = require("./SecurityInfo");
 
 /**
  * Base class for info about the various types of securities.
- * @see "Section 13.8.5.1, OFX Spec"
+ * See "Section 13.8.5.1, OFX Spec"
  * <br>
  * This class exposes a read-only view of the flattened aggregates that are
  * common to all security info as a convenience to application
@@ -117,7 +117,7 @@ BaseSecurityInfo.prototype.getRating = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a noptional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */

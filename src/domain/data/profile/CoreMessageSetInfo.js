@@ -23,7 +23,7 @@ var SynchronizationCapability = require("./SynchronizationCapability");
  * Core information about a specific version of a specific message set.
  *
  * @class
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 function CoreMessageSetInfo () {
 

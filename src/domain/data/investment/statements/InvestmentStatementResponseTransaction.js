@@ -23,7 +23,7 @@ var InvestmentStatementResponse = require("./InvestmentStatementResponse");
 
 /**
  * Investment statement transaction response.
- * @see "Section 13.9.2.1, OFX Spec"
+ * See "Section 13.9.2.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedResponseMessage

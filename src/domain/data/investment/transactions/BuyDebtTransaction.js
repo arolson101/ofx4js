@@ -23,7 +23,7 @@ var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying debt (i.e. bonds, CDs, etc.,).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -50,7 +50,7 @@ Aggregate.add("BUYDEBT", BuyDebtTransaction);
 /**
  * Gets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the amount of accrued interest
  */
@@ -63,7 +63,7 @@ Element.add(BuyDebtTransaction, {name: "ACCRDINT", order: 20, attributeType: Num
 /**
  * Sets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} accruedInterest the amount of accrued interest
  */

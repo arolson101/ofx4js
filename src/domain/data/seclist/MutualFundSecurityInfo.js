@@ -23,7 +23,7 @@ var MutualFundType = require("./MutualFundType");
 
 /**
  * Info about a mutual fund security.
- * @see "Section 13.8.5.3, OFX Spec"
+ * See "Section 13.8.5.3, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo

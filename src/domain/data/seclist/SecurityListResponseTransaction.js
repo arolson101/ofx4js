@@ -22,7 +22,7 @@ var SecurityListResponse = require("./SecurityListResponse");
 
 /**
  * Security list transaction response.
- * @see "Section 13.8.3.1, OFX Spec"
+ * See "Section 13.8.3.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedResponseMessage

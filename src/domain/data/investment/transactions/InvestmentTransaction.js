@@ -19,7 +19,7 @@ var Element = require("../../../../meta/Element");
 
 /**
  * Investment transaction aggregate ("INVTRAN").
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @class
  */
@@ -76,7 +76,7 @@ Aggregate.add("INVTRAN", InvestmentTransaction);
 /**
  * Gets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the financial institution asssigned transaction id
  */
@@ -89,7 +89,7 @@ Element.add(InvestmentTransaction, {name: "FITID", required: true, order: 0, att
 /**
  * Sets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} transactionId the financial institution asssigned transaction id
  */
@@ -101,7 +101,7 @@ InvestmentTransaction.prototype.setTransactionId = function(transactionId) {
 /**
  * Gets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the server assigned transaction id
  */
@@ -114,7 +114,7 @@ Element.add(InvestmentTransaction, {name: "SRVRTID", order: 10, attributeType: S
 /**
  * Sets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} serverId the server assigned transaction id
  */
@@ -126,7 +126,7 @@ InvestmentTransaction.prototype.setServerId = function(serverId) {
 /**
  * Gets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -139,7 +139,7 @@ Element.add(InvestmentTransaction, {name: "DTTRADE", required: true, order: 20, 
 /**
  * Sets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {Date} tradeDate the trade date
  */
@@ -151,7 +151,7 @@ InvestmentTransaction.prototype.setTradeDate = function(tradeDate) {
 /**
  * Gets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -164,7 +164,7 @@ Element.add(InvestmentTransaction, {name: "DTSETTLE", order: 30, attributeType: 
 /**
  * Sets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {Date} settlementDate the trade date
  */
@@ -176,7 +176,7 @@ InvestmentTransaction.prototype.setSettlementDate = function(settlementDate) {
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the transaction id of the transaction being reversed
  */
@@ -189,7 +189,7 @@ Element.add(InvestmentTransaction, {name: "REVERSALFITID", order: 40, attributeT
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} reversalTransactionId the transaction id of the transaction being reversed
  */
@@ -201,7 +201,7 @@ InvestmentTransaction.prototype.setReversalTransactionId = function(reversalTran
 /**
  * Gets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -214,7 +214,7 @@ Element.add(InvestmentTransaction, {name: "MEMO", order: 50, attributeType: Stri
 /**
  * Sets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} memo the memo
  */

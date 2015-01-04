@@ -98,10 +98,14 @@ TransferInfo.prototype.setBankAccountFrom = function(bankAccountFrom) {
 /**
  * The account to transfer from.
  *
- * @param {BankAccountDetails} bankAccountFrom The account to transfer from.
+ * @param {BankAccountDetails|CreditCardAccountDetails} accountFrom The account to transfer from.
  */
-TransferInfo.prototype.setAccountFrom = function(bankAccountFrom) {
-  this.setBankAccountFrom(bankAccountFrom);
+TransferInfo.prototype.setAccountFrom = function(accountFrom) {
+  if (accountFrom instanceof BankAccountDetails) {
+    this.setBankAccountFrom(accountFrom);
+  } else if (accountFrom instanceof CreditCardAccountDetails) {
+    this.setCreditCardAccountFrom(accountFrom);
+  }
 };
 
 
@@ -124,16 +128,6 @@ ChildAggregate.add(TransferInfo, {name: "CCACCTFROM", order: 10, attributeType: 
 TransferInfo.prototype.setCreditCardAccountFrom = function(creditCardAccountFrom) {
   this.bankAccountFrom = null;
   this.creditCardAccountFrom = creditCardAccountFrom;
-};
-
-
-/**
- * The credit card to transfer from.
- *
- * @param {CreditCardAccountDetails} creditCardAccountFrom The credit card to transfer from.
- */
-TransferInfo.prototype.setAccountFrom = function(creditCardAccountFrom) {
-  this.setCreditCardAccountFrom(creditCardAccountFrom);
 };
 
 
@@ -162,10 +156,14 @@ TransferInfo.prototype.setBankAccountTo = function(bankAccountTo) {
 /**
  * The bank account to transfer to.
  *
- * @param {BankAccountDetails} bankAccountTo The bank account to transfer to.
+ * @param {BankAccountDetails|CreditCardAccountDetails} accountTo The bank account to transfer to.
  */
-TransferInfo.prototype.setAccountTo = function(bankAccountTo) {
-  this.setBankAccountTo(bankAccountTo);
+TransferInfo.prototype.setAccountTo = function(accountTo) {
+  if (accountTo instanceof BankAccountDetails) {
+    this.setBankAccountTo(accountTo);
+  } else if (accountTo instanceof CreditCardAccountDetails) {
+    this.setCreditCardAccountTo(accountTo);
+  }
 };
 
 
@@ -188,16 +186,6 @@ ChildAggregate.add(TransferInfo, {name: "CCACCTTO", order: 30, attributeType: Cr
 TransferInfo.prototype.setCreditCardAccountTo = function(creditCardAccountTo) {
   this.bankAccountTo = null;
   this.creditCardAccountTo = creditCardAccountTo;
-};
-
-
-/**
- * The credit card account to transfer to.
- *
- * @param {CreditCardAccountDetails} creditCardAccountTo The credit card account to transfer to.
- */
-TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
-  this.setCreditCardAccountTo(creditCardAccountTo);
 };
 
 

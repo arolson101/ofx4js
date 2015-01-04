@@ -24,7 +24,7 @@ var OptionBuyType = require("./OptionBuyType");
 
 /**
  * Transaction for buying options.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -57,7 +57,7 @@ Aggregate.add("BUYOPT", BuyOptionTransaction);
 /**
  * Gets the type of option purchase (i.e. "BUYTOOPEN" or "BUYTOCLOSE"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the option buy type
  */
@@ -70,7 +70,7 @@ Element.add(BuyOptionTransaction, {name: "OPTBUYTYPE", required: true, order: 20
 /**
  * Sets the type of option purchase (i.e. "BUYTOOPEN" or "BUYTOCLOSE"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} optionBuyType the option buy type
  */
@@ -91,7 +91,7 @@ BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
 
 /**
  * Gets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Integer} the number of shares per contact
  */
@@ -103,7 +103,7 @@ Element.add(BuyOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30
 
 /**
  * Sets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Integer} sharesPerContact the number of shares per contact
  */

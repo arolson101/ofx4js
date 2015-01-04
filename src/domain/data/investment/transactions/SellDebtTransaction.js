@@ -24,7 +24,7 @@ var SellDebtReason = require("./SellDebtReason");
 
 /**
  * Transaction for selling debt (i.e. bonds, CDs, etc.,).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -56,7 +56,7 @@ Aggregate.add("SELLDEBT", SellDebtTransaction);
 /**
  * Gets the reason for the sale. One of "CALL" (the debt was called), "SELL" (the debt was sold),
  * "MATURITY" (the debt reached maturity).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The reason for the sale
  */
@@ -69,7 +69,7 @@ Element.add(SellDebtTransaction, {name: "SELLREASON", order: 30, attributeType: 
 /**
  * Sets the reason for the sale. One of "CALL" (the debt was called), "SELL" (the debt was sold),
  * "MATURITY" (the debt reached maturity).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} sellReason The reason for the sale
  */
@@ -91,7 +91,7 @@ SellDebtTransaction.prototype.getSellReasonEnum = function() {
 /**
  * Gets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the amount of accrued interest
  */
@@ -104,7 +104,7 @@ Element.add(SellDebtTransaction, {name: "ACCRDINT", order: 40, attributeType: Nu
 /**
  * Sets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} accruedInterest the amount of accrued interest
  */

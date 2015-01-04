@@ -22,7 +22,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Web Enrollment option containing URL to direct user for web based enrollment, if supported.
  * @class
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 function WebEnrollment () {
 

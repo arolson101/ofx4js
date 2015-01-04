@@ -27,7 +27,7 @@ var TransferProfile = require("./common/TransferProfile");
  * Interbank Funds Transfer Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.4 OFX Spec"
+ * See "Section 11.13.4 OFX Spec"
  */
 function InterbankTransferV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);

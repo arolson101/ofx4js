@@ -22,7 +22,7 @@ var InvestmentBankTransaction = require("./InvestmentBankTransaction");
 
 /**
  * The transaction list aggregate.
- * @see "Section 13.9.1.2, OFX Spec"
+ * See "Section 13.9.1.2, OFX Spec"
  *
  * @class
  */

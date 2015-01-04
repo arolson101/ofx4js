@@ -85,7 +85,7 @@ BaseBuyInvestmentTransaction.prototype.getInvestmentTransaction = function() {
 /**
  * Gets the id of the security that was bought. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -99,7 +99,7 @@ BaseBuyInvestmentTransaction.prototype.getSecurityId = function() {
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased.
  */
@@ -112,7 +112,7 @@ BaseBuyInvestmentTransaction.prototype.getUnits = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -124,7 +124,7 @@ BaseBuyInvestmentTransaction.prototype.getUnitPrice = function() {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markup. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markeup price
  */
@@ -136,7 +136,7 @@ BaseBuyInvestmentTransaction.prototype.getMarkup = function() {
 /**
  * Gets the transaction commission for the purchase. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -147,7 +147,7 @@ BaseBuyInvestmentTransaction.prototype.getCommission = function() {
 
 /**
  * Gets the taxes for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -158,7 +158,7 @@ BaseBuyInvestmentTransaction.prototype.getTaxes = function() {
 
 /**
  * Gets the fees for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -169,7 +169,7 @@ BaseBuyInvestmentTransaction.prototype.getFees = function() {
 
 /**
  * Gets the load for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -182,7 +182,7 @@ BaseBuyInvestmentTransaction.prototype.getLoad = function() {
  * Gets the total for the purchase. Should be equal to
  * (units * (unitPrice + markup)) + (commision + fees + load + taxes) according to the OFX
  * spec. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -194,7 +194,7 @@ BaseBuyInvestmentTransaction.prototype.getTotal = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -205,7 +205,7 @@ BaseBuyInvestmentTransaction.prototype.getCurrencyCode = function() {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -216,7 +216,7 @@ BaseBuyInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -237,7 +237,7 @@ BaseBuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the money came from. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */

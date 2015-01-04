@@ -19,7 +19,7 @@ var Element = require("../../../meta/Element");
 
 /**
  * @class
- * @see "Section 5.2, OFX Spec"
+ * See "Section 5.2, OFX Spec"
  */
 function Currency () {
 

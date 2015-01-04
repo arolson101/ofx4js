@@ -37,7 +37,7 @@ function AccountInfoResponse () {
 
   /**
    * @name AccountInfoResponse#accounts
-   * @type Collection<AccountProfile>
+   * @type AccountProfile[]
    * @access private
    */
   this.accounts = null;
@@ -78,7 +78,7 @@ AccountInfoResponse.prototype.setLastUpdated = function(lastUpdated) {
 /**
  * The accounts.
  *
- * @return {Collection<AccountProfile>} The accounts.
+ * @return {AccountProfile[]} The accounts.
  */
 AccountInfoResponse.prototype.getAccounts = function() {
   return this.accounts;
@@ -89,7 +89,7 @@ ChildAggregate.add(AccountInfoResponse, {order: 10, attributeType: Array, collec
 /**
  * The accounts.
  *
- * @param {Collection<AccountProfile>} accounts The accounts.
+ * @param {AccountProfile[]} accounts The accounts.
  */
 AccountInfoResponse.prototype.setAccounts = function(accounts) {
   this.accounts = accounts;

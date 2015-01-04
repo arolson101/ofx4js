@@ -24,7 +24,7 @@ var Element = require("../../../meta/Element");
  * Request to change a user password.
  *
  * @class
- * @see "Section 2.5.2.1, OFX Spec."
+ * See "Section 2.5.2.1, OFX Spec."
  */
 function PasswordChangeRequest () {
   RequestMessage.call(this);

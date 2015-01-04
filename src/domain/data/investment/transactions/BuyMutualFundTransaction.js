@@ -24,7 +24,7 @@ var BuyType = require("./BuyType");
 
 /**
  * Transaction for buying mutual funds.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -57,7 +57,7 @@ Aggregate.add("BUYMF", BuyMutualFundTransaction);
 /**
  * Gets the type of purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the buy type
  */
@@ -70,7 +70,7 @@ Element.add(BuyMutualFundTransaction, {name: "BUYTYPE", required: true, order: 2
 /**
  * Sets the type of purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} buyType the buy type
  */
@@ -92,7 +92,7 @@ BuyMutualFundTransaction.prototype.getBuyTypeEnum = function() {
 /**
  * Gets any related transaction id for a mutual fund purchase (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the related transaction id
  */
@@ -105,7 +105,7 @@ Element.add(BuyMutualFundTransaction, {name: "RELFITID", order: 30, attributeTyp
 /**
  * Sets any related transaction id for a mutual fund purchase (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId the related transaction id
  */

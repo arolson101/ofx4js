@@ -136,24 +136,14 @@ FinancialInstitutionImpl.prototype.createAuthenticatedRequest = function(usernam
 
 
 /**
- * Send a request.
- *
- * @param {RequestEnvelope} request The request.
- * @return {ResponseEnvelope} The request.
- */
-FinancialInstitutionImpl.prototype.sendRequest = function(request) {
-  return this.getConnection().sendRequest(request, this.getData().getOFXURL());
-};
-
-
-/**
  * Send a request to a specific URL.
  *
  * @param {RequestEnvelope} request The request.
- * @param {URL} url The url.
+ * @param {URL} [url] The url.
  * @return {ResponseEnvelope} The request.
  */
 FinancialInstitutionImpl.prototype.sendRequest = function(request, url) {
+  url = url || this.getData().getOFXURL();
   return this.getConnection().sendRequest(request, url);
 };
 
@@ -349,7 +339,7 @@ FinancialInstitutionImpl.prototype.createAccountInfoRequest = function() {
  * Get the account profiles for the specified response envelope.
  *
  * @param {ResponseEnvelope} response The response envelope.
- * @return {Collection<AccountProfile>} The account profiles.
+ * @return {AccountProfile[]} The account profiles.
  */
 FinancialInstitutionImpl.prototype.getAccountProfiles = function(response) {
   var messageSet = response.getMessageSet(MessageSetType.signup);

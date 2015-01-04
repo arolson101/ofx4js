@@ -24,7 +24,7 @@ var StatusCode = require("./StatusCode");
  * Transaction status element.
  *
  * @class
- * @see "Section 3.1.4, OFX Spec"
+ * See "Section 3.1.4, OFX Spec"
  */
 function Status () {
 

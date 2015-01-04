@@ -24,7 +24,7 @@ var BuyType = require("./BuyType");
 
 /**
  * Transaction for buying stock.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -50,7 +50,7 @@ Aggregate.add("BUYSTOCK", BuyStockTransaction);
 /**
  * Gets the type of stock purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the buy type
  */
@@ -63,7 +63,7 @@ Element.add(BuyStockTransaction, {name: "BUYTYPE", required: true, order: 20, at
 /**
  * Sets the type of stock purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} buyType the buy type
  */

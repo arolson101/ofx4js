@@ -56,7 +56,7 @@ BaseInvestmentTransaction.prototype.getInvestmentTransaction = function() { thro
 /**
  * Gets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the financial institution asssigned transaction id
  */
@@ -67,7 +67,7 @@ BaseInvestmentTransaction.prototype.getTransactionId = function() {
 /**
  * Gets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the server assigned transaction id
  */
@@ -78,7 +78,7 @@ BaseInvestmentTransaction.prototype.getServerId = function() {
 /**
  * Gets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -89,7 +89,7 @@ BaseInvestmentTransaction.prototype.getTradeDate = function() {
 /**
  * Gets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -100,7 +100,7 @@ BaseInvestmentTransaction.prototype.getSettlementDate = function() {
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the transaction id of the transaction being reversed
  */
@@ -111,7 +111,7 @@ BaseInvestmentTransaction.prototype.getReversalTransactionId = function() {
 /**
  * Gets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the memo
  */

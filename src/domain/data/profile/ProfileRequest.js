@@ -23,7 +23,7 @@ var ClientRoutingCapability = require("./ClientRoutingCapability");
 
 /**
  * @class
- * @see "Section 7.1.5, OFX Spec"
+ * See "Section 7.1.5, OFX Spec"
  */
 function ProfileRequest () {
   RequestMessage.call(this);

@@ -24,7 +24,7 @@ var SellType = require("./SellType");
 
 /**
  * Transaction for selling stock.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -49,7 +49,7 @@ Aggregate.add("SELLSTOCK", SellStockTransaction);
 /**
  * Gets the type of stock sale (i.e. "SELL" or "SELLSHORT"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sell type
  */
@@ -62,7 +62,7 @@ Element.add(SellStockTransaction, {name: "SELLTYPE", required: true, order: 20, 
 /**
  * Sets the type of stock sale (i.e. "SELL" or "SELLSHORT"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} sellType the sell type
  */

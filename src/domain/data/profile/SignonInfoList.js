@@ -22,7 +22,7 @@ var SignonInfo = require("./SignonInfo");
  * List of signon information.
  *
  * @class
- * @see "Section 7.2.2, OFX Spec"
+ * See "Section 7.2.2, OFX Spec"
  */
 function SignonInfoList () {
 

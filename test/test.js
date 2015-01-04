@@ -1,10 +1,7 @@
-/*global ofx4js, chai, sinon, describe, before, beforeEach, after, afterEach, it, xit */
-/*jshint -W106*/
+/*global ofx4js */
 
 'use strict';
 
-/* jshint -W098 */
-var assert = chai.assert;
 var expect = chai.expect;
 
 // http://www.ofx.net/OFXExamplesPage/OFXExamples.aspx
@@ -147,6 +144,7 @@ var BaseFinancialInstitutionData = ofx4js.client.impl.BaseFinancialInstitutionDa
 var OFXV1Connection = ofx4js.client.net.OFXV1Connection;
 var Status = ofx4js.domain.data.common.Status;
 
+/*jshint -W098*/
 function enableLog(enabled) {
   ofx4js.util.log.info = enabled;
   ofx4js.util.log.network = enabled;
@@ -224,23 +222,30 @@ describe("ofx parsing", function() {
     expect(transactions[2].getAmount()).to.equal("-100.00");
   });
   
-  it("should download profile info from a bank", function() {
-//    enableLog(true);
-//    var bank = new BaseFinancialInstitutionData();
-//
-//    // TODO- input your information.  See http://www.ofxhome.com/
-//    bank.setFinancialInstitutionId("");
-//    bank.setOrganization("");
-//    bank.setOFXURL("");
-//    bank.setName("");
-//    
-//    var connection = new OFXV1Connection();
-//
-//    var service = new FinancialInstitutionImpl(bank, connection);
-//    return service.readProfile()
-//    .then(function(data) {
-//      console.log(data);
-//    });
+  xit("should download profile info from a bank", function() {
+    var bank = new BaseFinancialInstitutionData();
+
+    // TODO- input your information.  See http://www.ofxhome.com/
+    bank.setFinancialInstitutionId("");
+    bank.setOrganization("");
+    bank.setOFXURL("");
+    bank.setName("");
+    
+    expect(bank.getFinancialInstitutionId()).to.not.be.empty();
+    expect(bank.getOrganization()).to.not.be.empty();
+    expect(bank.getOFXURL()).to.not.be.empty();
+    expect(bank.getName()).to.not.be.empty();
+    
+    var connection = new OFXV1Connection();
+
+    // NOTE: making an OFX connection will fail security checks in browsers.  On Chrome you
+    // can make it run with the "--disable-web-security" command-line option
+    // e.g. (OSX): open /Applications/Google\ Chrome.app --args --disable-web-security
+    var service = new FinancialInstitutionImpl(bank, connection);
+    return service.readProfile()
+    .then(function(data) {
+      console.log(data);
+    });
   });
 });
 

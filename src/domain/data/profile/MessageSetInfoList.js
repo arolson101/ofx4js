@@ -20,7 +20,7 @@ var AbstractMessageSetInfo = require("./AbstractMessageSetInfo");
 
 /**
  * @class
- * @see "Section 7.2, OFX Spec"
+ * See "Section 7.2, OFX Spec"
  */
 function MessageSetInfoList () {
 

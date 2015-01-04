@@ -25,7 +25,7 @@ var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Sell investment transaction aggregate ("INVSELL").
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @class
  */
@@ -208,7 +208,7 @@ SellInvestmentTransaction.prototype.setInvestmentTransaction = function(investme
 /**
  * Gets the id of the security that was sold. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was sold
  */
@@ -221,7 +221,7 @@ ChildAggregate.add(SellInvestmentTransaction, {required: true, order: 20, attrib
 /**
  * Sets the id of the security that was sold. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was sold
  */
@@ -235,7 +235,7 @@ SellInvestmentTransaction.prototype.setSecurityId = function(securityId) {
  * than stock splits, this is the quantity sold. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units sold
  */
@@ -250,7 +250,7 @@ Element.add(SellInvestmentTransaction, {name: "UNITS", required: true, order: 30
  * than stock splits, this is the quantity sold. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units sold
  */
@@ -263,7 +263,7 @@ SellInvestmentTransaction.prototype.setUnits = function(units) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -277,7 +277,7 @@ Element.add(SellInvestmentTransaction, {name: "UNITPRICE", required: true, order
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -289,7 +289,7 @@ SellInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markdown. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markedown price
  */
@@ -302,7 +302,7 @@ Element.add(SellInvestmentTransaction, {name: "MARKDOWN", order: 50, attributeTy
 /**
  * Sets the portion of the unit price that is attributed to the dealer markdown. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} markdown the per unit markedown price
  */
@@ -314,7 +314,7 @@ SellInvestmentTransaction.prototype.setMarkdown = function(markdown) {
 /**
  * Gets the transaction commission for the sale. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -327,7 +327,7 @@ Element.add(SellInvestmentTransaction, {name: "COMMISSION", order: 60, attribute
 /**
  * Sets the transaction commission for the sale. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} commission the transaction commision
  */
@@ -338,7 +338,7 @@ SellInvestmentTransaction.prototype.setCommission = function(commission) {
 
 /**
  * Gets the taxes for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -350,7 +350,7 @@ Element.add(SellInvestmentTransaction, {name: "TAXES", order: 70, attributeType:
 
 /**
  * Sets the taxes for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} taxes the transaction taxes
  */
@@ -361,7 +361,7 @@ SellInvestmentTransaction.prototype.setTaxes = function(taxes) {
 
 /**
  * Gets the fees for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -373,7 +373,7 @@ Element.add(SellInvestmentTransaction, {name: "FEES", order: 80, attributeType: 
 
 /**
  * Sets the fees for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} fees the transaction fees
  */
@@ -384,7 +384,7 @@ SellInvestmentTransaction.prototype.setFees = function(fees) {
 
 /**
  * Gets the load for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -396,7 +396,7 @@ Element.add(SellInvestmentTransaction, {name: "LOAD", order: 90, attributeType: 
 
 /**
  * Sets the load for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} load the load
  */
@@ -407,7 +407,7 @@ SellInvestmentTransaction.prototype.setLoad = function(load) {
 
 /**
  * Gets the withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the withholding
  */
@@ -419,7 +419,7 @@ Element.add(SellInvestmentTransaction, {name: "WITHHOLDING", order: 93, attribut
 
 /**
  * Sets the withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} withholding the withholding
  */
@@ -430,7 +430,7 @@ SellInvestmentTransaction.prototype.setWithholding = function(withholding) {
 
 /**
  * Gets whether the sale was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -442,7 +442,7 @@ Element.add(SellInvestmentTransaction, {name: "TAXEXEMPT", order: 97, attributeT
 
 /**
  * Sets whether the sale was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Boolean} taxExempt whether the transaction was tax exempt
  */
@@ -456,7 +456,7 @@ SellInvestmentTransaction.prototype.setTaxExempt = function(taxExempt) {
  * (units * (unitPrice + markdown)) + (commision + fees + load + taxes + penalty + withholding +
  * statewithholding) according to the OFX spec. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -471,7 +471,7 @@ Element.add(SellInvestmentTransaction, {name: "TOTAL", required: true, order: 10
  * (units * (unitPrice + markdown)) + (commision + fees + load + taxes + penalty + withholding +
  * statewithholding) according to the OFX spec. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -482,7 +482,7 @@ SellInvestmentTransaction.prototype.setTotal = function(total) {
 
 /**
  * Gets the gain sale. This is aan optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the gain for the sale
  */
@@ -494,7 +494,7 @@ Element.add(SellInvestmentTransaction, {name: "GAIN", order: 105, attributeType:
 
 /**
  * Sets the gain sale. This is aan optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} gain the gain for the sale
  */
@@ -506,7 +506,7 @@ SellInvestmentTransaction.prototype.setGain = function(gain) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -519,7 +519,7 @@ Element.add(SellInvestmentTransaction, {name: "CURRENCY", order: 110, attributeT
 /**
  * sets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -531,7 +531,7 @@ SellInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -543,7 +543,7 @@ Element.add(SellInvestmentTransaction, {name: "ORIGCURRENCY", order: 120, attrib
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction
  */
@@ -555,7 +555,7 @@ SellInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalC
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -567,7 +567,7 @@ Element.add(SellInvestmentTransaction, {name: "SUBACCTSEC", order: 130, attribut
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -589,7 +589,7 @@ SellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 /**
  * Gets the sub account type that the security is being transfered from
  * (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -602,7 +602,7 @@ Element.add(SellInvestmentTransaction, {name: "SUBACCTFUND", order: 140, attribu
 /**
  * Sets the sub account type that the security is being transfered from
  * (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -624,7 +624,7 @@ SellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the loan id if this transaction was due to a loan or loan repayment on a 401k. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the loan id
  */
@@ -637,7 +637,7 @@ Element.add(SellInvestmentTransaction, {name: "LOANID", order: 150, attributeTyp
 /**
  * Sets the loan id if this transaction was due to a loan or loan repayment on a 401k. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} loanId the loan id
  */
@@ -648,7 +648,7 @@ SellInvestmentTransaction.prototype.setLoanId = function(loanId) {
 
 /**
  * Gets the state withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the state withholding
  */
@@ -660,7 +660,7 @@ Element.add(SellInvestmentTransaction, {name: "STATEWITHHOLDING", order: 160, at
 
 /**
  * Sets the state withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} stateWithholding the state withholding
  */
@@ -671,7 +671,7 @@ SellInvestmentTransaction.prototype.setStateWithholding = function(stateWithhold
 
 /**
  * Gets the penalty for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the state withholding
  */
@@ -683,7 +683,7 @@ Element.add(SellInvestmentTransaction, {name: "PENALTY", order: 170, attributeTy
 
 /**
  * Sets the penalty for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} penalty the state withholding
  */
@@ -696,7 +696,7 @@ SellInvestmentTransaction.prototype.setPenalty = function(penalty) {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -710,7 +710,7 @@ Element.add(SellInvestmentTransaction, {name: "INV401KSOURCE", order: 180, attri
  * Sets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */

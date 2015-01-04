@@ -22,7 +22,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
  * @class
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 
 function OtherEnrollment () {

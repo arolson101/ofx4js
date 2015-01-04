@@ -25,7 +25,7 @@ var IncludePosition = require("./IncludePosition");
 
 /**
  * Aggregate for the investment statement download request.
- * @see "Section 13.9.1.1, OFX Spec"
+ * See "Section 13.9.1.1, OFX Spec"
  *
  * @class
  * @augments StatementRequest

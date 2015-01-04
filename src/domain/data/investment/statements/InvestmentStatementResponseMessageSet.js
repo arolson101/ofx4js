@@ -24,7 +24,7 @@ var InvestmentStatementResponseTransaction = require("./InvestmentStatementRespo
 
 /**
  * Investment statement response message set.
- * @see "Section 13.7.1.2.2, OFX Spec"
+ * See "Section 13.7.1.2.2, OFX Spec"
  *
  * @class
  * @augments ResponseMessageSet

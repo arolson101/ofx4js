@@ -16,7 +16,7 @@
 
 /**
  * Types of 401(k) sources.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */

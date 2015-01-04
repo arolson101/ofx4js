@@ -25,7 +25,7 @@ var ResponseMessageSet = require("./ResponseMessageSet");
  * Envelope for enclosing an OFX response.
  *
  * @class
- * @see "Section 2.4.3, OFX Spec"
+ * See "Section 2.4.3, OFX Spec"
  */
 function ResponseEnvelope () {
 
@@ -60,7 +60,7 @@ Aggregate.add("OFX", ResponseEnvelope);
  * The security of this envelope.
  *
  * @return {ApplicationSecurity} The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.getSecurity = function() {
   return this.security;
@@ -72,7 +72,7 @@ Header.add(ResponseEnvelope, {name: "SECURITY", attributeType: ApplicationSecuri
  * The security of this envelope.
  *
  * @param {ApplicationSecurity} security The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.setSecurity = function(security) {
   this.security = security;
@@ -83,7 +83,7 @@ ResponseEnvelope.prototype.setSecurity = function(security) {
  * The UID for the envelope.
  *
  * @return {String} The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.getUID = function() {
   return this.UID;
@@ -95,7 +95,7 @@ Header.add(ResponseEnvelope, {name: "NEWFILEUID", attributeType: String, readMet
  * The UID for the envelope.
  *
  * @param {String} UID The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.setUID = function(UID) {
   this.UID = UID;
@@ -106,7 +106,7 @@ ResponseEnvelope.prototype.setUID = function(UID) {
  * The message sets that make up the content of this response.
  *
  * @return {ResponseMessageSet[]} The message sets that make up the content of this response.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
@@ -118,7 +118,7 @@ ChildAggregate.add(ResponseEnvelope, {order: 1, attributeType: Array, collection
  * The message sets that make up the content of this response.
  *
  * @param {ResponseMessageSet[]} messageSets The message sets that make up the content of this response.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.setMessageSets = function(messageSets) {
   this.messageSets = messageSets;

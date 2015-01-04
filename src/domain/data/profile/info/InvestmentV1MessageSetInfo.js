@@ -22,7 +22,7 @@ var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
 
 /**
- * @see "Section 13.7.1.1, OFX Spec"
+ * See "Section 13.7.1.1, OFX Spec"
  *
  * @class
  */

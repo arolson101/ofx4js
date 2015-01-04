@@ -19,7 +19,7 @@ var Element = require("../../../meta/Element");
 
 /**
  * Identifier for a security.
- * @see "Section 13.8.1, OFX Spec"
+ * See "Section 13.8.1, OFX Spec"
  *
  * @class
  */

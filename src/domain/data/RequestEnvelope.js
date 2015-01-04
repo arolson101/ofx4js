@@ -25,7 +25,7 @@ var UUID = require("uuid");
  * Envelope for enclosing an OFX request.
  *
  * @class
- * @see "Section 2.4.3, OFX Spec"
+ * See "Section 2.4.3, OFX Spec"
  */
 function RequestEnvelope (/*String*/ UID) {
 
@@ -68,7 +68,7 @@ Aggregate.add("OFX", RequestEnvelope);
  * The security of this envelope.
  *
  * @return {ApplicationSecurity} The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getSecurity = function() {
   return this.security;
@@ -80,7 +80,7 @@ Header.add(RequestEnvelope, {name: "SECURITY", attributeType: ApplicationSecurit
  * The security of this envelope.
  *
  * @param {ApplicationSecurity} security The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.setSecurity = function(security) {
   this.security = security;
@@ -91,7 +91,7 @@ RequestEnvelope.prototype.setSecurity = function(security) {
  * The UID for the envelope.
  *
  * @return {String} The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getUID = function() {
   return this.UID;
@@ -103,7 +103,7 @@ Header.add(RequestEnvelope, {name: "NEWFILEUID", attributeType: String, readMeth
  * The UID for the envelope.
  *
  * @param {String} UID The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.setUID = function(UID) {
   this.UID = UID;
@@ -114,7 +114,7 @@ RequestEnvelope.prototype.setUID = function(UID) {
  * The UID of the last-processed request/response (used for file-based error recovery).
  *
  * @return {String} The UID of the last-processed request/response (used for file-based error recovery).
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getLastProcessedUID = function() {
   return this.lastProcessedUID;
@@ -126,7 +126,7 @@ Header.add(RequestEnvelope, {name: "OLDFILEUID", attributeType: String, readMeth
  * The UID of the last-processed request/response (used for file-based error recovery).
  *
  * @param {String} lastProcessedUID The UID of the last-processed request/response (used for file-based error recovery).
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
   this.lastProcessedUID = lastProcessedUID;
@@ -137,7 +137,7 @@ RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
  * The message sets that make up the content of this request.
  *
  * @return {RequestMessageSet[]} The message sets that make up the content of this request.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
@@ -149,7 +149,7 @@ ChildAggregate.add(RequestEnvelope, {order: 1, attributeType: Array, collectionE
  * The message sets that make up the content of this request.
  *
  * @param {RequestMessageSet[]} messageSets The message sets that make up the content of this request.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.setMessageSets = function(messageSets) {
   this.messageSets = messageSets;

@@ -20,7 +20,7 @@ var BasePosition = require("./BasePosition");
 
 /**
  * Aggregate for a list of invesment positions.
- * @see "Section 13.9.2.2, OFX Spec"
+ * See "Section 13.9.2.2, OFX Spec"
  *
  * @class
  */

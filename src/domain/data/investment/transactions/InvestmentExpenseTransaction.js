@@ -28,7 +28,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for an investment expense
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -96,7 +96,7 @@ Aggregate.add("INVEXPENSE", InvestmentExpenseTransaction);
 /**
  * Gets the id of the security for the expense. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security for the expsense
  */
@@ -109,7 +109,7 @@ ChildAggregate.add(InvestmentExpenseTransaction, {required: true, order: 20, att
 /**
  * Sets the id of the security for the expense. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security for the expsense
  */
@@ -120,7 +120,7 @@ InvestmentExpenseTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
  * Gets the total for the expense.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -132,7 +132,7 @@ Element.add(InvestmentExpenseTransaction, {name: "TOTAL", required: true, order:
 
 /**
  * Sets the total for the expense.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -143,7 +143,7 @@ InvestmentExpenseTransaction.prototype.setTotal = function(total) {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -155,7 +155,7 @@ Element.add(InvestmentExpenseTransaction, {name: "SUBACCTSEC", order: 40, attrib
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -176,7 +176,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -188,7 +188,7 @@ Element.add(InvestmentExpenseTransaction, {name: "SUBACCTFUND", order: 50, attri
 
 /**
  * Sets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -210,7 +210,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -223,7 +223,7 @@ Element.add(InvestmentExpenseTransaction, {name: "CURRENCY", order: 60, attribut
 /**
  * sets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -235,7 +235,7 @@ InvestmentExpenseTransaction.prototype.setCurrencyCode = function(currencyCode) 
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -247,7 +247,7 @@ Element.add(InvestmentExpenseTransaction, {name: "ORIGCURRENCY", order: 70, attr
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction
  */
@@ -261,7 +261,7 @@ InvestmentExpenseTransaction.prototype.setOriginalCurrencyInfo = function(origin
  * Gets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -275,7 +275,7 @@ Element.add(InvestmentExpenseTransaction, {name: "INV401KSOURCE", order: 180, at
  * Sets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */

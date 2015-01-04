@@ -14,6 +14,14 @@
     "sub": true,
     "predef": [
       "Promise",
-      "window"
+      "window",
+      "chai", 
+      "describe", 
+      "before", 
+      "beforeEach", 
+      "after", 
+      "afterEach", 
+      "it", 
+      "xit"
     ]
 }

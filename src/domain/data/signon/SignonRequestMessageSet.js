@@ -28,7 +28,7 @@ var PasswordChangeRequestTransaction = require("./PasswordChangeRequestTransacti
  *
  * @class
  * @augments RequestMessageSet
- * @see "Section 2.5, OFX Spec."
+ * See "Section 2.5, OFX Spec."
  */
 function SignonRequestMessageSet () {
   RequestMessageSet.call(this);

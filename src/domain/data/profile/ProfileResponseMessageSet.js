@@ -25,7 +25,7 @@ var ProfileResponseTransaction = require("./ProfileResponseTransaction");
 /**
  * @class
  * @augments ResponseMessageSet
- * @see "Section 7 OFX Spec"
+ * See "Section 7 OFX Spec"
  */
 function ProfileResponseMessageSet () {
   ResponseMessageSet.call(this);

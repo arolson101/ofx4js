@@ -25,7 +25,7 @@ var RelatedOptionType = require("./RelatedOptionType");
 
 /**
  * Transaction for selling options.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -78,7 +78,7 @@ Aggregate.add("SELLOPT", SellOptionTransaction);
 /**
  * Gets the type of option sale (i.e. "SELLTOCLOSE" or "SELLTOOPEN"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the option sell type
  */
@@ -91,7 +91,7 @@ Element.add(SellOptionTransaction, {name: "OPTSELLTYPE", required: true, order: 
 /**
  * Sets the type of option sale (i.e. "SELLTOCLOSE" or "SELLTOOPEN"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} optionSellType the option sell type
  */
@@ -112,7 +112,7 @@ SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
 
 /**
  * Gets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Integer} the number of shares per contact
  */
@@ -124,7 +124,7 @@ Element.add(SellOptionTransaction, {name: "SHPERCTRCT", required: true, order: 3
 
 /**
  * Sets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Integer} sharesPerContact the number of shares per contact
  */
@@ -136,7 +136,7 @@ SellOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact)
 /**
  * Gets a related transaction for the option sale for complex option transactions. This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The related transaction id
  */
@@ -149,7 +149,7 @@ Element.add(SellOptionTransaction, {name: "RELFITID", order: 40, attributeType: 
 /**
  * Sets a related transaction for the option sale for complex option transactions. This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId The related transaction id
  */
@@ -161,7 +161,7 @@ SellOptionTransaction.prototype.setRelatedTransactionId = function(relatedTransa
 /**
  * Gets the type for the related transaction. One of "SPREAD", "STRADDLE", "NONE", "OTHER". This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The related tansaction type
  */
@@ -174,7 +174,7 @@ Element.add(SellOptionTransaction, {name: "RELTYPE", order: 50, attributeType: S
 /**
  * Sets the type for the related transaction. One of "SPREAD", "STRADDLE", "NONE", "OTHER". This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedType The related tansaction type
  */
@@ -196,7 +196,7 @@ SellOptionTransaction.prototype.getRelatedTypeEnum = function() {
 /**
  * Gets how the option sale is secured. One of "NAKED" or "COVERED". This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} how the option sale is secured
  */
@@ -209,7 +209,7 @@ Element.add(SellOptionTransaction, {name: "SECURED", order: 60, attributeType: S
 /**
  * Sets how the option sale is secured. One of "NAKED" or "COVERED". This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} secured how the option sale is secured
  */

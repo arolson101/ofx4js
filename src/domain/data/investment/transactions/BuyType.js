@@ -16,7 +16,7 @@
 
 /**
  * Type of purchase for stocks and mutual funds.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */

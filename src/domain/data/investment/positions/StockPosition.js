@@ -22,7 +22,7 @@ var Element = require("../../../../meta/Element");
 
 /**
  * Represents a stock position.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition

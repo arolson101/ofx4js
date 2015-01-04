@@ -30,7 +30,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  * @class
  * @augments ResponseMessage
  * @augments StatusHolder
- * @see "Section 2.5.1.2, OFX Spec."
+ * See "Section 2.5.1.2, OFX Spec."
  */
 function SignonResponse () {
   ResponseMessage.call(this);

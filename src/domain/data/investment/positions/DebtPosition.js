@@ -21,7 +21,7 @@ var BasePosition = require("./BasePosition");
 
 /**
  * Represents a debt position.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition

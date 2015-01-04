@@ -23,7 +23,7 @@ var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 /**
  * Stop Check Profile
  * @class
- * @see "Section 11.13.2.3 OFX Spec"
+ * See "Section 11.13.2.3 OFX Spec"
  */
 function StopCheckProfile () {
 
@@ -89,7 +89,7 @@ StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ 
  *
  * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
  * the milliseconds and time zone are still optional, and default to GMT.
- * @see "Section 3.2.8.3 OFX Spec"
+ * See "Section 3.2.8.3 OFX Spec"
  * @return {String} Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 StopCheckProfile.prototype.getProcessEndTime = function() {
@@ -104,7 +104,7 @@ Element.add(StopCheckProfile, {name: "PROCENDTM", required: true, order: 10, att
  * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
  * the milliseconds and time zone are still optional, and default to GMT.
 
- * @see "Section 3.2.8.3 OFX Spec"
+ * See "Section 3.2.8.3 OFX Spec"
  * @param {String} processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 StopCheckProfile.prototype.setProcessEndTime = function(processEndTime) {

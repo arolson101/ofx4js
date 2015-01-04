@@ -16,7 +16,7 @@
 
 /**
  * @enum
- * @see "Section 4, OFX spec"
+ * See "Section 4, OFX spec"
  */
 var ApplicationSecurity = {
 

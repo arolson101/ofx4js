@@ -68,7 +68,11 @@ ChildAggregate.add(Tax1099ResponseMessageSet, {order: 0, attributeType: Array, c
  * @param {Tax1099ResponseTransaction[]} taxResponseTransaction The statement responses.
  */
 Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(taxResponseTransaction) {
-  this.taxResponseTransaction = taxResponseTransaction;
+  if (taxResponseTransaction instanceof Array) {
+    this.taxResponseTransaction = taxResponseTransaction;
+  } else {
+    this.taxResponseTransaction = [taxResponseTransaction];
+  }
 };
 
 
@@ -87,13 +91,6 @@ Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
 Tax1099ResponseMessageSet.prototype.getStatementResponse = function() {
   return !this.taxResponseTransaction || this.taxResponseTransaction.length === 0 ? null : this.taxResponseTransaction.get(0);
 };
-
-
-Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(/*Tax1099ResponseTransaction*/ taxResponseTransaction) {
-  this.taxResponseTransaction = taxResponseTransaction;
-};
-
-
 
 
 module.exports = Tax1099ResponseMessageSet;

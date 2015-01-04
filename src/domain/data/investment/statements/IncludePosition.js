@@ -20,7 +20,7 @@ var Element = require("../../../../meta/Element");
 
 /**
  * Aggreate to indicate whether position information is requested as part of the statement
- * @see "Section 13.9.1.2, OFX Spec"
+ * See "Section 13.9.1.2, OFX Spec"
  *
  * @class
  */

@@ -24,7 +24,7 @@ var CoreMessageSetInfo = require("./CoreMessageSetInfo");
  * Information specific to a version of a message set.
  *
  * @class
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 function VersionSpecificMessageSetInfo () {
 

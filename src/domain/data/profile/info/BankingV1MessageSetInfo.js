@@ -31,7 +31,7 @@ var ImageProfile = require("./common/ImageProfile");
  * Banking Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.2.1 OFX Spec"
+ * See "Section 11.13.2.1 OFX Spec"
  */
 function BankingV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);

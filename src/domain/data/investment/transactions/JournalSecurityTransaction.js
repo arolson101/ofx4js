@@ -28,7 +28,7 @@ var SecurityId = require("../../seclist/SecurityId");
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
  * account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -77,7 +77,7 @@ Aggregate.add("JRNLSEC", JournalSecurityTransaction);
 /**
  * Gets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -90,7 +90,7 @@ ChildAggregate.add(JournalSecurityTransaction, {required: true, order: 20, attri
 /**
  * Sets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was bought
  */
@@ -101,7 +101,7 @@ JournalSecurityTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
  * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -113,7 +113,7 @@ Element.add(JournalSecurityTransaction, {name: "SUBACCTFROM", order: 30, attribu
 
 /**
  * Sets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountFrom the sub account type
  */
@@ -134,7 +134,7 @@ JournalSecurityTransaction.prototype.getFromSubAccountFundEnum = function() {
 
 /**
  * Gets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -146,7 +146,7 @@ Element.add(JournalSecurityTransaction, {name: "SUBACCTTO", order: 40, attribute
 
 /**
  * sets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountTo the sub account fund
  */
@@ -167,7 +167,7 @@ JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
 
 /**
  * Gets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -179,7 +179,7 @@ Element.add(JournalSecurityTransaction, {name: "TOTAL", order: 50, attributeType
 
 /**
  * Sets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */

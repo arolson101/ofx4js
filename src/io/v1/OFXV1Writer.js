@@ -181,11 +181,5 @@ OFXV1Writer.prototype.print = function(/*String*/ line) {
 };
 
 
-//OFXV1Writer.prototype.print = function(/*char*/ ch) {
-//  this.writer.write(ch);
-//};
-
-
-
 
 module.exports = OFXV1Writer;

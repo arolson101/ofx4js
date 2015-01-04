@@ -21,7 +21,7 @@ var Currency = require("./Currency");
 
 /**
  * @class
- * @see "Section 3.1.3, OFX Spec"
+ * See "Section 3.1.3, OFX Spec"
  */
 function BalanceRecord () {
 

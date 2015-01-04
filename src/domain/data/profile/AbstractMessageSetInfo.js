@@ -21,7 +21,7 @@ var VersionSpecificMessageSetInfo = require("./VersionSpecificMessageSetInfo");
  * Information about a message set.
  *
  * @class
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 function AbstractMessageSetInfo () {
 

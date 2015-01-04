@@ -98,7 +98,7 @@ OFXV1Connection.prototype.logResponse = function(inBuffer) {
  *
  * @param {URL} url The URL.
  * @param {ByteArrayOutputStream} outBuffer The buffer.
- * @return {InputStream} The response.
+ * @return {Promise<string>} The response.
  */
 OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
   var outText = outBuffer.join("");
@@ -129,7 +129,7 @@ OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
 /**
  * Unmarshal the input stream.
  *
- * @param {InputStream} in The input stream.
+ * @param {string} in_ The input text.
  * @return {ResponseEnvelope} The response envelope.
  */
 OFXV1Connection.prototype.unmarshal = function(in_) {

@@ -23,7 +23,7 @@ var SecurityListRequest = require("./SecurityListRequest");
 
 /**
  * Security list transaction request.
- * @see "Section 13.8.2.1, OFX Spec"
+ * See "Section 13.8.2.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedRequestMessage

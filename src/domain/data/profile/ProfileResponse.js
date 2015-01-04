@@ -28,7 +28,7 @@ var SignonInfoList = require("./SignonInfoList");
  * @class
  * @augments ResponseMessage
  * @augments FinancialInstitutionProfile
- * @see "Section 7.2 OFX Spec"
+ * See "Section 7.2 OFX Spec"
  */
 function ProfileResponse () {
   ResponseMessage.call(this);
@@ -501,25 +501,11 @@ ProfileResponse.prototype.setEmail = function(email) {
 };
 
 
-ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type) {
-  var profiles = this.getProfiles(type);
-  if (profiles.length > 1) {
-    throw new Error("More than one profile of type " + type);
-  }
-  else if (profiles.length === 0) {
-    return null;
-  }
-  else {
-    return profiles[0];
-  }
-};
-
-
 /**
  * Get all the profiles of the specified type.
  *
  * @param {MessageSetType} type The type.
- * @return {Collection<MessageSetProfile>} The profiles.
+ * @return {MessageSetProfile[]} The profiles.
  */
 ProfileResponse.prototype.getProfiles = function(type) {
   var profiles = [];
@@ -544,15 +530,27 @@ ProfileResponse.prototype.getProfiles = function(type) {
 
 ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type, /*String*/ version) {
   var profiles = this.getProfiles(type);
-  for (var i=0; i<profiles.length; i++) {
-    var profile = profiles[i];
-    if (!version) {
-      if (!profile.getVersion()) {
+  if (version) {
+    for (var i=0; i<profiles.length; i++) {
+      var profile = profiles[i];
+      if (!version) {
+        if (!profile.getVersion()) {
+          return profile;
+        }
+      }
+      else if (version === profile.getVersion()) {
         return profile;
       }
     }
-    else if (version === profile.getVersion()) {
-      return profile;
+  } else {
+    if (profiles.length > 1) {
+      throw new Error("More than one profile of type " + type);
+    }
+    else if (profiles.length === 0) {
+      return null;
+    }
+    else {
+      return profiles[0];
     }
   }
   

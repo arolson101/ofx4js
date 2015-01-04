@@ -120,19 +120,10 @@ FinancialInstitutionProfile.prototype.getSiteURL = function() { throw new Error(
 FinancialInstitutionProfile.prototype.getEmail = function() { throw new Error("not implemented"); };
 
 /**
- * Get the message set profile for the specified message set.
+ * Get the message set profile for the specified message set and, optionally, the specified version.
  *
  * @param {MessageSetType} type The message set type for which to retrieve the profile.
- * @return {MessageSetProfile} The message set profile information, or null if the FI doesn't support any message sets of the specified type.
- * @throws IllegalStateException If multiple versions of the specified message set exist.
- */
-FinancialInstitutionProfile.prototype.getMessageSetProfile = function(/*type*/) { throw new Error("not implemented"); };
-
-/**
- * Get the message set profile for the specified message set and the specified version.
- *
- * @param {MessageSetType} type The message set type for which to retrieve the profile.
- * @param {String} version The version for which to retrieve the profile.
+ * @param {String} [version] The version for which to retrieve the profile.
  * @return {MessageSetProfile} The message set profile information, or null if the FI doesn't support the specified message set of the specified version.
  */
 FinancialInstitutionProfile.prototype.getMessageSetProfile = function(/*type, version*/) { throw new Error("not implemented"); };

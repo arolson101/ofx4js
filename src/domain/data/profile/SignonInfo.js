@@ -26,7 +26,7 @@ var CharacterType = require("./CharacterType");
  *
  * @class
  * @augments SignonProfile
- * @see "Section 7.2.2, OFX Spec"
+ * See "Section 7.2.2, OFX Spec"
  */
 function SignonInfo () {
 

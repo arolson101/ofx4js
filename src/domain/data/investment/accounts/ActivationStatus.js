@@ -16,7 +16,7 @@
 
 /**
  * Activation status of an account.
- * @see "Section 13.6.2, OFX Spec"
+ * See "Section 13.6.2, OFX Spec"
  *
  * @enum
  */

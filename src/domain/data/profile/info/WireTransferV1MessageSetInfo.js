@@ -26,7 +26,7 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * Wire Transfer Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.5 OFX Spec"
+ * See "Section 11.13.5 OFX Spec"
  */
 function WireTransferV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);

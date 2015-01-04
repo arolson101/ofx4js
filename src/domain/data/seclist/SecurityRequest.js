@@ -20,7 +20,7 @@ var SecurityId = require("./SecurityId");
 
 /**
  * Security request aggregate.
- * @see "Section 13.8.2.2, OFX Spec"
+ * See "Section 13.8.2.2, OFX Spec"
  *
  * @class
  */

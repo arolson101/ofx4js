@@ -22,7 +22,7 @@ var SecurityId = require("./SecurityId");
 
 /**
  * Info about a security.
- * @see "Section 13.8.5.1, OFX Spec"
+ * See "Section 13.8.5.1, OFX Spec"
  *
  * @class
  */
@@ -208,7 +208,7 @@ SecurityInfo.prototype.setRating = function(rating) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a noptional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -222,7 +222,7 @@ Element.add(SecurityInfo, {name: "UNITPRICE", order: 60, attributeType: Number, 
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */

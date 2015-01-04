@@ -16,7 +16,7 @@
 
 /**
  * @enum
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 var SynchronizationCapability = {
 
