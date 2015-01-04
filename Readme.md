@@ -6,17 +6,17 @@ Note: There is no affiliation between the Ofx4j and Ofx4js projects.
 
 ## Installation
 Install with
-
+```
   npm install ofx4js
-
+```
 Then either
-
+```
   <script src="path/to/ofx4js.min.js"></script>
-
+```
 or
-
+```
   var ofx4js = require("ofx4js");
-
+```
 ## Usage
 To parse an OFX response:
 
