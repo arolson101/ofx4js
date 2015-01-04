@@ -57,7 +57,7 @@ function makeBundle(watch, minify) {
     b.on('update', bundle);
   }
   
-  b.add('./src/index.js');
+  b.add('./src/main.js');
   return bundle();
 }
 

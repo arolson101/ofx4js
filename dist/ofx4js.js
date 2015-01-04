@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./src/index.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./src/main.js":[function(require,module,exports){
 "use strict";
 
 var ofx4js = {
@@ -6427,19 +6427,10 @@ FinancialInstitutionProfile.prototype.getSiteURL = function() { throw new Error(
 FinancialInstitutionProfile.prototype.getEmail = function() { throw new Error("not implemented"); };
 
 /**
- * Get the message set profile for the specified message set.
+ * Get the message set profile for the specified message set and, optionally, the specified version.
  *
  * @param {MessageSetType} type The message set type for which to retrieve the profile.
- * @return {MessageSetProfile} The message set profile information, or null if the FI doesn't support any message sets of the specified type.
- * @throws IllegalStateException If multiple versions of the specified message set exist.
- */
-FinancialInstitutionProfile.prototype.getMessageSetProfile = function(/*type*/) { throw new Error("not implemented"); };
-
-/**
- * Get the message set profile for the specified message set and the specified version.
- *
- * @param {MessageSetType} type The message set type for which to retrieve the profile.
- * @param {String} version The version for which to retrieve the profile.
+ * @param {String} [version] The version for which to retrieve the profile.
  * @return {MessageSetProfile} The message set profile information, or null if the FI doesn't support the specified message set of the specified version.
  */
 FinancialInstitutionProfile.prototype.getMessageSetProfile = function(/*type, version*/) { throw new Error("not implemented"); };
@@ -6454,48 +6445,6 @@ FinancialInstitutionProfile.prototype.getSignonProfile = function(/*messageSet*/
 
 
 module.exports = FinancialInstitutionProfile;
-
-},{}],"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionService.js":[function(require,module,exports){
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-"use strict";
-
-/**
- * @class
- */
-function FinancialInstitutionService() {
-}
-
-/**
- * Get the financial institution by the specified id.
- *
- * @param {String} fid The financial institution id.
- * @return {FinancialInstitution} The financial institution, or null if not found.
- */
-FinancialInstitutionService.prototype.getFinancialInstitution = function(/*fid*/) { throw new Error("not implemented"); };
-
-/**
- * Get the financial institution by the specified data.
- *
- * @param {FinancialInstitutionData} data The financial institution data.
- * @return {FinancialInstitution} The financial institution, or null if not found.
- */
-FinancialInstitutionService.prototype.getFinancialInstitution = function(/*data*/) { throw new Error("not implemented"); };
-
-
-module.exports = FinancialInstitutionService;
 
 },{}],"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js":[function(require,module,exports){
 /*
@@ -7326,24 +7275,14 @@ FinancialInstitutionImpl.prototype.createAuthenticatedRequest = function(usernam
 
 
 /**
- * Send a request.
- *
- * @param {RequestEnvelope} request The request.
- * @return {ResponseEnvelope} The request.
- */
-FinancialInstitutionImpl.prototype.sendRequest = function(request) {
-  return this.getConnection().sendRequest(request, this.getData().getOFXURL());
-};
-
-
-/**
  * Send a request to a specific URL.
  *
  * @param {RequestEnvelope} request The request.
- * @param {URL} url The url.
+ * @param {URL} [url] The url.
  * @return {ResponseEnvelope} The request.
  */
 FinancialInstitutionImpl.prototype.sendRequest = function(request, url) {
+  url = url || this.getData().getOFXURL();
   return this.getConnection().sendRequest(request, url);
 };
 
@@ -7782,11 +7721,10 @@ module.exports = {
   FinancialInstitutionAccount: require("./FinancialInstitutionAccount"),
   FinancialInstitutionData: require("./FinancialInstitutionData"),
   FinancialInstitutionProfile: require("./FinancialInstitutionProfile"),
-  FinancialInstitutionService: require("./FinancialInstitutionService"),
   InvestmentAccount: require("./InvestmentAccount"),
 };
 
-},{"./AccountStatement":"/Users/aolson/Developer/ofx4js/src/client/AccountStatement.js","./BankAccount":"/Users/aolson/Developer/ofx4js/src/client/BankAccount.js","./CreditCardAccount":"/Users/aolson/Developer/ofx4js/src/client/CreditCardAccount.js","./FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","./FinancialInstitutionAccount":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionAccount.js","./FinancialInstitutionData":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionData.js","./FinancialInstitutionProfile":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js","./FinancialInstitutionService":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionService.js","./InvestmentAccount":"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js","./context/index":"/Users/aolson/Developer/ofx4js/src/client/context/index.js","./impl/index":"/Users/aolson/Developer/ofx4js/src/client/impl/index.js","./net/index":"/Users/aolson/Developer/ofx4js/src/client/net/index.js"}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXConnection.js":[function(require,module,exports){
+},{"./AccountStatement":"/Users/aolson/Developer/ofx4js/src/client/AccountStatement.js","./BankAccount":"/Users/aolson/Developer/ofx4js/src/client/BankAccount.js","./CreditCardAccount":"/Users/aolson/Developer/ofx4js/src/client/CreditCardAccount.js","./FinancialInstitution":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitution.js","./FinancialInstitutionAccount":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionAccount.js","./FinancialInstitutionData":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionData.js","./FinancialInstitutionProfile":"/Users/aolson/Developer/ofx4js/src/client/FinancialInstitutionProfile.js","./InvestmentAccount":"/Users/aolson/Developer/ofx4js/src/client/InvestmentAccount.js","./context/index":"/Users/aolson/Developer/ofx4js/src/client/context/index.js","./impl/index":"/Users/aolson/Developer/ofx4js/src/client/impl/index.js","./net/index":"/Users/aolson/Developer/ofx4js/src/client/net/index.js"}],"/Users/aolson/Developer/ofx4js/src/client/net/OFXConnection.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7924,7 +7862,7 @@ OFXV1Connection.prototype.logResponse = function(inBuffer) {
  *
  * @param {URL} url The URL.
  * @param {ByteArrayOutputStream} outBuffer The buffer.
- * @return {InputStream} The response.
+ * @return {Promise<string>} The response.
  */
 OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
   var outText = outBuffer.join("");
@@ -7955,7 +7893,7 @@ OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
 /**
  * Unmarshal the input stream.
  *
- * @param {InputStream} in The input stream.
+ * @param {string} in_ The input text.
  * @return {ResponseEnvelope} The response envelope.
  */
 OFXV1Connection.prototype.unmarshal = function(in_) {
@@ -8091,7 +8029,7 @@ module.exports = {
 
 /**
  * @enum
- * @see "Section 4, OFX spec"
+ * See "Section 4, OFX spec"
  */
 var ApplicationSecurity = {
 
@@ -8214,7 +8152,7 @@ module.exports = MessageSetProfile;
  * The message set type, used to define message set order in the envelope.
  *
  * @enum
- * @see "Section 2.4.5.2, OFX spec"
+ * See "Section 2.4.5.2, OFX spec"
  */
 var MessageSetType = {
 
@@ -8275,7 +8213,7 @@ var UUID = require("uuid");
  * Envelope for enclosing an OFX request.
  *
  * @class
- * @see "Section 2.4.3, OFX Spec"
+ * See "Section 2.4.3, OFX Spec"
  */
 function RequestEnvelope (/*String*/ UID) {
 
@@ -8318,7 +8256,7 @@ Aggregate.add("OFX", RequestEnvelope);
  * The security of this envelope.
  *
  * @return {ApplicationSecurity} The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getSecurity = function() {
   return this.security;
@@ -8330,7 +8268,7 @@ Header.add(RequestEnvelope, {name: "SECURITY", attributeType: ApplicationSecurit
  * The security of this envelope.
  *
  * @param {ApplicationSecurity} security The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.setSecurity = function(security) {
   this.security = security;
@@ -8341,7 +8279,7 @@ RequestEnvelope.prototype.setSecurity = function(security) {
  * The UID for the envelope.
  *
  * @return {String} The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getUID = function() {
   return this.UID;
@@ -8353,7 +8291,7 @@ Header.add(RequestEnvelope, {name: "NEWFILEUID", attributeType: String, readMeth
  * The UID for the envelope.
  *
  * @param {String} UID The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.setUID = function(UID) {
   this.UID = UID;
@@ -8364,7 +8302,7 @@ RequestEnvelope.prototype.setUID = function(UID) {
  * The UID of the last-processed request/response (used for file-based error recovery).
  *
  * @return {String} The UID of the last-processed request/response (used for file-based error recovery).
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.getLastProcessedUID = function() {
   return this.lastProcessedUID;
@@ -8376,7 +8314,7 @@ Header.add(RequestEnvelope, {name: "OLDFILEUID", attributeType: String, readMeth
  * The UID of the last-processed request/response (used for file-based error recovery).
  *
  * @param {String} lastProcessedUID The UID of the last-processed request/response (used for file-based error recovery).
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
   this.lastProcessedUID = lastProcessedUID;
@@ -8387,7 +8325,7 @@ RequestEnvelope.prototype.setLastProcessedUID = function(lastProcessedUID) {
  * The message sets that make up the content of this request.
  *
  * @return {RequestMessageSet[]} The message sets that make up the content of this request.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
@@ -8399,7 +8337,7 @@ ChildAggregate.add(RequestEnvelope, {order: 1, attributeType: Array, collectionE
  * The message sets that make up the content of this request.
  *
  * @param {RequestMessageSet[]} messageSets The message sets that make up the content of this request.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 RequestEnvelope.prototype.setMessageSets = function(messageSets) {
   this.messageSets = messageSets;
@@ -8536,7 +8474,7 @@ var ResponseMessageSet = require("./ResponseMessageSet");
  * Envelope for enclosing an OFX response.
  *
  * @class
- * @see "Section 2.4.3, OFX Spec"
+ * See "Section 2.4.3, OFX Spec"
  */
 function ResponseEnvelope () {
 
@@ -8571,7 +8509,7 @@ Aggregate.add("OFX", ResponseEnvelope);
  * The security of this envelope.
  *
  * @return {ApplicationSecurity} The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.getSecurity = function() {
   return this.security;
@@ -8583,7 +8521,7 @@ Header.add(ResponseEnvelope, {name: "SECURITY", attributeType: ApplicationSecuri
  * The security of this envelope.
  *
  * @param {ApplicationSecurity} security The security of this envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.setSecurity = function(security) {
   this.security = security;
@@ -8594,7 +8532,7 @@ ResponseEnvelope.prototype.setSecurity = function(security) {
  * The UID for the envelope.
  *
  * @return {String} The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.getUID = function() {
   return this.UID;
@@ -8606,7 +8544,7 @@ Header.add(ResponseEnvelope, {name: "NEWFILEUID", attributeType: String, readMet
  * The UID for the envelope.
  *
  * @param {String} UID The UID for the envelope.
- * @see "Section 2.2, OFX spec"
+ * See "Section 2.2, OFX spec"
  */
 ResponseEnvelope.prototype.setUID = function(UID) {
   this.UID = UID;
@@ -8617,7 +8555,7 @@ ResponseEnvelope.prototype.setUID = function(UID) {
  * The message sets that make up the content of this response.
  *
  * @return {ResponseMessageSet[]} The message sets that make up the content of this response.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.getMessageSets = function() {
   return this.messageSets;
@@ -8629,7 +8567,7 @@ ChildAggregate.add(ResponseEnvelope, {order: 1, attributeType: Array, collection
  * The message sets that make up the content of this response.
  *
  * @param {ResponseMessageSet[]} messageSets The message sets that make up the content of this response.
- * @see "Section 2.4.5, OFX Spec"
+ * See "Section 2.4.5, OFX Spec"
  */
 ResponseEnvelope.prototype.setMessageSets = function(messageSets) {
   this.messageSets = messageSets;
@@ -8962,7 +8900,7 @@ var RequestMessage = require("./ResponseMessage");
  * A request message wrapped in a transaction.
  *
  * @class
- * @see "Section 2.4.6, OFX Spec"
+ * See "Section 2.4.6, OFX Spec"
  */
 function TransactionWrappedRequestMessage() {
   RequestMessage.call(this);
@@ -9094,7 +9032,7 @@ var Status = require("./common/Status");
  * @class
  * @augments ResponseMessage
  * @augments StatusHolder
- * @see "Section 2.4.6, OFX Spec"
+ * See "Section 2.4.6, OFX Spec"
  */
 function TransactionWrappedResponseMessage() {
   ResponseMessage.call(this);
@@ -10371,7 +10309,7 @@ var Currency = require("./Currency");
 
 /**
  * @class
- * @see "Section 3.1.3, OFX Spec"
+ * See "Section 3.1.3, OFX Spec"
  */
 function BalanceRecord () {
 
@@ -10617,7 +10555,7 @@ var Element = require("../../../meta/Element");
 
 /**
  * @class
- * @see "Section 5.2, OFX Spec"
+ * See "Section 5.2, OFX Spec"
  */
 function Currency () {
 
@@ -11436,7 +11374,7 @@ var StatusCode = require("./StatusCode");
  * Transaction status element.
  *
  * @class
- * @see "Section 3.1.4, OFX Spec"
+ * See "Section 3.1.4, OFX Spec"
  */
 function Status () {
 
@@ -12135,9 +12073,9 @@ Transaction.prototype.setCorrectionId = function(correctionId) {
 
 
 /**
- * The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  *
- * @return {CorrectionAction} The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * @return {CorrectionAction} The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  */
 Transaction.prototype.getCorrectionAction = function() {
   return this.correctionAction;
@@ -12146,9 +12084,9 @@ Element.add(Transaction, {name: "CORRECTACTION", order: 70, attributeType: Corre
 
 
 /**
- * The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  *
- * @param {CorrectionAction} correctionAction The action to take on the {@link #getCorrectionId() corrected transaction}.
+ * @param {CorrectionAction} correctionAction The action to take on the {@link Transaction#getCorrectionId() corrected transaction}.
  */
 Transaction.prototype.setCorrectionAction = function(correctionAction) {
   this.correctionAction = correctionAction;
@@ -12744,10 +12682,14 @@ TransferInfo.prototype.setBankAccountFrom = function(bankAccountFrom) {
 /**
  * The account to transfer from.
  *
- * @param {BankAccountDetails} bankAccountFrom The account to transfer from.
+ * @param {BankAccountDetails|CreditCardAccountDetails} accountFrom The account to transfer from.
  */
-TransferInfo.prototype.setAccountFrom = function(bankAccountFrom) {
-  this.setBankAccountFrom(bankAccountFrom);
+TransferInfo.prototype.setAccountFrom = function(accountFrom) {
+  if (accountFrom instanceof BankAccountDetails) {
+    this.setBankAccountFrom(accountFrom);
+  } else if (accountFrom instanceof CreditCardAccountDetails) {
+    this.setCreditCardAccountFrom(accountFrom);
+  }
 };
 
 
@@ -12770,16 +12712,6 @@ ChildAggregate.add(TransferInfo, {name: "CCACCTFROM", order: 10, attributeType: 
 TransferInfo.prototype.setCreditCardAccountFrom = function(creditCardAccountFrom) {
   this.bankAccountFrom = null;
   this.creditCardAccountFrom = creditCardAccountFrom;
-};
-
-
-/**
- * The credit card to transfer from.
- *
- * @param {CreditCardAccountDetails} creditCardAccountFrom The credit card to transfer from.
- */
-TransferInfo.prototype.setAccountFrom = function(creditCardAccountFrom) {
-  this.setCreditCardAccountFrom(creditCardAccountFrom);
 };
 
 
@@ -12808,10 +12740,14 @@ TransferInfo.prototype.setBankAccountTo = function(bankAccountTo) {
 /**
  * The bank account to transfer to.
  *
- * @param {BankAccountDetails} bankAccountTo The bank account to transfer to.
+ * @param {BankAccountDetails|CreditCardAccountDetails} accountTo The bank account to transfer to.
  */
-TransferInfo.prototype.setAccountTo = function(bankAccountTo) {
-  this.setBankAccountTo(bankAccountTo);
+TransferInfo.prototype.setAccountTo = function(accountTo) {
+  if (accountTo instanceof BankAccountDetails) {
+    this.setBankAccountTo(accountTo);
+  } else if (accountTo instanceof CreditCardAccountDetails) {
+    this.setCreditCardAccountTo(accountTo);
+  }
 };
 
 
@@ -12834,16 +12770,6 @@ ChildAggregate.add(TransferInfo, {name: "CCACCTTO", order: 30, attributeType: Cr
 TransferInfo.prototype.setCreditCardAccountTo = function(creditCardAccountTo) {
   this.bankAccountTo = null;
   this.creditCardAccountTo = creditCardAccountTo;
-};
-
-
-/**
- * The credit card account to transfer to.
- *
- * @param {CreditCardAccountDetails} creditCardAccountTo The credit card account to transfer to.
- */
-TransferInfo.prototype.setAccountTo = function(creditCardAccountTo) {
-  this.setCreditCardAccountTo(creditCardAccountTo);
 };
 
 
@@ -14017,7 +13943,7 @@ module.exports = AccountType;
 
 /**
  * Activation status of an account.
- * @see "Section 13.6.2, OFX Spec"
+ * See "Section 13.6.2, OFX Spec"
  *
  * @enum
  */
@@ -14452,7 +14378,7 @@ module.exports = InvestmentAccountInfo;
 
 /**
  * Types of well-known sub-accounts.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -14660,7 +14586,7 @@ BasePosition.prototype.setInvestmentPosition = function(investmentPosition) {
 
 /**
  * Gets the security id for the position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SecurityId} the security id for the position
  */
@@ -14672,7 +14598,7 @@ BasePosition.prototype.getSecurityId = function() {
 /**
  * Gets the sub-account type. One of "CASH", "MARGIN", "SHORT", "OTHER". This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the sub-account type
  */
@@ -14683,7 +14609,7 @@ BasePosition.prototype.getHeldInAccount = function() {
 
 /**
  * Gets the sub-account type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SubAccountType} the sub-account type or null if it's not one of the well-known types
  */
@@ -14695,7 +14621,7 @@ BasePosition.prototype.getHeldInAccountEnum = function() {
 /**
  * Gets the position type. One of SHORT or LONG. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the position type
  */
@@ -14706,7 +14632,7 @@ BasePosition.prototype.getPositionType = function() {
 
 /**
  * Gets the position type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {PositionType} the position type or null if it's not one of the well-known types
  */
@@ -14719,7 +14645,7 @@ BasePosition.prototype.getPositionTypeEnum = function() {
  * Gets the number of units in the position. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the number of units in the position
  */
@@ -14732,7 +14658,7 @@ BasePosition.prototype.getUnits = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -14743,7 +14669,7 @@ BasePosition.prototype.getUnitPrice = function() {
 
 /**
  * Gets the market value of this position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the market value of the position
  */
@@ -14755,7 +14681,7 @@ BasePosition.prototype.getMarketValue = function() {
 /**
  * Gets the date and time of the unit price and market value. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Date} the market value date
  */
@@ -14767,7 +14693,7 @@ BasePosition.prototype.getMarketValueDate = function() {
 /**
  * Gets the currency code of the position. This is an optional field according to the OFX spec.
  * If not present, it's the default currency of the account.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the currency code of the position or null for the default currency
  */
@@ -14779,7 +14705,7 @@ BasePosition.prototype.getCurrencyCode = function() {
 /**
  * Gets the memo associated with the position. This is an optional field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -14792,7 +14718,7 @@ BasePosition.prototype.getMemo = function() {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -14839,7 +14765,7 @@ var BasePosition = require("./BasePosition");
 
 /**
  * Represents a debt position.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -14877,7 +14803,7 @@ module.exports = DebtPosition;
 
 /**
  * Types of 401(k) sources.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -14941,7 +14867,7 @@ var Inv401KSource = require("./Inv401KSource");
 
 /**
  * Class for the investment position aggregate.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -15026,7 +14952,7 @@ Aggregate.add("INVPOS", InvestmentPosition);
 
 /**
  * Gets the security id for the position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SecurityId} the security id for the position
  */
@@ -15038,7 +14964,7 @@ ChildAggregate.add(InvestmentPosition, {required: true, order: 10, attributeType
 
 /**
  * Sets the security id for the position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {SecurityId} securityId the security id for the position
  */
@@ -15050,7 +14976,7 @@ InvestmentPosition.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the sub-account type. One of "CASH", "MARGIN", "SHORT", "OTHER". This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the sub-account type
  */
@@ -15063,7 +14989,7 @@ Element.add(InvestmentPosition, {name: "HELDINACCT", required: true, order: 20, 
 /**
  * Sets the sub-account type. One of "CASH", "MARGIN", "SHORT", "OTHER". This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} heldInAccount the sub-account type
  */
@@ -15074,7 +15000,7 @@ InvestmentPosition.prototype.setHeldInAccount = function(heldInAccount) {
 
 /**
  * Gets the sub-account type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {SubAccountType} the sub-account type or null if it's not one of the well-known types
  */
@@ -15086,7 +15012,7 @@ InvestmentPosition.prototype.getHeldInAccountEnum = function() {
 /**
  * Gets the position type. One of SHORT or LONG. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the position type
  */
@@ -15099,7 +15025,7 @@ Element.add(InvestmentPosition, {name: "POSTYPE", required: true, order: 30, att
 /**
  * Sets the position type. One of SHORT or LONG. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} positionType the position type
  */
@@ -15110,7 +15036,7 @@ InvestmentPosition.prototype.setPositionType = function(positionType) {
 
 /**
  * Gets the position type as one of the well-known types.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {PositionType} the position type or null if it's not one of the well-known types
  */
@@ -15123,7 +15049,7 @@ InvestmentPosition.prototype.getPositionTypeEnum = function() {
  * Gets the number of units in the position. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the number of units in the position
  */
@@ -15137,7 +15063,7 @@ Element.add(InvestmentPosition, {name: "UNITS", required: true, order: 40, attri
  * Sets the number of units in the position. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Double} units the number of units in the position
  */
@@ -15150,7 +15076,7 @@ InvestmentPosition.prototype.setUnits = function(units) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -15164,7 +15090,7 @@ Element.add(InvestmentPosition, {name: "UNITPRICE", required: true, order: 50, a
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -15175,7 +15101,7 @@ InvestmentPosition.prototype.setUnitPrice = function(unitPrice) {
 
 /**
  * Gets the market value of this position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Double} the market value of the position
  */
@@ -15187,7 +15113,7 @@ Element.add(InvestmentPosition, {name: "MKTVAL", required: true, order: 60, attr
 
 /**
  * Sets the market value of this position. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Double} marketValue the market value of the position
  */
@@ -15199,7 +15125,7 @@ InvestmentPosition.prototype.setMarketValue = function(marketValue) {
 /**
  * Gets the date and time of the unit price and market value. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {Date} the market value date
  */
@@ -15212,7 +15138,7 @@ Element.add(InvestmentPosition, {name: "DTPRICEASOF", required: true, order: 70,
 /**
  * Sets the date and time of the unit price and market value. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {Date} marketValueDate the market value date
  */
@@ -15224,7 +15150,7 @@ InvestmentPosition.prototype.setMarketValueDate = function(marketValueDate) {
 /**
  * Gets the currency code of the position. This is an optional field according to the OFX spec.
  * If not present, it's the default currency of the account.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the currency code of the position or null for the default currency
  */
@@ -15237,7 +15163,7 @@ Element.add(InvestmentPosition, {name: "CURRENCY", order: 80, attributeType: Str
 /**
  * Sets the currency code of the position. This is an optional field according to the OFX spec.
  * If not present, it's the default currency of the account.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} currencyCode the currency code of the position or null for the default currency
  */
@@ -15249,7 +15175,7 @@ InvestmentPosition.prototype.setCurrencyCode = function(currencyCode) {
 /**
  * Gets the memo associated with the position. This is an optional field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -15262,7 +15188,7 @@ Element.add(InvestmentPosition, {name: "MEMO", order: 90, attributeType: String,
 /**
  * Sets the memo associated with the position. This is an optional field according to the OFX
  * spec.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @param {String} memo the memo
  */
@@ -15275,7 +15201,7 @@ InvestmentPosition.prototype.setMemo = function(memo) {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -15289,7 +15215,7 @@ Element.add(InvestmentPosition, {name: "INV401KSOURCE", order: 100, attributeTyp
  * Sets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */
@@ -15335,7 +15261,7 @@ var BasePosition = require("./BasePosition");
 
 /**
  * Aggregate for a list of invesment positions.
- * @see "Section 13.9.2.2, OFX Spec"
+ * See "Section 13.9.2.2, OFX Spec"
  *
  * @class
  */
@@ -15404,7 +15330,7 @@ var BasePosition = require("./BasePosition");
 
 /**
  * Represents a mutual fund position.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -15561,7 +15487,7 @@ var ShortOptionSecurity = require("./ShortOptionSecurity");
 
 /**
  * Represents an options position.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -15642,7 +15568,7 @@ var BasePosition = require("./BasePosition");
 
 /**
  * Represents other types of positions.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -15680,7 +15606,7 @@ module.exports = OtherPosition;
 
 /**
  * Type of position.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @enum
  */
@@ -15720,7 +15646,7 @@ module.exports = PositionType;
 
 /**
  * How a short option is secured.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @enum
  */
@@ -15767,7 +15693,7 @@ var Element = require("../../../../meta/Element");
 
 /**
  * Represents a stock position.
- * @see "Section 13.9.2.6.1, OFX Spec"
+ * See "Section 13.9.2.6.1, OFX Spec"
  *
  * @class
  * @augments BasePosition
@@ -15909,7 +15835,7 @@ var BalanceRecord = require("../../common/BalanceRecord");
 
 /**
  * Aggregate for the investment balance list.
- * @see "Section 13.9.2.7, OFX Spec"
+ * See "Section 13.9.2.7, OFX Spec"
  *
  * @class
  */
@@ -15976,7 +15902,7 @@ var Element = require("../../../../meta/Element");
 
 /**
  * Aggreate to indicate whether position information is requested as part of the statement
- * @see "Section 13.9.1.2, OFX Spec"
+ * See "Section 13.9.1.2, OFX Spec"
  *
  * @class
  */
@@ -16074,7 +16000,7 @@ var BalanceList = require("./BalanceList");
 
 /**
  * Aggregate for the investment balance.
- * @see "Section 13.9.2.7, OFX Spec"
+ * See "Section 13.9.2.7, OFX Spec"
  *
  * @class
  */
@@ -16266,7 +16192,7 @@ var IncludePosition = require("./IncludePosition");
 
 /**
  * Aggregate for the investment statement download request.
- * @see "Section 13.9.1.1, OFX Spec"
+ * See "Section 13.9.1.1, OFX Spec"
  *
  * @class
  * @augments StatementRequest
@@ -16430,7 +16356,7 @@ var InvestmentStatementRequestTransaction = require("./InvestmentStatementReques
 
 /**
  * Investment statement request message set.
- * @see "Section 13.7.1.2.1, OFX Spec"
+ * See "Section 13.7.1.2.1, OFX Spec"
  *
  * @class
  * @augments RequestMessageSet
@@ -16518,7 +16444,7 @@ var ChildAggregate = require("../../../../meta/ChildAggregate");
 
 /**
  * Investment statement transaction request.
- * @see "Section 13.9.1.1, OFX Spec"
+ * See "Section 13.9.1.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedRequestMessage
@@ -16602,7 +16528,7 @@ var InvestmentBalance = require("./InvestmentBalance");
 
 /**
  * Aggregate for the investment statement download response.
- * @see "Section 13.9.2.2, OFX Spec"
+ * See "Section 13.9.2.2, OFX Spec"
  *
  * @class
  * @augments StatementResponse
@@ -16836,7 +16762,7 @@ var InvestmentStatementResponseTransaction = require("./InvestmentStatementRespo
 
 /**
  * Investment statement response message set.
- * @see "Section 13.7.1.2.2, OFX Spec"
+ * See "Section 13.7.1.2.2, OFX Spec"
  *
  * @class
  * @augments ResponseMessageSet
@@ -16941,7 +16867,7 @@ var InvestmentStatementResponse = require("./InvestmentStatementResponse");
 
 /**
  * Investment statement transaction response.
- * @see "Section 13.9.2.1, OFX Spec"
+ * See "Section 13.9.2.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedResponseMessage
@@ -17097,7 +17023,7 @@ BaseBuyInvestmentTransaction.prototype.getInvestmentTransaction = function() {
 /**
  * Gets the id of the security that was bought. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -17111,7 +17037,7 @@ BaseBuyInvestmentTransaction.prototype.getSecurityId = function() {
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased.
  */
@@ -17124,7 +17050,7 @@ BaseBuyInvestmentTransaction.prototype.getUnits = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -17136,7 +17062,7 @@ BaseBuyInvestmentTransaction.prototype.getUnitPrice = function() {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markup. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markeup price
  */
@@ -17148,7 +17074,7 @@ BaseBuyInvestmentTransaction.prototype.getMarkup = function() {
 /**
  * Gets the transaction commission for the purchase. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -17159,7 +17085,7 @@ BaseBuyInvestmentTransaction.prototype.getCommission = function() {
 
 /**
  * Gets the taxes for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -17170,7 +17096,7 @@ BaseBuyInvestmentTransaction.prototype.getTaxes = function() {
 
 /**
  * Gets the fees for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -17181,7 +17107,7 @@ BaseBuyInvestmentTransaction.prototype.getFees = function() {
 
 /**
  * Gets the load for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -17194,7 +17120,7 @@ BaseBuyInvestmentTransaction.prototype.getLoad = function() {
  * Gets the total for the purchase. Should be equal to
  * (units * (unitPrice + markup)) + (commision + fees + load + taxes) according to the OFX
  * spec. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -17206,7 +17132,7 @@ BaseBuyInvestmentTransaction.prototype.getTotal = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -17217,7 +17143,7 @@ BaseBuyInvestmentTransaction.prototype.getCurrencyCode = function() {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -17228,7 +17154,7 @@ BaseBuyInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -17249,7 +17175,7 @@ BaseBuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the money came from. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -17331,7 +17257,7 @@ BaseInvestmentTransaction.prototype.getInvestmentTransaction = function() { thro
 /**
  * Gets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the financial institution asssigned transaction id
  */
@@ -17342,7 +17268,7 @@ BaseInvestmentTransaction.prototype.getTransactionId = function() {
 /**
  * Gets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the server assigned transaction id
  */
@@ -17353,7 +17279,7 @@ BaseInvestmentTransaction.prototype.getServerId = function() {
 /**
  * Gets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -17364,7 +17290,7 @@ BaseInvestmentTransaction.prototype.getTradeDate = function() {
 /**
  * Gets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -17375,7 +17301,7 @@ BaseInvestmentTransaction.prototype.getSettlementDate = function() {
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the transaction id of the transaction being reversed
  */
@@ -17386,7 +17312,7 @@ BaseInvestmentTransaction.prototype.getReversalTransactionId = function() {
 /**
  * Gets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -17563,7 +17489,7 @@ BaseSellInvestmentTransaction.prototype.getInvestmentTransaction = function() {
 /**
  * Gets the id of the security that was sold. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -17577,7 +17503,7 @@ BaseSellInvestmentTransaction.prototype.getSecurityId = function() {
  * than stock splits, this is the quantity sold. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased.
  */
@@ -17590,7 +17516,7 @@ BaseSellInvestmentTransaction.prototype.getUnits = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -17602,7 +17528,7 @@ BaseSellInvestmentTransaction.prototype.getUnitPrice = function() {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markdown. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markedown price
  */
@@ -17614,7 +17540,7 @@ BaseSellInvestmentTransaction.prototype.getMarkdown = function() {
 /**
  * Gets the transaction commission for the sale. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -17625,7 +17551,7 @@ BaseSellInvestmentTransaction.prototype.getCommission = function() {
 
 /**
  * Gets the taxes for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -17636,7 +17562,7 @@ BaseSellInvestmentTransaction.prototype.getTaxes = function() {
 
 /**
  * Gets the fees for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -17647,7 +17573,7 @@ BaseSellInvestmentTransaction.prototype.getFees = function() {
 
 /**
  * Gets the load for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -17658,7 +17584,7 @@ BaseSellInvestmentTransaction.prototype.getLoad = function() {
 
 /**
  * Gets the withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the withholding
  */
@@ -17669,7 +17595,7 @@ BaseSellInvestmentTransaction.prototype.getWithholding = function() {
 
 /**
  * Gets whether the sale was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -17683,7 +17609,7 @@ BaseSellInvestmentTransaction.prototype.getTaxExempt = function() {
  * (units * (unitPrice + markdown)) + (commision + fees + load + taxes + penalty + withholding +
  * statewithholding) according to the OFX spec. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -17694,7 +17620,7 @@ BaseSellInvestmentTransaction.prototype.getTotal = function() {
 
 /**
  * Gets the gain sale. This is aan optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the gain for the sale
  */
@@ -17706,7 +17632,7 @@ BaseSellInvestmentTransaction.prototype.getGain = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction.
  */
@@ -17717,7 +17643,7 @@ BaseSellInvestmentTransaction.prototype.getCurrencyCode = function() {
 
 /**
  * Gets the origianl currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the currency info for the transaction.
  */
@@ -17728,7 +17654,7 @@ BaseSellInvestmentTransaction.prototype.getOriginalCurrencyInfo = function() {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -17749,7 +17675,7 @@ BaseSellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the money went to  (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -17771,7 +17697,7 @@ BaseSellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the loan id if this transaction was due to a loan or loan repayment on a 401k. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the loan id
  */
@@ -17782,7 +17708,7 @@ BaseSellInvestmentTransaction.prototype.getLoadId = function() {
 
 /**
  * Gets the state withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the state withholding
  */
@@ -17793,7 +17719,7 @@ BaseSellInvestmentTransaction.prototype.getStateWithholding = function() {
 
 /**
  * Gets the penalty for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the state withholding
  */
@@ -17806,7 +17732,7 @@ BaseSellInvestmentTransaction.prototype.getPenalty = function() {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -17855,7 +17781,7 @@ var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying debt (i.e. bonds, CDs, etc.,).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -17882,7 +17808,7 @@ Aggregate.add("BUYDEBT", BuyDebtTransaction);
 /**
  * Gets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the amount of accrued interest
  */
@@ -17895,7 +17821,7 @@ Element.add(BuyDebtTransaction, {name: "ACCRDINT", order: 20, attributeType: Num
 /**
  * Sets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} accruedInterest the amount of accrued interest
  */
@@ -17935,7 +17861,7 @@ var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Buy investment transaction aggregate ("INVBUY").
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @class
  */
@@ -18069,7 +17995,7 @@ BuyInvestmentTransaction.prototype.setInvestmentTransaction = function(investmen
 /**
  * Gets the id of the security that was bought. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -18082,7 +18008,7 @@ ChildAggregate.add(BuyInvestmentTransaction, {required: true, order: 20, attribu
 /**
  * Sets the id of the security that was bought. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was bought
  */
@@ -18096,7 +18022,7 @@ BuyInvestmentTransaction.prototype.setSecurityId = function(securityId) {
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased.
  */
@@ -18111,7 +18037,7 @@ Element.add(BuyInvestmentTransaction, {name: "UNITS", required: true, order: 30,
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units purchased.
  */
@@ -18124,7 +18050,7 @@ BuyInvestmentTransaction.prototype.setUnits = function(units) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -18138,7 +18064,7 @@ Element.add(BuyInvestmentTransaction, {name: "UNITPRICE", required: true, order:
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -18150,7 +18076,7 @@ BuyInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markup. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markeup price
  */
@@ -18163,7 +18089,7 @@ Element.add(BuyInvestmentTransaction, {name: "MARKUP", order: 50, attributeType:
 /**
  * Sets the portion of the unit price that is attributed to the dealer markup. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} markup the per unit markeup price
  */
@@ -18175,7 +18101,7 @@ BuyInvestmentTransaction.prototype.setMarkup = function(markup) {
 /**
  * Gets the transaction commission for the purchase. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -18188,7 +18114,7 @@ Element.add(BuyInvestmentTransaction, {name: "COMMISSION", order: 60, attributeT
 /**
  * Sets the transaction commission for the purchase. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} commission the transaction commision
  */
@@ -18199,7 +18125,7 @@ BuyInvestmentTransaction.prototype.setCommission = function(commission) {
 
 /**
  * Gets the taxes for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -18211,7 +18137,7 @@ Element.add(BuyInvestmentTransaction, {name: "TAXES", order: 70, attributeType: 
 
 /**
  * Sets the taxes for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} taxes the transaction taxes
  */
@@ -18222,7 +18148,7 @@ BuyInvestmentTransaction.prototype.setTaxes = function(taxes) {
 
 /**
  * Gets the fees for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -18234,7 +18160,7 @@ Element.add(BuyInvestmentTransaction, {name: "FEES", order: 80, attributeType: N
 
 /**
  * Sets the fees for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} fees the transaction fees
  */
@@ -18245,7 +18171,7 @@ BuyInvestmentTransaction.prototype.setFees = function(fees) {
 
 /**
  * Gets the load for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -18257,7 +18183,7 @@ Element.add(BuyInvestmentTransaction, {name: "LOAD", order: 90, attributeType: N
 
 /**
  * Sets the load for the purchase. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} load the load
  */
@@ -18270,7 +18196,7 @@ BuyInvestmentTransaction.prototype.setLoad = function(load) {
  * Gets the total for the purchase. Should be equal to
  * (units * (unitPrice + markup)) + (commision + fees + taxes) according to the OFX
  * spec. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -18284,7 +18210,7 @@ Element.add(BuyInvestmentTransaction, {name: "TOTAL", required: true, order: 100
  * Sets the total for the purchase. Should be equal to
  * (units * (unitPrice + markup)) + (commision + fees + taxes) according to the OFX
  * spec. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -18296,7 +18222,7 @@ BuyInvestmentTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction.
  */
@@ -18309,7 +18235,7 @@ Element.add(BuyInvestmentTransaction, {name: "CURRENCY", order: 110, attributeTy
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info may be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction.
  */
@@ -18321,7 +18247,7 @@ BuyInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -18333,7 +18259,7 @@ ChildAggregate.add(BuyInvestmentTransaction, {order: 120, attributeType: Origina
 
 /**
  * Sets the original currency info for the transaction
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction
  */
@@ -18345,7 +18271,7 @@ BuyInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalCu
 
  /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -18357,7 +18283,7 @@ Element.add(BuyInvestmentTransaction, {name: "SUBACCTSEC", order: 130, attribute
 
 /**
   * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
-  * @see "Section 13.9.2.4.3, OFX Spec"
+  * See "Section 13.9.2.4.3, OFX Spec"
   *
   * @param {String} subAccountSecurity the sub account type
   */
@@ -18378,7 +18304,7 @@ BuyInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the money came from. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -18390,7 +18316,7 @@ Element.add(BuyInvestmentTransaction, {name: "SUBACCTFUND", order: 140, attribut
 
 /**
  * Sets the sub account type that the money came from. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAcctFund the sub account fund
  */
@@ -18440,7 +18366,7 @@ var BuyType = require("./BuyType");
 
 /**
  * Transaction for buying mutual funds.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -18473,7 +18399,7 @@ Aggregate.add("BUYMF", BuyMutualFundTransaction);
 /**
  * Gets the type of purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the buy type
  */
@@ -18486,7 +18412,7 @@ Element.add(BuyMutualFundTransaction, {name: "BUYTYPE", required: true, order: 2
 /**
  * Sets the type of purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} buyType the buy type
  */
@@ -18508,7 +18434,7 @@ BuyMutualFundTransaction.prototype.getBuyTypeEnum = function() {
 /**
  * Gets any related transaction id for a mutual fund purchase (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the related transaction id
  */
@@ -18521,7 +18447,7 @@ Element.add(BuyMutualFundTransaction, {name: "RELFITID", order: 30, attributeTyp
 /**
  * Sets any related transaction id for a mutual fund purchase (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId the related transaction id
  */
@@ -18561,7 +18487,7 @@ var OptionBuyType = require("./OptionBuyType");
 
 /**
  * Transaction for buying options.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -18594,7 +18520,7 @@ Aggregate.add("BUYOPT", BuyOptionTransaction);
 /**
  * Gets the type of option purchase (i.e. "BUYTOOPEN" or "BUYTOCLOSE"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the option buy type
  */
@@ -18607,7 +18533,7 @@ Element.add(BuyOptionTransaction, {name: "OPTBUYTYPE", required: true, order: 20
 /**
  * Sets the type of option purchase (i.e. "BUYTOOPEN" or "BUYTOCLOSE"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} optionBuyType the option buy type
  */
@@ -18628,7 +18554,7 @@ BuyOptionTransaction.prototype.getOptionBuyTypeEnum = function() {
 
 /**
  * Gets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Integer} the number of shares per contact
  */
@@ -18640,7 +18566,7 @@ Element.add(BuyOptionTransaction, {name: "SHPERCTRCT", required: true, order: 30
 
 /**
  * Sets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Integer} sharesPerContact the number of shares per contact
  */
@@ -18678,7 +18604,7 @@ var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying other types of securities.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -18723,7 +18649,7 @@ var BuyType = require("./BuyType");
 
 /**
  * Transaction for buying stock.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseBuyInvestmentTransaction
@@ -18749,7 +18675,7 @@ Aggregate.add("BUYSTOCK", BuyStockTransaction);
 /**
  * Gets the type of stock purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the buy type
  */
@@ -18762,7 +18688,7 @@ Element.add(BuyStockTransaction, {name: "BUYTYPE", required: true, order: 20, at
 /**
  * Sets the type of stock purchase (i.e. "BUY" or "BUYTOCOVER"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} buyType the buy type
  */
@@ -18804,7 +18730,7 @@ module.exports = BuyStockTransaction;
 
 /**
  * Type of purchase for stocks and mutual funds.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -18845,7 +18771,7 @@ module.exports = BuyType;
 
 /**
  * Type of action for closing a stock option.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -18902,7 +18828,7 @@ var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for closing an option position due to expiration, exercise, or assignment.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -18972,7 +18898,7 @@ Aggregate.add("CLOSUREOPT", CloseOptionTransaction);
 
 /**
  * Gets the security id of the option.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {SecurityId} the security id of the option
  */
@@ -18984,7 +18910,7 @@ ChildAggregate.add(CloseOptionTransaction, {order: 20, attributeType: SecurityId
 
 /**
  * Sets the security id of the option.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the option
  */
@@ -18996,7 +18922,7 @@ CloseOptionTransaction.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the action being performed (i.e. "EXERCISE", "ASSIGN", "EXPIRE" This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the option action
  */
@@ -19009,7 +18935,7 @@ Element.add(CloseOptionTransaction, {name: "OPTACTION", required: true, order: 3
 /**
  * Sets the action being performed (i.e. "EXERCISE", "ASSIGN", "EXPIRE" This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} optionAction the option action
  */
@@ -19031,7 +18957,7 @@ CloseOptionTransaction.prototype.getOptionActionEnum = function() {
 /**
  * Gets the number of units of the option that were closed. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the number of units closed
  */
@@ -19044,7 +18970,7 @@ Element.add(CloseOptionTransaction, {name: "UNITS", required: true, order: 40, a
 /**
  * Sets the number of units of the option that were closed. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} units the number of units closed
  */
@@ -19055,7 +18981,7 @@ CloseOptionTransaction.prototype.setUnits = function(units) {
 
 /**
  * Gets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Integer} the number of shares per contact
  */
@@ -19067,7 +18993,7 @@ Element.add(CloseOptionTransaction, {name: "SHPERCTRCT", required: true, order: 
 
 /**
  * Sets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Integer} sharesPerContact the number of shares per contact
  */
@@ -19078,7 +19004,7 @@ CloseOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -19090,7 +19016,7 @@ Element.add(CloseOptionTransaction, {name: "SUBACCTSEC", required: true, order: 
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -19113,7 +19039,7 @@ CloseOptionTransaction.prototype.getSubAccountSecurityEnum = function() {
  * Gets the related transaction id for the related buy or sell corresponding to the
  * EXERCISE or ASSIGN action. This is a required field according to the OFX spec if the
  * action or EXERCISE or ASSIGN.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the related transaction id
  */
@@ -19127,7 +19053,7 @@ Element.add(CloseOptionTransaction, {name: "RELFITID", order: 70, attributeType:
  * Sets the related transaction id for the related buy or sell corresponding to the
  * EXERCISE or ASSIGN action. This is a required field according to the OFX spec if the
  * action or EXERCISE or ASSIGN.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId the related transaction id
  */
@@ -19138,7 +19064,7 @@ CloseOptionTransaction.prototype.setRelatedTransactionId = function(relatedTrans
 
 /**
  * Gets the gain related to the transaction. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the gain related to the transaction
  */
@@ -19150,7 +19076,7 @@ Element.add(CloseOptionTransaction, {name: "GAIN", order: 80, attributeType: Num
 
 /**
  * Sets the gain related to the transaction. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} gain the gain related to the transaction
  */
@@ -19196,7 +19122,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -19287,7 +19213,7 @@ Aggregate.add("INCOME", IncomeTransaction);
 /**
  * Gets the id of the security that the income was for. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that the income was for
  */
@@ -19300,7 +19226,7 @@ ChildAggregate.add(IncomeTransaction, {required: true, order: 20, attributeType:
 /**
  * Sets the id of the security that the income was for. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that the income was for
  */
@@ -19312,7 +19238,7 @@ IncomeTransaction.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC>
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @return {String} the type of income
  */
@@ -19325,7 +19251,7 @@ Element.add(IncomeTransaction, {name: "INCOMETYPE", required: true, order: 30, a
 /**
  * Sets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC>
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @param {String} incomeType the type of income
  */
@@ -19346,7 +19272,7 @@ IncomeTransaction.prototype.getIncomeTypeEnum = function() {
 
 /**
  * Gets the total income received.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -19358,7 +19284,7 @@ Element.add(IncomeTransaction, {name: "TOTAL", required: true, order: 40, attrib
 
 /**
  * Sets the total income received.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -19369,7 +19295,7 @@ IncomeTransaction.prototype.setTotal = function(total) {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -19381,7 +19307,7 @@ Element.add(IncomeTransaction, {name: "SUBACCTSEC", order: 50, attributeType: St
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAcctSec the sub account type
  */
@@ -19402,7 +19328,7 @@ IncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund for the transaction
  */
@@ -19414,7 +19340,7 @@ Element.add(IncomeTransaction, {name: "SUBACCTFUND", order: 60, attributeType: S
 
 /**
  * Sets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAcctFund the sub account fund for the transaction
  */
@@ -19435,7 +19361,7 @@ IncomeTransaction.prototype.getSubAccountFundEnum = function() {
 
 /**
  * Gets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -19447,7 +19373,7 @@ Element.add(IncomeTransaction, {name: "TAXEXEMPT", order: 70, attributeType: Boo
 
 /**
  * Sets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Boolean} taxExempt whether the transaction was tax exempt
  */
@@ -19458,7 +19384,7 @@ IncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 
 /**
  * Gets the withholding for the income. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the withholding
  */
@@ -19470,7 +19396,7 @@ Element.add(IncomeTransaction, {name: "WITHHOLDING", order: 80, attributeType: N
 
 /**
  * Sets the withholding for the income. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} withholding the withholding
  */
@@ -19482,7 +19408,7 @@ IncomeTransaction.prototype.setWithholding = function(withholding) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -19495,7 +19421,7 @@ Element.add(IncomeTransaction, {name: "CURRENCY", order: 90, attributeType: Stri
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -19507,7 +19433,7 @@ IncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the currency info for the transaction
  */
@@ -19519,7 +19445,7 @@ ChildAggregate.add(IncomeTransaction, {order: 120, attributeType: OriginalCurren
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the currency info for the transaction
  */
@@ -19533,7 +19459,7 @@ IncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalCurrencyI
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -19547,7 +19473,7 @@ Element.add(IncomeTransaction, {name: "INV401KSOURCE", order: 110, attributeType
  * Sets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */
@@ -19589,7 +19515,7 @@ module.exports = IncomeTransaction;
 
 /**
  * Type of income.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -19645,7 +19571,7 @@ var Transaction = require("../../common/Transaction");
 
 /**
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
- * @see "Section 13.9.2.3, OFX Spec"
+ * See "Section 13.9.2.3, OFX Spec"
  *
  * @class
  */
@@ -19692,7 +19618,7 @@ InvestmentBankTransaction.prototype.setTransaction = function(transaction) {
 
 /**
  * Gets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @return {String} the sub account fund for the transaction
  */
@@ -19704,7 +19630,7 @@ Element.add(InvestmentBankTransaction, {name: "SUBACCTFUND", required: true, ord
 
 /**
  * Sets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund for the transaction
  */
@@ -19758,7 +19684,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for an investment expense
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -19826,7 +19752,7 @@ Aggregate.add("INVEXPENSE", InvestmentExpenseTransaction);
 /**
  * Gets the id of the security for the expense. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security for the expsense
  */
@@ -19839,7 +19765,7 @@ ChildAggregate.add(InvestmentExpenseTransaction, {required: true, order: 20, att
 /**
  * Sets the id of the security for the expense. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security for the expsense
  */
@@ -19850,7 +19776,7 @@ InvestmentExpenseTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
  * Gets the total for the expense.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -19862,7 +19788,7 @@ Element.add(InvestmentExpenseTransaction, {name: "TOTAL", required: true, order:
 
 /**
  * Sets the total for the expense.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -19873,7 +19799,7 @@ InvestmentExpenseTransaction.prototype.setTotal = function(total) {
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -19885,7 +19811,7 @@ Element.add(InvestmentExpenseTransaction, {name: "SUBACCTSEC", order: 40, attrib
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -19906,7 +19832,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountSecurityEnum = function() {
 
 /**
  * Gets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -19918,7 +19844,7 @@ Element.add(InvestmentExpenseTransaction, {name: "SUBACCTFUND", order: 50, attri
 
 /**
  * Sets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -19940,7 +19866,7 @@ InvestmentExpenseTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -19953,7 +19879,7 @@ Element.add(InvestmentExpenseTransaction, {name: "CURRENCY", order: 60, attribut
 /**
  * sets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -19965,7 +19891,7 @@ InvestmentExpenseTransaction.prototype.setCurrencyCode = function(currencyCode) 
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -19977,7 +19903,7 @@ Element.add(InvestmentExpenseTransaction, {name: "ORIGCURRENCY", order: 70, attr
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction
  */
@@ -19991,7 +19917,7 @@ InvestmentExpenseTransaction.prototype.setOriginalCurrencyInfo = function(origin
  * Gets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -20005,7 +19931,7 @@ Element.add(InvestmentExpenseTransaction, {name: "INV401KSOURCE", order: 180, at
  * Sets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */
@@ -20050,7 +19976,7 @@ var Element = require("../../../../meta/Element");
 
 /**
  * Investment transaction aggregate ("INVTRAN").
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @class
  */
@@ -20107,7 +20033,7 @@ Aggregate.add("INVTRAN", InvestmentTransaction);
 /**
  * Gets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the financial institution asssigned transaction id
  */
@@ -20120,7 +20046,7 @@ Element.add(InvestmentTransaction, {name: "FITID", required: true, order: 0, att
 /**
  * Sets the unique financial institution assigned transaction id. This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} transactionId the financial institution asssigned transaction id
  */
@@ -20132,7 +20058,7 @@ InvestmentTransaction.prototype.setTransactionId = function(transactionId) {
 /**
  * Gets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the server assigned transaction id
  */
@@ -20145,7 +20071,7 @@ Element.add(InvestmentTransaction, {name: "SRVRTID", order: 10, attributeType: S
 /**
  * Sets the server assigned transaction id. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} serverId the server assigned transaction id
  */
@@ -20157,7 +20083,7 @@ InvestmentTransaction.prototype.setServerId = function(serverId) {
 /**
  * Gets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -20170,7 +20096,7 @@ Element.add(InvestmentTransaction, {name: "DTTRADE", required: true, order: 20, 
 /**
  * Sets the trade date of the transaction. For stock splits, this is the
  * day of record. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {Date} tradeDate the trade date
  */
@@ -20182,7 +20108,7 @@ InvestmentTransaction.prototype.setTradeDate = function(tradeDate) {
 /**
  * Gets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {Date} the trade date
  */
@@ -20195,7 +20121,7 @@ Element.add(InvestmentTransaction, {name: "DTSETTLE", order: 30, attributeType: 
 /**
  * Sets the settlement date of the transaction. For stock splits, this is the
  * day of of execution. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {Date} settlementDate the trade date
  */
@@ -20207,7 +20133,7 @@ InvestmentTransaction.prototype.setSettlementDate = function(settlementDate) {
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the transaction id of the transaction being reversed
  */
@@ -20220,7 +20146,7 @@ Element.add(InvestmentTransaction, {name: "REVERSALFITID", order: 40, attributeT
 /**
  * For a reveral transaction, gets the financial institution assigned
  * transaction id for the transaction being revesed.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} reversalTransactionId the transaction id of the transaction being reversed
  */
@@ -20232,7 +20158,7 @@ InvestmentTransaction.prototype.setReversalTransactionId = function(reversalTran
 /**
  * Gets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @return {String} the memo
  */
@@ -20245,7 +20171,7 @@ Element.add(InvestmentTransaction, {name: "MEMO", order: 50, attributeType: Stri
 /**
  * Sets the memo associated with the transaction. This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.1, OFX Spec"
+ * See "Section 13.9.2.4.1, OFX Spec"
  *
  * @param {String} memo the memo
  */
@@ -20283,7 +20209,7 @@ var InvestmentBankTransaction = require("./InvestmentBankTransaction");
 
 /**
  * The transaction list aggregate.
- * @see "Section 13.9.1.2, OFX Spec"
+ * See "Section 13.9.1.2, OFX Spec"
  *
  * @class
  */
@@ -20441,7 +20367,7 @@ var TransactionType = require("./TransactionType");
 /**
  * Transaction for journal fund transactions between sub-accounts within the same investment
  * account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -20480,7 +20406,7 @@ Aggregate.add("JRNLFUND", JournalFundTransaction);
 
 /**
  * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -20492,7 +20418,7 @@ Element.add(JournalFundTransaction, {name: "SUBACCTFROM", order: 20, attributeTy
 
 /**
  * Sets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountFrom the sub account type
  */
@@ -20513,7 +20439,7 @@ JournalFundTransaction.prototype.getFromSubAccountFundEnum = function() {
 
 /**
  * Gets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -20525,7 +20451,7 @@ Element.add(JournalFundTransaction, {name: "SUBACCTTO", order: 30, attributeType
 
 /**
  * Sets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountTo the sub account fund
  */
@@ -20546,7 +20472,7 @@ JournalFundTransaction.prototype.getToSubAccountFundEnum = function() {
 
 /**
  * Gets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -20558,7 +20484,7 @@ Element.add(JournalFundTransaction, {name: "TOTAL", order: 40, attributeType: Nu
 
 /**
  * Sets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -20602,7 +20528,7 @@ var SecurityId = require("../../seclist/SecurityId");
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
  * account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -20651,7 +20577,7 @@ Aggregate.add("JRNLSEC", JournalSecurityTransaction);
 /**
  * Gets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was bought
  */
@@ -20664,7 +20590,7 @@ ChildAggregate.add(JournalSecurityTransaction, {required: true, order: 20, attri
 /**
  * Sets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was bought
  */
@@ -20675,7 +20601,7 @@ JournalSecurityTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
  * Gets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -20687,7 +20613,7 @@ Element.add(JournalSecurityTransaction, {name: "SUBACCTFROM", order: 30, attribu
 
 /**
  * Sets the sub account type the transer is from (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountFrom the sub account type
  */
@@ -20708,7 +20634,7 @@ JournalSecurityTransaction.prototype.getFromSubAccountFundEnum = function() {
 
 /**
  * Gets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -20720,7 +20646,7 @@ Element.add(JournalSecurityTransaction, {name: "SUBACCTTO", order: 40, attribute
 
 /**
  * sets the sub account type that the transfer is to (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountTo the sub account fund
  */
@@ -20741,7 +20667,7 @@ JournalSecurityTransaction.prototype.getToSubAccountFundEnum = function() {
 
 /**
  * Gets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -20753,7 +20679,7 @@ Element.add(JournalSecurityTransaction, {name: "TOTAL", order: 50, attributeType
 
 /**
  * Sets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -20795,7 +20721,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
  * account.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -20840,7 +20766,7 @@ Aggregate.add("MARGININTEREST", MarginInterestTransaction);
 
 /**
  * Gets the sub account type the margin interest affects (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -20852,7 +20778,7 @@ Element.add(MarginInterestTransaction, {name: "SUBACCTFUND", order: 30, attribut
 
 /**
  * Sets the sub account type the margin interest affects (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} subAccountFund the sub account type
  */
@@ -20874,7 +20800,7 @@ MarginInterestTransaction.prototype.getSubAccountFundEnum = function() {
 
 /**
  * Gets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -20886,7 +20812,7 @@ Element.add(MarginInterestTransaction, {name: "TOTAL", order: 40, attributeType:
 
 /**
  * Sets the total for the transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -20898,7 +20824,7 @@ MarginInterestTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction.
  */
@@ -20911,7 +20837,7 @@ Element.add(MarginInterestTransaction, {name: "CURRENCY", order: 110, attributeT
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction.
  */
@@ -20923,7 +20849,7 @@ MarginInterestTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction.
  */
@@ -20935,7 +20861,7 @@ Element.add(MarginInterestTransaction, {name: "ORIGCURRENCY", order: 120, attrib
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrency the original currency info for the transaction.
  */
@@ -20968,7 +20894,7 @@ module.exports = MarginInterestTransaction;
 
 /**
  * Type of purchase for options.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -21009,7 +20935,7 @@ module.exports = OptionBuyType;
 
 /**
  * Type of sale for options.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -21056,7 +20982,7 @@ var Element = require("../../../../meta/Element");
  * the financial institution can report the transaction as converted into the default currency
  * and then include this child aggregate to report what the original currency was and what the
  * rate of conversion was.
- * @see "Section 5.2, OFX Spec"
+ * See "Section 5.2, OFX Spec"
  *
  * @class
  */
@@ -21165,7 +21091,7 @@ var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for reinvestment transactions.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -21283,7 +21209,7 @@ Aggregate.add("REINVEST", ReinvestIncomeTransaction);
 /**
  * Gets the id of the security that was reinvested in. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was reinvested in
  */
@@ -21296,7 +21222,7 @@ ChildAggregate.add(ReinvestIncomeTransaction, {required: true, order: 20, attrib
 /**
  * Sets the id of the security that was reinvested in. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was reinvested in
  */
@@ -21309,7 +21235,7 @@ ReinvestIncomeTransaction.prototype.setSecurityId = function(securityId) {
  * Gets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @return {String} the type of income
  */
@@ -21323,7 +21249,7 @@ Element.add(ReinvestIncomeTransaction, {name: "INCOMETYPE", required: true, orde
  * Sets the type of income. One of "CGLONG" (long term capital gains), "CGSHORT" (short term
  * capital gains), "DIV" (dividend), INTEREST, or MISC. This is a required field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
+ * See "Section 13.9.2.4.4, OFX Spec" This is a required field according to the OFX spec.
  *
  * @param {String} incomeType the type of income
  */
@@ -21344,7 +21270,7 @@ ReinvestIncomeTransaction.prototype.getIncomeTypeEnum = function() {
 
 /**
  * Gets the total income received. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -21356,7 +21282,7 @@ Element.add(ReinvestIncomeTransaction, {name: "TOTAL", required: true, order: 40
 
 /**
  * Sets the total income received. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -21368,7 +21294,7 @@ ReinvestIncomeTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -21381,7 +21307,7 @@ Element.add(ReinvestIncomeTransaction, {name: "SUBACCTSEC", order: 50, attribute
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -21403,7 +21329,7 @@ ReinvestIncomeTransaction.prototype.getSubAccountSecurityEnum = function() {
 /**
  * Gets the number of units of the security that was reinvested in. This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units purchased
  */
@@ -21416,7 +21342,7 @@ Element.add(ReinvestIncomeTransaction, {name: "UNITS", required: true, order: 60
 /**
  * Sets the number of units of the security that was reinvested in. This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units purchased
  */
@@ -21427,7 +21353,7 @@ ReinvestIncomeTransaction.prototype.setUnits = function(units) {
 
 /**
  * Gets the price per commonly-quoted unit. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -21439,7 +21365,7 @@ Element.add(ReinvestIncomeTransaction, {name: "UNITPRICE", required: true, order
 
 /**
  * Sets the price per commonly-quoted unit. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -21451,7 +21377,7 @@ ReinvestIncomeTransaction.prototype.setUnitPrice = function(unitPrice) {
 /**
  * Gets the transaction commission for the reinvestment. This is an optional field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -21464,7 +21390,7 @@ Element.add(ReinvestIncomeTransaction, {name: "COMMISSION", order: 80, attribute
 /**
  * Sets the transaction commission for the reinvestment. This is an optional field according to
  * the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} commission the transaction commision
  */
@@ -21475,7 +21401,7 @@ ReinvestIncomeTransaction.prototype.setCommission = function(commission) {
 
 /**
  * Gets the taxes for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -21487,7 +21413,7 @@ Element.add(ReinvestIncomeTransaction, {name: "TAXES", order: 90, attributeType:
 
 /**
  * Sets the taxes for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} taxes the transaction taxes
  */
@@ -21498,7 +21424,7 @@ ReinvestIncomeTransaction.prototype.setTaxes = function(taxes) {
 
 /**
  * Gets the fees for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -21510,7 +21436,7 @@ Element.add(ReinvestIncomeTransaction, {name: "FEES", order: 100, attributeType:
 
 /**
  * Sets the fees for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} fees the transaction fees
  */
@@ -21521,7 +21447,7 @@ ReinvestIncomeTransaction.prototype.setFees = function(fees) {
 
 /**
  * Gets the load for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -21533,7 +21459,7 @@ Element.add(ReinvestIncomeTransaction, {name: "LOAD", order: 110, attributeType:
 
 /**
  * Sets the load for the reinvestment. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} load the load
  */
@@ -21544,7 +21470,7 @@ ReinvestIncomeTransaction.prototype.setLoad = function(load) {
 
 /**
  * Gets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -21556,7 +21482,7 @@ Element.add(ReinvestIncomeTransaction, {name: "TAXEXEMPT", order: 120, attribute
 
 /**
  * Sets whether the income was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Boolean} taxExempt whether the transaction was tax exempt
  */
@@ -21568,7 +21494,7 @@ ReinvestIncomeTransaction.prototype.setTaxExempt = function(taxExempt) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -21581,7 +21507,7 @@ Element.add(ReinvestIncomeTransaction, {name: "CURRENCY", order: 130, attributeT
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -21593,7 +21519,7 @@ ReinvestIncomeTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction.
  */
@@ -21605,7 +21531,7 @@ Element.add(ReinvestIncomeTransaction, {name: "ORIGCURRENCY", order: 140, attrib
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction.
  */
@@ -21619,7 +21545,7 @@ ReinvestIncomeTransaction.prototype.setOriginalCurrencyInfo = function(originalC
  * Gets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -21633,7 +21559,7 @@ Element.add(ReinvestIncomeTransaction, {name: "INV401KSOURCE", order: 150, attri
  * Sets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */
@@ -21674,7 +21600,7 @@ module.exports = ReinvestIncomeTransaction;
 
 /**
  * Related option transaction type.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @enum
  */
@@ -21734,7 +21660,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for return of capital transactions.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -21803,7 +21729,7 @@ Aggregate.add("RETOFCAP", ReturnOfCapitalTransaction);
 /**
  * Gets the id of the security that capital was returned from. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that capital was returned from
  */
@@ -21816,7 +21742,7 @@ ChildAggregate.add(ReturnOfCapitalTransaction, {required: true, order: 20, attri
 /**
  * Sets the id of the security that capital was returned from. This is a required field according
  * to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that capital was returned from
  */
@@ -21827,7 +21753,7 @@ ReturnOfCapitalTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
  * Gets the total amount of capital returned. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -21839,7 +21765,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "TOTAL", required: true, order: 4
 
 /**
  * Sets the total amount of capital returned. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -21851,7 +21777,7 @@ ReturnOfCapitalTransaction.prototype.setTotal = function(total) {
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -21864,7 +21790,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "SUBACCTSEC", order: 50, attribut
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -21886,7 +21812,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountSecurityEnum = function() {
 /**
  * Gets the sub account type that the transaction affects.
  * (e.g. CASH, MARGIN, SHORT, OTHER). This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -21899,7 +21825,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "SUBACCTFUND", order: 140, attrib
 /**
  * Sets the sub account type that the transaction affects.
  * (e.g. CASH, MARGIN, SHORT, OTHER). This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -21921,7 +21847,7 @@ ReturnOfCapitalTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -21934,7 +21860,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "CURRENCY", order: 110, attribute
 /**
  * Sets the currency code for the transaction. Only one of currency code or original currency
  * info should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -21946,7 +21872,7 @@ ReturnOfCapitalTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the currency code for the transaction.
  */
@@ -21958,7 +21884,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "ORIGCURRENCY", order: 120, attri
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the currency code for the transaction.
  */
@@ -21972,7 +21898,7 @@ ReturnOfCapitalTransaction.prototype.setOriginalCurrencyInfo = function(original
  * Gets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -21986,7 +21912,7 @@ Element.add(ReturnOfCapitalTransaction, {name: "INV401KSOURCE", order: 180, attr
  * Sets the 401K source for the reinvestment. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */
@@ -22028,7 +21954,7 @@ module.exports = ReturnOfCapitalTransaction;
 
 /**
  * Reason debt was sold.
- * @see "Section 13.9.2.4.2, OFX Spec"
+ * See "Section 13.9.2.4.2, OFX Spec"
  *
  * @enum
  */
@@ -22080,7 +22006,7 @@ var SellDebtReason = require("./SellDebtReason");
 
 /**
  * Transaction for selling debt (i.e. bonds, CDs, etc.,).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -22112,7 +22038,7 @@ Aggregate.add("SELLDEBT", SellDebtTransaction);
 /**
  * Gets the reason for the sale. One of "CALL" (the debt was called), "SELL" (the debt was sold),
  * "MATURITY" (the debt reached maturity).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The reason for the sale
  */
@@ -22125,7 +22051,7 @@ Element.add(SellDebtTransaction, {name: "SELLREASON", order: 30, attributeType: 
 /**
  * Sets the reason for the sale. One of "CALL" (the debt was called), "SELL" (the debt was sold),
  * "MATURITY" (the debt reached maturity).
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} sellReason The reason for the sale
  */
@@ -22147,7 +22073,7 @@ SellDebtTransaction.prototype.getSellReasonEnum = function() {
 /**
  * Gets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} the amount of accrued interest
  */
@@ -22160,7 +22086,7 @@ Element.add(SellDebtTransaction, {name: "ACCRDINT", order: 40, attributeType: Nu
 /**
  * Sets the amount of accrued interest on the debt. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} accruedInterest the amount of accrued interest
  */
@@ -22201,7 +22127,7 @@ var InvestmentTransaction = require("./InvestmentTransaction");
 
 /**
  * Sell investment transaction aggregate ("INVSELL").
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @class
  */
@@ -22384,7 +22310,7 @@ SellInvestmentTransaction.prototype.setInvestmentTransaction = function(investme
 /**
  * Gets the id of the security that was sold. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was sold
  */
@@ -22397,7 +22323,7 @@ ChildAggregate.add(SellInvestmentTransaction, {required: true, order: 20, attrib
 /**
  * Sets the id of the security that was sold. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was sold
  */
@@ -22411,7 +22337,7 @@ SellInvestmentTransaction.prototype.setSecurityId = function(securityId) {
  * than stock splits, this is the quantity sold. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units sold
  */
@@ -22426,7 +22352,7 @@ Element.add(SellInvestmentTransaction, {name: "UNITS", required: true, order: 30
  * than stock splits, this is the quantity sold. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units sold
  */
@@ -22439,7 +22365,7 @@ SellInvestmentTransaction.prototype.setUnits = function(units) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -22453,7 +22379,7 @@ Element.add(SellInvestmentTransaction, {name: "UNITPRICE", required: true, order
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -22465,7 +22391,7 @@ SellInvestmentTransaction.prototype.setUnitPrice = function(unitPrice) {
 /**
  * Gets the portion of the unit price that is attributed to the dealer markdown. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit markedown price
  */
@@ -22478,7 +22404,7 @@ Element.add(SellInvestmentTransaction, {name: "MARKDOWN", order: 50, attributeTy
 /**
  * Sets the portion of the unit price that is attributed to the dealer markdown. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} markdown the per unit markedown price
  */
@@ -22490,7 +22416,7 @@ SellInvestmentTransaction.prototype.setMarkdown = function(markdown) {
 /**
  * Gets the transaction commission for the sale. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction commision
  */
@@ -22503,7 +22429,7 @@ Element.add(SellInvestmentTransaction, {name: "COMMISSION", order: 60, attribute
 /**
  * Sets the transaction commission for the sale. This is an optional field according to the
  * OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} commission the transaction commision
  */
@@ -22514,7 +22440,7 @@ SellInvestmentTransaction.prototype.setCommission = function(commission) {
 
 /**
  * Gets the taxes for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction taxes
  */
@@ -22526,7 +22452,7 @@ Element.add(SellInvestmentTransaction, {name: "TAXES", order: 70, attributeType:
 
 /**
  * Sets the taxes for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} taxes the transaction taxes
  */
@@ -22537,7 +22463,7 @@ SellInvestmentTransaction.prototype.setTaxes = function(taxes) {
 
 /**
  * Gets the fees for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the transaction fees
  */
@@ -22549,7 +22475,7 @@ Element.add(SellInvestmentTransaction, {name: "FEES", order: 80, attributeType: 
 
 /**
  * Sets the fees for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} fees the transaction fees
  */
@@ -22560,7 +22486,7 @@ SellInvestmentTransaction.prototype.setFees = function(fees) {
 
 /**
  * Gets the load for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the load
  */
@@ -22572,7 +22498,7 @@ Element.add(SellInvestmentTransaction, {name: "LOAD", order: 90, attributeType: 
 
 /**
  * Sets the load for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} load the load
  */
@@ -22583,7 +22509,7 @@ SellInvestmentTransaction.prototype.setLoad = function(load) {
 
 /**
  * Gets the withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the withholding
  */
@@ -22595,7 +22521,7 @@ Element.add(SellInvestmentTransaction, {name: "WITHHOLDING", order: 93, attribut
 
 /**
  * Sets the withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} withholding the withholding
  */
@@ -22606,7 +22532,7 @@ SellInvestmentTransaction.prototype.setWithholding = function(withholding) {
 
 /**
  * Gets whether the sale was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Boolean} whether the transaction was tax exempt
  */
@@ -22618,7 +22544,7 @@ Element.add(SellInvestmentTransaction, {name: "TAXEXEMPT", order: 97, attributeT
 
 /**
  * Sets whether the sale was tax exempt. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Boolean} taxExempt whether the transaction was tax exempt
  */
@@ -22632,7 +22558,7 @@ SellInvestmentTransaction.prototype.setTaxExempt = function(taxExempt) {
  * (units * (unitPrice + markdown)) + (commision + fees + load + taxes + penalty + withholding +
  * statewithholding) according to the OFX spec. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the total
  */
@@ -22647,7 +22573,7 @@ Element.add(SellInvestmentTransaction, {name: "TOTAL", required: true, order: 10
  * (units * (unitPrice + markdown)) + (commision + fees + load + taxes + penalty + withholding +
  * statewithholding) according to the OFX spec. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} total the total
  */
@@ -22658,7 +22584,7 @@ SellInvestmentTransaction.prototype.setTotal = function(total) {
 
 /**
  * Gets the gain sale. This is aan optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the gain for the sale
  */
@@ -22670,7 +22596,7 @@ Element.add(SellInvestmentTransaction, {name: "GAIN", order: 105, attributeType:
 
 /**
  * Sets the gain sale. This is aan optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} gain the gain for the sale
  */
@@ -22682,7 +22608,7 @@ SellInvestmentTransaction.prototype.setGain = function(gain) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -22695,7 +22621,7 @@ Element.add(SellInvestmentTransaction, {name: "CURRENCY", order: 110, attributeT
 /**
  * sets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} currencyCode the currency code for the transaction
  */
@@ -22707,7 +22633,7 @@ SellInvestmentTransaction.prototype.setCurrencyCode = function(currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -22719,7 +22645,7 @@ Element.add(SellInvestmentTransaction, {name: "ORIGCURRENCY", order: 120, attrib
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {OriginalCurrency} originalCurrencyInfo the original currency info for the transaction
  */
@@ -22731,7 +22657,7 @@ SellInvestmentTransaction.prototype.setOriginalCurrencyInfo = function(originalC
 
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -22743,7 +22669,7 @@ Element.add(SellInvestmentTransaction, {name: "SUBACCTSEC", order: 130, attribut
 
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -22765,7 +22691,7 @@ SellInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
 /**
  * Gets the sub account type that the security is being transfered from
  * (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -22778,7 +22704,7 @@ Element.add(SellInvestmentTransaction, {name: "SUBACCTFUND", order: 140, attribu
 /**
  * Sets the sub account type that the security is being transfered from
  * (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -22800,7 +22726,7 @@ SellInvestmentTransaction.prototype.getSubAccountFundEnum = function() {
 /**
  * Gets the loan id if this transaction was due to a loan or loan repayment on a 401k. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the loan id
  */
@@ -22813,7 +22739,7 @@ Element.add(SellInvestmentTransaction, {name: "LOANID", order: 150, attributeTyp
 /**
  * Sets the loan id if this transaction was due to a loan or loan repayment on a 401k. This is an
  * optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} loanId the loan id
  */
@@ -22824,7 +22750,7 @@ SellInvestmentTransaction.prototype.setLoanId = function(loanId) {
 
 /**
  * Gets the state withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the state withholding
  */
@@ -22836,7 +22762,7 @@ Element.add(SellInvestmentTransaction, {name: "STATEWITHHOLDING", order: 160, at
 
 /**
  * Sets the state withholding for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} stateWithholding the state withholding
  */
@@ -22847,7 +22773,7 @@ SellInvestmentTransaction.prototype.setStateWithholding = function(stateWithhold
 
 /**
  * Gets the penalty for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the state withholding
  */
@@ -22859,7 +22785,7 @@ Element.add(SellInvestmentTransaction, {name: "PENALTY", order: 170, attributeTy
 
 /**
  * Sets the penalty for the sale. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} penalty the state withholding
  */
@@ -22872,7 +22798,7 @@ SellInvestmentTransaction.prototype.setPenalty = function(penalty) {
  * Gets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -22886,7 +22812,7 @@ Element.add(SellInvestmentTransaction, {name: "INV401KSOURCE", order: 180, attri
  * Sets the 401K source for the sale. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */
@@ -22936,7 +22862,7 @@ var SellType = require("./SellType");
 
 /**
  * Transaction for selling mutual fund.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -22974,7 +22900,7 @@ Aggregate.add("SELLMF", SellMutualFundTransaction);
 
 /**
  * Gets the type of sale. One of "SELL" or "SELLSHORT".
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The type of sale
  */
@@ -22986,7 +22912,7 @@ Element.add(SellMutualFundTransaction, {name: "SELLTYPE", order: 20, attributeTy
 
 /**
  * Sets the type of sale. One of "SELL" or "SELLSHORT".
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} sellType The type of sale
  */
@@ -23007,7 +22933,7 @@ SellMutualFundTransaction.prototype.getSellTypeEnum = function() {
 
 /**
  * Gets the average cost basis of the sale.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Double} The average cost basis of the sale
  */
@@ -23019,7 +22945,7 @@ Element.add(SellMutualFundTransaction, {name: "AVGCOSTBASIS", order: 30, attribu
 
 /**
  * Sets the average cost basis of the sale.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Double} averageCostBasis The average cost basis of the sale
  */
@@ -23031,7 +22957,7 @@ SellMutualFundTransaction.prototype.setAverageCostBasis = function(averageCostBa
 /**
  * Gets any related transaction id for a mutual fund sale (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the related transaction id
  */
@@ -23044,7 +22970,7 @@ Element.add(SellMutualFundTransaction, {name: "RELFITID", order: 40, attributeTy
 /**
  * Sets any related transaction id for a mutual fund sale (e.g. for a mutual fund exchange).
  * This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId the related transaction id
  */
@@ -23085,7 +23011,7 @@ var RelatedOptionType = require("./RelatedOptionType");
 
 /**
  * Transaction for selling options.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -23138,7 +23064,7 @@ Aggregate.add("SELLOPT", SellOptionTransaction);
 /**
  * Gets the type of option sale (i.e. "SELLTOCLOSE" or "SELLTOOPEN"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the option sell type
  */
@@ -23151,7 +23077,7 @@ Element.add(SellOptionTransaction, {name: "OPTSELLTYPE", required: true, order: 
 /**
  * Sets the type of option sale (i.e. "SELLTOCLOSE" or "SELLTOOPEN"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} optionSellType the option sell type
  */
@@ -23172,7 +23098,7 @@ SellOptionTransaction.prototype.getOptionSellTypeEnum = function() {
 
 /**
  * Gets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {Integer} the number of shares per contact
  */
@@ -23184,7 +23110,7 @@ Element.add(SellOptionTransaction, {name: "SHPERCTRCT", required: true, order: 3
 
 /**
  * Sets the number of shares per contact. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {Integer} sharesPerContact the number of shares per contact
  */
@@ -23196,7 +23122,7 @@ SellOptionTransaction.prototype.setSharesPerContact = function(sharesPerContact)
 /**
  * Gets a related transaction for the option sale for complex option transactions. This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The related transaction id
  */
@@ -23209,7 +23135,7 @@ Element.add(SellOptionTransaction, {name: "RELFITID", order: 40, attributeType: 
 /**
  * Sets a related transaction for the option sale for complex option transactions. This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedTransactionId The related transaction id
  */
@@ -23221,7 +23147,7 @@ SellOptionTransaction.prototype.setRelatedTransactionId = function(relatedTransa
 /**
  * Gets the type for the related transaction. One of "SPREAD", "STRADDLE", "NONE", "OTHER". This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} The related tansaction type
  */
@@ -23234,7 +23160,7 @@ Element.add(SellOptionTransaction, {name: "RELTYPE", order: 50, attributeType: S
 /**
  * Sets the type for the related transaction. One of "SPREAD", "STRADDLE", "NONE", "OTHER". This
  * is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} relatedType The related tansaction type
  */
@@ -23256,7 +23182,7 @@ SellOptionTransaction.prototype.getRelatedTypeEnum = function() {
 /**
  * Gets how the option sale is secured. One of "NAKED" or "COVERED". This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} how the option sale is secured
  */
@@ -23269,7 +23195,7 @@ Element.add(SellOptionTransaction, {name: "SECURED", order: 60, attributeType: S
 /**
  * Sets how the option sale is secured. One of "NAKED" or "COVERED". This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} secured how the option sale is secured
  */
@@ -23317,7 +23243,7 @@ var TransactionType = require("./TransactionType");
 
 /**
  * Transaction for buying other types of securities.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -23361,7 +23287,7 @@ var SellType = require("./SellType");
 
 /**
  * Transaction for selling stock.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseSellInvestmentTransaction
@@ -23386,7 +23312,7 @@ Aggregate.add("SELLSTOCK", SellStockTransaction);
 /**
  * Gets the type of stock sale (i.e. "SELL" or "SELLSHORT"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @return {String} the sell type
  */
@@ -23399,7 +23325,7 @@ Element.add(SellStockTransaction, {name: "SELLTYPE", required: true, order: 20, 
 /**
  * Sets the type of stock sale (i.e. "SELL" or "SELLSHORT"). This is a required field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @param {String} sellType the sell type
  */
@@ -23493,7 +23419,7 @@ var OriginalCurrency = require("./OriginalCurrency");
 
 /**
  * Transaction for a stock split.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -23588,7 +23514,7 @@ Aggregate.add("SPLIT", SplitTransaction);
 /**
  * Gets the id of the security for the split. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security for the expsense
  */
@@ -23601,7 +23527,7 @@ ChildAggregate.add(SplitTransaction, {required: true, order: 20, attributeType: 
 /**
  * Sets the id of the security for the split. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security for the expsense
  */
@@ -23613,7 +23539,7 @@ SplitTransaction.prototype.setSecurityId = function(securityId) {
 /**
  * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account type
  */
@@ -23626,7 +23552,7 @@ Element.add(SplitTransaction, {name: "SUBACCTSEC", order: 30, attributeType: Str
 /**
  * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER). This is a
  * required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountSecurity the sub account type
  */
@@ -23736,7 +23662,7 @@ SplitTransaction.prototype.setDenominator = function(denominator) {
 /**
  * Gets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the currency code for the transaction
  */
@@ -23749,7 +23675,7 @@ Element.add(SplitTransaction, {name: "CURRENCY", order: 80, attributeType: Strin
 /**
  * sets the currency code for the transaction. Only one of currency code or original currency
  * code should be set according to the OFX spec. If neither are set, means the default currency.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {void} the currency code for the transaction
  */
@@ -23761,7 +23687,7 @@ SplitTransaction.prototype.setCurrencyCode = function(/*String*/ currencyCode) {
 
 /**
  * Gets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {OriginalCurrency} the original currency info for the transaction
  */
@@ -23773,7 +23699,7 @@ Element.add(SplitTransaction, {name: "ORIGCURRENCY", order: 90, attributeType: O
 
 /**
  * Sets the original currency info for the transaction.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {void} the original currency info for the transaction
  */
@@ -23806,7 +23732,7 @@ SplitTransaction.prototype.setCashForFractionalUnits = function(cashForFractiona
 
 /**
  * Gets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the sub account fund
  */
@@ -23818,7 +23744,7 @@ Element.add(SplitTransaction, {name: "SUBACCTFUND", order: 110, attributeType: S
 
 /**
  * Sets the sub account type for the fund. (e.g. CASH, MARGIN, SHORT, OTHER).
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} subAccountFund the sub account fund
  */
@@ -23841,7 +23767,7 @@ SplitTransaction.prototype.getSubAccountFundEnum = function() {
  * Gets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the 401k source
  */
@@ -23855,7 +23781,7 @@ Element.add(SplitTransaction, {name: "INV401KSOURCE", order: 120, attributeType:
  * Sets the 401K source for the transaction. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the 401k source
  */
@@ -23897,7 +23823,7 @@ module.exports = SplitTransaction;
 
 /**
  * Type of investment transaction.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @enum
  */
@@ -23982,7 +23908,7 @@ module.exports = TransactionWithSecurity;
 
 /**
  * Type of transfer.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @enum
  */
@@ -24036,7 +23962,7 @@ var SecurityId = require("../../seclist/SecurityId");
 
 /**
  * Transaction for transfers.
- * @see "Section 13.9.2.4.4, OFX Spec"
+ * See "Section 13.9.2.4.4, OFX Spec"
  *
  * @class
  * @augments BaseOtherInvestmentTransaction
@@ -24118,7 +24044,7 @@ Aggregate.add("TRANSFER", TransferInvestmentTransaction);
 /**
  * Gets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {SecurityId} the security id of the security that was transferred
  */
@@ -24131,7 +24057,7 @@ ChildAggregate.add(TransferInvestmentTransaction, {required: true, order: 20, at
 /**
  * Sets the id of the security that was transferred. This is a required field according to the OFX
  * spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {SecurityId} securityId the security id of the security that was transferred
  */
@@ -24142,7 +24068,7 @@ TransferInvestmentTransaction.prototype.setSecurityId = function(securityId) {
 
 /**
   * Gets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
-  * @see "Section 13.9.2.4.3, OFX Spec"
+  * See "Section 13.9.2.4.3, OFX Spec"
   *
   * @return {String} the sub account type
   */
@@ -24154,7 +24080,7 @@ Element.add(TransferInvestmentTransaction, {name: "SUBACCTSEC", order: 30, attri
 
 /**
   * Sets the sub account type for the security (e.g. CASH, MARGIN, SHORT, OTHER).
-  * @see "Section 13.9.2.4.3, OFX Spec"
+  * See "Section 13.9.2.4.3, OFX Spec"
   *
   * @param {String} subAccountSecurity the sub account type
   */
@@ -24178,7 +24104,7 @@ TransferInvestmentTransaction.prototype.getSubAccountSecurityEnum = function() {
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the number of units transferred
  */
@@ -24193,7 +24119,7 @@ Element.add(TransferInvestmentTransaction, {name: "UNITS", required: true, order
  * than stock splits, this is the quantity bought. For stocks, mutual funds, and others, this
  * is the number of shares. For bonds, this is the face value. For options, this is the number of
  * contacts. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} units the number of units transferred
  */
@@ -24295,7 +24221,7 @@ TransferInvestmentTransaction.prototype.setAverageCostBasis = function(averageCo
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -24309,7 +24235,7 @@ Element.add(TransferInvestmentTransaction, {name: "UNITPRICE", required: true, o
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a required field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -24345,7 +24271,7 @@ TransferInvestmentTransaction.prototype.setPurchaseDate = function(purchaseDate)
  * Gets the 401K source for the transfer. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {String} the state withholding
  */
@@ -24359,7 +24285,7 @@ Element.add(TransferInvestmentTransaction, {name: "INV401KSOURCE", order: 100, a
  * Sets the 401K source for the transfer. Should be one of "PRETAX", "AFTERTAX", "MATCH",
  * "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST".  This is an optional field
  * according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {String} inv401kSource the state withholding
  */
@@ -24453,7 +24379,7 @@ var VersionSpecificMessageSetInfo = require("./VersionSpecificMessageSetInfo");
  * Information about a message set.
  *
  * @class
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 function AbstractMessageSetInfo () {
 
@@ -24513,7 +24439,7 @@ module.exports = AbstractMessageSetInfo;
 
 /**
  * @enum
- * @see "Section 7.2.2, OFX Spec"
+ * See "Section 7.2.2, OFX Spec"
  */
 var CharacterType = {
 
@@ -24548,7 +24474,7 @@ module.exports = CharacterType;
 
 /**
  * @enum
- * @see "Section 7.1.5, OFX Spec"
+ * See "Section 7.1.5, OFX Spec"
  */
 var ClientRoutingCapability = {
 
@@ -24588,7 +24514,7 @@ var SynchronizationCapability = require("./SynchronizationCapability");
  * Core information about a specific version of a specific message set.
  *
  * @class
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 function CoreMessageSetInfo () {
 
@@ -24908,7 +24834,7 @@ var AbstractMessageSetInfo = require("./AbstractMessageSetInfo");
 
 /**
  * @class
- * @see "Section 7.2, OFX Spec"
+ * See "Section 7.2, OFX Spec"
  */
 function MessageSetInfoList () {
 
@@ -24976,7 +24902,7 @@ var ClientRoutingCapability = require("./ClientRoutingCapability");
 
 /**
  * @class
- * @see "Section 7.1.5, OFX Spec"
+ * See "Section 7.1.5, OFX Spec"
  */
 function ProfileRequest () {
   RequestMessage.call(this);
@@ -25077,7 +25003,7 @@ var ProfileRequestTransaction = require("./ProfileRequestTransaction");
 /**
  * @class
  * @augments RequestMessageSet
- * @see "Section 7 OFX Spec"
+ * See "Section 7 OFX Spec"
  */
 function ProfileRequestMessageSet () {
   RequestMessageSet.call(this);
@@ -25243,7 +25169,7 @@ var SignonInfoList = require("./SignonInfoList");
  * @class
  * @augments ResponseMessage
  * @augments FinancialInstitutionProfile
- * @see "Section 7.2 OFX Spec"
+ * See "Section 7.2 OFX Spec"
  */
 function ProfileResponse () {
   ResponseMessage.call(this);
@@ -25716,20 +25642,6 @@ ProfileResponse.prototype.setEmail = function(email) {
 };
 
 
-ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type) {
-  var profiles = this.getProfiles(type);
-  if (profiles.length > 1) {
-    throw new Error("More than one profile of type " + type);
-  }
-  else if (profiles.length === 0) {
-    return null;
-  }
-  else {
-    return profiles[0];
-  }
-};
-
-
 /**
  * Get all the profiles of the specified type.
  *
@@ -25759,15 +25671,27 @@ ProfileResponse.prototype.getProfiles = function(type) {
 
 ProfileResponse.prototype.getMessageSetProfile = function(/*MessageSetType*/ type, /*String*/ version) {
   var profiles = this.getProfiles(type);
-  for (var i=0; i<profiles.length; i++) {
-    var profile = profiles[i];
-    if (!version) {
-      if (!profile.getVersion()) {
+  if (version) {
+    for (var i=0; i<profiles.length; i++) {
+      var profile = profiles[i];
+      if (!version) {
+        if (!profile.getVersion()) {
+          return profile;
+        }
+      }
+      else if (version === profile.getVersion()) {
         return profile;
       }
     }
-    else if (version === profile.getVersion()) {
-      return profile;
+  } else {
+    if (profiles.length > 1) {
+      throw new Error("More than one profile of type " + type);
+    }
+    else if (profiles.length === 0) {
+      return null;
+    }
+    else {
+      return profiles[0];
     }
   }
   
@@ -25826,7 +25750,7 @@ var ProfileResponseTransaction = require("./ProfileResponseTransaction");
 /**
  * @class
  * @augments ResponseMessageSet
- * @see "Section 7 OFX Spec"
+ * See "Section 7 OFX Spec"
  */
 function ProfileResponseMessageSet () {
   ResponseMessageSet.call(this);
@@ -25992,7 +25916,7 @@ var CharacterType = require("./CharacterType");
  *
  * @class
  * @augments SignonProfile
- * @see "Section 7.2.2, OFX Spec"
+ * See "Section 7.2.2, OFX Spec"
  */
 function SignonInfo () {
 
@@ -26510,7 +26434,7 @@ var SignonInfo = require("./SignonInfo");
  * List of signon information.
  *
  * @class
- * @see "Section 7.2.2, OFX Spec"
+ * See "Section 7.2.2, OFX Spec"
  */
 function SignonInfoList () {
 
@@ -26571,7 +26495,7 @@ module.exports = SignonInfoList;
 
 /**
  * @enum
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 var SynchronizationCapability = {
 
@@ -26610,7 +26534,7 @@ var CoreMessageSetInfo = require("./CoreMessageSetInfo");
  * Information specific to a version of a message set.
  *
  * @class
- * @see "Section 7.2.1, OFX Spec"
+ * See "Section 7.2.1, OFX Spec"
  */
 function VersionSpecificMessageSetInfo () {
 
@@ -26812,7 +26736,7 @@ var ImageProfile = require("./common/ImageProfile");
  * Banking Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.2.1 OFX Spec"
+ * See "Section 11.13.2.1 OFX Spec"
  */
 function BankingV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -27050,7 +26974,7 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * BillPay Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 12.11.2 OFX Spec"
+ * See "Section 12.11.2 OFX Spec"
  */
 function BillpayV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -27503,7 +27427,7 @@ var ImageProfile = require("./common/ImageProfile");
  * Credit Card Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.3 OFX Spec"
+ * See "Section 11.13.3 OFX Spec"
  */
 function CreditCardV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -27656,7 +27580,7 @@ var Element = require("../../../../meta/Element");
  * Email Message Set Profile Information
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 9.4.2 OFX Spec"
+ * See "Section 9.4.2 OFX Spec"
  */
 function EmailV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -27812,7 +27736,7 @@ var TransferProfile = require("./common/TransferProfile");
  * Interbank Funds Transfer Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.4 OFX Spec"
+ * See "Section 11.13.4 OFX Spec"
  */
 function InterbankTransferV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -28008,7 +27932,7 @@ var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
 
 /**
- * @see "Section 13.7.1.1, OFX Spec"
+ * See "Section 13.7.1.1, OFX Spec"
  *
  * @class
  */
@@ -28348,7 +28272,7 @@ var Aggregate = require("../../../../meta/Aggregate");
 var Element = require("../../../../meta/Element");
 
 /**
- * @see "Section 13.7.2.1, OFX Spec"
+ * See "Section 13.7.2.1, OFX Spec"
  *
  * @class
  * @augments VersionSpecificMessageSetInfo
@@ -28592,7 +28516,7 @@ var OtherEnrollment = require("./signup/OtherEnrollment");
  *
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 function SignupV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -28825,7 +28749,7 @@ var ProcessorDayOff = require("../../common/ProcessorDayOff");
  * Wire Transfer Message Set Profile
  * @class
  * @augments VersionSpecificMessageSetInfo
- * @see "Section 11.13.5 OFX Spec"
+ * See "Section 11.13.5 OFX Spec"
  */
 function WireTransferV1MessageSetInfo () {
   VersionSpecificMessageSetInfo.call(this);
@@ -28961,7 +28885,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Email Profile
  * @class
- * @see "Section 11.13.2.3 OFX Spec"
+ * See "Section 11.13.2.3 OFX Spec"
  */
 function EmailProfile () {
 
@@ -29037,7 +28961,7 @@ var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 /**
  * Stop Check Profile
  * @class
- * @see "Section 11.13.2.3 OFX Spec"
+ * See "Section 11.13.2.3 OFX Spec"
  */
 function StopCheckProfile () {
 
@@ -29103,7 +29027,7 @@ StopCheckProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ 
  *
  * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
  * the milliseconds and time zone are still optional, and default to GMT.
- * @see "Section 3.2.8.3 OFX Spec"
+ * See "Section 3.2.8.3 OFX Spec"
  * @return {String} Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 StopCheckProfile.prototype.getProcessEndTime = function() {
@@ -29118,7 +29042,7 @@ Element.add(StopCheckProfile, {name: "PROCENDTM", required: true, order: 10, att
  * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
  * the milliseconds and time zone are still optional, and default to GMT.
 
- * @see "Section 3.2.8.3 OFX Spec"
+ * See "Section 3.2.8.3 OFX Spec"
  * @param {String} processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 StopCheckProfile.prototype.setProcessEndTime = function(processEndTime) {
@@ -29196,7 +29120,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Image Profile
  * @class
- * @see "Section 3.1.6.2 OFX Spec"
+ * See "Section 3.1.6.2 OFX Spec"
  */
 function ImageProfile () {
 
@@ -29272,7 +29196,7 @@ var ProcessorDayOff = require("../../../common/ProcessorDayOff");
 /**
  * Funds Transfer Profile
  * @class
- * @see "Section 11.13.2.2 OFX Spec"
+ * See "Section 11.13.2.2 OFX Spec"
  */
 function TransferProfile () {
 
@@ -29387,7 +29311,7 @@ TransferProfile.prototype.setProcessorDaysOff = function(/*ProcessorDayOff[]*/ p
  *
  * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
  * the milliseconds and time zone are still optional, and default to GMT.
- * @see "Section 3.2.8.3 OFX Spec"
+ * See "Section 3.2.8.3 OFX Spec"
  * @return {String} Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 TransferProfile.prototype.getProcessEndTime = function() {
@@ -29402,7 +29326,7 @@ Element.add(TransferProfile, {name: "PROCENDTM", required: true, order: 10, attr
  * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
  * the milliseconds and time zone are still optional, and default to GMT.
 
- * @see "Section 3.2.8.3 OFX Spec"
+ * See "Section 3.2.8.3 OFX Spec"
  * @param {String} processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
  */
 TransferProfile.prototype.setProcessEndTime = function(processEndTime) {
@@ -29611,7 +29535,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Client Enrollment option, contains indicator as to whether the account number is required as part of enrollment
  * @class
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 function ClientEnrollment () {
 
@@ -29672,7 +29596,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
  * @class
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 
 function OtherEnrollment () {
@@ -29734,7 +29658,7 @@ var Element = require("../../../../../meta/Element");
 /**
  * Web Enrollment option containing URL to direct user for web based enrollment, if supported.
  * @class
- * @see "Section 8.8 OFX Spec"
+ * See "Section 8.8 OFX Spec"
  */
 function WebEnrollment () {
 
@@ -29797,7 +29721,7 @@ module.exports = {
 
 /**
  * Asset class for debt.
- * @see "Section 13.8.5.7, OFX Spec"
+ * See "Section 13.8.5.7, OFX Spec"
  *
  * @enum
  */
@@ -29884,7 +29808,7 @@ var SecurityInfo = require("./SecurityInfo");
 
 /**
  * Base class for info about the various types of securities.
- * @see "Section 13.8.5.1, OFX Spec"
+ * See "Section 13.8.5.1, OFX Spec"
  * <br>
  * This class exposes a read-only view of the flattened aggregates that are
  * common to all security info as a convenience to application
@@ -29982,7 +29906,7 @@ BaseSecurityInfo.prototype.getRating = function() {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a noptional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -30046,7 +29970,7 @@ module.exports = BaseSecurityInfo;
 
 /**
  * Call type for debt.
- * @see "Section 13.8.5.2, OFX Spec"
+ * See "Section 13.8.5.2, OFX Spec"
  *
  * @enum
  */
@@ -30093,7 +30017,7 @@ module.exports = CallType;
 
 /**
  * Coupon freqency for debt.
- * @see "Section 13.8.5.2, OFX Spec"
+ * See "Section 13.8.5.2, OFX Spec"
  *
  * @enum
  */
@@ -30143,7 +30067,7 @@ module.exports = CouponFrequency;
 
 /**
  * The class of debt.
- * @see "Section 13.8.5.2, OFX Spec"
+ * See "Section 13.8.5.2, OFX Spec"
  *
  * @enum
  */
@@ -30201,7 +30125,7 @@ var AssetClass = require("./AssetClass");
 
 /**
  * Info about a debt security.
- * @see "Section 13.8.5.2, OFX Spec"
+ * See "Section 13.8.5.2, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo
@@ -30693,7 +30617,7 @@ module.exports = DebtSecurityInfo;
 
 /**
  * The type of debt.
- * @see "Section 13.8.5.2, OFX Spec"
+ * See "Section 13.8.5.2, OFX Spec"
  *
  * @class
  */
@@ -30741,7 +30665,7 @@ var MutualFundType = require("./MutualFundType");
 
 /**
  * Info about a mutual fund security.
- * @see "Section 13.8.5.3, OFX Spec"
+ * See "Section 13.8.5.3, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo
@@ -30875,7 +30799,7 @@ module.exports = MutualFundSecurityInfo;
 
 /**
  * The type of mutual fund.
- * @see "Section 13.8.5.2, OFX Spec"
+ * See "Section 13.8.5.2, OFX Spec"
  *
  * @enum
  */
@@ -30928,7 +30852,7 @@ var AssetClass = require("./AssetClass");
 
 /**
  * Info about an option security.
- * @see "Section 13.8.5.4, OFX Spec"
+ * See "Section 13.8.5.4, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo
@@ -31190,7 +31114,7 @@ module.exports = OptionSecurityInfo;
 
 /**
  * Type of option.
- * @see "Section 13.8.5.4, OFX Spec"
+ * See "Section 13.8.5.4, OFX Spec"
  *
  * @enum
  */
@@ -31238,7 +31162,7 @@ var AssetClass = require("./AssetClass");
 
 /**
  * Info about any other type of security.
- * @see "Section 13.8.5.5, OFX Spec"
+ * See "Section 13.8.5.5, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo
@@ -31377,7 +31301,7 @@ var Element = require("../../../meta/Element");
 
 /**
  * Identifier for a security.
- * @see "Section 13.8.1, OFX Spec"
+ * See "Section 13.8.1, OFX Spec"
  *
  * @class
  */
@@ -31474,7 +31398,7 @@ var SecurityId = require("./SecurityId");
 
 /**
  * Info about a security.
- * @see "Section 13.8.5.1, OFX Spec"
+ * See "Section 13.8.5.1, OFX Spec"
  *
  * @class
  */
@@ -31660,7 +31584,7 @@ SecurityInfo.prototype.setRating = function(rating) {
  * Gets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is a noptional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @return {Double} the per unit price
  */
@@ -31674,7 +31598,7 @@ Element.add(SecurityInfo, {name: "UNITPRICE", order: 60, attributeType: Number, 
  * Sets the price per commonly-quoted unit. For stocks, mutual funds, and others, this is the
  * share price. For bonds, this is the percentage of par. For options, this is the per share (not
  * per contact) price. This is an optional field according to the OFX spec.
- * @see "Section 13.9.2.4.3, OFX Spec"
+ * See "Section 13.9.2.4.3, OFX Spec"
  *
  * @param {Double} unitPrice the per unit price
  */
@@ -31777,7 +31701,7 @@ var BaseSecurityInfo = require("./BaseSecurityInfo");
 
 /**
  * Aggregate for a list of securities.
- * @see "Section 13.8.4, OFX Spec"
+ * See "Section 13.8.4, OFX Spec"
  *
  * @class
  */
@@ -31837,7 +31761,7 @@ var SecurityRequest = require("./SecurityRequest");
 
 /**
  * Request aggregate for the security list.
- * @see "Section 13.8.2.2, OFX Spec"
+ * See "Section 13.8.2.2, OFX Spec"
  *
  * @class
  */
@@ -31901,7 +31825,7 @@ var SecurityListRequestTransaction = require("./SecurityListRequestTransaction")
 
 /**
  * Security list request message set.
- * @see "Section 13.7.2.2.1, OFX Spec"
+ * See "Section 13.7.2.2.1, OFX Spec"
  *
  * @class
  * @augments RequestMessageSet
@@ -31989,7 +31913,7 @@ var SecurityListRequest = require("./SecurityListRequest");
 
 /**
  * Security list transaction request.
- * @see "Section 13.8.2.1, OFX Spec"
+ * See "Section 13.8.2.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedRequestMessage
@@ -32068,7 +31992,7 @@ var Aggregate = require("../../../meta/Aggregate");
 /**
  * Security list response. This is an empty aggregate. The actual security information is included
  * in the "SECLIST" aggregate.
- * @see "Section 13.8.3, OFX Spec"
+ * See "Section 13.8.3, OFX Spec"
  *
  * @class
  * @augments ResponseMessage
@@ -32222,7 +32146,7 @@ var SecurityListResponse = require("./SecurityListResponse");
 
 /**
  * Security list transaction response.
- * @see "Section 13.8.3.1, OFX Spec"
+ * See "Section 13.8.3.1, OFX Spec"
  *
  * @class
  * @augments TransactionWrappedResponseMessage
@@ -32298,7 +32222,7 @@ var SecurityId = require("./SecurityId");
 
 /**
  * Security request aggregate.
- * @see "Section 13.8.2.2, OFX Spec"
+ * See "Section 13.8.2.2, OFX Spec"
  *
  * @class
  */
@@ -32401,7 +32325,7 @@ var AssetClass = require("./AssetClass");
 
 /**
  * Info about a stock security.
- * @see "Section 13.8.5.6, OFX Spec"
+ * See "Section 13.8.5.6, OFX Spec"
  *
  * @class
  * @augments BaseSecurityInfo
@@ -32605,7 +32529,7 @@ module.exports = StockSecurityInfo;
 
 /**
  * The type of debt.
- * @see "Section 13.8.5.6, OFX Spec"
+ * See "Section 13.8.5.6, OFX Spec"
  *
  * @enum
  */
@@ -32781,7 +32705,7 @@ var Element = require("../../../meta/Element");
  * Request to change a user password.
  *
  * @class
- * @see "Section 2.5.2.1, OFX Spec."
+ * See "Section 2.5.2.1, OFX Spec."
  */
 function PasswordChangeRequest () {
   RequestMessage.call(this);
@@ -32957,7 +32881,7 @@ var Element = require("../../../meta/Element");
  *
  * @class
  * @augments ResponseMessage
- * @see "Section 2.5.2.2, OFX Spec."
+ * See "Section 2.5.2.2, OFX Spec."
  */
 function PasswordChangeResponse () {
   ResponseMessage.call(this);
@@ -33141,7 +33065,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  *
  * @class
  * @augments RequestMessage
- * @see "Section 2.5.1.2, OFX Spec."
+ * See "Section 2.5.1.2, OFX Spec."
  */
 function SignonRequest () {
   RequestMessage.call(this);
@@ -33617,7 +33541,7 @@ var PasswordChangeRequestTransaction = require("./PasswordChangeRequestTransacti
  *
  * @class
  * @augments RequestMessageSet
- * @see "Section 2.5, OFX Spec."
+ * See "Section 2.5, OFX Spec."
  */
 function SignonRequestMessageSet () {
   RequestMessageSet.call(this);
@@ -33744,7 +33668,7 @@ var FinancialInstitution = require("./FinancialInstitution");
  * @class
  * @augments ResponseMessage
  * @augments StatusHolder
- * @see "Section 2.5.1.2, OFX Spec."
+ * See "Section 2.5.1.2, OFX Spec."
  */
 function SignonResponse () {
   ResponseMessage.call(this);
@@ -34083,7 +34007,7 @@ var PasswordChangeResponseTransaction = require("./PasswordChangeResponseTransac
  *
  * @class
  * @augments ResponseMessageSet
- * @see "Section 2.5, OFX Spec."
+ * See "Section 2.5, OFX Spec."
  */
 function SignonResponseMessageSet () {
   ResponseMessageSet.call(this);
@@ -38476,7 +38400,11 @@ ChildAggregate.add(Tax1099ResponseMessageSet, {order: 0, attributeType: Array, c
  * @param {Tax1099ResponseTransaction[]} taxResponseTransaction The statement responses.
  */
 Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(taxResponseTransaction) {
-  this.taxResponseTransaction = taxResponseTransaction;
+  if (taxResponseTransaction instanceof Array) {
+    this.taxResponseTransaction = taxResponseTransaction;
+  } else {
+    this.taxResponseTransaction = [taxResponseTransaction];
+  }
 };
 
 
@@ -38495,13 +38423,6 @@ Tax1099ResponseMessageSet.prototype.getResponseMessages = function() {
 Tax1099ResponseMessageSet.prototype.getStatementResponse = function() {
   return !this.taxResponseTransaction || this.taxResponseTransaction.length === 0 ? null : this.taxResponseTransaction.get(0);
 };
-
-
-Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction = function(/*Tax1099ResponseTransaction*/ taxResponseTransaction) {
-  this.taxResponseTransaction = taxResponseTransaction;
-};
-
-
 
 
 module.exports = Tax1099ResponseMessageSet;
@@ -39685,16 +39606,6 @@ function AggregateUnmarshaller (clazz) {
 
 
 
-
-AggregateUnmarshaller.prototype.unmarshal = function(/*InputStream*/ stream) {
-  var aggregate = new this.clazz();
-  var reader = this.newReader();
-  reader.setContentHandler(new AggregateStackContentHandler(aggregate, this.getConversion()));
-  reader.parse(stream);
-  return aggregate;
-};
-
-
 AggregateUnmarshaller.prototype.unmarshal = function(/*Reader*/ reader) {
   var aggregate = new this.clazz();
   var ofxReader = this.newReader();
@@ -39909,7 +39820,7 @@ BaseOFXReader.prototype.shiftAndAppend = function(buffer, /*char*/ c) {
 
 
 /**
- * Parse an OFX version 1 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
+ * Parse an OFX version 1 stream from the first OFX element (defined by the {@link BaseOFXReader#getFirstElementStart() first element characters}).
  *
  * @param {Reader} reader The reader.
  */
@@ -39923,7 +39834,7 @@ BaseOFXReader.prototype.parseV1FromFirstElement = function(text) {
 
 
 /**
- * Parse an OFX version 2 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
+ * Parse an OFX version 2 stream from the first OFX element (defined by the {@link BaseOFXReader#getFirstElementStart() first element characters}).
  *
  * @param {string} text The text.
  */
@@ -40408,9 +40319,9 @@ OFXReader.prototype.setContentHandler = function(handler) { throw new Error("not
 /**
  * Parse a stream.
  *
- * @param {InputStream or Reader} stream The stream or reader to parse.
+ * @param {string} text The stream or reader to parse.
  */
-OFXReader.prototype.parse = function(stream) { throw new Error("not implemented"); };
+OFXReader.prototype.parse = function(text) { throw new Error("not implemented"); };
 
 
 module.exports = OFXReader;
@@ -40907,12 +40818,6 @@ OFXV1Writer.prototype.print = function(/*String*/ line) {
 };
 
 
-//OFXV1Writer.prototype.print = function(/*char*/ ch) {
-//  this.writer.write(ch);
-//};
-
-
-
 
 module.exports = OFXV1Writer;
 
@@ -41316,7 +41221,7 @@ Stack.prototype.isEmpty = function() {
 
 module.exports = Stack;
 
-},{}]},{},["./src/index.js"])
+},{}]},{},["./src/main.js"])
 
 
 //# sourceMappingURL=ofx4js.js.map

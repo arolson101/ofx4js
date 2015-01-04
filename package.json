@@ -1,8 +1,13 @@
 {
   "name": "ofx4js",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A javascript OFX library, ported from OFX4J",
+  "keywords": [
+    "ofx",
+    "banking",
+    "finance"
+  ],
+  "main": "src/main.js",
   "dependencies": {
     "clone": "^0.2.0",
     "inherits": "^2.0.1",
@@ -27,8 +32,8 @@
     "watchify": "^2.2.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
-  "author": "",
+  "author": "Andrew Olson <andrew@olsononline.org>",
   "license": "MIT"
 }
