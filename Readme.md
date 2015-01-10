@@ -67,6 +67,7 @@ To download a bank's profile information:
 
 NOTE: making an OFX connection will fail security checks in browsers.  On Chrome you
 can make it run with the "--disable-web-security" command-line option
+
 e.g. (OSX): open /Applications/Google\ Chrome.app --args --disable-web-security
 
 ## Status

@@ -1,6 +1,6 @@
 {
   "name": "ofx4js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A javascript OFX library, ported from OFX4J",
   "keywords": [
     "ofx",
@@ -35,5 +35,9 @@
     "test": "gulp test"
   },
   "author": "Andrew Olson <andrew@olsononline.org>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arolson101/ofx4js.git"
+  },
   "license": "MIT"
 }

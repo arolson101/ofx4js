@@ -8,6 +8,4 @@ var ofx4js = {
   util: require("./util/index"),
 };
 
-window.ofx4js = ofx4js;
-
 module.exports = ofx4js;
