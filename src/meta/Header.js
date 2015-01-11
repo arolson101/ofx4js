@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module.exports = function() {};
-
 "use strict";
 
 var AggregateIntrospector = require("../io/AggregateIntrospector");

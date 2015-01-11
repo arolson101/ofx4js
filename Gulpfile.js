@@ -72,7 +72,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('lint', function() {
-  return gulp.src('./src/domain/**/*.js')
+  return gulp.src('./src/**/*.js')
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
 });

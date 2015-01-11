@@ -14,8 +14,6 @@
 
 "use strict";
 
-var inherit = require("../util/inherit");
-
 /**
  * Basic interface for reading an OFX document.
  *
@@ -29,14 +27,14 @@ function OFXReader() {
  *
  * @param {OFXHandler} handler The handler.
  */
-OFXReader.prototype.setContentHandler = function(handler) { throw new Error("not implemented"); };
+OFXReader.prototype.setContentHandler = function(/*handler*/) { throw new Error("not implemented"); };
 
 /**
  * Parse a stream.
  *
  * @param {string} text The stream or reader to parse.
  */
-OFXReader.prototype.parse = function(text) { throw new Error("not implemented"); };
+OFXReader.prototype.parse = function(/*text*/) { throw new Error("not implemented"); };
 
 
 module.exports = OFXReader;
