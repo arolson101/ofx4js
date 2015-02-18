@@ -128,6 +128,21 @@ function pad(num, size) {
   return s;
 }
 
+/**
+ * Pad a number with trailing zeroes until it is of <tt>size</tt> length.
+ * Intended for numbers after a decimal point to get a fixed number of decimals
+ *
+ * @param {int} num number
+ * @param {int} size number of digits in final number
+ * @return {string} padded number
+ */
+function dpad(num, size) {
+  var s = num+"";
+  while (s.length < size) {
+    s = s + "0";
+  }
+  return s;
+}
 
 /**
  * Format the date according to the OFX spec.
@@ -143,7 +158,7 @@ DefaultStringConversion.prototype.formatDate = function(date) {
     pad(date.getMinutes(), 2) +
     pad(date.getSeconds(), 2) +
     "." +
-    date.getMilliseconds() +
+    dpad(date.getMilliseconds(), 3) +
     "[" +
     (date.getTimezoneOffset() / 60) +
     "]";

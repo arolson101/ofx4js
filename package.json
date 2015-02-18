@@ -1,6 +1,6 @@
 {
   "name": "ofx4js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A javascript OFX library, ported from OFX4J",
   "keywords": [
     "ofx",

@@ -43,27 +43,6 @@ Aggregate.add("FI", FinancialInstitution);
 
 
 /**
- * Financial institution id.
- *
- * @return {String} Financial institution id.
- */
-FinancialInstitution.prototype.getId = function() {
-  return this.id;
-};
-Element.add(FinancialInstitution, {name: "FID", order: 10, attributeType: String, readMethod: "getId", writeMethod: "setId"});
-
-
-/**
- * Financial institution id.
- *
- * @param {String} id Financial institution id.
- */
-FinancialInstitution.prototype.setId = function(id) {
-  this.id = id;
-};
-
-
-/**
  * The organization.
  *
  * @return {String} The organization.
@@ -83,6 +62,27 @@ FinancialInstitution.prototype.setOrganization = function(organization) {
   this.organization = organization;
 };
 
+
+
+/**
+ * Financial institution id.
+ *
+ * @return {String} Financial institution id.
+ */
+FinancialInstitution.prototype.getId = function() {
+  return this.id;
+};
+Element.add(FinancialInstitution, {name: "FID", order: 10, attributeType: String, readMethod: "getId", writeMethod: "setId"});
+
+
+/**
+ * Financial institution id.
+ *
+ * @param {String} id Financial institution id.
+ */
+FinancialInstitution.prototype.setId = function(id) {
+  this.id = id;
+};
 
 
 
