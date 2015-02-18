@@ -45,6 +45,13 @@ function OFXV1Connection () {
    * @access private
    */
   this.unmarshaller = new AggregateUnmarshaller(ResponseEnvelope);
+  
+  /**
+   * @name OFXV1Connection#async
+   * @type bool
+   * @access private
+   */
+  this.async = true;
 }
 
 inherit(OFXV1Connection, "implements", OFXConnection);
@@ -102,19 +109,22 @@ OFXV1Connection.prototype.logResponse = function(inBuffer) {
  */
 OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
   var outText = outBuffer.join("");
+  var async = this.getAsync();
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();
-    request.open("POST", url, true);
+    var onloadCalled = false;
+    request.open("POST", url, async);
     request.setRequestHeader("Content-Type", "application/x-ofx");
     //request.setRequestHeader("Content-Length", outBuffer.length);
     request.setRequestHeader("Accept", "*/*, application/x-ofx");
     request.onload = function() {
+      onloadCalled = true;
       if (request.status >= 200 && request.status < 300) {
-        resolve(request.response);
+        resolve(request.responseText);
       } else if (request.status >= 400 && request.status < 500) {
-        reject(Error("Error with client request: " + request.statusText));
+        reject(Error("Error " + request.status + " with client request: " + request.responseText));
       } else {
-        reject(Error("Invalid response code from OFX server: " + request.statusText));
+        reject(Error("Invalid response code from OFX server: " + request.status));
       }
     };
     request.onerror = function() {
@@ -122,6 +132,10 @@ OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
     };
     
     request.send(outText);
+    
+    if (!async && !onloadCalled) {
+      request.onload();
+    }
   });
 };
 
@@ -187,6 +201,26 @@ OFXV1Connection.prototype.setUnmarshaller = function(unmarshaller) {
   this.unmarshaller = unmarshaller;
 };
 
+
+
+/**
+ * Async mode
+ *
+ * @return {bool} Whether in async mode.
+ */
+OFXV1Connection.prototype.getAsync = function() {
+  return this.async;
+};
+
+
+/**
+ * Async mode
+ *
+ * @param {bool} async async mode.
+ */
+OFXV1Connection.prototype.setAsync = function(async) {
+  this.async = async;
+};
 
 
 

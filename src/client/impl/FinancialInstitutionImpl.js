@@ -183,11 +183,11 @@ FinancialInstitutionImpl.prototype.getProfile = function(response) {
  */
 FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request, response) {
   if (response.getSecurity() != ApplicationSecurity.NONE) {
-    throw new Error(String.format("Unable to participate in %s security.", response.getSecurity()));
+    throw new Error("Unable to participate in " + response.getSecurity() + " security.");
   }
 
-  if (request.getUID() !== response.getUID()) {
-    throw new Error(String.format("Invalid transaction ID '%s' in response.  Expected: %s", response.getUID(), request));
+  if (request.getUID() !== response.getUID() && response.getUID() != "NONE") { // "NONE" is not to spec but was found in the wild
+    throw new Error("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + response.getUID());
   }
 
   var messageSets = request.getMessageSets();

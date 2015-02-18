@@ -59,7 +59,7 @@ OFXV2Writer.prototype.writeHeaders = function(/*object*/ headers) {
     uid = "NONE";
   }
 
-  this.print(String.format("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"%s\" OLDFILEUID=\"%s\" NEWFILEUID=\"%s\"?>", security, olduid, uid));
+  this.print("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"" + security + "\" OLDFILEUID=\"" + olduid + "\" NEWFILEUID=\"" + uid + "\"?>");
   this.headersWritten = true;
 };
 

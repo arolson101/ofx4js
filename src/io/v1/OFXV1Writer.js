@@ -116,15 +116,15 @@ OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value)
 
   //todo: optimize performance of the character escaping
   if (value.indexOf('&') >= 0) {
-    value = value.replaceAll("\\&", "&amp;");
+    value = value.replace("&", "&amp;");
   }
 
   if (value.indexOf('<') >= 0) {
-    value = value.replaceAll("<", "&lt;");
+    value = value.replace("<", "&lt;");
   }
 
   if (value.indexOf('>') >= 0) {
-    value = value.replaceAll(">", "&gt;");
+    value = value.replace(">", "&gt;");
   }
   
   this.print('<');
