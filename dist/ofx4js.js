@@ -7320,11 +7320,11 @@ FinancialInstitutionImpl.prototype.getProfile = function(response) {
  */
 FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request, response) {
   if (response.getSecurity() != ApplicationSecurity.NONE) {
-    throw new Error(String.format("Unable to participate in %s security.", response.getSecurity()));
+    throw new Error("Unable to participate in " + response.getSecurity() + " security.");
   }
 
-  if (request.getUID() !== response.getUID()) {
-    throw new Error(String.format("Invalid transaction ID '%s' in response.  Expected: %s", response.getUID(), request));
+  if (request.getUID() !== response.getUID() && response.getUID() != "NONE") { // "NONE" is not to spec but was found in the wild
+    throw new Error("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + response.getUID());
   }
 
   var messageSets = request.getMessageSets();
@@ -7807,6 +7807,13 @@ function OFXV1Connection () {
    * @access private
    */
   this.unmarshaller = new AggregateUnmarshaller(ResponseEnvelope);
+  
+  /**
+   * @name OFXV1Connection#async
+   * @type bool
+   * @access private
+   */
+  this.async = true;
 }
 
 inherit(OFXV1Connection, "implements", OFXConnection);
@@ -7864,19 +7871,22 @@ OFXV1Connection.prototype.logResponse = function(inBuffer) {
  */
 OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
   var outText = outBuffer.join("");
+  var async = this.getAsync();
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();
-    request.open("POST", url, true);
+    var onloadCalled = false;
+    request.open("POST", url, async);
     request.setRequestHeader("Content-Type", "application/x-ofx");
     //request.setRequestHeader("Content-Length", outBuffer.length);
     request.setRequestHeader("Accept", "*/*, application/x-ofx");
     request.onload = function() {
+      onloadCalled = true;
       if (request.status >= 200 && request.status < 300) {
-        resolve(request.response);
+        resolve(request.responseText);
       } else if (request.status >= 400 && request.status < 500) {
-        reject(Error("Error with client request: " + request.statusText));
+        reject(Error("Error " + request.status + " with client request: " + request.responseText));
       } else {
-        reject(Error("Invalid response code from OFX server: " + request.statusText));
+        reject(Error("Invalid response code from OFX server: " + request.status));
       }
     };
     request.onerror = function() {
@@ -7884,6 +7894,10 @@ OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
     };
     
     request.send(outText);
+    
+    if (!async && !onloadCalled) {
+      request.onload();
+    }
   });
 };
 
@@ -7949,6 +7963,26 @@ OFXV1Connection.prototype.setUnmarshaller = function(unmarshaller) {
   this.unmarshaller = unmarshaller;
 };
 
+
+
+/**
+ * Async mode
+ *
+ * @return {bool} Whether in async mode.
+ */
+OFXV1Connection.prototype.getAsync = function() {
+  return this.async;
+};
+
+
+/**
+ * Async mode
+ *
+ * @param {bool} async async mode.
+ */
+OFXV1Connection.prototype.setAsync = function(async) {
+  this.async = async;
+};
 
 
 
@@ -40297,8 +40331,6 @@ module.exports = OFXParseEvent;
 
 "use strict";
 
-var inherit = require("../util/inherit");
-
 /**
  * Basic interface for reading an OFX document.
  *
@@ -40312,19 +40344,19 @@ function OFXReader() {
  *
  * @param {OFXHandler} handler The handler.
  */
-OFXReader.prototype.setContentHandler = function(handler) { throw new Error("not implemented"); };
+OFXReader.prototype.setContentHandler = function(/*handler*/) { throw new Error("not implemented"); };
 
 /**
  * Parse a stream.
  *
  * @param {string} text The stream or reader to parse.
  */
-OFXReader.prototype.parse = function(text) { throw new Error("not implemented"); };
+OFXReader.prototype.parse = function(/*text*/) { throw new Error("not implemented"); };
 
 
 module.exports = OFXReader;
 
-},{"../util/inherit":"/Users/aolson/Developer/ofx4js/src/util/inherit.js"}],"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js":[function(require,module,exports){
+},{}],"/Users/aolson/Developer/ofx4js/src/io/OFXV2ContentHandler.js":[function(require,module,exports){
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40751,15 +40783,15 @@ OFXV1Writer.prototype.writeElement = function(/*String*/ name, /*String*/ value)
 
   //todo: optimize performance of the character escaping
   if (value.indexOf('&') >= 0) {
-    value = value.replaceAll("\\&", "&amp;");
+    value = value.replace("&", "&amp;");
   }
 
   if (value.indexOf('<') >= 0) {
-    value = value.replaceAll("<", "&lt;");
+    value = value.replace("<", "&lt;");
   }
 
   if (value.indexOf('>') >= 0) {
-    value = value.replaceAll(">", "&gt;");
+    value = value.replace(">", "&gt;");
   }
   
   this.print('<');
@@ -40881,7 +40913,7 @@ OFXV2Writer.prototype.writeHeaders = function(/*object*/ headers) {
     uid = "NONE";
   }
 
-  this.print(String.format("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"%s\" OLDFILEUID=\"%s\" NEWFILEUID=\"%s\"?>", security, olduid, uid));
+  this.print("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"" + security + "\" OLDFILEUID=\"" + olduid + "\" NEWFILEUID=\"" + uid + "\"?>");
   this.headersWritten = true;
 };
 
@@ -41004,8 +41036,6 @@ module.exports = Element;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-module.exports = function() {};
 
 "use strict";
 
