@@ -109,6 +109,7 @@ OFXV1Connection.prototype.logResponse = function(inBuffer) {
  */
 OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
   var outText = outBuffer.join("");
+  //outText = outText.replace(/(\r\n|\n|\r)/gm, "\r\n");
   var async = this.getAsync();
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();

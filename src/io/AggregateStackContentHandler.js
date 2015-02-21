@@ -250,15 +250,15 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
         } else {
           if (LOG.warning) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
-            
-            attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
           }
         }
       }
       catch (e) {
         console.log("Unable to set " + attribute.toString(), e);
       }
-      this.stack.peek().currentAttributeIndex = attribute.getOrder();
+      if(attribute) {
+        this.stack.peek().currentAttributeIndex = attribute.getOrder();
+      }
     }
   }
   else {

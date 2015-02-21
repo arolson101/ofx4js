@@ -186,7 +186,7 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
     throw new Error("Unable to participate in " + response.getSecurity() + " security.");
   }
 
-  if (request.getUID() !== response.getUID() && response.getUID() != "NONE") { // "NONE" is not to spec but was found in the wild
+  if (request.getUID() !== response.getUID() && response.getUID() != "NONE" && response.getUID() !== null) { // "NONE" is not to spec but was found in the wild
     throw new Error("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + response.getUID());
   }
 

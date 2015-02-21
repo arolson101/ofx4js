@@ -151,17 +151,15 @@ function dpad(num, size) {
  * @return {String} The date format.
  */
 DefaultStringConversion.prototype.formatDate = function(date) {
-  return pad(date.getFullYear(), 4) +
-    pad(date.getMonth() + 1, 2) +
-    pad(date.getDay(), 2) +
-    pad(date.getHours(), 2) +
-    pad(date.getMinutes(), 2) +
-    pad(date.getSeconds(), 2) +
+  var gmt = new Date(date.valueOf() + date.getTimezoneOffset() * 60000);
+  return pad(gmt.getFullYear(), 4) +
+    pad(gmt.getMonth() + 1, 2) +
+    pad(gmt.getDay(), 2) +
+    pad(gmt.getHours(), 2) +
+    pad(gmt.getMinutes(), 2) +
+    pad(gmt.getSeconds(), 2) +
     "." +
-    dpad(date.getMilliseconds(), 3) +
-    "[" +
-    (date.getTimezoneOffset() / 60) +
-    "]";
+    dpad(gmt.getMilliseconds(), 3);
 };
 
 
