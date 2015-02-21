@@ -16,6 +16,7 @@ function inherit(child, type, parent) {
       break;
       
     case 'implements':
+      inherits(child, parent);
       break;
       
     default:

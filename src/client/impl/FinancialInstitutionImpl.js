@@ -262,7 +262,7 @@ FinancialInstitutionImpl.prototype.validateStatus = function(statusHolder) {
       }
     }
 
-    throw new Error(status, "Invalid " + statusHolder.getStatusHolderName() + ": " + message);
+    throw new Error("Invalid " + statusHolder.getStatusHolderName() + ": " + message);
   }
 };
 
