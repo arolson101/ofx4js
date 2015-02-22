@@ -159,6 +159,7 @@ OFXV1Writer.prototype.setWriteAttributesOnNewLine = function(/*boolean*/ writeAt
 
 OFXV1Writer.prototype.close = function() {
   this.flush();
+  this.writer.write(this.LINE_SEPARATOR); // ensure newline at end of request
   this.writer.close();
 };
 

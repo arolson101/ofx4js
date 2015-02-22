@@ -109,14 +109,12 @@ OFXV1Connection.prototype.logResponse = function(inBuffer) {
  */
 OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
   var outText = outBuffer.join("");
-  //outText = outText.replace(/(\r\n|\n|\r)/gm, "\r\n");
   var async = this.getAsync();
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest();
     var onloadCalled = false;
     request.open("POST", url, async);
     request.setRequestHeader("Content-Type", "application/x-ofx");
-    //request.setRequestHeader("Content-Length", outBuffer.length);
     request.setRequestHeader("Accept", "*/*, application/x-ofx");
     request.onload = function() {
       onloadCalled = true;
