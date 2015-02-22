@@ -58,7 +58,7 @@ Buffer.TYPED_ARRAY_SUPPORT = (function () {
     var buf = new ArrayBuffer(0)
     var arr = new Uint8Array(buf)
     arr.foo = function () { return 42 }
-    return 42 === arr.foo() && // typed array instances can be augmented
+    return arr.foo() === 42 && // typed array instances can be augmented
         typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
         new Uint8Array(1).subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
   } catch (e) {
@@ -86,60 +86,67 @@ function Buffer (subject, encoding, noZero) {
 
   // Find the length
   var length
-  if (type === 'number')
-    length = subject > 0 ? subject >>> 0 : 0
-  else if (type === 'string') {
+  if (type === 'number') {
+    length = +subject
+  } else if (type === 'string') {
     length = Buffer.byteLength(subject, encoding)
   } else if (type === 'object' && subject !== null) { // assume object is array-like
     if (subject.type === 'Buffer' && isArray(subject.data))
       subject = subject.data
-    length = +subject.length > 0 ? Math.floor(+subject.length) : 0
-  } else
+    length = +subject.length
+  } else {
     throw new TypeError('must start with number, buffer, array or string')
+  }
 
   if (length > kMaxLength)
     throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
       'size: 0x' + kMaxLength.toString(16) + ' bytes')
 
-  var buf
+  if (length < 0)
+    length = 0
+  else
+    length >>>= 0 // Coerce to uint32.
+
+  var self = this
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = Buffer._augment(new Uint8Array(length))
+    /*eslint-disable consistent-this */
+    self = Buffer._augment(new Uint8Array(length))
+    /*eslint-enable consistent-this */
   } else {
     // Fallback: Return THIS instance of Buffer (created by `new`)
-    buf = this
-    buf.length = length
-    buf._isBuffer = true
+    self.length = length
+    self._isBuffer = true
   }
 
   var i
   if (Buffer.TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
     // Speed optimization -- use set if we're copying from a typed array
-    buf._set(subject)
+    self._set(subject)
   } else if (isArrayish(subject)) {
     // Treat array-ish objects as a byte array
     if (Buffer.isBuffer(subject)) {
       for (i = 0; i < length; i++)
-        buf[i] = subject.readUInt8(i)
+        self[i] = subject.readUInt8(i)
     } else {
       for (i = 0; i < length; i++)
-        buf[i] = ((subject[i] % 256) + 256) % 256
+        self[i] = ((subject[i] % 256) + 256) % 256
     }
   } else if (type === 'string') {
-    buf.write(subject, 0, encoding)
+    self.write(subject, 0, encoding)
   } else if (type === 'number' && !Buffer.TYPED_ARRAY_SUPPORT && !noZero) {
     for (i = 0; i < length; i++) {
-      buf[i] = 0
+      self[i] = 0
     }
   }
 
   if (length > 0 && length <= Buffer.poolSize)
-    buf.parent = rootParent
+    self.parent = rootParent
 
-  return buf
+  return self
 }
 
-function SlowBuffer(subject, encoding, noZero) {
+function SlowBuffer (subject, encoding, noZero) {
   if (!(this instanceof SlowBuffer))
     return new SlowBuffer(subject, encoding, noZero)
 
@@ -155,6 +162,8 @@ Buffer.isBuffer = function (b) {
 Buffer.compare = function (a, b) {
   if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b))
     throw new TypeError('Arguments must be Buffers')
+
+  if (a === b) return 0
 
   var x = a.length
   var y = b.length
@@ -296,6 +305,7 @@ Buffer.prototype.toString = function (encoding, start, end) {
 
 Buffer.prototype.equals = function (b) {
   if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
   return Buffer.compare(this, b) === 0
 }
 
@@ -312,6 +322,7 @@ Buffer.prototype.inspect = function () {
 
 Buffer.prototype.compare = function (b) {
   if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return 0
   return Buffer.compare(this, b)
 }
 
@@ -374,7 +385,7 @@ function base64Write (buf, string, offset, length) {
 }
 
 function utf16leWrite (buf, string, offset, length) {
-  var charsWritten = blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length, 2)
+  var charsWritten = blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
   return charsWritten
 }
 
@@ -396,7 +407,7 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
   offset = Number(offset) || 0
 
   if (length < 0 || offset < 0 || offset > this.length)
-    throw new RangeError('attempt to write outside buffer bounds');
+    throw new RangeError('attempt to write outside buffer bounds')
 
   var remaining = this.length - offset
   if (!length) {
@@ -519,7 +530,7 @@ Buffer.prototype.slice = function (start, end) {
   end = end === undefined ? len : ~~end
 
   if (start < 0) {
-    start += len;
+    start += len
     if (start < 0)
       start = 0
   } else if (start > len) {
@@ -588,7 +599,7 @@ Buffer.prototype.readUIntBE = function (offset, byteLength, noAssert) {
   var val = this[offset + --byteLength]
   var mul = 1
   while (byteLength > 0 && (mul *= 0x100))
-    val += this[offset + --byteLength] * mul;
+    val += this[offset + --byteLength] * mul
 
   return val
 }
@@ -996,7 +1007,7 @@ Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
 
 // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
 Buffer.prototype.copy = function (target, target_start, start, end) {
-  var source = this
+  var self = this // source
 
   if (!start) start = 0
   if (!end && end !== 0) end = this.length
@@ -1006,12 +1017,12 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
 
   // Copy 0 bytes; we're done
   if (end === start) return 0
-  if (target.length === 0 || source.length === 0) return 0
+  if (target.length === 0 || self.length === 0) return 0
 
   // Fatal error conditions
   if (target_start < 0)
     throw new RangeError('targetStart out of bounds')
-  if (start < 0 || start >= source.length) throw new RangeError('sourceStart out of bounds')
+  if (start < 0 || start >= self.length) throw new RangeError('sourceStart out of bounds')
   if (end < 0) throw new RangeError('sourceEnd out of bounds')
 
   // Are we oob?
@@ -1160,8 +1171,6 @@ var INVALID_BASE64_RE = /[^+\/0-9A-z\-]/g
 function base64clean (str) {
   // Node strips out invalid characters like \n and \t from the string, base64-js does not
   str = stringtrim(str).replace(INVALID_BASE64_RE, '')
-  // replace url-safe space and slash
-  str = str.replace(/-/g, '+').replace(/_/g, '/')
   // Node converts strings with length < 2 to ''
   if (str.length < 2) return ''
   // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
@@ -1187,61 +1196,50 @@ function toHex (n) {
   return n.toString(16)
 }
 
-function utf8ToBytes(string, units) {
-  var codePoint, length = string.length
-  var leadSurrogate = null
+function utf8ToBytes (string, units) {
   units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
   var bytes = []
   var i = 0
 
-  for (; i<length; i++) {
+  for (; i < length; i++) {
     codePoint = string.charCodeAt(i)
 
     // is surrogate component
     if (codePoint > 0xD7FF && codePoint < 0xE000) {
-
       // last char was a lead
       if (leadSurrogate) {
-
         // 2 leads in a row
         if (codePoint < 0xDC00) {
           if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
           leadSurrogate = codePoint
           continue
-        }
-
-        // valid surrogate pair
-        else {
+        } else {
+          // valid surrogate pair
           codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
           leadSurrogate = null
         }
-      }
+      } else {
+        // no lead yet
 
-      // no lead yet
-      else {
-
-        // unexpected trail
         if (codePoint > 0xDBFF) {
+          // unexpected trail
           if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
           continue
-        }
-
-        // unpaired lead
-        else if (i + 1 === length) {
+        } else if (i + 1 === length) {
+          // unpaired lead
           if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
           continue
-        }
-
-        // valid lead
-        else {
+        } else {
+          // valid lead
           leadSurrogate = codePoint
           continue
         }
       }
-    }
-
-    // valid bmp char, but last char was a lead
-    else if (leadSurrogate) {
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
       if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
       leadSurrogate = null
     }
@@ -1250,32 +1248,28 @@ function utf8ToBytes(string, units) {
     if (codePoint < 0x80) {
       if ((units -= 1) < 0) break
       bytes.push(codePoint)
-    }
-    else if (codePoint < 0x800) {
+    } else if (codePoint < 0x800) {
       if ((units -= 2) < 0) break
       bytes.push(
         codePoint >> 0x6 | 0xC0,
         codePoint & 0x3F | 0x80
-      );
-    }
-    else if (codePoint < 0x10000) {
+      )
+    } else if (codePoint < 0x10000) {
       if ((units -= 3) < 0) break
       bytes.push(
         codePoint >> 0xC | 0xE0,
         codePoint >> 0x6 & 0x3F | 0x80,
         codePoint & 0x3F | 0x80
-      );
-    }
-    else if (codePoint < 0x200000) {
+      )
+    } else if (codePoint < 0x200000) {
       if ((units -= 4) < 0) break
       bytes.push(
         codePoint >> 0x12 | 0xF0,
         codePoint >> 0xC & 0x3F | 0x80,
         codePoint >> 0x6 & 0x3F | 0x80,
         codePoint & 0x3F | 0x80
-      );
-    }
-    else {
+      )
+    } else {
       throw new Error('Invalid code point')
     }
   }
@@ -1296,7 +1290,6 @@ function utf16leToBytes (str, units) {
   var c, hi, lo
   var byteArray = []
   for (var i = 0; i < str.length; i++) {
-
     if ((units -= 2) < 0) break
 
     c = str.charCodeAt(i)
@@ -1313,8 +1306,7 @@ function base64ToBytes (str) {
   return base64.toByteArray(base64clean(str))
 }
 
-function blitBuffer (src, dst, offset, length, unitSize) {
-  if (unitSize) length -= length % unitSize;
+function blitBuffer (src, dst, offset, length) {
   for (var i = 0; i < length; i++) {
     if ((i + offset >= dst.length) || (i >= src.length))
       break
@@ -1346,12 +1338,16 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	var NUMBER = '0'.charCodeAt(0)
 	var LOWER  = 'a'.charCodeAt(0)
 	var UPPER  = 'A'.charCodeAt(0)
+	var PLUS_URL_SAFE = '-'.charCodeAt(0)
+	var SLASH_URL_SAFE = '_'.charCodeAt(0)
 
 	function decode (elt) {
 		var code = elt.charCodeAt(0)
-		if (code === PLUS)
+		if (code === PLUS ||
+		    code === PLUS_URL_SAFE)
 			return 62 // '+'
-		if (code === SLASH)
+		if (code === SLASH ||
+		    code === SLASH_URL_SAFE)
 			return 63 // '/'
 		if (code < NUMBER)
 			return -1 //no match
@@ -1877,31 +1873,6 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
 },{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/isarray/index.js":[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
@@ -1911,69 +1882,39 @@ module.exports = Array.isArray || function (arr) {
 // shim for using process in browser
 
 var process = module.exports = {};
+var queue = [];
+var draining = false;
 
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
+function drainQueue() {
+    if (draining) {
+        return;
     }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
+    draining = true;
+    var currentQueue;
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
+        }
+        len = queue.length;
     }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
+    draining = false;
+}
+process.nextTick = function (fun) {
+    queue.push(fun);
+    if (!draining) {
+        setTimeout(drainQueue, 0);
     }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
+};
 
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
 
 function noop() {}
 
@@ -1994,6 +1935,7 @@ process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
+process.umask = function() { return 0; };
 
 },{}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/duplex.js":[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
@@ -2091,7 +2033,8 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js","_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
+
+},{"./_stream_readable":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js","_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2139,7 +2082,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
+},{"./_stream_transform":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3125,7 +3068,8 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","events":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js","isarray":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/isarray/index.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js","string_decoder/":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
+
+},{"_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","events":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js","isarray":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/isarray/index.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js","string_decoder/":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3337,7 +3281,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
+},{"./_stream_duplex":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3727,7 +3671,8 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
+
+},{"./_stream_duplex":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/lib/_stream_duplex.js","_process":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/process/browser.js","buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","core-util-is":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3837,6 +3782,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
+
 },{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/passthrough.js":[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
@@ -3985,7 +3931,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js","readable-stream/duplex.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/duplex.js","readable-stream/passthrough.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/passthrough.js","readable-stream/readable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/readable.js","readable-stream/transform.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/transform.js","readable-stream/writable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/writable.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js":[function(require,module,exports){
+},{"events":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/events/events.js","inherits":"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js","readable-stream/duplex.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/duplex.js","readable-stream/passthrough.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/passthrough.js","readable-stream/readable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/readable.js","readable-stream/transform.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/transform.js","readable-stream/writable.js":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/readable-stream/writable.js"}],"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4356,8 +4302,32 @@ clone.clonePrototype = function(parent) {
 };
 
 }).call(this,require("buffer").Buffer)
+
 },{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
-arguments[4]["/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/inherits/inherits_browser.js"][0].apply(exports,arguments)
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
 },{}],"/Users/aolson/Developer/ofx4js/node_modules/sax/lib/sax.js":[function(require,module,exports){
 (function (Buffer){
 // wrapper for non-node envs
@@ -5772,6 +5742,7 @@ if (!String.fromCodePoint) {
 })(typeof exports === "undefined" ? sax = {} : exports);
 
 }).call(this,require("buffer").Buffer)
+
 },{"buffer":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/buffer/index.js","stream":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/stream-browserify/index.js","string_decoder":"/Users/aolson/Developer/ofx4js/node_modules/browserify/node_modules/string_decoder/index.js"}],"/Users/aolson/Developer/ofx4js/node_modules/uuid/rng-browser.js":[function(require,module,exports){
 (function (global){
 
@@ -5807,6 +5778,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
 },{}],"/Users/aolson/Developer/ofx4js/node_modules/uuid/uuid.js":[function(require,module,exports){
 //     uuid.js
 //
@@ -7323,7 +7295,7 @@ FinancialInstitutionImpl.prototype.doGeneralValidationChecks = function(request,
     throw new Error("Unable to participate in " + response.getSecurity() + " security.");
   }
 
-  if (request.getUID() !== response.getUID() && response.getUID() != "NONE") { // "NONE" is not to spec but was found in the wild
+  if (request.getUID() !== response.getUID() && response.getUID() != "NONE" && response.getUID() !== null) { // "NONE" is not to spec but was found in the wild
     throw new Error("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + response.getUID());
   }
 
@@ -7399,7 +7371,7 @@ FinancialInstitutionImpl.prototype.validateStatus = function(statusHolder) {
       }
     }
 
-    throw new Error(status, "Invalid " + statusHolder.getStatusHolderName() + ": " + message);
+    throw new Error("Invalid " + statusHolder.getStatusHolderName() + ": " + message);
   }
 };
 
@@ -7877,7 +7849,6 @@ OFXV1Connection.prototype.sendBuffer = function(url, outBuffer) {
     var onloadCalled = false;
     request.open("POST", url, async);
     request.setRequestHeader("Content-Type", "application/x-ofx");
-    //request.setRequestHeader("Content-Length", outBuffer.length);
     request.setRequestHeader("Accept", "*/*, application/x-ofx");
     request.onload = function() {
       onloadCalled = true;
@@ -39572,15 +39543,15 @@ AggregateStackContentHandler.prototype.endAggregate = function(aggregateName) {
         } else {
           if (LOG.warning) {
             console.log("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
-            
-            attribute = this.stack.peek().info.getAttribute(aggregateName, this.stack.peek().currentAttributeIndex, infoHolder.aggregate.constructor);
           }
         }
       }
       catch (e) {
         console.log("Unable to set " + attribute.toString(), e);
       }
-      this.stack.peek().currentAttributeIndex = attribute.getOrder();
+      if(attribute) {
+        this.stack.peek().currentAttributeIndex = attribute.getOrder();
+      }
     }
   }
   else {
@@ -40128,17 +40099,15 @@ function dpad(num, size) {
  * @return {String} The date format.
  */
 DefaultStringConversion.prototype.formatDate = function(date) {
-  return pad(date.getFullYear(), 4) +
-    pad(date.getMonth() + 1, 2) +
-    pad(date.getDay(), 2) +
-    pad(date.getHours(), 2) +
-    pad(date.getMinutes(), 2) +
-    pad(date.getSeconds(), 2) +
+  var gmt = new Date(date.valueOf() + date.getTimezoneOffset() * 60000);
+  return pad(gmt.getFullYear(), 4) +
+    pad(gmt.getMonth() + 1, 2) +
+    pad(gmt.getDay(), 2) +
+    pad(gmt.getHours(), 2) +
+    pad(gmt.getMinutes(), 2) +
+    pad(gmt.getSeconds(), 2) +
     "." +
-    dpad(date.getMilliseconds(), 3) +
-    "[" +
-    (date.getTimezoneOffset() / 60) +
-    "]";
+    dpad(gmt.getMilliseconds(), 3);
 };
 
 
@@ -40841,6 +40810,7 @@ OFXV1Writer.prototype.setWriteAttributesOnNewLine = function(/*boolean*/ writeAt
 
 OFXV1Writer.prototype.close = function() {
   this.flush();
+  this.writer.write(this.LINE_SEPARATOR); // ensure newline at end of request
   this.writer.close();
 };
 
@@ -41190,6 +41160,7 @@ function inherit(child, type, parent) {
       break;
       
     case 'implements':
+      inherits(child, parent);
       break;
       
     default:
