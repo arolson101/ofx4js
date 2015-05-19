@@ -14,27 +14,17 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j;
+module ofx4js {
 
 /**
  * Thrown for unsupported OFX security type.
  *
  * @author Ryan Heaton
  */
-public class UnsupportedOFXSecurityTypeException extends OFXException {
-
-  public UnsupportedOFXSecurityTypeException() {
-  }
-
-  public UnsupportedOFXSecurityTypeException(String message) {
+export class UnsupportedOFXSecurityTypeException extends OFXException {
+  constructor(message: string) {
     super(message);
   }
+}
 
-  public UnsupportedOFXSecurityTypeException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public UnsupportedOFXSecurityTypeException(Throwable cause) {
-    super(cause);
-  }
 }

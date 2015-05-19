@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='OriginalCurrency'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -27,15 +33,14 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "MARGININTEREST" )
-public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
+export class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
 
-  private Double total;
-  private String subAccountFund;
-  private String currencyCode;
-  private OriginalCurrency originalCurrencyInfo;
+  private total: number;
+  private subAccountFund: string;
+  private currencyCode: string;
+  private originalCurrencyInfo: OriginalCurrency;
 
-  public MarginInterestTransaction() {
+  constructor() {
     super(TransactionType.MARGIN_INTEREST);
   }
 
@@ -45,9 +50,8 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTFUND", order = 30)
-  public String getSubAccountFund() {
-    return subAccountFund;
+  public getSubAccountFund(): string {
+    return this.subAccountFund;
   }
 
   /**
@@ -56,7 +60,7 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param subAccountFund the sub account type
    */
-  public void setSubAccountFund(String subAccountFund) {
+  public setSubAccountFund(subAccountFund: string): void {
     this.subAccountFund = subAccountFund;
   }
 
@@ -65,9 +69,9 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountFundEnum() {
-    String type = getSubAccountFund();
-    return type != null ? SubAccountType.valueOf(type) : null;
+  public getSubAccountFundEnum(): SubAccountType {
+    var type: string = this.getSubAccountFund();
+    return type != null ? SubAccountType[type] : null;
   }
 
   /**
@@ -76,9 +80,8 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the total
    */
-  @Element( name = "TOTAL", order = 40)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -87,7 +90,7 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
 
@@ -98,9 +101,8 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the currency code for the transaction.
    */
-  @Element( name = "CURRENCY", order = 110)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -110,7 +112,7 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param currencyCode the currency code for the transaction.
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
     this.originalCurrencyInfo = null;
   }
@@ -121,9 +123,8 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the original currency info for the transaction.
    */
-  @Element( name = "ORIGCURRENCY", order = 120)
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return originalCurrencyInfo;
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.originalCurrencyInfo;
   }
 
   /**
@@ -132,8 +133,16 @@ public class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param originalCurrency the original currency info for the transaction.
    */
-  public void SetOriginalCurrency(OriginalCurrency originalCurrency) {
+  public setOriginalCurrencyInfo(originalCurrency: OriginalCurrency): void {
     this.originalCurrencyInfo = originalCurrency;
     this.currencyCode = null;
   }
+}
+
+Aggregate_add( MarginInterestTransaction, "MARGININTEREST" );
+Element_add(MarginInterestTransaction, { name: "SUBACCTFUND", order: 30, type: String, read: MarginInterestTransaction.prototype.getSubAccountFund, write: MarginInterestTransaction.prototype.setSubAccountFund });
+Element_add(MarginInterestTransaction, { name: "TOTAL", order: 40, type: Number, read: MarginInterestTransaction.prototype.getTotal, write: MarginInterestTransaction.prototype.setTotal });
+Element_add(MarginInterestTransaction, { name: "CURRENCY", order: 110, type: String, read: MarginInterestTransaction.prototype.getCurrencyCode, write: MarginInterestTransaction.prototype.setCurrencyCode });
+Element_add(MarginInterestTransaction, { name: "ORIGCURRENCY", order: 120, type: OriginalCurrency, read: MarginInterestTransaction.prototype.getOriginalCurrencyInfo, write: MarginInterestTransaction.prototype.setOriginalCurrencyInfo });
+
 }

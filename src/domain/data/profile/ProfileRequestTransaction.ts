@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='ProfileRequest'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate( "PROFTRNRQ" )
-public class ProfileRequestTransaction extends TransactionWrappedRequestMessage<ProfileRequest> {
+export class ProfileRequestTransaction extends TransactionWrappedRequestMessage<ProfileRequest> {
 
-  private ProfileRequest message;
+  private message: ProfileRequest;
 
   /**
    * The wrapped message.
    *
    * @return The wrapped message.
    */
-  @ChildAggregate ( required = true, order = 30 )
-  public ProfileRequest getMessage() {
-    return message;
+  public getMessage(): ProfileRequest {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class ProfileRequestTransaction extends TransactionWrappedRequestMessage<
    *
    * @param message The wrapped message.
    */
-  public void setMessage(ProfileRequest message) {
+  public setMessage(message: ProfileRequest): void {
     this.message = message;
   }
 
   // Inherited.
-  public void setWrappedMessage(ProfileRequest message) {
-    setMessage(message);
+  public setWrappedMessage(message: ProfileRequest): void {
+    this.setMessage(message);
   }
+}
+
+Aggregate_add( ProfileRequestTransaction, "PROFTRNRQ" );
+ChildAggregate_add(ProfileRequestTransaction, { required: true, order: 30, type: ProfileRequest, read: ProfileRequestTransaction.prototype.getMessage, write: ProfileRequestTransaction.prototype.setMessage });
+
 }

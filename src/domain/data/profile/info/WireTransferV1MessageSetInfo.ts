@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/ProcessorDayOff'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.common.ProcessorDayOff;
-import net.sf.ofx4j.domain.data.profile.VersionSpecificMessageSetInfo;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.List;
+import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Wire Transfer Message Set Profile
@@ -30,61 +32,64 @@ import java.util.List;
  * @author Ryan Heaton
  * @see "Section 11.13.5 OFX Spec"
  */
-@Aggregate ( "WIREXFERMSGSETV1" )
-public class WireTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+export class WireTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
 
-  private List<ProcessorDayOff> processorDaysOff;
-  private String processEndTime;
-  private Boolean supportsScheduledTransfers;
-  private Double domesticWireTransferFee;
-  private Double internationalWireTransferFee;
+  private processorDaysOff: Array<ProcessorDayOff>;
+  private processEndTime: string;
+  private supportsScheduledTransfers: boolean;
+  private domesticWireTransferFee: number;
+  private internationalWireTransferFee: number;
 
-  public MessageSetType getMessageSetType() {
+  public getMessageSetType(): MessageSetType {
     return MessageSetType.wire_transfer;
   }
 
-  @Element( name = "PROCDAYSOFF", order = 10 )
-  public List<ProcessorDayOff> getProcessorDaysOff() {
-    return processorDaysOff;
+  public getProcessorDaysOff(): Array<ProcessorDayOff> {
+    return this.processorDaysOff;
   }
 
-  public void setProcessorDaysOff(List<ProcessorDayOff> processorDaysOff) {
+  public setProcessorDaysOff(processorDaysOff: Array<ProcessorDayOff>): void {
     this.processorDaysOff = processorDaysOff;
   }
 
-  @Element( name = "PROCENDTM", required = true, order = 20 )
-  public String getProcessEndTime() {
-    return processEndTime;
+  public getProcessEndTime(): string {
+    return this.processEndTime;
   }
 
-  public void setProcessEndTime(String processEndTime) {
+  public setProcessEndTime(processEndTime: string): void {
     this.processEndTime = processEndTime;
   }
 
-  @Element( name = "CANSCHED", required = true, order = 30 )
-  public Boolean getSupportsScheduledTransfers() {
-    return supportsScheduledTransfers;
+  public getSupportsScheduledTransfers(): boolean {
+    return this.supportsScheduledTransfers;
   }
 
-  public void setSupportsScheduledTransfers(Boolean supportsScheduledTransfers) {
+  public setSupportsScheduledTransfers(supportsScheduledTransfers: boolean): void {
     this.supportsScheduledTransfers = supportsScheduledTransfers;
   }
 
-  @Element( name = "DOMXFERFEE", required = true, order = 40 )
-  public Double getDomesticWireTransferFee() {
-    return domesticWireTransferFee;
+  public getDomesticWireTransferFee(): number {
+    return this.domesticWireTransferFee;
   }
 
-  public void setDomesticWireTransferFee(Double domesticWireTransferFee) {
+  public setDomesticWireTransferFee(domesticWireTransferFee: number): void {
     this.domesticWireTransferFee = domesticWireTransferFee;
   }
 
-  @Element( name = "INTLXFERFEE", required = true, order = 50 )
-  public Double getInternationalWireTransferFee() {
-    return internationalWireTransferFee;
+  public getInternationalWireTransferFee(): number {
+    return this.internationalWireTransferFee;
   }
 
-  public void setInternationalWireTransferFee(Double internationalWireTransferFee) {
+  public setInternationalWireTransferFee(internationalWireTransferFee: number): void {
     this.internationalWireTransferFee = internationalWireTransferFee;
   }
+}
+
+Aggregate_add( WireTransferV1MessageSetInfo, "WIREXFERMSGSETV1" );
+Element_add(WireTransferV1MessageSetInfo, { name: "PROCDAYSOFF", order: 10, type: Array, collectionEntryType: ProcessorDayOff, read: WireTransferV1MessageSetInfo.prototype.getProcessorDaysOff, write: WireTransferV1MessageSetInfo.prototype.setProcessorDaysOff });
+Element_add(WireTransferV1MessageSetInfo, { name: "PROCENDTM", required: true, order: 20, type: String, read: WireTransferV1MessageSetInfo.prototype.getProcessEndTime, write: WireTransferV1MessageSetInfo.prototype.setProcessEndTime });
+Element_add(WireTransferV1MessageSetInfo, { name: "CANSCHED", required: true, order: 30, type: Boolean, read: WireTransferV1MessageSetInfo.prototype.getSupportsScheduledTransfers, write: WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers });
+Element_add(WireTransferV1MessageSetInfo, { name: "DOMXFERFEE", required: true, order: 40, type: Number, read: WireTransferV1MessageSetInfo.prototype.getDomesticWireTransferFee, write: WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee });
+Element_add(WireTransferV1MessageSetInfo, { name: "INTLXFERFEE", required: true, order: 50, type: Number, read: WireTransferV1MessageSetInfo.prototype.getInternationalWireTransferFee, write: WireTransferV1MessageSetInfo.prototype.setInternationalWireTransferFee });
+
 }

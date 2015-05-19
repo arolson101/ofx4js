@@ -13,29 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='MessageSetType'/>
+///<reference path='RequestMessage'/>
 
-package net.sf.ofx4j.domain.data;
-
-import java.util.List;
+module ofx4js.domain.data {
 
 /**
  * A message set enclosed in an OFX request envelope.
  *
  * @author Ryan Heaton
  */
-public abstract class RequestMessageSet implements Comparable<RequestMessageSet> {
+export /*abstract*/ class RequestMessageSet /*implements Comparable<RequestMessageSet>*/ {
 
-  private String version = "1";
+  private version: string;
 
-  public abstract MessageSetType getType();
+  public /*abstract*/ getType(): MessageSetType { throw new Error("abstract"); }
+
+  constructor() {
+    this.version = "1";
+  }
 
   /**
    * The version of this request message.
    *
    * @return The version of this request message.
    */
-  public String getVersion() {
-    return version;
+  public getVersion(): string {
+    return this.version;
   }
 
   /**
@@ -43,7 +47,7 @@ public abstract class RequestMessageSet implements Comparable<RequestMessageSet>
    *
    * @param version The version of this request message.
    */
-  public void setVersion(String version) {
+  public setVersion(version: string): void {
     this.version = version;
   }
 
@@ -52,10 +56,17 @@ public abstract class RequestMessageSet implements Comparable<RequestMessageSet>
    *
    * @return The request messages for this request message set.
    */
-  public abstract List<RequestMessage> getRequestMessages();
+  public /*abstract*/ getRequestMessages(): Array<RequestMessage> { throw new Error("abstract"); }
 
   // Inherited.
-  public int compareTo(RequestMessageSet o) {
+  /*public compareTo(o: RequestMessageSet): number {
     return getType().compareTo(o.getType());
+  }*/
+  
+  public static contentCompare(left: RequestMessageSet, right: RequestMessageSet): number {
+    return left.getType() - right.getType();
   }
+  
+}
+
 }

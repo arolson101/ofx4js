@@ -7,6 +7,7 @@ log/
 results/
 .svn/
 ofx4j-code/
+.DS_Store
 
 *.seed
 *.log

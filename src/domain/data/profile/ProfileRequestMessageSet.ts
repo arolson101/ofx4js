@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='ProfileRequestTransaction'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  * @see "Section 7 OFX Spec"
  */
-@Aggregate ( "PROFMSGSRQV1" )
-public class ProfileRequestMessageSet extends RequestMessageSet {
+export class ProfileRequestMessageSet extends RequestMessageSet {
 
-  private ProfileRequestTransaction profileRequest;
+  private profileRequest: ProfileRequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.profile;
   }
 
@@ -43,9 +44,8 @@ public class ProfileRequestMessageSet extends RequestMessageSet {
    *
    * @return The profile request.
    */
-  @ChildAggregate ( required = true, order = 0 )
-  public ProfileRequestTransaction getProfileRequest() {
-    return profileRequest;
+  public getProfileRequest(): ProfileRequestTransaction {
+    return this.profileRequest;
   }
 
   /**
@@ -53,17 +53,22 @@ public class ProfileRequestMessageSet extends RequestMessageSet {
    *
    * @param profileRequest The profile request.
    */
-  public void setProfileRequest(ProfileRequestTransaction profileRequest) {
+  public setProfileRequest(profileRequest: ProfileRequestTransaction): void {
     this.profileRequest = profileRequest;
   }
 
 
   // Inherited.
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-    if (getProfileRequest() != null) {
-      requestMessages.add(getProfileRequest());
+  public getRequestMessages(): Array<RequestMessage> {
+    var requestMessages: Array<RequestMessage> = new Array<RequestMessage>();
+    if (this.getProfileRequest() != null) {
+      requestMessages.push(this.getProfileRequest());
     }
     return requestMessages;
   }
+}
+
+Aggregate_add( ProfileRequestMessageSet, "PROFMSGSRQV1" );
+ChildAggregate_add(ProfileRequestMessageSet, { required: true, order: 0, type: ProfileRequestTransaction, read: ProfileRequestMessageSet.prototype.getProfileRequest, write: ProfileRequestMessageSet.prototype.setProfileRequest });
+
 }

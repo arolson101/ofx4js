@@ -13,15 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
+///<reference path='OriginalCurrency'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for return of capital transactions.
@@ -29,19 +40,18 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "RETOFCAP" )
-public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
+export class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private SecurityId securityId;
-  private Double total;
-  private String subAccountSecurity;
-  private String subAccountFund;
-  private String currencyCode;
-  private OriginalCurrency originalCurrencyInfo;
-  private String inv401kSource;
+  private securityId: SecurityId;
+  private total: number;
+  private subAccountSecurity: string;
+  private subAccountFund: string;
+  private currencyCode: string;
+  private originalCurrencyInfo: OriginalCurrency;
+  private inv401kSource: string;
 
-  public ReturnOfCapitalTransaction() {
+  constructor() {
     super(TransactionType.RETURN_OF_CAPITAL);
   }
 
@@ -52,9 +62,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the security id of the security that capital was returned from
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -64,7 +73,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param securityId the security id of the security that capital was returned from
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -74,9 +83,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the total
    */
-  @Element( name = "TOTAL", required = true, order = 40)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -85,7 +93,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
 
@@ -96,9 +104,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTSEC", order = 50)
-  public String getSubAccountSecurity() {
-    return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+    return this.subAccountSecurity;
   }
 
   /**
@@ -108,7 +115,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAccountSecurity the sub account type
    */
-  public void setSubAccountSecurity(String subAccountSecurity) {
+  public setSubAccountSecurity(subAccountSecurity: string): void {
     this.subAccountSecurity = subAccountSecurity;
   }
 
@@ -117,8 +124,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -128,9 +135,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account fund
    */
-  @Element( name = "SUBACCTFUND", order = 140)
-  public String getSubAccountFund() {
-    return subAccountFund;
+  public getSubAccountFund(): string {
+    return this.subAccountFund;
   }
 
   /**
@@ -140,7 +146,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAccountFund the sub account fund
    */
-  public void setSubAccountFund(String subAccountFund) {
+  public setSubAccountFund(subAccountFund: string): void {
     this.subAccountFund = subAccountFund;
   }
 
@@ -149,8 +155,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
 
   /**
@@ -160,9 +166,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the currency code for the transaction
    */
-  @Element( name = "CURRENCY", order = 110)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -172,7 +177,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param currencyCode the currency code for the transaction
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
     this.originalCurrencyInfo = null;
   }
@@ -183,9 +188,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the currency code for the transaction.
    */
-  @Element( name = "ORIGCURRENCY", order = 120)
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return originalCurrencyInfo;
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.originalCurrencyInfo;
   }
 
   /**
@@ -194,7 +198,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param originalCurrencyInfo the currency code for the transaction.
    */
-  public void setOriginalCurrencyInfo(OriginalCurrency originalCurrencyInfo) {
+  public setOriginalCurrencyInfo(originalCurrencyInfo: OriginalCurrency): void {
     this.originalCurrencyInfo = originalCurrencyInfo;
     this.currencyCode = null;
   }
@@ -207,9 +211,8 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the state withholding
    */
-  @Element( name = "INV401KSOURCE", order = 180)
-  public String get401kSource() {
-    return inv401kSource;
+  public get401kSource(): string {
+    return this.inv401kSource;
   }
 
   /**
@@ -220,7 +223,7 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @param inv401kSource the state withholding
    */
-  public void set401kSource(String inv401kSource) {
+  public set401kSource(inv401kSource: string): void {
     this.inv401kSource = inv401kSource;
   }
 
@@ -229,7 +232,18 @@ public class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of close or null if it's not well known.
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+Aggregate_add( ReturnOfCapitalTransaction, "RETOFCAP" );
+ChildAggregate_add(ReturnOfCapitalTransaction, { required: true, order: 20, type: SecurityId, read: ReturnOfCapitalTransaction.prototype.getSecurityId, write: ReturnOfCapitalTransaction.prototype.setSecurityId });
+Element_add(ReturnOfCapitalTransaction, { name: "TOTAL", required: true, order: 40, type: Number, read: ReturnOfCapitalTransaction.prototype.getTotal, write: ReturnOfCapitalTransaction.prototype.setTotal });
+Element_add(ReturnOfCapitalTransaction, { name: "SUBACCTSEC", order: 50, type: String, read: ReturnOfCapitalTransaction.prototype.getSubAccountSecurity, write: ReturnOfCapitalTransaction.prototype.setSubAccountSecurity });
+Element_add(ReturnOfCapitalTransaction, { name: "SUBACCTFUND", order: 140, type: String, read: ReturnOfCapitalTransaction.prototype.getSubAccountFund, write: ReturnOfCapitalTransaction.prototype.setSubAccountFund });
+Element_add(ReturnOfCapitalTransaction, { name: "CURRENCY", order: 110, type: String, read: ReturnOfCapitalTransaction.prototype.getCurrencyCode, write: ReturnOfCapitalTransaction.prototype.setCurrencyCode });
+Element_add(ReturnOfCapitalTransaction, { name: "ORIGCURRENCY", order: 120, type: OriginalCurrency, read: ReturnOfCapitalTransaction.prototype.getOriginalCurrencyInfo, write: ReturnOfCapitalTransaction.prototype.setOriginalCurrencyInfo });
+Element_add(ReturnOfCapitalTransaction, { name: "INV401KSOURCE", order: 180, type: String, read: ReturnOfCapitalTransaction.prototype.get401kSource, write: ReturnOfCapitalTransaction.prototype.set401kSource });
+
 }

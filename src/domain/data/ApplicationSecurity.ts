@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
 /**
  * @author Ryan Heaton
  * @see "Section 4, OFX spec"
  */
-public enum ApplicationSecurity {
+export enum ApplicationSecurity {
 
   NONE,
 
   TYPE1
+}
+
 }

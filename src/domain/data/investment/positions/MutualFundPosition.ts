@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BasePosition'/>
 
-package net.sf.ofx4j.domain.data.investment.positions;
+module ofx4js.domain.data.investment.positions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Represents a mutual fund position.
@@ -25,22 +28,20 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "POSMF" )
-public class MutualFundPosition extends BasePosition {
+export class MutualFundPosition extends BasePosition {
 
-  private Double unitsStreet;
-  private Double unitsUser;
-  private Boolean reinvestDividends;
-  private Boolean reinvestCapitalGains;
+  private unitsStreet: number;
+  private unitsUser: number;
+  private reinvestDividends: boolean;
+  private reinvestCapitalGains: boolean;
 
   /**
    * Gets the number of units in the financial insititution's street name.
    *
    * @return the number of units in the financial insititution's street name.
    */
-  @Element( name = "UNITSSTREET", order = 20)
-  public Double getUnitsStreet() {
-    return unitsStreet;
+  public getUnitsStreet(): number {
+    return this.unitsStreet;
   }
 
   /**
@@ -48,7 +49,7 @@ public class MutualFundPosition extends BasePosition {
    *
    * @param unitsStreet the number of units in the financial insititution's street name.
    */
-  public void setUnitsStreet(Double unitsStreet) {
+  public setUnitsStreet(unitsStreet: number): void {
     this.unitsStreet = unitsStreet;
   }
 
@@ -57,9 +58,8 @@ public class MutualFundPosition extends BasePosition {
    *
    * @return the number of units in the user's name.
    */
-  @Element( name = "UNITSUSER", order = 30)
-  public Double getUnitsUser() {
-    return unitsUser;
+  public getUnitsUser(): number {
+    return this.unitsUser;
   }
 
   /**
@@ -67,7 +67,7 @@ public class MutualFundPosition extends BasePosition {
    *
    * @param unitsUser the number of units in the user's name.
    */
-  public void setUnitsUser(Double unitsUser) {
+  public setUnitsUser(unitsUser: number): void {
     this.unitsUser = unitsUser;
   }
 
@@ -76,9 +76,8 @@ public class MutualFundPosition extends BasePosition {
    *
    * @return whether dividends are automatically reinvested
    */
-  @Element( name = "REINVDIV", order = 50)
-  public Boolean getReinvestDividends() {
-    return reinvestDividends;
+  public getReinvestDividends(): boolean {
+    return this.reinvestDividends;
   }
 
   /**
@@ -86,7 +85,7 @@ public class MutualFundPosition extends BasePosition {
    *
    * @param reinvestDividends whether dividends are automatically reinvested
    */
-  public void setReinvestDividends(Boolean reinvestDividends) {
+  public setReinvestDividends(reinvestDividends: boolean): void {
     this.reinvestDividends = reinvestDividends;
   }
 
@@ -95,9 +94,8 @@ public class MutualFundPosition extends BasePosition {
    *
    * @return whether capital gains are automatically reinvested
    */
-  @Element( name = "REINVCG", order = 60)
-  public Boolean getReinvestCapitalGains() {
-    return reinvestCapitalGains;
+  public getReinvestCapitalGains(): boolean {
+    return this.reinvestCapitalGains;
   }
 
   /**
@@ -105,7 +103,15 @@ public class MutualFundPosition extends BasePosition {
    *
    * @param reinvestCapitalGains whether capital gains are automatically reinvested
    */
-  public void setReinvestCapitalGains(Boolean reinvestCapitalGains) {
+  public setReinvestCapitalGains(reinvestCapitalGains: boolean): void {
     this.reinvestCapitalGains = reinvestCapitalGains;
   }
+}
+
+Aggregate_add( MutualFundPosition, "POSMF" );
+Element_add(MutualFundPosition, { name: "UNITSSTREET", order: 20, type: Number, read: MutualFundPosition.prototype.getUnitsStreet, write: MutualFundPosition.prototype.setUnitsStreet });
+Element_add(MutualFundPosition, { name: "UNITSUSER", order: 30, type: Number, read: MutualFundPosition.prototype.getUnitsUser, write: MutualFundPosition.prototype.setUnitsUser });
+Element_add(MutualFundPosition, { name: "REINVDIV", order: 50, type: Boolean, read: MutualFundPosition.prototype.getReinvestDividends, write: MutualFundPosition.prototype.setReinvestDividends });
+Element_add(MutualFundPosition, { name: "REINVCG", order: 60, type: Boolean, read: MutualFundPosition.prototype.getReinvestCapitalGains, write: MutualFundPosition.prototype.setReinvestCapitalGains });
+
 }

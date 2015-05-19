@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='AccountDetails'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * Marker interface for account information.
  *
  * @author Ryan Heaton
  */
-public interface AccountInfo {
+export interface AccountInfo {
 
   /**
    * The account details.
    *
    * @return The account details.
    */
-  AccountDetails getAccountDetails();
+  getAccountDetails(): AccountDetails;
+
+}
 
 }

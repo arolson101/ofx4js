@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
 /**
  * Interface for converting to/from OFX strings.
  *
  * @author Ryan Heaton
  */
-public interface StringConversion {
+export interface StringConversion {
 
   /**
    * Convert the specified object to a string.
@@ -29,7 +29,7 @@ public interface StringConversion {
    * @param value The value to convert to a string.
    * @return The string.
    */
-  String toString(Object value);
+  toString(value: Object): string;
 
   /**
    * Convert the specified value to an object of the specified type.
@@ -39,5 +39,7 @@ public interface StringConversion {
    * @return The converted value.
    * @throws OFXSyntaxException If there was something wrong with the syntax of the string.
    */
-  <E> E fromString(Class<E> clazz, String value) throws OFXSyntaxException;
+  fromString<E>(clazz: any, value: string) /*throws OFXSyntaxException*/: E;
+}
+
 }

@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "FI" )
-public class FinancialInstitution {
+export class FinancialInstitution {
 
-  private String id;
-  private String organization;
+  private id: string;
+  private organization: string;
 
   /**
    * Financial institution id.
    *
    * @return Financial institution id.
    */
-  @Element ( name = "FID", order = 10 )
-  public String getId() {
-    return id;
+  public getId(): string {
+    return this.id;
   }
 
   /**
@@ -43,7 +43,7 @@ public class FinancialInstitution {
    *
    * @param id Financial institution id.
    */
-  public void setId(String id) {
+  public setId(id: string): void {
     this.id = id;
   }
 
@@ -52,9 +52,8 @@ public class FinancialInstitution {
    *
    * @return The organization.
    */
-  @Element ( name = "ORG", required = true, order = 0 )
-  public String getOrganization() {
-    return organization;
+  public getOrganization(): string {
+    return this.organization;
   }
 
   /**
@@ -62,7 +61,13 @@ public class FinancialInstitution {
    *
    * @param organization The organization.
    */
-  public void setOrganization(String organization) {
+  public setOrganization(organization: string): void {
     this.organization = organization;
   }
+}
+
+Aggregate_add( FinancialInstitution, "FI" );
+Element_add(FinancialInstitution, { name: "FID", order: 10, type: String, read: FinancialInstitution.prototype.getId, write: FinancialInstitution.prototype.setId });
+Element_add(FinancialInstitution, { name: "ORG", required: true, order: 0, type: String, read: FinancialInstitution.prototype.getOrganization, write: FinancialInstitution.prototype.setOrganization });
+
 }

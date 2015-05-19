@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXApplicationContext'/>
 
-package net.sf.ofx4j.client.context;
+module ofx4js.client.context {
 
 /**
  * Default application context.
- * 
+ *
  * @author Ryan Heaton
  */
-public class DefaultApplicationContext implements OFXApplicationContext {
+export class DefaultApplicationContext implements OFXApplicationContext {
 
-  private final String appId;
-  private final String appVersion;
+  private appId: string;
+  private appVersion: string;
 
-  public DefaultApplicationContext(String appId, String appVersion) {
+  constructor(appId: string, appVersion: string) {
     this.appId = appId;
     this.appVersion = appVersion;
   }
 
-  public String getAppId() {
-    return appId;
+  public getAppId(): string {
+    return this.appId;
   }
 
-  public String getAppVersion() {
-    return appVersion;
+  public getAppVersion(): string {
+    return this.appVersion;
   }
+}
+
 }

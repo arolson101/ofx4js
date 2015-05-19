@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../investment/positions/PositionType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransferAction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.investment.positions.PositionType;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import PositionType = ofx4js.domain.data.investment.positions.PositionType;
+import PositionType_fromOfx = ofx4js.domain.data.investment.positions.PositionType_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for transfers.
@@ -32,22 +42,21 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate("TRANSFER")
-public class TransferInvestmentTransaction extends BaseOtherInvestmentTransaction {
+export class TransferInvestmentTransaction extends BaseOtherInvestmentTransaction {
 
-  private SecurityId securityId;
-  private String subAccountSecurity;
-  private Double units;
-  private String transferAction;
-  private String positionType;
-  private Double averageCostBasis;
-  private Double unitPrice;
-  private Date purchaseDate;
-  private String inv401kSource;
+  private securityId: SecurityId;
+  private subAccountSecurity: string;
+  private units: number;
+  private transferAction: string;
+  private positionType: string;
+  private averageCostBasis: number;
+  private unitPrice: number;
+  private purchaseDate: Date;
+  private inv401kSource: string;
 
   // TODO (jonp) -- INVACCTFROM
 
-  public TransferInvestmentTransaction() {
+  constructor() {
     super(TransactionType.TRANSFER);
   }
 
@@ -58,9 +67,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the security id of the security that was transferred
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -70,7 +78,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param securityId the security id of the security that was transferred
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -80,9 +88,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
     *
     * @return the sub account type
     */
-   @Element( name = "SUBACCTSEC", order = 30)
-   public String getSubAccountSecurity() {
-     return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+     return this.subAccountSecurity;
    }
 
   /**
@@ -91,7 +98,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
     *
     * @param subAccountSecurity the sub account type
     */
-   public void setSubAccountSecurity(String subAccountSecurity) {
+  public setSubAccountSecurity(subAccountSecurity: string): void {
      this.subAccountSecurity = subAccountSecurity;
    }
 
@@ -100,8 +107,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -113,9 +120,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the number of units transferred
    */
-  @Element( name = "UNITS", required = true, order = 40)
-  public Double getUnits() {
-    return units;
+  public getUnits(): number {
+    return this.units;
   }
 
   /**
@@ -127,7 +133,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param units the number of units transferred
    */
-  public void setUnits(Double units) {
+  public setUnits(units: number): void {
     this.units = units;
   }
 
@@ -137,9 +143,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the type of transfer
    */
-  @Element( name = "TFERACTION", required = true, order = 50)
-  public String getTransferAction() {
-    return transferAction;
+  public getTransferAction(): string {
+    return this.transferAction;
   }
 
   /**
@@ -148,7 +153,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param transferAction the type of transfer
    */
-  public void setTransferAction(String transferAction) {
+  public setTransferAction(transferAction: string): void {
     this.transferAction = transferAction;
   }
 
@@ -157,8 +162,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the type of transfer or null if it's not well known
    */
-  public TransferAction getTransferActionEnum() {
-    return TransferAction.fromOfx(getTransferAction());
+  public getTransferActionEnum(): TransferAction {
+    return TransferAction_fromOfx(this.getTransferAction());
   }
 
   /**
@@ -167,9 +172,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the position type
    */
-  @Element( name = "POSTYPE", required = true, order = 60)
-  public String getPositionType() {
-    return positionType;
+  public getPositionType(): string {
+    return this.positionType;
   }
 
   /**
@@ -178,7 +182,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param positionType the position type
    */
-  public void setPositionType(String positionType) {
+  public setPositionType(positionType: string): void {
     this.positionType = positionType;
   }
 
@@ -187,8 +191,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the position type or null if it's not well known
    */
-  public PositionType getPositionTypeEnum() {
-    return PositionType.fromOfx(getPositionType());
+  public getPositionTypeEnum(): PositionType {
+    return PositionType_fromOfx(this.getPositionType());
   }
 
   /**
@@ -197,9 +201,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the average cost basis
    */
-  @Element( name = "AVGCOSTBASIS", order = 70)
-  public Double getAverageCostBasis() {
-    return averageCostBasis;
+  public getAverageCostBasis(): number {
+    return this.averageCostBasis;
   }
 
   /**
@@ -208,7 +211,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param averageCostBasis the average cost basis
    */
-  public void setAverageCostBasis(Double averageCostBasis) {
+  public setAverageCostBasis(averageCostBasis: number): void {
     this.averageCostBasis = averageCostBasis;
   }
 
@@ -220,9 +223,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the per unit price
    */
-  @Element( name = "UNITPRICE", required = true, order = 80)
-  public Double getUnitPrice() {
-    return unitPrice;
+  public getUnitPrice(): number {
+    return this.unitPrice;
   }
 
   /**
@@ -233,7 +235,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param unitPrice the per unit price
    */
-  public void setUnitPrice(Double unitPrice) {
+  public setUnitPrice(unitPrice: number): void {
     this.unitPrice = unitPrice;
   }
 
@@ -243,9 +245,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the original date of purchase
    */
-  @Element( name = "DTPURCHASE", order = 90)
-  public Date getPurchaseDate() {
-    return purchaseDate;
+  public getPurchaseDate(): Date {
+    return this.purchaseDate;
   }
 
   /**
@@ -254,7 +255,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param purchaseDate the original date of purchase
    */
-  public void setPurchaseDate(Date purchaseDate) {
+  public setPurchaseDate(purchaseDate: Date): void {
     this.purchaseDate = purchaseDate;
   }
 
@@ -266,9 +267,8 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the state withholding
    */
-  @Element( name = "INV401KSOURCE", order = 100)
-  public String get401kSource() {
-    return inv401kSource;
+  public get401kSource(): string {
+    return this.inv401kSource;
   }
 
   /**
@@ -279,7 +279,7 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @param inv401kSource the state withholding
    */
-  public void set401kSource(String inv401kSource) {
+  public set401kSource(inv401kSource: string): void {
     this.inv401kSource = inv401kSource;
   }
 
@@ -288,7 +288,20 @@ public class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
    *
    * @return the type of close or null if it's not well known.
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+Aggregate_add(TransferInvestmentTransaction, "TRANSFER");
+ChildAggregate_add(TransferInvestmentTransaction, { required: true, order: 20, type: SecurityId, read: TransferInvestmentTransaction.prototype.getSecurityId, write: TransferInvestmentTransaction.prototype.setSecurityId });
+Element_add(TransferInvestmentTransaction, { name: "SUBACCTSEC", order: 30, type: String, read: TransferInvestmentTransaction.prototype.getSubAccountSecurity, write: TransferInvestmentTransaction.prototype.setSubAccountSecurity });
+Element_add(TransferInvestmentTransaction, { name: "UNITS", required: true, order: 40, type: Number, read: TransferInvestmentTransaction.prototype.getUnits, write: TransferInvestmentTransaction.prototype.setUnits });
+Element_add(TransferInvestmentTransaction, { name: "TFERACTION", required: true, order: 50, type: String, read: TransferInvestmentTransaction.prototype.getTransferAction, write: TransferInvestmentTransaction.prototype.setTransferAction });
+Element_add(TransferInvestmentTransaction, { name: "POSTYPE", required: true, order: 60, type: String, read: TransferInvestmentTransaction.prototype.getPositionType, write: TransferInvestmentTransaction.prototype.setPositionType });
+Element_add(TransferInvestmentTransaction, { name: "AVGCOSTBASIS", order: 70, type: Number, read: TransferInvestmentTransaction.prototype.getAverageCostBasis, write: TransferInvestmentTransaction.prototype.setAverageCostBasis });
+Element_add(TransferInvestmentTransaction, { name: "UNITPRICE", required: true, order: 80, type: Number, read: TransferInvestmentTransaction.prototype.getUnitPrice, write: TransferInvestmentTransaction.prototype.setUnitPrice });
+Element_add(TransferInvestmentTransaction, { name: "DTPURCHASE", order: 90, type: Date, read: TransferInvestmentTransaction.prototype.getPurchaseDate, write: TransferInvestmentTransaction.prototype.setPurchaseDate });
+Element_add(TransferInvestmentTransaction, { name: "INV401KSOURCE", order: 100, type: String, read: TransferInvestmentTransaction.prototype.get401kSource, write: TransferInvestmentTransaction.prototype.set401kSource });
+
 }

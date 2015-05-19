@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseBuyInvestmentTransaction'/>
+///<reference path='BuyType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for buying stock.
@@ -25,12 +29,11 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "BUYSTOCK" )
-public class BuyStockTransaction extends BaseBuyInvestmentTransaction {
+export class BuyStockTransaction extends BaseBuyInvestmentTransaction {
 
-  private String buyType;
+  private buyType: string;
 
-  public BuyStockTransaction() {
+  constructor() {
     super(TransactionType.BUY_STOCK);
   }
 
@@ -41,9 +44,8 @@ public class BuyStockTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the buy type
    */
-  @Element( name = "BUYTYPE", required = true, order = 20)
-  public String getBuyType() {
-    return buyType;
+  public getBuyType(): string {
+    return this.buyType;
   }
 
   /**
@@ -53,7 +55,7 @@ public class BuyStockTransaction extends BaseBuyInvestmentTransaction {
    *
    * @param buyType the buy type
    */
-  public void setBuyType(String buyType) {
+  public setBuyType(buyType: string): void {
     this.buyType = buyType;
   }
 
@@ -62,7 +64,12 @@ public class BuyStockTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the type of purchase or null if it's not well known
    */
-  public BuyType getBuyTypeEnum() {
-    return BuyType.fromOfx(buyType);
+  public getBuyTypeEnum(): BuyType {
+    return BuyType_fromOfx(this.buyType);
   }
+}
+
+Aggregate_add( BuyStockTransaction, "BUYSTOCK" );
+Element_add(BuyStockTransaction, { name: "BUYTYPE", required: true, order: 20, type: String, read: BuyStockTransaction.prototype.getBuyType, write: BuyStockTransaction.prototype.setBuyType });
+
 }

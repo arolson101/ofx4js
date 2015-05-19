@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../common/StatementRequest'/>
+///<reference path='CreditCardAccountDetails'/>
 
-package net.sf.ofx4j.domain.data.creditcard;
+module ofx4js.domain.data.creditcard {
 
-import net.sf.ofx4j.domain.data.common.StatementRequest;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate("CCSTMTRQ")
-public class CreditCardStatementRequest extends StatementRequest {
+export class CreditCardStatementRequest extends StatementRequest {
 
-  private CreditCardAccountDetails account;
+  private account: CreditCardAccountDetails;
 
   /**
    * The account details.
    *
    * @return The account details.
    */
-  @ChildAggregate ( name = "CCACCTFROM", required = true, order = 0 )
-  public CreditCardAccountDetails getAccount() {
-    return account;
+  public getAccount(): CreditCardAccountDetails {
+    return this.account;
   }
 
   /**
@@ -43,8 +45,12 @@ public class CreditCardStatementRequest extends StatementRequest {
    *
    * @param account The account details.
    */
-  public void setAccount(CreditCardAccountDetails account) {
+  public setAccount(account: CreditCardAccountDetails): void {
     this.account = account;
   }
+}
+
+Aggregate_add( CreditCardStatementRequest, "CCSTMTRQ" );
+ChildAggregate_add(CreditCardStatementRequest, { name: "CCACCTFROM", required: true, order: 0, type: CreditCardAccountDetails, read: CreditCardStatementRequest.prototype.getAccount, write: CreditCardStatementRequest.prototype.setAccount });
 
 }

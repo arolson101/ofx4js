@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of sale for options.
@@ -22,17 +22,19 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum OptionSellType {
+export enum OptionSellType {
   SELL_TO_CLOSE,
-  SELL_TO_OPEN;
+  SELL_TO_OPEN
+}
 
-  public static OptionSellType fromOfx(String ofxVal) {
-    if ("SELLTOOPEN".equals(ofxVal)) {
-      return SELL_TO_OPEN;
-    } else if ("SELLTOCLOSE".equals(ofxVal)) {
-      return SELL_TO_CLOSE;
-    } else {
-      return null;
-    }
+export function OptionSellType_fromOfx(ofxVal: string): OptionSellType {
+  if ("SELLTOOPEN" === ofxVal) {
+    return OptionSellType.SELL_TO_OPEN;
+  } else if ("SELLTOCLOSE" === ofxVal) {
+    return OptionSellType.SELL_TO_CLOSE;
+  } else {
+    return null;
   }
+}
+
 }

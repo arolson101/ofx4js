@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='BankStatementRequestTransaction'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "BANKMSGSRQV1" )
-public class BankingRequestMessageSet extends RequestMessageSet {
+export class BankingRequestMessageSet extends RequestMessageSet {
 
-  private BankStatementRequestTransaction statementRequest;
+  private statementRequest: BankStatementRequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.banking;
   }
 
@@ -42,9 +43,8 @@ public class BankingRequestMessageSet extends RequestMessageSet {
    *
    * @return The statement request.
    */
-  @ChildAggregate( order = 0 )
-  public BankStatementRequestTransaction getStatementRequest() {
-    return statementRequest;
+  public getStatementRequest(): BankStatementRequestTransaction {
+    return this.statementRequest;
   }
 
   /**
@@ -52,16 +52,21 @@ public class BankingRequestMessageSet extends RequestMessageSet {
    *
    * @param statementRequest The statement request.
    */
-  public void setStatementRequest(BankStatementRequestTransaction statementRequest) {
+  public setStatementRequest(statementRequest: BankStatementRequestTransaction): void {
     this.statementRequest = statementRequest;
   }
 
   // Inherited.
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-    if (getStatementRequest() != null) {
-      requestMessages.add(getStatementRequest());
+  public getRequestMessages(): Array<RequestMessage> {
+    var requestMessages: Array<RequestMessage> = [];
+    if (this.getStatementRequest() != null) {
+      requestMessages.push(this.getStatementRequest());
     }
     return requestMessages;
   }
+}
+
+Aggregate_add( BankingRequestMessageSet, "BANKMSGSRQV1" );
+ChildAggregate_add(BankingRequestMessageSet, { order: 0, type: BankStatementRequestTransaction, read: BankingRequestMessageSet.prototype.getStatementRequest, write: BankingRequestMessageSet.prototype.setStatementRequest });
+
 }

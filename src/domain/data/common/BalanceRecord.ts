@@ -13,45 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='Currency'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
-import java.util.Date;
+export enum BalanceRecordType {
+
+  DOLLAR,
+
+  PERCENT,
+
+  NUMBER
+}
+
 
 /**
  * @author Ryan Heaton
  * @see "Section 3.1.3, OFX Spec"
  */
-@Aggregate ( "BAL" )
-public class BalanceRecord {
+export class BalanceRecord {
 
-  public enum Type {
-
-    DOLLAR,
-
-    PERCENT,
-
-    NUMBER
-  }
-
-  private String name;
-  private String description;
-  private Type type;
-  private String value;
-  private Date timestamp;
-  private Currency currency;
+  private name: string;
+  private description: string;
+  private type: BalanceRecordType;
+  private value: string;
+  private timestamp: Date;
+  private currency: Currency;
 
   /**
    * Name of the balance.
    *
    * @return Name of the balance.
    */
-  @Element ( name = "NAME", required = true, order = 0 )
-  public String getName() {
+  public getName(): string {
     return name;
   }
 
@@ -60,7 +61,7 @@ public class BalanceRecord {
    *
    * @param name Name of the balance.
    */
-  public void setName(String name) {
+  public setName(name: string): void {
     this.name = name;
   }
 
@@ -69,9 +70,8 @@ public class BalanceRecord {
    *
    * @return Description of the balance.
    */
-  @Element ( name = "DESC", required = true, order = 10 )
-  public String getDescription() {
-    return description;
+  public getDescription(): string {
+    return this.description;
   }
 
   /**
@@ -79,7 +79,7 @@ public class BalanceRecord {
    *
    * @param description Description of the balance.
    */
-  public void setDescription(String description) {
+  public setDescription(description: string): void {
     this.description = description;
   }
 
@@ -88,9 +88,8 @@ public class BalanceRecord {
    *
    * @return Type of the balance.
    */
-  @Element ( name = "BALTYPE", required = true, order = 20 )
-  public Type getType() {
-    return type;
+  public getType(): BalanceRecordType {
+    return this.type;
   }
 
   /**
@@ -98,7 +97,7 @@ public class BalanceRecord {
    *
    * @param type Type of the balance.
    */
-  public void setType(Type type) {
+  public setType(type: BalanceRecordType): void {
     this.type = type;
   }
 
@@ -107,9 +106,8 @@ public class BalanceRecord {
    *
    * @return The value of the balance.
    */
-  @Element ( name = "VALUE", required = true, order = 30 )
-  public String getValue() {
-    return value;
+  public getValue(): string {
+    return this.value;
   }
 
   /**
@@ -117,7 +115,7 @@ public class BalanceRecord {
    *
    * @param value The value of the balance.
    */
-  public void setValue(String value) {
+  public setValue(value: string): void {
     this.value = value;
   }
 
@@ -126,9 +124,8 @@ public class BalanceRecord {
    *
    * @return Timestamp of the balance.
    */
-  @Element ( name = "DTASOF", order = 40 )
-  public Date getTimestamp() {
-    return timestamp;
+  public getTimestamp(): Date {
+    return this.timestamp;
   }
 
   /**
@@ -136,7 +133,7 @@ public class BalanceRecord {
    *
    * @param timestamp Timestamp of the balance.
    */
-  public void setTimestamp(Date timestamp) {
+  public setTimestamp(timestamp: Date): void {
     this.timestamp = timestamp;
   }
 
@@ -145,9 +142,8 @@ public class BalanceRecord {
    *
    * @return Currency.
    */
-  @ChildAggregate ( order = 50 )
-  public Currency getCurrency() {
-    return currency;
+  public getCurrency(): Currency {
+    return this.currency;
   }
 
   /**
@@ -155,7 +151,17 @@ public class BalanceRecord {
    *
    * @param currency Currency.
    */
-  public void setCurrency(Currency currency) {
+  public setCurrency(currency: Currency): void {
     this.currency = currency;
   }
+}
+
+Aggregate_add( BalanceRecord, "BAL" );
+Element_add(BalanceRecord, { name: "NAME", required: true, order: 0, type: String, read: BalanceRecord.prototype.getName, write: BalanceRecord.prototype.setName });
+Element_add(BalanceRecord, { name: "DESC", required: true, order: 10, type: String, read: BalanceRecord.prototype.getDescription, write: BalanceRecord.prototype.setDescription });
+Element_add(BalanceRecord, { name: "BALTYPE", required: true, order: 20, type: BalanceRecordType, read: BalanceRecord.prototype.getType, write: BalanceRecord.prototype.setType });
+Element_add(BalanceRecord, { name: "VALUE", required: true, order: 30, type: String, read: BalanceRecord.prototype.getValue, write: BalanceRecord.prototype.setValue });
+Element_add(BalanceRecord, { name: "DTASOF", order: 40, type: Date, read: BalanceRecord.prototype.getTimestamp, write: BalanceRecord.prototype.setTimestamp });
+ChildAggregate_add(BalanceRecord, { order: 50, type: Currency, read: BalanceRecord.prototype.getCurrency, write: BalanceRecord.prototype.setCurrency });
+
 }

@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Ryan Heaton
  */
-public interface OFXWriter {
+export interface OFXWriter {
 
   /**
    * Write the specified headers.
    *
    * @param headers The headers to be written.
    */
-  void writeHeaders(Map<String, String> headers) throws IOException;
+  writeHeaders(headers: StringMap) /*throws IOException*/: void;
 
   /**
    * Write the start of a new aggregate.
    *
    * @param aggregateName The aggregate name.
    */
-  void writeStartAggregate(String aggregateName) throws IOException;
+  writeStartAggregate(aggregateName: string) /*throws IOException*/: void;
 
   /**
    * Write an element to the current aggregate.
@@ -44,7 +42,7 @@ public interface OFXWriter {
    * @param name The name of the element.
    * @param value The value of the element.
    */
-  void writeElement(String name, String value) throws IOException;
+  writeElement(name: string, value: string) /*throws IOException*/: void;
 
   /**
    * Write the end of an aggregate.
@@ -52,10 +50,12 @@ public interface OFXWriter {
    * @param aggregateName The aggregate name.
    * @throws IllegalArgumentException If the specified aggregate hasn't been started.
    */
-  void writeEndAggregate(String aggregateName) throws IOException;
+  writeEndAggregate(aggregateName: string) /*throws IOException*/: void;
 
   /**
    * Close this OFX writer.
    */
-  void close() throws IOException;
+  close() /*throws IOException*/: void;
+}
+
 }

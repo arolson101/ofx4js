@@ -13,36 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../investment/accounts/InvestmentAccountInfo'/>
+///<reference path='../banking/BankAccountInfo'/>
+///<reference path='../creditcard/CreditCardAccountInfo'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountInfo;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.domain.data.banking.BankAccountInfo;
-import net.sf.ofx4j.domain.data.creditcard.CreditCardAccountInfo;
+import InvestmentAccountInfo = ofx4js.domain.data.investment.accounts.InvestmentAccountInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import BankAccountInfo = ofx4js.domain.data.banking.BankAccountInfo;
+import CreditCardAccountInfo = ofx4js.domain.data.creditcard.CreditCardAccountInfo;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "ACCTINFO" )
-public class AccountProfile {
+export class AccountProfile {
 
-  private String description;
-  private String phone;
-  private BankAccountInfo bankSpecifics;
-  private CreditCardAccountInfo creditCardSpecifics;
-  private InvestmentAccountInfo investSpecifics;
+  private description: string;
+  private phone: string;
+  private bankSpecifics: BankAccountInfo;
+  private creditCardSpecifics: CreditCardAccountInfo;
+  private investSpecifics: InvestmentAccountInfo;
 
   /**
    * Description of the account.
    *
    * @return The description of the account.
    */
-  @Element ( name = "DESC", order = 0 )
-  public String getDescription() {
-    return description;
+  public getDescription(): string {
+    return this.description;
   }
 
   /**
@@ -50,7 +54,7 @@ public class AccountProfile {
    *
    * @param description The description of the account.
    */
-  public void setDescription(String description) {
+  public setDescription(description: string): void {
     this.description = description;
   }
 
@@ -59,9 +63,8 @@ public class AccountProfile {
    *
    * @return Phone number for the account.
    */
-  @Element ( name = "PHONE", order = 10 )
-  public String getPhone() {
-    return phone;
+  public getPhone(): string {
+    return this.phone;
   }
 
   /**
@@ -69,7 +72,7 @@ public class AccountProfile {
    *
    * @param phone Phone number for the account.
    */
-  public void setPhone(String phone) {
+  public setPhone(phone: string): void {
     this.phone = phone;
   }
 
@@ -78,17 +81,17 @@ public class AccountProfile {
    *
    * @return Account specifics.
    */
-  public net.sf.ofx4j.domain.data.common.AccountInfo getSpecifics() {
-    if (getBankSpecifics() != null && getCreditCardSpecifics() != null) {
-      throw new IllegalStateException("Only one account specifics aggregate can be set at a time.");
+  public getSpecifics(): ofx4js.domain.data.common.AccountInfo {
+    if (this.getBankSpecifics() != null && this.getCreditCardSpecifics() != null) {
+      throw new Error("Only one account specifics aggregate can be set at a time.");
     }
-    else if (getBankSpecifics() != null) {
-      return getBankSpecifics();
-    } else if (getInvestmentSpecifics() != null) {
-      return getInvestmentSpecifics();
+    else if (this.getBankSpecifics() != null) {
+      return this.getBankSpecifics();
+    } else if (this.getInvestmentSpecifics() != null) {
+      return this.getInvestmentSpecifics();
     }
     else {
-      return getCreditCardSpecifics();
+      return this.getCreditCardSpecifics();
     }
   }
 
@@ -97,17 +100,17 @@ public class AccountProfile {
    *
    * @param specifics Account specifics.
    */
-  public void setSpecifics(net.sf.ofx4j.domain.data.common.AccountInfo specifics) {
+  public setSpecifics(specifics: ofx4js.domain.data.common.AccountInfo): void {
     if (specifics instanceof BankAccountInfo) {
-      setBankSpecifics((BankAccountInfo) specifics);
+      this.setBankSpecifics(<BankAccountInfo> specifics);
     }
     else if (specifics instanceof CreditCardAccountInfo) {
-      setCreditCardSpecifics((CreditCardAccountInfo) specifics);
+      this.setCreditCardSpecifics(<CreditCardAccountInfo> specifics);
     } else if (specifics instanceof InvestmentAccountInfo) {
-      setInvestmentSpecifics((InvestmentAccountInfo) specifics);
+      this.setInvestmentSpecifics(<InvestmentAccountInfo> specifics);
     }
     else {
-      throw new IllegalArgumentException("Unknown specifics type: " + specifics);
+      throw new Error("Unknown specifics type: " + specifics);
     }
   }
 
@@ -116,9 +119,8 @@ public class AccountProfile {
    *
    * @return Bank-specific info.
    */
-  @ChildAggregate ( order = 20 )
-  public BankAccountInfo getBankSpecifics() {
-    return bankSpecifics;
+  public getBankSpecifics(): BankAccountInfo {
+    return this.bankSpecifics;
   }
 
   /**
@@ -126,7 +128,7 @@ public class AccountProfile {
    *
    * @param bankSpecifics Bank-specific info.
    */
-  public void setBankSpecifics(BankAccountInfo bankSpecifics) {
+  public setBankSpecifics(bankSpecifics: BankAccountInfo): void {
     this.creditCardSpecifics = null;
     this.investSpecifics = null;
     this.bankSpecifics = bankSpecifics;
@@ -137,9 +139,8 @@ public class AccountProfile {
    *
    * @return Credit-card account info.
    */
-  @ChildAggregate ( order = 30 )
-  public CreditCardAccountInfo getCreditCardSpecifics() {
-    return creditCardSpecifics;
+  public getCreditCardSpecifics(): CreditCardAccountInfo {
+    return this.creditCardSpecifics;
   }
 
   /**
@@ -147,7 +148,7 @@ public class AccountProfile {
    *
    * @param creditCardSpecifics Credit-card account info.
    */
-  public void setCreditCardSpecifics(CreditCardAccountInfo creditCardSpecifics) {
+  public setCreditCardSpecifics(creditCardSpecifics: CreditCardAccountInfo): void {
     this.bankSpecifics = null;
     this.investSpecifics = null;
     this.creditCardSpecifics = creditCardSpecifics;
@@ -158,9 +159,8 @@ public class AccountProfile {
    *
    * @return Investment account info.
    */
-  @ChildAggregate ( order = 40 )
-  public InvestmentAccountInfo getInvestmentSpecifics() {
-    return investSpecifics;
+  public getInvestmentSpecifics(): InvestmentAccountInfo {
+    return this.investSpecifics;
   }
 
   /**
@@ -168,9 +168,18 @@ public class AccountProfile {
    *
    * @param investSpecifics Investment account info.
    */
-  public void setInvestmentSpecifics(InvestmentAccountInfo investSpecifics) {
+  public setInvestmentSpecifics(investSpecifics: InvestmentAccountInfo): void {
     this.bankSpecifics = null;
     this.creditCardSpecifics = null;
     this.investSpecifics = investSpecifics;
   }
+}
+
+Aggregate_add( AccountProfile, "ACCTINFO" );
+Element_add(AccountProfile, { name: "DESC", order: 0, type: String, read: AccountProfile.prototype.getDescription, write: AccountProfile.prototype.setDescription });
+Element_add(AccountProfile, { name: "PHONE", order: 10, type: String, read: AccountProfile.prototype.getPhone, write: AccountProfile.prototype.setPhone });
+ChildAggregate_add(AccountProfile, { order: 20, type: BankAccountInfo, read: AccountProfile.prototype.getBankSpecifics, write: AccountProfile.prototype.setBankSpecifics });
+ChildAggregate_add(AccountProfile, { order: 30, type: CreditCardAccountInfo, read: AccountProfile.prototype.getCreditCardSpecifics, write: AccountProfile.prototype.setCreditCardSpecifics });
+ChildAggregate_add(AccountProfile, { order: 40, type: InvestmentAccountInfo, read: AccountProfile.prototype.getInvestmentSpecifics, write: AccountProfile.prototype.setInvestmentSpecifics });
+
 }

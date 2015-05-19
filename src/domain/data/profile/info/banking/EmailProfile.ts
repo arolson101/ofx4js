@@ -13,40 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.profile.info.banking;
+module ofx4js.domain.data.profile.info.banking {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Email Profile
  * @author Scott Priddy
  * @see "Section 11.13.2.3 OFX Spec"
  */
-@Aggregate( "EMAILPROF")
-public class EmailProfile {
+export class EmailProfile {
 
-  private Boolean canEmail;
-  private Boolean canNotify;
+  private canEmail: boolean;
+  private canNotify: boolean;
 
-  @Element( name = "CANEMAIL", required = true, order = 10 )
-  public Boolean getCanEmail() {
-    return canEmail;
+  public getCanEmail(): boolean {
+    return this.canEmail;
   }
 
-  public void setCanEmail(Boolean canEmail) {
+  public setCanEmail(canEmail: boolean): void {
     this.canEmail = canEmail;
   }
 
-  @Element( name = "CANNOTIFY", required = true, order = 20 )
-  public Boolean getCanNotify() {
-    return canNotify;
+  public getCanNotify(): boolean {
+    return this.canNotify;
   }
 
-  public void setCanNotify(Boolean canNotify) {
+  public setCanNotify(canNotify: boolean): void {
     this.canNotify = canNotify;
   }
+}
 
+Aggregate_add( EmailProfile, "EMAILPROF");
+Element_add(EmailProfile, { name: "CANEMAIL", required: true, order: 10, type: Boolean, read: EmailProfile.prototype.getCanEmail, write: EmailProfile.prototype.setCanEmail });
+Element_add(EmailProfile, { name: "CANNOTIFY", required: true, order: 20, type: Boolean, read: EmailProfile.prototype.getCanNotify, write: EmailProfile.prototype.setCanNotify });
 
 }

@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.profile.VersionSpecificMessageSetInfo;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @see "Section 13.7.2.1, OFX Spec"
@@ -27,21 +30,24 @@ import net.sf.ofx4j.meta.Element;
  * @author Jon Perlow
  * @author Ryan Heaton
  */
-@Aggregate ( "SECLISTMSGSETV1" )
-public class SecurityListV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+export class SecurityListV1MessageSetInfo extends VersionSpecificMessageSetInfo {
 
-  private Boolean supportsSecurityListDownload;
+  private supportsSecurityListDownload: boolean;
 
-  public MessageSetType getMessageSetType() {
+  public getMessageSetType(): MessageSetType {
     return MessageSetType.investment_security;
   }
 
-  @Element( name = "SECLISTRQDNLD", required=true, order = 10)
-  public Boolean getSupportsSecurityListDownload() {
-    return supportsSecurityListDownload;
+  public getSupportsSecurityListDownload(): boolean {
+    return this.supportsSecurityListDownload;
   }
 
-  public void setSupportsSecurityListDownload(Boolean supportsSecurityListDownload) {
+  public setSupportsSecurityListDownload(supportsSecurityListDownload: boolean): void {
     this.supportsSecurityListDownload = supportsSecurityListDownload;
   }
+}
+
+Aggregate_add( SecurityListV1MessageSetInfo, "SECLISTMSGSETV1" );
+Element_add(SecurityListV1MessageSetInfo, { name: "SECLISTRQDNLD", required:true, order: 10, type: Boolean, read: SecurityListV1MessageSetInfo.prototype.getSupportsSecurityListDownload, write: SecurityListV1MessageSetInfo.prototype.setSupportsSecurityListDownload });
+
 }

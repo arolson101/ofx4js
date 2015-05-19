@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for journal fund transactions between sub-accounts within the same investment
@@ -27,14 +33,13 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "JRNLFUND" )
-public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
+export class JournalFundTransaction extends BaseOtherInvestmentTransaction {
 
-  private String subAccountFrom;
-  private String subAccountTo;
-  private Double total;
+  private subAccountFrom: string;
+  private subAccountTo: string;
+  private total: number;
 
-  public JournalFundTransaction() {
+  constructor() {
     super(TransactionType.JOURNAL_FUND);
   }
 
@@ -44,9 +49,8 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTFROM", order = 20)
-  public String getFromSubAccountFund() {
-    return subAccountFrom;
+  public getFromSubAccountFund(): string {
+    return this.subAccountFrom;
   }
 
   /**
@@ -55,7 +59,7 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param subAccountFrom the sub account type
    */
-  public void setFromSubAccountFund(String subAccountFrom) {
+  public setFromSubAccountFund(subAccountFrom: string): void {
     this.subAccountFrom = subAccountFrom;
   }
 
@@ -64,8 +68,8 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getFromSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getFromSubAccountFund());
+  public getFromSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getFromSubAccountFund());
   }
 
   /**
@@ -74,9 +78,8 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the sub account fund
    */
-  @Element( name = "SUBACCTTO", order = 30)
-  public String getToSubAccountFund() {
-    return subAccountTo;
+  public getToSubAccountFund(): string {
+    return this.subAccountTo;
   }
 
   /**
@@ -85,7 +88,7 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param subAccountTo the sub account fund
    */
-  public void setToSubAccountFund(String subAccountTo) {
+  public setToSubAccountFund(subAccountTo: string): void {
     this.subAccountTo = subAccountTo;
   }
 
@@ -94,8 +97,8 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getToSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getToSubAccountFund());
+  public getToSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getToSubAccountFund());
   }
 
   /**
@@ -104,9 +107,8 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the total
    */
-  @Element( name = "TOTAL", order = 40)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -115,7 +117,14 @@ public class JournalFundTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
+}
+
+Aggregate_add( JournalFundTransaction, "JRNLFUND" );
+Element_add(JournalFundTransaction, { name: "SUBACCTFROM", order: 20, type: String, read: JournalFundTransaction.prototype.getFromSubAccountFund, write: JournalFundTransaction.prototype.setFromSubAccountFund });
+Element_add(JournalFundTransaction, { name: "SUBACCTTO", order: 30, type: String, read: JournalFundTransaction.prototype.getToSubAccountFund, write: JournalFundTransaction.prototype.setToSubAccountFund });
+Element_add(JournalFundTransaction, { name: "TOTAL", order: 40, type: Number, read: JournalFundTransaction.prototype.getTotal, write: JournalFundTransaction.prototype.setTotal });
+
 }

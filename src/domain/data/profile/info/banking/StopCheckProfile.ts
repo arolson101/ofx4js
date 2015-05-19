@@ -13,40 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
+///<reference path='../../../common/ProcessorDayOff'/>
 
-package net.sf.ofx4j.domain.data.profile.info.banking;
+module ofx4js.domain.data.profile.info.banking {
 
-import net.sf.ofx4j.domain.data.common.ProcessorDayOff;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.List;
+import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Stop Check Profile
  * @author Scott Priddy
  * @see "Section 11.13.2.3 OFX Spec"
  */
-@Aggregate( "STPCHKPROF" )
-public class StopCheckProfile {
+export class StopCheckProfile {
 
-  private List<ProcessorDayOff> processorDaysOff;
-  private String processEndTime;
-  private Boolean canUseRange;
-  private Boolean canUseDescription;
-  private Double stopCheckFee;
+  private processorDaysOff: Array<ProcessorDayOff>;
+  private processEndTime: string;
+  private canUseRange: boolean;
+  private canUseDescription: boolean;
+  private stopCheckFee: number;
 
   /**
    * Days of week that no processing occurs: MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
    * FRIDAY, SATURDAY, or SUNDAY. 0 or more <PROCDAYSOFF> can be sent.
    * @return List of days during the week that no processing occurs.
    */
-  @Element( name = "PROCDAYSOFF", order = 0 )
-  public List<ProcessorDayOff> getProcessorDaysOff() {
-    return processorDaysOff;
+  public getProcessorDaysOff(): Array<ProcessorDayOff> {
+    return this.processorDaysOff;
   }
 
-  public void setProcessorDaysOff(List<ProcessorDayOff> processorDaysOff) {
+  public setProcessorDaysOff(processorDaysOff: Array<ProcessorDayOff>): void {
     this.processorDaysOff = processorDaysOff;
   }
 
@@ -58,9 +57,8 @@ public class StopCheckProfile {
    * @see "Section 3.2.8.3 OFX Spec"
    * @return Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
    */
-  @Element( name = "PROCENDTM", required = true, order = 10 )
-  public String getProcessEndTime() {
-    return processEndTime;
+  public getProcessEndTime(): string {
+    return this.processEndTime;
   }
 
   /**
@@ -72,34 +70,40 @@ public class StopCheckProfile {
    * @see "Section 3.2.8.3 OFX Spec"
    * @param processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
    */
-  public void setProcessEndTime(String processEndTime) {
+  public setProcessEndTime(processEndTime: string): void {
     this.processEndTime = processEndTime;
   }
 
-  @Element( name = "CANUSERANGE", required = true, order = 20 )
-  public Boolean getCanUseRange() {
-    return canUseRange;
+  public getCanUseRange(): boolean {
+    return this.canUseRange;
   }
 
-  public void setCanUseRange(Boolean canUseRange) {
+  public setCanUseRange(canUseRange: boolean): void {
     this.canUseRange = canUseRange;
   }
 
-  @Element( name = "CANUSEDESC", required = true, order = 30 )
-  public Boolean getCanUseDescription() {
-    return canUseDescription;
+  public getCanUseDescription(): boolean {
+    return this.canUseDescription;
   }
 
-  public void setCanUseDescription(Boolean canUseDescription) {
+  public setCanUseDescription(canUseDescription: boolean): void {
     this.canUseDescription = canUseDescription;
   }
 
-  @Element( name = "STPCHKFEE", required = true, order = 40 )
-  public Double getStopCheckFee() {
-    return stopCheckFee;
+  public getStopCheckFee(): number {
+    return this.stopCheckFee;
   }
 
-  public void setStopCheckFee(Double stopCheckFee) {
+  public setStopCheckFee(stopCheckFee: number): void {
     this.stopCheckFee = stopCheckFee;
   }
+}
+
+Aggregate_add( StopCheckProfile, "STPCHKPROF" );
+Element_add(StopCheckProfile, { name: "PROCDAYSOFF", order: 0, type: Array, collectionEntryType: ProcessorDayOff, read: StopCheckProfile.prototype.getProcessorDaysOff, write: StopCheckProfile.prototype.setProcessorDaysOff });
+Element_add(StopCheckProfile, { name: "PROCENDTM", required: true, order: 10, type: String, read: StopCheckProfile.prototype.getProcessEndTime, write: StopCheckProfile.prototype.setProcessEndTime });
+Element_add(StopCheckProfile, { name: "CANUSERANGE", required: true, order: 20, type: Boolean, read: StopCheckProfile.prototype.getCanUseRange, write: StopCheckProfile.prototype.setCanUseRange });
+Element_add(StopCheckProfile, { name: "CANUSEDESC", required: true, order: 30, type: Boolean, read: StopCheckProfile.prototype.getCanUseDescription, write: StopCheckProfile.prototype.setCanUseDescription });
+Element_add(StopCheckProfile, { name: "STPCHKFEE", required: true, order: 40, type: Number, read: StopCheckProfile.prototype.getStopCheckFee, write: StopCheckProfile.prototype.setStopCheckFee });
+
 }

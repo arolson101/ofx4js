@@ -13,68 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../v1/OFXV1Writer'/>
 
-package net.sf.ofx4j.io.v2;
+module ofx4js.io.v2 {
 
-import net.sf.ofx4j.io.v1.OFXV1Writer;
+import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
 
-import java.io.*;
-import java.util.Map;
+//import Map = java.util.Map;
 
 /**
  * OFX writer to XML, suitable for OFX version 2.0.
  *
  * @author Ryan Heaton
  */
-public class OFXV2Writer extends OFXV1Writer {
+export class OFXV2Writer extends OFXV1Writer {
 
-  public OFXV2Writer(OutputStream out) {
+  constructor(out: OutputBuffer | StreamWriter) {
     super(out);
   }
 
-  public OFXV2Writer(Writer writer) {
-    super(writer);
+  //@Override
+  protected newWriter(out: OutputBuffer) /*throws UnsupportedEncodingException*/: StreamWriter {
+    return new StreamWriter(out, "UTF-8");
   }
 
-  @Override
-  protected OutputStreamWriter newWriter(OutputStream out) throws UnsupportedEncodingException {
-    return new OutputStreamWriter(out, "UTF-8");
-  }
-
-  public void writeHeaders(Map<String, String> headers) throws IOException {
-    if (headersWritten) {
-      throw new IllegalStateException("Headers have already been written!");
+  public writeHeaders(headers: StringMap) /*throws IOException*/: void {
+    if (this.headersWritten) {
+      throw new Error("Headers have already been written!");
     }
 
     //write out the XML PI
-    print("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-    String security = headers.get("SECURITY");
+    this.print("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+    var security: string = headers["SECURITY"];
     if (security == null) {
       security = "NONE";
     }
-    String olduid = headers.get("OLDFILEUID");
+    var olduid: string = headers["OLDFILEUID"];
     if (olduid == null) {
       olduid = "NONE";
     }
     // println(olduid);
-    String uid = headers.get("NEWFILEUID");
+    var uid: string = headers["NEWFILEUID"];
     if (uid == null) {
       uid = "NONE";
     }
 
-    print(String.format("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"%s\" OLDFILEUID=\"%s\" NEWFILEUID=\"%s\"?>", security, olduid, uid));
+    this.print("<?OFX OFXHEADER=\"200\" VERSION=\"202\" SECURITY=\"" + security + "\" OLDFILEUID=\"" + olduid + "\" NEWFILEUID=\"" + uid + "\"?>");
     this.headersWritten = true;
   }
 
-  public void writeElement(String name, String value) throws IOException {
+  public writeElement(name: string, value: string): void {
     super.writeElement(name, value);
-    print("</");
-    print(name);
-    print('>');
+    this.print("</");
+    this.print(name);
+    this.print('>');
   }
 
-  @Override
-  public boolean isWriteAttributesOnNewLine() {
+  //@Override
+  public isWriteAttributesOnNewLine(): boolean {
     return false;
   }
+}
+
 }

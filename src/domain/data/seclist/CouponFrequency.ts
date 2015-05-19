@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * Coupon freqency for debt.
@@ -22,26 +22,28 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum CouponFrequency {
+export enum CouponFrequency {
   MONTHLY,
   QUARTERLY,
   SEMIANNUAL,
   ANNUAL,
-  OTHER;
+  OTHER
+}
 
-  public static CouponFrequency fromOfx(String ofxVal) {
-    if ("MONTHLY".equals(ofxVal)) {
-      return MONTHLY;
-    } else if ("QUARTERLY".equals(ofxVal)) {
-      return QUARTERLY;
-    } else if ("SEMIANNUAL".equals(ofxVal)) {
-      return SEMIANNUAL;
-    } else if ("ANNUAL".equals(ofxVal)) {
-      return ANNUAL;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function CouponFrequency_fromOfx(ofxVal: string): CouponFrequency {
+  if ("MONTHLY" === ofxVal) {
+    return CouponFrequency.MONTHLY;
+  } else if ("QUARTERLY" === ofxVal) {
+    return CouponFrequency.QUARTERLY;
+  } else if ("SEMIANNUAL" === ofxVal) {
+    return CouponFrequency.SEMIANNUAL;
+  } else if ("ANNUAL" === ofxVal) {
+    return CouponFrequency.ANNUAL;
+  } else if ("OTHER" === ofxVal) {
+    return CouponFrequency.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

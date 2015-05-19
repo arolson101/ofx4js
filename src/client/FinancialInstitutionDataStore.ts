@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='FinancialInstitutionData'/>
 
-package net.sf.ofx4j.client;
-
-import java.util.List;
+module ofx4js.client {
 
 /**
  * @author Ryan Heaton
  */
-public interface FinancialInstitutionDataStore {
+export interface FinancialInstitutionDataStore {
 
   /**
    * Get the data for the financial institution of the specified id.
@@ -29,12 +28,14 @@ public interface FinancialInstitutionDataStore {
    * @param fid The id of the financial institution.
    * @return The financial institution data, or null if none exists for the specified id.
    */
-  FinancialInstitutionData getInstitutionData(String fid);
+  getInstitutionData(fid: string): FinancialInstitutionData;
 
   /**
    * Get the whole list of financial institution data.
    *
    * @return The whole list of financial institution data.
    */
-  List<FinancialInstitutionData> getInstitutionDataList();
+  getInstitutionDataList(): Array<FinancialInstitutionData>;
+}
+
 }

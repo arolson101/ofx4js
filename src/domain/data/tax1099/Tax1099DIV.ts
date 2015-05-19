@@ -13,65 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='PayerAddress'/>
+///<reference path='RecAddress'/>
 
-import net.sf.ofx4j.domain.data.tax1099.PayerAddress;
-import net.sf.ofx4j.domain.data.tax1099.RecAddress;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.tax1099 {
 
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-
-
-@Aggregate ( "TAX1099DIV_V100")
-public class Tax1099DIV  {
+export class Tax1099DIV  {
 
   
-	private String srvrtId;
-	private String taxYear;
-	private String ordDiv;
-	private String qualifiedDiv;
-	private String totCapGain;
-	private String p28Gain;
-	private String unrecSec1250;
-	private String sec1202;
-	private String nonTaxDist;
-	private String fedTaxWh;
-	private String investExp;
-	private String forTaxPd;
-	private String cashLiq;
-	private String nonCashLiq;
+	private srvrtId: string;
+	private taxYear: string;
+	private ordDiv: string;
+	private qualifiedDiv: string;
+	private totCapGain: string;
+	private p28Gain: string;
+	private unrecSec1250: string;
+	private sec1202: string;
+	private nonTaxDist: string;
+	private fedTaxWh: string;
+	private investExp: string;
+	private forTaxPd: string;
+	private cashLiq: string;
+	private nonCashLiq: string;
 	
-	private PayerAddress payerAddress;
-	private String payerId;
-	private RecAddress recAddress;
-	private String recId;
-	private String recAcct;
+	private payerAddress: PayerAddress;
+	private payerId: string;
+	private recAddress: RecAddress;
+	private recId: string;
+	private recAcct: string;
 	
 	 
-	  @Element ( name = "SRVRTID",required = false , order = 0 )
-	  public String getSrvrtId() {
-	    return srvrtId;
+	  public getSrvrtId(): string {
+	    return this.srvrtId;
 	  }
 
 	  
-	  public void setSrvrtId(String srvrtId) {
+      public setSrvrtId(srvrtId: string): void {
 	    this.srvrtId = srvrtId;
 	  }
 
 	 
-	  @Element ( name = "TAXYEAR", required = false, order = 1 )
-	  public String getTaxYear() {
-	    return taxYear;
+      public getTaxYear(): string {
+	    return this.taxYear;
 	  }
 
 	 
-	  public void setTaxYear(String taxYear) {
+	  public setTaxYear(taxYear: string): void {
 	    this.taxYear = taxYear;
 	  }
 
@@ -79,16 +78,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the ordDiv
 	 */
-	 @Element ( name = "ORDDIV", required = false, order = 2 )
-	public String getOrdDiv() {
-		return ordDiv;
+	public getOrdDiv(): string {
+		return this.ordDiv;
 	}
 
 
 	/**
 	 * @param ordDiv the ordDiv to set
 	 */
-	public void setOrdDiv(String ordDiv) {
+	public setOrdDiv(ordDiv: string): void {
 		this.ordDiv = ordDiv;
 	}
 
@@ -96,16 +94,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the qualifiedDiv
 	 */
-	@Element ( name = "QUALIFIEDDIV", required = false, order = 3 )
-	public String getQualifiedDiv() {
-		return qualifiedDiv;
+	public getQualifiedDiv(): string {
+		return this.qualifiedDiv;
 	}
 
 
 	/**
 	 * @param qualifiedDiv the qualifiedDiv to set
 	 */
-	public void setQualifiedDiv(String qualifiedDiv) {
+	public setQualifiedDiv(qualifiedDiv: string): void {
 		this.qualifiedDiv = qualifiedDiv;
 	}
 
@@ -113,16 +110,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the totCapGain
 	 */
-	@Element ( name = "TOTCAPGAIN", required = false, order = 4 )
-	public String getTotCapGain() {
-		return totCapGain;
+	public getTotCapGain(): string {
+		return this.totCapGain;
 	}
 
 
 	/**
 	 * @param totCapGain the totCapGain to set
 	 */
-	public void setTotCapGain(String totCapGain) {
+	public setTotCapGain(totCapGain: string): void {
 		this.totCapGain = totCapGain;
 	}
 
@@ -130,16 +126,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the p28Gain
 	 */
-	@Element ( name = "P28GAIN", required = false, order = 5 )
-	public String getP28Gain() {
-		return p28Gain;
+	public getP28Gain(): string {
+		return this.p28Gain;
 	}
 
 
 	/**
 	 * @param p28Gain the p28Gain to set
 	 */
-	public void setP28Gain(String p28Gain) {
+	public setP28Gain(p28Gain: string): void {
 		this.p28Gain = p28Gain;
 	}
 
@@ -147,16 +142,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the unrecSec1250
 	 */
-	@Element ( name = "UNRECSEC1250", required = false, order = 6 )
-	public String getUnrecSec1250() {
-		return unrecSec1250;
+	public getUnrecSec1250(): string {
+		return this.unrecSec1250;
 	}
 
 
 	/**
 	 * @param unrecSec1250 the unrecSec1250 to set
 	 */
-	public void setUnrecSec1250(String unrecSec1250) {
+	public setUnrecSec1250(unrecSec1250: string): void {
 		this.unrecSec1250 = unrecSec1250;
 	}
 
@@ -164,16 +158,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the sec1202
 	 */
-	@Element ( name = "SEC1202", required = false, order = 7 )
-	public String getSec1202() {
-		return sec1202;
+	public getSec1202(): string {
+		return this.sec1202;
 	}
 
 
 	/**
 	 * @param sec1202 the sec1202 to set
 	 */
-	public void setSec1202(String sec1202) {
+	public setSec1202(sec1202: string): void {
 		this.sec1202 = sec1202;
 	}
 
@@ -181,16 +174,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the nonTaxDist
 	 */
-	@Element ( name = "NONTAXDIST", required = false, order = 8 )
-	public String getNonTaxDist() {
-		return nonTaxDist;
+	public getNonTaxDist(): string {
+		return this.nonTaxDist;
 	}
 
 
 	/**
 	 * @param nonTaxDist the nonTaxDist to set
 	 */
-	public void setNonTaxDist(String nonTaxDist) {
+	public setNonTaxDist(nonTaxDist: string): void {
 		this.nonTaxDist = nonTaxDist;
 	}
 
@@ -198,16 +190,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the fedTaxWh
 	 */
-	@Element ( name = "FEDTAXWH", required = false, order = 9 )
-	public String getFedTaxWh() {
-		return fedTaxWh;
+	public getFedTaxWh(): string {
+		return this.fedTaxWh;
 	}
 
 
 	/**
 	 * @param fedTaxWh the fedTaxWh to set
 	 */
-	public void setFedTaxWh(String fedTaxWh) {
+	public setFedTaxWh(fedTaxWh: string): void {
 		this.fedTaxWh = fedTaxWh;
 	}
 
@@ -215,16 +206,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the investExp
 	 */
-	@Element ( name = "INVESTEXP", required = false, order = 10 )
-	public String getInvestExp() {
-		return investExp;
+	public getInvestExp(): string {
+		return this.investExp;
 	}
 
 
 	/**
 	 * @param investExp the investExp to set
 	 */
-	public void setInvestExp(String investExp) {
+	public setInvestExp(investExp: string): void {
 		this.investExp = investExp;
 	}
 
@@ -232,16 +222,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the forTaxPd
 	 */
-	@Element ( name = "FORTAXPD", required = false, order = 11 )
-	public String getForTaxPd() {
-		return forTaxPd;
+	public getForTaxPd(): string {
+		return this.forTaxPd;
 	}
 
 
 	/**
 	 * @param forTaxPd the forTaxPd to set
 	 */
-	public void setForTaxPd(String forTaxPd) {
+	public setForTaxPd(forTaxPd: string): void {
 		this.forTaxPd = forTaxPd;
 	}
 
@@ -249,16 +238,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the cashLiq
 	 */
-	@Element ( name = "CASHLIQ", required = false, order = 12 )
-	public String getCashLiq() {
-		return cashLiq;
+	public getCashLiq(): string {
+		return this.cashLiq;
 	}
 
 
 	/**
 	 * @param cashLiq the cashLiq to set
 	 */
-	public void setCashLiq(String cashLiq) {
+	public setCashLiq(cashLiq: string): void {
 		this.cashLiq = cashLiq;
 	}
 
@@ -266,16 +254,15 @@ public class Tax1099DIV  {
 	/**
 	 * @return the nonCashLiq
 	 */
-	@Element ( name = "NONCASHLIQ", required = false, order = 13 )
-	public String getNonCashLiq() {
-		return nonCashLiq;
+	public getNonCashLiq(): string {
+		return this.nonCashLiq;
 	}
 
 
 	/**
 	 * @param nonCashLiq the nonCashLiq to set
 	 */
-	public void setNonCashLiq(String nonCashLiq) {
+	public setNonCashLiq(nonCashLiq: string): void {
 		this.nonCashLiq = nonCashLiq;
 	}
 
@@ -283,32 +270,30 @@ public class Tax1099DIV  {
 	/**
 	 * @return the payerAddress
 	 */
-	@ChildAggregate(required=true, order = 14)
-	public PayerAddress getPayerAddress() {
-		return payerAddress;
+	public getPayerAddress(): PayerAddress {
+		return this.payerAddress;
 	}
 
 
 	/**
 	 * @param payerAddress the payerAddress to set
 	 */
-	public void setPayerAddress(PayerAddress payerAddress) {
+	public setPayerAddress(payerAddress: PayerAddress): void {
 		this.payerAddress = payerAddress;
 	}
 	
 	/**
 	 * @return the payerId
 	 */
-	@Element ( name = "PAYERID", required = true, order = 15 )
-	public String getPayerId() {
-		return payerId;
+	public getPayerId(): string {
+		return this.payerId;
 	}
 
 
 	/**
 	 * @param payerId the payerId to set
 	 */
-	public void setPayerId(String payerId) {
+	public setPayerId(payerId: string): void {
 		this.payerId = payerId;
 	}
 	
@@ -316,32 +301,30 @@ public class Tax1099DIV  {
 	/**
 	 * @return the recAddress
 	 */
-	@ChildAggregate(required=true, order = 16)
-	public RecAddress getRecAddress() {
-		return recAddress;
+	public getRecAddress(): RecAddress {
+		return this.recAddress;
 	}
 
 
 	/**
 	 * @param recAddress the recAddress to set
 	 */
-	public void setRecAddress(RecAddress recAddress) {
+	public setRecAddress(recAddress: RecAddress): void {
 		this.recAddress = recAddress;
 	}
 
 	/**
 	 * @return the recId
 	 */
-	@Element ( name = "RECID", required = true, order = 17 )
-	public String getRecId() {
-		return recId;
+	public getRecId(): string {
+		return this.recId;
 	}
 
 
 	/**
 	 * @param recId the recId to set
 	 */
-	public void setRecId(String recId) {
+	public setRecId(recId: string): void {
 		this.recId = recId;
 	}
 
@@ -349,19 +332,38 @@ public class Tax1099DIV  {
 	/**
 	 * @return the recAcct
 	 */
-	@Element ( name = "RECACCT", required = true, order = 18 )
-	public String getRecAcct() {
-		return recAcct;
+	public getRecAcct(): string {
+		return this.recAcct;
 	}
 
 
 	/**
 	 * @param recAcct the recAcct to set
 	 */
-	public void setRecAcct(String recAcct) {
+	public setRecAcct(recAcct: string): void {
 		this.recAcct = recAcct;
 	}
-	
-	
-	  
+}
+
+Aggregate_add(Tax1099DIV, "TAX1099DIV_V100");
+Element_add(Tax1099DIV, { name: "SRVRTID",required: false , order: 0, type: String, read: Tax1099DIV.prototype.getSrvrtId, write: Tax1099DIV.prototype.setSrvrtId });
+Element_add(Tax1099DIV, { name: "TAXYEAR", required: false, order: 1, type: String, read: Tax1099DIV.prototype.getTaxYear, write: Tax1099DIV.prototype.setTaxYear });
+Element_add(Tax1099DIV, { name: "ORDDIV", required: false, order: 2, type: String, read: Tax1099DIV.prototype.getOrdDiv, write: Tax1099DIV.prototype.setOrdDiv });
+Element_add(Tax1099DIV, { name: "QUALIFIEDDIV", required: false, order: 3, type: String, read: Tax1099DIV.prototype.getQualifiedDiv, write: Tax1099DIV.prototype.setQualifiedDiv });
+Element_add(Tax1099DIV, { name: "TOTCAPGAIN", required: false, order: 4, type: String, read: Tax1099DIV.prototype.getTotCapGain, write: Tax1099DIV.prototype.setTotCapGain });
+Element_add(Tax1099DIV, { name: "P28GAIN", required: false, order: 5, type: String, read: Tax1099DIV.prototype.getP28Gain, write: Tax1099DIV.prototype.setP28Gain });
+Element_add(Tax1099DIV, { name: "UNRECSEC1250", required: false, order: 6, type: String, read: Tax1099DIV.prototype.getUnrecSec1250, write: Tax1099DIV.prototype.setUnrecSec1250 });
+Element_add(Tax1099DIV, { name: "SEC1202", required: false, order: 7, type: String, read: Tax1099DIV.prototype.getSec1202, write: Tax1099DIV.prototype.setSec1202 });
+Element_add(Tax1099DIV, { name: "NONTAXDIST", required: false, order: 8, type: String, read: Tax1099DIV.prototype.getNonTaxDist, write: Tax1099DIV.prototype.setNonTaxDist });
+Element_add(Tax1099DIV, { name: "FEDTAXWH", required: false, order: 9, type: String, read: Tax1099DIV.prototype.getFedTaxWh, write: Tax1099DIV.prototype.setFedTaxWh });
+Element_add(Tax1099DIV, { name: "INVESTEXP", required: false, order: 10, type: String, read: Tax1099DIV.prototype.getInvestExp, write: Tax1099DIV.prototype.setInvestExp });
+Element_add(Tax1099DIV, { name: "FORTAXPD", required: false, order: 11, type: String, read: Tax1099DIV.prototype.getForTaxPd, write: Tax1099DIV.prototype.setForTaxPd });
+Element_add(Tax1099DIV, { name: "CASHLIQ", required: false, order: 12, type: String, read: Tax1099DIV.prototype.getCashLiq, write: Tax1099DIV.prototype.setCashLiq });
+Element_add(Tax1099DIV, { name: "NONCASHLIQ", required: false, order: 13, type: String, read: Tax1099DIV.prototype.getNonCashLiq, write: Tax1099DIV.prototype.setNonCashLiq });
+ChildAggregate_add(Tax1099DIV, { required:true, order: 14, type: PayerAddress, read: Tax1099DIV.prototype.getPayerAddress, write: Tax1099DIV.prototype.setPayerAddress });
+Element_add(Tax1099DIV, { name: "PAYERID", required: true, order: 15, type: String, read: Tax1099DIV.prototype.getPayerId, write: Tax1099DIV.prototype.setPayerId });
+ChildAggregate_add(Tax1099DIV, { required:true, order: 16, type: RecAddress, read: Tax1099DIV.prototype.getRecAddress, write: Tax1099DIV.prototype.setRecAddress });
+Element_add(Tax1099DIV, { name: "RECID", required: true, order: 17, type: String, read: Tax1099DIV.prototype.getRecId, write: Tax1099DIV.prototype.setRecId });
+Element_add(Tax1099DIV, { name: "RECACCT", required: true, order: 18, type: String, read: Tax1099DIV.prototype.getRecAcct, write: Tax1099DIV.prototype.setRecAcct });
+
 }

@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetProfile'/>
+///<reference path='../MessageSetType'/>
+///<reference path='CoreMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.domain.data.MessageSetProfile;
-import net.sf.ofx4j.domain.data.ApplicationSecurity;
-import net.sf.ofx4j.domain.data.MessageSetType;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
+import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
 
 /**
  * Information specific to a version of a message set.
@@ -27,18 +31,17 @@ import net.sf.ofx4j.domain.data.MessageSetType;
  * @author Ryan Heaton
  * @see "Section 7.2.1, OFX Spec"
  */
-public abstract class VersionSpecificMessageSetInfo implements MessageSetProfile {
+export /*abstract*/ class VersionSpecificMessageSetInfo implements MessageSetProfile {
 
-  private CoreMessageSetInfo core;
+  private core: CoreMessageSetInfo;
 
   /**
    * The information core.
    *
    * @return The information core.
    */
-  @ChildAggregate ( order = 0 )
-  public CoreMessageSetInfo getCore() {
-    return core;
+  public getCore(): CoreMessageSetInfo {
+    return this.core;
   }
 
   /**
@@ -46,7 +49,7 @@ public abstract class VersionSpecificMessageSetInfo implements MessageSetProfile
    *
    * @param core The information core.
    */
-  public void setCore(CoreMessageSetInfo core) {
+  public setCore(core: CoreMessageSetInfo): void {
     this.core = core;
   }
 
@@ -55,41 +58,44 @@ public abstract class VersionSpecificMessageSetInfo implements MessageSetProfile
    *
    * @return The message set type.
    */
-  public abstract MessageSetType getMessageSetType();
+  public /*abstract*/ getMessageSetType(): MessageSetType { throw new Error("abstract"); }
 
-  public String getVersion() {
-    return core != null ? core.getVersion() : null;
+  public getVersion(): string {
+    return this.core != null ? this.core.getVersion() : null;
   }
 
-  public String getServiceProviderName() {
-    return core != null ? core.getServiceProviderName() : null;
+  public getServiceProviderName(): string {
+    return this.core != null ? this.core.getServiceProviderName() : null;
   }
 
-  public String getUrl() {
-    return core != null ? core.getUrl() : null;
+  public getUrl(): string {
+    return this.core != null ? this.core.getUrl() : null;
   }
 
-  public ApplicationSecurity getSecurity() {
-    return core != null ? core.getSecurity() : null;
+  public getSecurity(): ApplicationSecurity {
+    return this.core != null ? this.core.getSecurity() : null;
   }
 
-  public boolean isSslRequired() {
-    return core != null && core.getSslRequired() != null ? core.getSslRequired() : true;
+  public isSslRequired(): boolean {
+    return this.core != null && this.core.getSslRequired() != null ? this.core.getSslRequired() : true;
   }
 
-  public String getRealm() {
-    return core != null ? core.getRealm() : null;
+  public getRealm(): string {
+    return this.core != null ? this.core.getRealm() : null;
   }
 
-  public String getLanguage() {
-    return core != null ? core.getLanguage() : null;
+  public getLanguage(): string {
+    return this.core != null ? this.core.getLanguage() : null;
   }
 
-  public SynchronizationCapability getSyncCapability() {
-    return core != null ? core.getSyncCapability() : null;
+  public getSyncCapability(): SynchronizationCapability {
+    return this.core != null ? this.core.getSyncCapability() : null;
   }
 
-  public boolean hasFileBasedErrorRecoverySupport() {
-    return core != null && core.getFileBasedErrorRecoverySupport() != null ? core.getFileBasedErrorRecoverySupport() : false;
+  public hasFileBasedErrorRecoverySupport(): boolean {
+    return this.core != null && this.core.getFileBasedErrorRecoverySupport() != null ? this.core.getFileBasedErrorRecoverySupport() : false;
   }
+}
+
+ChildAggregate_add(VersionSpecificMessageSetInfo, { order: 0, type: CoreMessageSetInfo, read: VersionSpecificMessageSetInfo.prototype.getCore, write: VersionSpecificMessageSetInfo.prototype.setCore });
 }

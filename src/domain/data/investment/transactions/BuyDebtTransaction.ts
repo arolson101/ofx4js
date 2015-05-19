@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BaseBuyInvestmentTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for buying debt (i.e. bonds, CDs, etc.,).
@@ -26,12 +30,11 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "BUYDEBT" )
-public class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
+export class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
 
-  private Double accruedInterest;
+  private accruedInterest: number;
 
-  public BuyDebtTransaction() {
+  constructor() {
     super(TransactionType.BUY_DEBT);
   }
 
@@ -42,9 +45,8 @@ public class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the amount of accrued interest
    */
-  @Element( name = "ACCRDINT", order = 20)
-  public Double getAccruedInterest() {
-    return accruedInterest;
+  public getAccruedInterest(): number {
+    return this.accruedInterest;
   }
 
   /**
@@ -54,7 +56,12 @@ public class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
    *
    * @param accruedInterest the amount of accrued interest
    */
-  public void setAccruedInterest(Double accruedInterest) {
+  public setAccruedInterest(accruedInterest: number): void {
     this.accruedInterest = accruedInterest;
   }
+}
+
+Aggregate_add( BuyDebtTransaction, "BUYDEBT" );
+Element_add(BuyDebtTransaction, { name: "ACCRDINT", order: 20, type: Number, read: BuyDebtTransaction.prototype.getAccruedInterest, write: BuyDebtTransaction.prototype.setAccruedInterest });
+
 }

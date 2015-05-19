@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../seclist/SecurityId'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
 
 /**
  * Interface for transactions that have a security associated with them.
  *
  * @author Jon Perlow
  */
-public interface TransactionWithSecurity {
+export interface TransactionWithSecurity {
 
   /**
    * Gets the security for the transaction.
    *
    * @return the security id for the transaction
    */
-  SecurityId getSecurityId();
+  getSecurityId(): SecurityId;
+}
+
 }

@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../domain/data/creditcard/CreditCardAccountDetails'/>
+///<reference path='FinancialInstitutionAccount'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.domain.data.creditcard.CreditCardAccountDetails;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
 
 /**
  * @author Ryan Heaton
  */
-public interface CreditCardAccount extends FinancialInstitutionAccount {
+export interface CreditCardAccount extends FinancialInstitutionAccount {
 
   /**
    * The details of the credit card account.
    *
    * @return The details of the credit card account.
    */
-  CreditCardAccountDetails getDetails();
+  getDetails(): CreditCardAccountDetails;
+}
+
 }

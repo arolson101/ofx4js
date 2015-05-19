@@ -13,20 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../project.d.ts'/>
+///<reference path='OFXHandler'/>
+///<reference path='DefaultHandler'/>
+///<reference path='OFXParseException'/>
+///<reference path='OFXV2ContentHandler'/>
+///<reference path='StringReader'/>
+///<reference path='OFXReader'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+var sax: SAXModule = require("sax");
+
+var LOG: Log;
+
+function arraysEqual(a1: Array<string>, a2: Array<string>) {
+  if(a1.length !== a2.length) {
+    return false;
+  }
+  for(var i=0; i<a1.length; i++) {
+    if(a1[i] !== a2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 
 /**
  * Base class for an OFX reader.  Parses the headers and determines whether we're parsing an
@@ -34,19 +49,21 @@ import java.util.regex.Pattern;
  *
  * @author Ryan Heaton
  */
-public abstract class BaseOFXReader implements OFXReader {
-
-  private static final Log LOG = LogFactory.getLog(BaseOFXReader.class);
-  public static final Pattern OFX_2_PROCESSING_INSTRUCTION_PATTERN = Pattern.compile("<\\?OFX ([^\\?]+)\\?>");
-  private OFXHandler contentHandler = new DefaultHandler();
+export /*abstract*/ class BaseOFXReader implements OFXReader {
+  public static OFX_2_PROCESSING_INSTRUCTION_PATTERN: RegExp = /<\\?OFX ([^\\?]+)\\?>/;
+  private contentHandler: OFXHandler;
+  
+  constructor() {
+    this.contentHandler = new DefaultHandler();
+  }
 
   /**
    * The content handler.
    *
    * @return The content handler.
    */
-  public OFXHandler getContentHandler() {
-    return contentHandler;
+  public getContentHandler(): OFXHandler {
+    return this.contentHandler;
   }
 
   /**
@@ -54,18 +71,8 @@ public abstract class BaseOFXReader implements OFXReader {
    *
    * @param handler The content handler.
    */
-  public void setContentHandler(OFXHandler handler) {
+  public setContentHandler(handler: OFXHandler): void {
     this.contentHandler = handler;
-  }
-
-  /**
-   * Parses the stream as UTF-8 encoded data.
-   *
-   * @param stream The stream to parse.
-   */
-  public void parse(InputStream stream) throws IOException, OFXParseException {
-    //todo: what about UTF-16 or other unicode encodings?
-    parse(new InputStreamReader(stream, "utf-8"));
   }
 
   /**
@@ -73,44 +80,41 @@ public abstract class BaseOFXReader implements OFXReader {
    *
    * @param reader The reader.
    */
-  public void parse(Reader reader) throws IOException, OFXParseException {
-    //make sure we're buffering...
-    reader = new BufferedReader(reader);
-
-    StringBuilder header = new StringBuilder();
-    final char[] firstElementStart = getFirstElementStart();
-    final char[] buffer = new char[firstElementStart.length];
-    reader.mark(firstElementStart.length);
-    int ch = reader.read(buffer);
-    while ((ch != -1) && (!Arrays.equals(buffer, firstElementStart))) {
-      if (!contains(buffer, '<')) {
+  public parse(reader: StringReader): void  {
+    var header: string = "";
+    var firstElementStart = this.getFirstElementStart();
+    var buffer: Array<string> = new Array(firstElementStart.length);
+    reader.mark(/*firstElementStart.length*/);
+    var ch: any = reader.read(buffer);
+    while ((ch != -1) && (!arraysEqual(buffer, firstElementStart))) {
+      if (!this.contains(buffer, '<')) {
         //if the buffer contains a '<', then we might already have marked the beginning.
-        reader.mark(firstElementStart.length);
+        reader.mark(/*firstElementStart.length*/);
       }
       ch = reader.read();
-      char shifted = shiftAndAppend(buffer, (char) ch);
-      header.append(shifted);
+      var shifted: string = this.shiftAndAppend(buffer, ch);
+      header += shifted;
     }
 
     if (ch == -1) {
       throw new OFXParseException("Invalid OFX: no root <OFX> element!");
     }
     else {
-      Matcher matcher = OFX_2_PROCESSING_INSTRUCTION_PATTERN.matcher(header);
-      if (matcher.find()) {
+      var matches = BaseOFXReader.OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
+      if (matches) {
         if (LOG.isInfoEnabled()) {
           LOG.info("Processing OFX 2 header...");
         }
 
-        processOFXv2Headers(matcher.group(1));
+        this.processOFXv2Headers(matches[1]);
         reader.reset();
-        parseV2FromFirstElement(reader);
+        this.parseV2FromFirstElement(reader.remainder());
       }
       else {
         LOG.info("Processing OFX 1 headers...");
-        processOFXv1Headers(header.toString());
+        this.processOFXv1Headers(header);
         reader.reset();
-        parseV1FromFirstElement(reader);
+        this.parseV1FromFirstElement(reader.remainder());
       }
     }
   }
@@ -120,8 +124,8 @@ public abstract class BaseOFXReader implements OFXReader {
    *
    * @return The first characters of the OFX element.
    */
-  protected char[] getFirstElementStart() {
-    return new char[]{ '<', 'O', 'F', 'X' };
+  protected getFirstElementStart(): Array<string> {
+    return [ '<', 'O', 'F', 'X' ];
   }
 
   /**
@@ -131,18 +135,19 @@ public abstract class BaseOFXReader implements OFXReader {
    * @param c The character to search for.
    * @return Whether the specified buffer contains the specified character.
    */
-  private boolean contains(char[] buffer, char c) {
-    for (char ch : buffer) {
-      if (ch == c) {
+  private contains(buffer: Array<string>, c: string): boolean {
+    for (var i=0; i<buffer.length; i++) {
+      var ch = buffer[i];
+      if (ch === c) {
         return true;
       }
     }
     return false;
   }
 
-  private char shiftAndAppend(char[] buffer, char c) {
-    char shifted = buffer[0];
-    for (int i = 0; i + 1 < buffer.length; i++) {
+  private shiftAndAppend(buffer: Array<string>, c: string): string {
+    var shifted = buffer[0];
+    for (var i = 0; i + 1 < buffer.length; i++) {
       buffer[i] = buffer[i + 1];
     }
     buffer[buffer.length - 1] = c;
@@ -152,29 +157,27 @@ public abstract class BaseOFXReader implements OFXReader {
   /**
    * Parse an OFX version 1 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
    *
-   * @param reader The reader.
+   * @param text The text.
    */
-  protected abstract void parseV1FromFirstElement(Reader reader) throws IOException, OFXParseException;
+  protected parseV1FromFirstElement(text: string): void {
+    var strict = false;
+    var parser: SAXParser = sax.parser(strict);
+    var handler = new OFXV2ContentHandler(this.getContentHandler());
+    handler.install(parser);
+    parser.write(text);
+  }
 
   /**
    * Parse an OFX version 2 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
    *
-   * @param reader The reader.
+   * @param text The text.
    */
-  protected void parseV2FromFirstElement(Reader reader) throws IOException, OFXParseException {
-    try {
-      XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-      xmlReader.setFeature("http://xml.org/sax/features/namespaces", false);
-      xmlReader.setContentHandler(new OFXV2ContentHandler(getContentHandler()));
-      xmlReader.parse(new InputSource(reader));
-    }
-    catch (SAXException e) {
-      if (e.getCause() instanceof OFXParseException) {
-        throw (OFXParseException) e.getCause();
-      }
-      
-      throw new OFXParseException(e);
-    }
+  protected parseV2FromFirstElement(text: string): void {
+    var strict = true;
+    var parser: SAXParser = sax.parser(strict);
+    var handler = new OFXV2ContentHandler(this.getContentHandler());
+    handler.install(parser);
+    parser.write(text);
   }
 
   /**
@@ -182,17 +185,16 @@ public abstract class BaseOFXReader implements OFXReader {
    *
    * @param chars The characters to process.
    */
-  protected void processOFXv1Headers(String chars) throws IOException, OFXParseException {
-    BufferedReader reader = new BufferedReader(new StringReader(chars));
-    String line = reader.readLine();
-    while (line != null) {
-      int colonIndex = line.indexOf(':');
+  protected processOFXv1Headers(chars: string): void {
+    var lines: Array<string> = chars.split(/(\n|\r\n)/);
+    for(var i=0; i<lines.length; i++) {
+      var line: string = lines[i];
+      var colonIndex: number = line.indexOf(':');
       if (colonIndex >= 0) {
-        String name = line.substring(0, colonIndex);
-        String value = line.length() > colonIndex ? line.substring(colonIndex + 1) : "";
+        var name: string = line.substring(0, colonIndex);
+        var value: string = line.length > colonIndex ? line.substring(colonIndex + 1) : "";
         this.contentHandler.onHeader(name, value);
       }
-      line = reader.readLine();
     }
   }
 
@@ -201,13 +203,14 @@ public abstract class BaseOFXReader implements OFXReader {
    *
    * @param chars The characters to process.
    */
-  protected void processOFXv2Headers(String chars) throws OFXParseException {
-    String[] nameValuePairs = chars.split("\\s+");
-    for (String nameValuePair : nameValuePairs) {
-      int equalsIndex = nameValuePair.indexOf('=');
+  protected processOFXv2Headers(chars: string) /*throws OFXParseException*/: void {
+    var nameValuePairs: String[] = chars.split("\\s+");
+    for (var nameValuePair_ in nameValuePairs) {
+      var nameValuePair: string = nameValuePair_;
+      var equalsIndex: number = nameValuePair.indexOf('=');
       if (equalsIndex >= 0) {
-        String name = nameValuePair.substring(0, equalsIndex);
-        String value = nameValuePair.length() > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
+        var name: string = nameValuePair.substring(0, equalsIndex);
+        var value: string = nameValuePair.length > equalsIndex ? nameValuePair.substring(equalsIndex + 1) : "";
         value = value.replace('"', ' ');
         value = value.replace('\'', ' ');
         value = value.trim();
@@ -215,4 +218,8 @@ public abstract class BaseOFXReader implements OFXReader {
       }
     }
   }
+}
+
+LOG = LogFactory.getLog(BaseOFXReader);
+
 }

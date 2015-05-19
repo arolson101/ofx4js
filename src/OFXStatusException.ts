@@ -13,36 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='domain/data/common/Status'/>
 
-package net.sf.ofx4j;
+module ofx4js {
 
-import net.sf.ofx4j.domain.data.common.Status;
+import Status = ofx4js.domain.data.common.Status;
 
 /**
  * Exception based on a StatusCode response
  *
  * @author Michael Mosseri
  */
-public class OFXStatusException extends OFXException {
-	private Status status;
-	
-  public OFXStatusException() {
-  }
+export class OFXStatusException extends OFXException {
+	private status: Status;
 
-  public OFXStatusException(Status status, String message) {
+  constructor(status: Status, message: string) {
     super(message);
     this.status = status;
   }
 
-  public OFXStatusException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public OFXStatusException(Throwable cause) {
-    super(cause);
-  }
-  
-  public Status getStatus() {
+  public getStatus(): Status {
   	return this.status;
   }
+}
+
 }

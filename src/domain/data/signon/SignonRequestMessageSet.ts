@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='../RequestMessage'/>
+///<reference path='SignonRequest'/>
+///<reference path='PasswordChangeRequestTransaction'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * The sign-on request message set.
@@ -31,13 +35,12 @@ import java.util.ArrayList;
  * @author Ryan Heaton
  * @see "Section 2.5, OFX Spec."
  */
-@Aggregate ("SIGNONMSGSRQV1")
-public class SignonRequestMessageSet extends RequestMessageSet {
+export class SignonRequestMessageSet extends RequestMessageSet {
 
-  private SignonRequest signonRequest;
-  private PasswordChangeRequestTransaction passwordChangeRequest;
+  private signonRequest: SignonRequest;
+  private passwordChangeRequest: PasswordChangeRequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.signon;
   }
 
@@ -46,9 +49,8 @@ public class SignonRequestMessageSet extends RequestMessageSet {
    *
    * @return The message for this message set.
    */
-  @ChildAggregate ( required = true, order = 0 )
-  public SignonRequest getSignonRequest() {
-    return signonRequest;
+  public getSignonRequest(): SignonRequest {
+    return this.signonRequest;
   }
 
   /**
@@ -56,7 +58,7 @@ public class SignonRequestMessageSet extends RequestMessageSet {
    *
    * @param signonRequest The message for this message set.
    */
-  public void setSignonRequest(SignonRequest signonRequest) {
+  public setSignonRequest(signonRequest: SignonRequest): void {
     this.signonRequest = signonRequest;
   }
 
@@ -65,9 +67,8 @@ public class SignonRequestMessageSet extends RequestMessageSet {
    *
    * @return The password change request.
    */
-  @ChildAggregate ( order = 10 )
-  public PasswordChangeRequestTransaction getPasswordChangeRequest() {
-    return passwordChangeRequest;
+  public getPasswordChangeRequest(): PasswordChangeRequestTransaction {
+    return this.passwordChangeRequest;
   }
 
   /**
@@ -75,7 +76,7 @@ public class SignonRequestMessageSet extends RequestMessageSet {
    *
    * @param passwordChangeRequest The password change request.
    */
-  public void setPasswordChangeRequest(PasswordChangeRequestTransaction passwordChangeRequest) {
+  public setPasswordChangeRequest(passwordChangeRequest: PasswordChangeRequestTransaction): void {
     this.passwordChangeRequest = passwordChangeRequest;
   }
 
@@ -83,17 +84,23 @@ public class SignonRequestMessageSet extends RequestMessageSet {
 
 
   // Inherited.
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
+  public getRequestMessages(): Array<RequestMessage> {
+    var requestMessages: Array<RequestMessage> = new Array<RequestMessage>();
 
-    if (getSignonRequest() != null) {
-      requestMessages.add(getSignonRequest());
+    if (this.getSignonRequest() != null) {
+      requestMessages.push(this.getSignonRequest());
     }
 
-    if (getPasswordChangeRequest() != null) {
-      requestMessages.add(getPasswordChangeRequest());
+    if (this.getPasswordChangeRequest() != null) {
+      requestMessages.push(this.getPasswordChangeRequest());
     }
 
     return requestMessages;
   }
+}
+
+Aggregate_add(SignonRequestMessageSet, "SIGNONMSGSRQV1");
+ChildAggregate_add(SignonRequestMessageSet, { required: true, order: 0, type: SignonRequest, read: SignonRequestMessageSet.prototype.getSignonRequest, write: SignonRequestMessageSet.prototype.setSignonRequest });
+ChildAggregate_add(SignonRequestMessageSet, { order: 10, type: PasswordChangeRequestTransaction, read: SignonRequestMessageSet.prototype.getPasswordChangeRequest, write: SignonRequestMessageSet.prototype.setPasswordChangeRequest });
+
 }

@@ -13,41 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../OFXException'/>
+///<reference path='../../client/AccountStatement'/>
+///<reference path='../../client/FinancialInstitutionAccount'/>
+///<reference path='../../domain/data/common/StatementRange'/>
+///<reference path='../../domain/data/common/StatementRequest'/>
+///<reference path='../../domain/data/common/StatementResponse'/>
+///<reference path='../../domain/data/creditcard/CreditCardAccountDetails'/>
+///<reference path='../../domain/data/investment/accounts/InvestmentAccountDetails'/>
+///<reference path='../../domain/data/MessageSetType'/>
 
-package net.sf.ofx4j.client.impl;
+module ofx4js.client.impl {
 
-import net.sf.ofx4j.OFXException;
-import net.sf.ofx4j.client.AccountStatement;
-import net.sf.ofx4j.client.FinancialInstitutionAccount;
-import net.sf.ofx4j.domain.data.*;
-import net.sf.ofx4j.domain.data.banking.BankAccountDetails;
-import net.sf.ofx4j.domain.data.common.StatementRange;
-import net.sf.ofx4j.domain.data.common.StatementRequest;
-import net.sf.ofx4j.domain.data.common.StatementResponse;
-import net.sf.ofx4j.domain.data.creditcard.CreditCardAccountDetails;
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountDetails;
-
-import java.util.Date;
+import OFXException = ofx4js.OFXException;
+import AccountStatement = ofx4js.client.AccountStatement;
+import FinancialInstitutionAccount = ofx4js.client.FinancialInstitutionAccount;
+//import data.* = ofx4js.domain.data.*;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+import StatementRange = ofx4js.domain.data.common.StatementRange;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
 
 /**
  * Base account implementation. Supports banking and credit card accounts.
  *
  * @author Ryan Heaton
  */
-public abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount {
+export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAccount {
 
-  private final D details;
-  private final MessageSetType messageType;
-  private final String username;
-  private final String password;
-  private final FinancialInstitutionImpl institution;
+  private details: D;
+  private messageType: MessageSetType;
+  private username: string;
+  private password: string;
+  private institution: FinancialInstitutionImpl;
 
-  protected BaseAccountImpl(D details, String username, String password, FinancialInstitutionImpl institution) {
+  constructor(details: D, username: string, password: string, institution: FinancialInstitutionImpl) {
     this.details = details;
     this.username = username;
     this.password = password;
     this.institution = institution;
-    this.messageType = getMessageSetType(details);
+    this.messageType = this.getMessageSetType(details);
   }
 
   /**
@@ -56,38 +69,41 @@ public abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount 
    * @param details The details.
    * @return The message set type.
    */
-  protected MessageSetType getMessageSetType(D details) {
-    MessageSetType messageType;
+  protected getMessageSetType(details: D): MessageSetType {
+    var messageType: MessageSetType;
     if (details instanceof BankAccountDetails) {
       messageType = MessageSetType.banking;
     }
-    else if (getDetails() instanceof CreditCardAccountDetails) {
+    else if (this.getDetails() instanceof CreditCardAccountDetails) {
       messageType = MessageSetType.creditcard;
     }
-    else if (getDetails() instanceof InvestmentAccountDetails) {
+    else if (this.getDetails() instanceof InvestmentAccountDetails) {
       messageType = MessageSetType.investment;
     }
     else {
-      throw new IllegalStateException("Illegal details: " + this.details.getClass().getName());
+      throw new Error("Illegal details");
     }
     return messageType;
   }
 
-  public AccountStatement readStatement(Date start, Date end) throws OFXException {
-    StatementRange range = new StatementRange();
+  public readStatement(start: Date, end: Date) /*throws OFXException*/: Promise<AccountStatement> {
+    var range: StatementRange = new StatementRange();
     range.setIncludeTransactions(true);
     range.setStart(start);
     range.setEnd(end);
 
-    RequestEnvelope request = institution.createAuthenticatedRequest(username, password);
-    TransactionWrappedRequestMessage requestTransaction = createTransaction();
-    requestTransaction.setWrappedMessage(createStatementRequest(getDetails(), range));
-    request.getMessageSets().add(createRequestMessageSet(requestTransaction));
+    var request: RequestEnvelope = this.institution.createAuthenticatedRequest(this.username, this.password);
+    var requestTransaction: TransactionWrappedRequestMessage<RequestMessage> = this.createTransaction();
+    requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
+    request.getMessageSets().insert(this.createRequestMessageSet(requestTransaction));
 
-    ResponseEnvelope response = institution.sendRequest(request);
-    institution.doGeneralValidationChecks(request, response);
-
-    return unwrapStatementResponse(response);
+    var self = this;
+    return self.institution.sendRequest(request)
+    .then(function(response: ResponseEnvelope): AccountStatement {
+      self.institution.doGeneralValidationChecks(request, response);
+  
+      return self.unwrapStatementResponse(response);
+    });
   }
 
   /**
@@ -96,7 +112,7 @@ public abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount 
    * @param response The response envelope to unwrap.
    * @return The response.
    */
-  protected abstract StatementResponse unwrapStatementResponse(ResponseEnvelope response) throws OFXException;
+  protected /*abstract*/ unwrapStatementResponse(response: ResponseEnvelope): StatementResponse /*throws OFXException*/ { throw new Error("abstract"); }
 
   /**
    * Create a request message set from the specified transaction.
@@ -104,14 +120,14 @@ public abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount 
    * @param transaction The transaction.
    * @return The request message set.
    */
-  protected abstract RequestMessageSet createRequestMessageSet(TransactionWrappedRequestMessage transaction);
+  protected /*abstract*/ createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet { throw new Error("abstract"); }
 
   /**
    * Create a transaction.
    *
    * @return The transaction.
    */
-  protected abstract TransactionWrappedRequestMessage createTransaction();
+  protected /*abstract*/ createTransaction(): TransactionWrappedRequestMessage<RequestMessage> { throw new Error("abstract"); }
 
   /**
    * Create a statement request.
@@ -120,15 +136,15 @@ public abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount 
    * @param range the range.
    * @return The statement request.
    */
-  protected abstract StatementRequest createStatementRequest(D details, StatementRange range);
+  protected /*abstract*/ createStatementRequest(details: D, range: StatementRange): StatementRequest { throw new Error("abstract"); }
 
   /**
    * The details of this account.
    *
    * @return The details of this account.
    */
-  public D getDetails() {
-    return details;
+  public getDetails(): D {
+    return this.details;
   }
 
   /**
@@ -136,7 +152,9 @@ public abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount 
    *
    * @return The message set type.
    */
-  protected MessageSetType getMessageType() {
-    return messageType;
+  protected getMessageType(): MessageSetType {
+    return this.messageType;
   }
+}
+
 }

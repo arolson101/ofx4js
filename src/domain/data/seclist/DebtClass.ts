@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * The class of debt.
@@ -22,23 +22,25 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum DebtClass {
+export enum DebtClass {
   TREASURY,
   MUNICIPAL,
   CORPORATE,
-  OTHER;
+  OTHER
+}
 
-  public static DebtClass fromOfx(String ofxVal) {
-    if ("TREASURY".equals(ofxVal)) {
-      return TREASURY;
-    } else if ("MUNICIPAL".equals(ofxVal)) {
-      return MUNICIPAL;
-    } else if ("CORPORATE".equals(ofxVal)) {
-      return CORPORATE;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function DebtClass_fromOfx(ofxVal: string): DebtClass {
+  if ("TREASURY" === ofxVal) {
+    return DebtClass.TREASURY;
+  } else if ("MUNICIPAL" === ofxVal) {
+    return DebtClass.MUNICIPAL;
+  } else if ("CORPORATE" === ofxVal) {
+    return DebtClass.CORPORATE;
+  } else if ("OTHER" === ofxVal) {
+    return DebtClass.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

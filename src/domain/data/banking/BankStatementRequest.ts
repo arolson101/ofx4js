@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../common/StatementRequest'/>
+///<reference path='BankAccountDetails'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.domain.data.common.StatementRequest;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate("STMTRQ")
-public class BankStatementRequest extends StatementRequest {
+export class BankStatementRequest extends StatementRequest {
 
-  private BankAccountDetails account;
+  private account: BankAccountDetails;
 
   /**
    * The account details.
    *
    * @return The account details.
    */
-  @ChildAggregate ( name = "BANKACCTFROM", required = true, order = 0 )
-  public BankAccountDetails getAccount() {
-    return account;
+  public getAccount(): BankAccountDetails {
+    return this.account;
   }
 
   /**
@@ -43,8 +45,13 @@ public class BankStatementRequest extends StatementRequest {
    *
    * @param account The account details.
    */
-  public void setAccount(BankAccountDetails account) {
+  public setAccount(account: BankAccountDetails): void {
     this.account = account;
   }
+
+}
+
+Aggregate_add( BankStatementRequest, "STMTRQ" );
+ChildAggregate_add(BankStatementRequest, { name: "BANKACCTFROM", required: true, order: 0, type: BankAccountDetails, read: BankStatementRequest.prototype.getAccount, write: BankStatementRequest.prototype.setAccount });
 
 }

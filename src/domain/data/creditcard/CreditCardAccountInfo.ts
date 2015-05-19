@@ -13,36 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../common/AccountStatus'/>
+///<reference path='../common/AccountInfo'/>
+///<reference path='../common/AccountDetails'/>
+///<reference path='CreditCardAccountDetails'/>
 
-package net.sf.ofx4j.domain.data.creditcard;
+module ofx4js.domain.data.creditcard {
 
-import net.sf.ofx4j.domain.data.common.AccountStatus;
-import net.sf.ofx4j.domain.data.common.AccountInfo;
-import net.sf.ofx4j.domain.data.common.AccountDetails;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import AccountStatus = ofx4js.domain.data.common.AccountStatus;
+import AccountInfo = ofx4js.domain.data.common.AccountInfo;
+import AccountDetails = ofx4js.domain.data.common.AccountDetails;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "CCACCTINFO" )
-public class CreditCardAccountInfo implements AccountInfo {
+export class CreditCardAccountInfo implements AccountInfo {
 
-  private CreditCardAccountDetails creditCardAccount;
-  private Boolean supportsTransactionDetailOperations;
-  private Boolean supportsTransferToOtherAccountOperations;
-  private Boolean supportsTransferFromOtherAccountOperations;
-  private AccountStatus status;
+  private creditCardAccount: CreditCardAccountDetails;
+  private supportsTransactionDetailOperations: boolean;
+  private supportsTransferToOtherAccountOperations: boolean;
+  private supportsTransferFromOtherAccountOperations: boolean;
+  private status: AccountStatus;
 
   /**
    * The credit card account this information is referencing.
    *
    * @return The credit card account this information is referencing.
    */
-  @ChildAggregate ( name = "CCACCTFROM", required = true, order = 0 )
-  public CreditCardAccountDetails getCreditCardAccount() {
-    return creditCardAccount;
+  public getCreditCardAccount(): CreditCardAccountDetails {
+    return this.creditCardAccount;
   }
 
   /**
@@ -50,13 +55,13 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @param creditCardAccount The credit card account this information is referencing.
    */
-  public void setCreditCardAccount(CreditCardAccountDetails creditCardAccount) {
+  public setCreditCardAccount(creditCardAccount: CreditCardAccountDetails): void {
     this.creditCardAccount = creditCardAccount;
   }
 
   // Inherited.
-  public AccountDetails getAccountDetails() {
-    return getCreditCardAccount();
+  public getAccountDetails(): AccountDetails {
+    return this.getCreditCardAccount();
   }
 
   /**
@@ -64,9 +69,8 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @return Whether this account supports download of transaction details.
    */
-  @Element ( name = "SUPTXDL", required = true, order = 10 )
-  public Boolean getSupportsTransactionDetailOperations() {
-    return supportsTransactionDetailOperations;
+  public getSupportsTransactionDetailOperations(): boolean {
+    return this.supportsTransactionDetailOperations;
   }
 
   /**
@@ -74,7 +78,7 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @param supportsTransactionDetailOperations Whether this account supports download of transaction details.
    */
-  public void setSupportsTransactionDetailOperations(Boolean supportsTransactionDetailOperations) {
+  public setSupportsTransactionDetailOperations(supportsTransactionDetailOperations: boolean): void {
     this.supportsTransactionDetailOperations = supportsTransactionDetailOperations;
   }
 
@@ -83,9 +87,8 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @return Whether this account supports transfer operations to other accounts.
    */
-  @Element ( name = "XFERSRC", required = true, order = 20 )
-  public Boolean getSupportsTransferToOtherAccountOperations() {
-    return supportsTransferToOtherAccountOperations;
+  public getSupportsTransferToOtherAccountOperations(): boolean {
+    return this.supportsTransferToOtherAccountOperations;
   }
 
   /**
@@ -93,7 +96,7 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @param supportsTransferToOtherAccountOperations Whether this account supports transfer operations to other accounts.
    */
-  public void setSupportsTransferToOtherAccountOperations(Boolean supportsTransferToOtherAccountOperations) {
+  public setSupportsTransferToOtherAccountOperations(supportsTransferToOtherAccountOperations: boolean): void {
     this.supportsTransferToOtherAccountOperations = supportsTransferToOtherAccountOperations;
   }
 
@@ -102,9 +105,8 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @return Whether this account supports transfer operations from other accounts.
    */
-  @Element ( name = "XFERDEST", required = true, order = 30 )
-  public Boolean getSupportsTransferFromOtherAccountOperations() {
-    return supportsTransferFromOtherAccountOperations;
+  public getSupportsTransferFromOtherAccountOperations(): boolean {
+    return this.supportsTransferFromOtherAccountOperations;
   }
 
   /**
@@ -112,7 +114,7 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @param supportsTransferFromOtherAccountOperations Whether this account supports transfer operations from other accounts.
    */
-  public void setSupportsTransferFromOtherAccountOperations(Boolean supportsTransferFromOtherAccountOperations) {
+  public setSupportsTransferFromOtherAccountOperations(supportsTransferFromOtherAccountOperations: boolean): void {
     this.supportsTransferFromOtherAccountOperations = supportsTransferFromOtherAccountOperations;
   }
 
@@ -121,9 +123,8 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @return The account status.
    */
-  @Element ( name = "SVCSTATUS", required = true, order = 40 )
-  public AccountStatus getStatus() {
-    return status;
+  public getStatus(): AccountStatus {
+    return this.status;
   }
 
   /**
@@ -131,7 +132,16 @@ public class CreditCardAccountInfo implements AccountInfo {
    *
    * @param status The account status.
    */
-  public void setStatus(AccountStatus status) {
+  public setStatus(status: AccountStatus): void {
     this.status = status;
   }
+}
+
+Aggregate_add( CreditCardAccountInfo, "CCACCTINFO" );
+ChildAggregate_add(CreditCardAccountInfo, { name: "CCACCTFROM", required: true, order: 0, type: CreditCardAccountDetails, read: CreditCardAccountInfo.prototype.getCreditCardAccount, write: CreditCardAccountInfo.prototype.setCreditCardAccount });
+Element_add(CreditCardAccountInfo, { name: "SUPTXDL", required: true, order: 10, type: Boolean, read: CreditCardAccountInfo.prototype.getSupportsTransactionDetailOperations, write: CreditCardAccountInfo.prototype.setSupportsTransactionDetailOperations });
+Element_add(CreditCardAccountInfo, { name: "XFERSRC", required: true, order: 20, type: Boolean, read: CreditCardAccountInfo.prototype.getSupportsTransferToOtherAccountOperations, write: CreditCardAccountInfo.prototype.setSupportsTransferToOtherAccountOperations });
+Element_add(CreditCardAccountInfo, { name: "XFERDEST", required: true, order: 30, type: Boolean, read: CreditCardAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations, write: CreditCardAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations });
+Element_add(CreditCardAccountInfo, { name: "SVCSTATUS", required: true, order: 40, type: AccountStatus, read: CreditCardAccountInfo.prototype.getStatus, write: CreditCardAccountInfo.prototype.setStatus });
+
 }

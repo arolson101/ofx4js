@@ -13,33 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../RequestMessage'/>
+///<reference path='ClientRoutingCapability'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  * @see "Section 7.1.5, OFX Spec"
  */
-@Aggregate ( "PROFRQ" )
-public class ProfileRequest extends RequestMessage {
+export class ProfileRequest extends RequestMessage {
 
-  private ClientRoutingCapability routingCapability = ClientRoutingCapability.NONE;
-  private Date profileLastUpdated;
+  private routingCapability: ClientRoutingCapability;
+  private profileLastUpdated: Date;
+  
+  constructor() {
+    super();
+    this.routingCapability = ClientRoutingCapability.NONE;
+  }
 
   /**
    * The client routing capability.
    *
    * @return The client routing capability.
    */
-  @Element ( name = "CLIENTROUTING", order = 0 )
-  public ClientRoutingCapability getRoutingCapability() {
-    return routingCapability;
+  public getRoutingCapability(): ClientRoutingCapability {
+    return this.routingCapability;
   }
 
   /**
@@ -47,7 +52,7 @@ public class ProfileRequest extends RequestMessage {
    *
    * @param routingCapability The client routing capability.
    */
-  public void setRoutingCapability(ClientRoutingCapability routingCapability) {
+  public setRoutingCapability(routingCapability: ClientRoutingCapability): void {
     this.routingCapability = routingCapability;
   }
 
@@ -56,9 +61,8 @@ public class ProfileRequest extends RequestMessage {
    *
    * @return The date the profile was last updated.
    */
-  @Element ( name = "DTPROFUP", order = 10 )
-  public Date getProfileLastUpdated() {
-    return profileLastUpdated;
+  public getProfileLastUpdated(): Date {
+    return this.profileLastUpdated;
   }
 
   /**
@@ -66,7 +70,13 @@ public class ProfileRequest extends RequestMessage {
    *
    * @param profileLastUpdated The date the profile was last updated.
    */
-  public void setProfileLastUpdated(Date profileLastUpdated) {
+  public setProfileLastUpdated(profileLastUpdated: Date): void {
     this.profileLastUpdated = profileLastUpdated;
   }
+}
+
+Aggregate_add( ProfileRequest, "PROFRQ" );
+Element_add(ProfileRequest, { name: "CLIENTROUTING", order: 0, type: ClientRoutingCapability, read: ProfileRequest.prototype.getRoutingCapability, write: ProfileRequest.prototype.setRoutingCapability });
+Element_add(ProfileRequest, { name: "DTPROFUP", order: 10, type: Date, read: ProfileRequest.prototype.getProfileLastUpdated, write: ProfileRequest.prototype.setProfileLastUpdated });
+
 }

@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='PasswordChangeRequest'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("PINCHTRNRQ")
-public class PasswordChangeRequestTransaction extends TransactionWrappedRequestMessage<PasswordChangeRequest> {
+export class PasswordChangeRequestTransaction extends TransactionWrappedRequestMessage<PasswordChangeRequest> {
 
-  private PasswordChangeRequest message;
+  private message: PasswordChangeRequest;
 
   /**
    * The wrapped message.
    *
    * @return The wrapped message.
    */
-  @ChildAggregate ( required = true, order = 30 )
-  public PasswordChangeRequest getMessage() {
-    return message;
+  public getMessage(): PasswordChangeRequest {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class PasswordChangeRequestTransaction extends TransactionWrappedRequestM
    *
    * @param message The wrapped message.
    */
-  public void setMessage(PasswordChangeRequest message) {
+  public setMessage(message: PasswordChangeRequest) {
     this.message = message;
   }
 
   // Inherited.
-  public void setWrappedMessage(PasswordChangeRequest message) {
-    setMessage(message);
+  public setWrappedMessage(message: PasswordChangeRequest): void {
+    this.setMessage(message);
   }
+}
+
+Aggregate_add(PasswordChangeRequestTransaction, "PINCHTRNRQ");
+ChildAggregate_add(PasswordChangeRequestTransaction, { required: true, order: 30, type: PasswordChangeRequest, read: PasswordChangeRequestTransaction.prototype.getMessage, write: PasswordChangeRequestTransaction.prototype.setMessage });
+
 }

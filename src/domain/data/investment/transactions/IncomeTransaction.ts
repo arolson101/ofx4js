@@ -13,15 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='IncomeType'/>
+///<reference path='OriginalCurrency'/>
+///<reference path='TransactionWithSecurity'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
@@ -29,22 +41,21 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INCOME" )
-public class IncomeTransaction extends BaseOtherInvestmentTransaction
+export class IncomeTransaction extends BaseOtherInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private SecurityId securityId;
-  private String incomeType;
-  private Double total;
-  private String subAccountSecurity;
-  private String subAccountFund;
-  private Boolean taxExempt;
-  private Double withholding;
-  private String currencyCode;
-  private OriginalCurrency originalCurrencyInfo;
-  private String inv401kSource;
+  private securityId: SecurityId;
+  private incomeType: string;
+  private total: number;
+  private subAccountSecurity: string;
+  private subAccountFund: string;
+  private taxExempt: boolean;
+  private withholding: number;
+  private currencyCode: string;
+  private originalCurrencyInfo: OriginalCurrency;
+  private inv401kSource: string;
 
-  public IncomeTransaction() {
+  constructor() {
     super(TransactionType.INCOME);
   }
 
@@ -55,9 +66,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the security id of the security that the income was for
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -67,7 +77,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param securityId the security id of the security that the income was for
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -78,9 +88,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of income
    */
-  @Element( name = "INCOMETYPE", required = true, order = 30)
-  public String getIncomeType() {
-    return incomeType;
+  public getIncomeType(): string {
+    return this.incomeType;
   }
 
   /**
@@ -90,7 +99,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param incomeType the type of income
    */
-  public void setIncomeType(String incomeType) {
+  public setIncomeType(incomeType: string): void {
     this.incomeType = incomeType;
   }
 
@@ -99,8 +108,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the income type or null if it's not well known
    */
-  public IncomeType getIncomeTypeEnum() {
-    return IncomeType.fromOfx(getIncomeType());
+  public getIncomeTypeEnum(): IncomeType {
+    return IncomeType_fromOfx(this.getIncomeType());
   }
 
   /**
@@ -109,9 +118,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the total
    */
-  @Element( name = "TOTAL", required = true, order = 40)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -120,7 +128,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
 
@@ -130,9 +138,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTSEC", order = 50)
-  public String getSubAccountSecurity() {
-    return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+    return this.subAccountSecurity;
   }
 
   /**
@@ -141,7 +148,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAcctSec the sub account type
    */
-  public void setSubAccountSecurity(String subAcctSec) {
+  public setSubAccountSecurity(subAcctSec: string): void {
     this.subAccountSecurity = subAcctSec;
   }
 
@@ -150,8 +157,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -160,9 +167,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account fund for the transaction
    */
-  @Element( name = "SUBACCTFUND", order = 60)
-  public String getSubAccountFund() {
-    return subAccountFund;
+  public getSubAccountFund(): string {
+    return this.subAccountFund;
   }
 
   /**
@@ -171,7 +177,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAcctFund the sub account fund for the transaction
    */
-  public void setSubAccountFund(String subAcctFund) {
+  public setSubAccountFund(subAcctFund: string): void {
     this.subAccountFund = subAcctFund;
   }
 
@@ -180,8 +186,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
 
   /**
@@ -190,9 +196,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return whether the transaction was tax exempt
    */
-  @Element( name = "TAXEXEMPT", order = 70)
-  public Boolean getTaxExempt() {
-    return taxExempt;
+  public getTaxExempt(): boolean {
+    return this.taxExempt;
   }
 
   /**
@@ -201,7 +206,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param taxExempt whether the transaction was tax exempt
    */
-  public void setTaxExempt(Boolean taxExempt) {
+  public setTaxExempt(taxExempt: boolean): void {
     this.taxExempt = taxExempt;
   }
 
@@ -211,9 +216,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the withholding
    */
-  @Element( name = "WITHHOLDING", order = 80)
-  public Double getWithholding() {
-    return withholding;
+  public getWithholding(): number {
+    return this.withholding;
   }
 
   /**
@@ -222,7 +226,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param withholding the withholding
    */
-  public void setWithholding(Double withholding) {
+  public setWithholding(withholding: number): void {
     this.withholding = withholding;
   }
 
@@ -233,9 +237,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the currency code for the transaction
    */
-  @Element( name = "CURRENCY", order = 90)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -245,7 +248,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param currencyCode the currency code for the transaction
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
     this.originalCurrencyInfo = null;
   }
@@ -256,9 +259,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the currency info for the transaction
    */
-  @ChildAggregate( order = 120 )
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return originalCurrencyInfo;
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.originalCurrencyInfo;
   }
 
   /**
@@ -267,7 +269,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param originalCurrencyInfo the currency info for the transaction
    */
-  public void setOriginalCurrencyInfo(OriginalCurrency originalCurrencyInfo) {
+  public setOriginalCurrencyInfo(originalCurrencyInfo: OriginalCurrency): void {
     this.originalCurrencyInfo = originalCurrencyInfo;
     this.currencyCode = null;
   }
@@ -280,9 +282,8 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the state withholding
    */
-  @Element( name = "INV401KSOURCE", order = 110)
-  public String get401kSource() {
-    return inv401kSource;
+  public get401kSource(): string {
+    return this.inv401kSource;
   }
 
   /**
@@ -293,7 +294,7 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param inv401kSource the state withholding
    */
-  public void set401kSource(String inv401kSource) {
+  public set401kSource(inv401kSource: string): void {
     this.inv401kSource = inv401kSource;
   }
 
@@ -302,7 +303,21 @@ public class IncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of close or null if it's not well known.
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+Aggregate_add( IncomeTransaction, "INCOME" );
+ChildAggregate_add(IncomeTransaction, { required: true, order: 20, type: SecurityId, read: IncomeTransaction.prototype.getSecurityId, write: IncomeTransaction.prototype.setSecurityId });
+Element_add(IncomeTransaction, { name: "INCOMETYPE", required: true, order: 30, type: String, read: IncomeTransaction.prototype.getIncomeType, write: IncomeTransaction.prototype.setIncomeType });
+Element_add(IncomeTransaction, { name: "TOTAL", required: true, order: 40, type: Number, read: IncomeTransaction.prototype.getTotal, write: IncomeTransaction.prototype.setTotal });
+Element_add(IncomeTransaction, { name: "SUBACCTSEC", order: 50, type: String, read: IncomeTransaction.prototype.getSubAccountSecurity, write: IncomeTransaction.prototype.setSubAccountSecurity });
+Element_add(IncomeTransaction, { name: "SUBACCTFUND", order: 60, type: String, read: IncomeTransaction.prototype.getSubAccountFund, write: IncomeTransaction.prototype.setSubAccountFund });
+Element_add(IncomeTransaction, { name: "TAXEXEMPT", order: 70, type: Boolean, read: IncomeTransaction.prototype.getTaxExempt, write: IncomeTransaction.prototype.setTaxExempt });
+Element_add(IncomeTransaction, { name: "WITHHOLDING", order: 80, type: Number, read: IncomeTransaction.prototype.getWithholding, write: IncomeTransaction.prototype.setWithholding });
+Element_add(IncomeTransaction, { name: "CURRENCY", order: 90, type: String, read: IncomeTransaction.prototype.getCurrencyCode, write: IncomeTransaction.prototype.setCurrencyCode });
+ChildAggregate_add(IncomeTransaction, { order: 120, type: OriginalCurrency, read: IncomeTransaction.prototype.getOriginalCurrencyInfo, write: IncomeTransaction.prototype.setOriginalCurrencyInfo });
+Element_add(IncomeTransaction, { name: "INV401KSOURCE", order: 110, type: String, read: IncomeTransaction.prototype.get401kSource, write: IncomeTransaction.prototype.set401kSource });
+
 }

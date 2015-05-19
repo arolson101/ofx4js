@@ -13,25 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../collections/SortedSet'/>
+///<reference path='StringConversion'/>
+///<reference path='DefaultStringConversion'/>
+///<reference path='AggregateIntrospector'/>
+///<reference path='AggregateInfo'/>
+///<reference path='AggregateAttribute'/>
+///<reference path='OFXWriter'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import SortedSet = ofx4js.collections.SortedSet;
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
 
-import java.io.IOException;
-import java.util.*;
+var LOG: Log;
 
 /**
  * Marshaller for aggregate objects.
  *
  * @author Ryan Heaton
  */
-public class AggregateMarshaller {
+export class AggregateMarshaller {
 
-  private static final Log LOG = LogFactory.getLog(AggregateMarshaller.class);
-
-  private StringConversion conversion = new DefaultStringConversion();
+  private conversion: StringConversion;
+  
+  constructor() {
+    this.conversion = new DefaultStringConversion();
+  }
 
   /**
    * Marshal the specified aggregate object.
@@ -39,24 +48,25 @@ public class AggregateMarshaller {
    * @param aggregate The aggregate to marshal.
    * @param writer    The writer.
    */
-  public void marshal(Object aggregate, OFXWriter writer) throws IOException {
-    AggregateInfo aggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.getClass());
+  public marshal(aggregate: Object, writer: OFXWriter) /*throws IOException*/: void {
+    var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.constructor);
     if (aggregateInfo == null) {
-      throw new IllegalArgumentException(String.format("Unable to marshal object of type %s (no aggregate metadata found).", aggregate.getClass().getName()));
+      throw new Error("Unable to marshal object (no aggregate metadata found).");
     }
 
     if (aggregateInfo.hasHeaders()) {
-      Map<String, Object> headerValues = aggregateInfo.getHeaders(aggregate);
-      Map<String, String> convertedValues = new TreeMap<String, String>();
-      for (String header : headerValues.keySet()) {
-        convertedValues.put(header, getConversion().toString(headerValues.get(header)));
+      var headerValues: HeaderValues = aggregateInfo.getHeaders(aggregate);
+      var convertedValues: StringMap = {};
+      for (var header_ in headerValues) {
+        var header: string = header;
+        convertedValues[header] = this.getConversion().toString(headerValues[header]);
       }
       writer.writeHeaders(convertedValues);
     }
 
     writer.writeStartAggregate(aggregateInfo.getName());
-    SortedSet<AggregateAttribute> AggregateAttributes = aggregateInfo.getAttributes();
-    writeAggregateAttributes(aggregate, writer, AggregateAttributes);
+    var AggregateAttributes: SortedSet<AggregateAttribute> = aggregateInfo.getAttributes();
+    this.writeAggregateAttributes(aggregate, writer, AggregateAttributes);
     writer.writeEndAggregate(aggregateInfo.getName());
   }
 
@@ -67,55 +77,57 @@ public class AggregateMarshaller {
    * @param writer              The writer.
    * @param aggregateAttributes The aggregate attributes.
    */
-  protected void writeAggregateAttributes(Object aggregate, OFXWriter writer, SortedSet<AggregateAttribute> aggregateAttributes) throws IOException {
-    for (AggregateAttribute aggregateAttribute : aggregateAttributes) {
-      Object childValue = null;
+  protected writeAggregateAttributes(aggregate: Object, writer: OFXWriter, aggregateAttributes: SortedSet<AggregateAttribute>) /*throws IOException*/: void {
+    for (var i in aggregateAttributes.values()) {
+      var aggregateAttribute: AggregateAttribute = aggregateAttributes.values()[i];
+      var childValue: Object = null;
       try {
         childValue = aggregateAttribute.get(aggregate);
       }
-      catch (Exception e) {
-        LOG.error(String.format("Unable to get %s", aggregateAttribute.toString()), e);
+      catch (e) {
+        LOG.error("Unable to get " + aggregateAttribute.toString(), e);
       }
 
       if (childValue != null) {
         switch (aggregateAttribute.getType()) {
-          case CHILD_AGGREGATE:
-            Collection childValues;
-            if (childValue instanceof Collection) {
-              childValues = (Collection) childValue;
+          case AggregateAttributeType.CHILD_AGGREGATE:
+            var childValues: Array<Object>;
+            if (childValue instanceof Array) {
+              childValues = childValue;
             }
             else {
-              childValues = Arrays.asList(childValue);
+              childValues = [childValue];
             }
 
-            for (Object value : childValues) {
-              AggregateInfo aggregateInfo = AggregateIntrospector.getAggregateInfo(value.getClass());
+            for (var value_ in childValues) {
+              var objValue: Object = value_;
+              var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(objValue.constructor);
               if (aggregateInfo == null) {
-                throw new IllegalArgumentException(String.format("Unable to marshal object of type %s (no aggregate metadata found).", value.getClass().getName()));
+                throw new Error("Unable to marshal object of type " + objValue.constructor.name + " (no aggregate metadata found).");
               }
 
-              String attributeName = aggregateAttribute.getName();
-              if (aggregateAttribute.isCollection()) {
+              var attributeName: string = aggregateAttribute.getName();
+              if (aggregateAttribute.isArray()) {
                 attributeName = aggregateInfo.getName();
               }
               
               writer.writeStartAggregate(attributeName);
-              writeAggregateAttributes(value, writer, aggregateInfo.getAttributes());
+              this.writeAggregateAttributes(objValue, writer, aggregateInfo.getAttributes());
               writer.writeEndAggregate(attributeName);
             }
             break;
-          case ELEMENT:
-            String value = getConversion().toString(childValue);
-            if ((value != null) && (!"".equals(value.trim()))) {
-              writer.writeElement(aggregateAttribute.getName(), value);
+          case AggregateAttributeType.ELEMENT:
+            var strValue: string = this.getConversion().toString(childValue);
+            if ((strValue != null) && ("" !== strValue.trim())) {
+              writer.writeElement(aggregateAttribute.getName(), strValue);
             }
             break;
           default:
-            throw new IllegalStateException("Unknown aggregate attribute type: " + aggregateAttribute.getType());
+            throw new Error("Unknown aggregate attribute type: " + aggregateAttribute.getType());
         }
       }
       else if (aggregateAttribute.isRequired()) {
-        throw new RequiredAttributeException("Required " + aggregateAttribute.toString() + " is null or empty.");
+        throw new Error("Required " + aggregateAttribute.toString() + " is null or empty.");
       }
     }
   }
@@ -125,8 +137,8 @@ public class AggregateMarshaller {
    *
    * @return The conversion.
    */
-  public StringConversion getConversion() {
-    return conversion;
+  public getConversion(): StringConversion {
+    return this.conversion;
   }
 
   /**
@@ -134,7 +146,11 @@ public class AggregateMarshaller {
    *
    * @param conversion The conversion.
    */
-  public void setConversion(StringConversion conversion) {
+  public setConversion(conversion: StringConversion): void {
     this.conversion = conversion;
   }
+}
+
+LOG = LogFactory.getLog(AggregateMarshaller);
+
 }

@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='SecurityId'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Security request aggregate.
@@ -25,43 +28,46 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate("SECRQ")
-public class SecurityRequest {
+export class SecurityRequest {
 
-  private SecurityId securityId;
-  private String tickerSymbol;
-  private String fiId;
+  private securityId: SecurityId;
+  private tickerSymbol: string;
+  private fiId: string;
 
-  @Element( name = "SECID", order = 10)
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
     this.tickerSymbol = null;
     this.fiId = null;
   }
 
-  @Element( name = "TICKER", order = 20)
-  public String getTickerSymbol() {
-    return tickerSymbol;
+  public getTickerSymbol(): string {
+    return this.tickerSymbol;
   }
 
-  public void setTickerSymbol(String tickerSymbol) {
+  public setTickerSymbol(tickerSymbol: string): void {
     this.tickerSymbol = tickerSymbol;
     this.securityId = null;
     this.fiId = null;
   }
 
-  @Element( name = "FIID", order = 30)
-  public String getFiId() {
-    return fiId;
+  public getFiId(): string {
+    return this.fiId;
   }
 
-  public void setFiId(String fiId) {
+  public setFiId(fiId: string): void {
     this.fiId = fiId;
     this.securityId = null;
     this.tickerSymbol = null;
   }
+}
+
+Aggregate_add(SecurityRequest, "SECRQ");
+Element_add(SecurityRequest, { name: "SECID", order: 10, type: SecurityId, read: SecurityRequest.prototype.getSecurityId, write: SecurityRequest.prototype.setSecurityId });
+Element_add(SecurityRequest, { name: "TICKER", order: 20, type: String, read: SecurityRequest.prototype.getTickerSymbol, write: SecurityRequest.prototype.setTickerSymbol });
+Element_add(SecurityRequest, { name: "FIID", order: 30, type: String, read: SecurityRequest.prototype.getFiId, write: SecurityRequest.prototype.setFiId });
+
 }

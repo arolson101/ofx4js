@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../io/OFXWriter'/>
+///<reference path='../../io/v2/OFXV2Writer'/>
+///<reference path='OFXV1Connection'/>
 
-package net.sf.ofx4j.client.net;
+module ofx4js.client.net {
 
-import net.sf.ofx4j.io.OFXWriter;
-import net.sf.ofx4j.io.v2.OFXV2Writer;
-
-import java.io.OutputStream;
+import OFXWriter = ofx4js.io.OFXWriter;
+import OFXV2Writer = ofx4js.io.v2.OFXV2Writer;
+import OutputBuffer = ofx4js.io.OutputBuffer;
 
 /**
  * @author Ryan Heaton
  */
-public class OFXV2Connection extends OFXV1Connection {
+export class OFXV2Connection extends OFXV1Connection {
 
-  @Override
-  protected OFXWriter newOFXWriter(OutputStream out) {
+  //@Override
+  protected newOFXWriter(out: OutputBuffer): OFXWriter {
     return new OFXV2Writer(out);
   }
+}
+
 }

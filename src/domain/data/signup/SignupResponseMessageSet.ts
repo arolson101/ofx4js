@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='../MessageSetType'/>
+///<reference path='AccountInfoResponseTransaction'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.*;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("SIGNUPMSGSRSV1")
-public class SignupResponseMessageSet extends ResponseMessageSet {
+export class SignupResponseMessageSet extends ResponseMessageSet {
 
-  private AccountInfoResponseTransaction accountInfoResponse;
+  private accountInfoResponse: AccountInfoResponseTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.signup;
   }
 
@@ -40,9 +40,8 @@ public class SignupResponseMessageSet extends ResponseMessageSet {
    *
    * @return The account info response.
    */
-  @ChildAggregate ( order = 0 )
-  public AccountInfoResponseTransaction getAccountInfoResponse() {
-    return accountInfoResponse;
+  public getAccountInfoResponse(): AccountInfoResponseTransaction {
+    return this.accountInfoResponse;
   }
 
   /**
@@ -50,7 +49,7 @@ public class SignupResponseMessageSet extends ResponseMessageSet {
    *
    * @param accountInfoResponse The account info response.
    */
-  public void setAccountInfoResponse(AccountInfoResponseTransaction accountInfoResponse) {
+  public setAccountInfoResponse(accountInfoResponse: AccountInfoResponseTransaction): void {
     this.accountInfoResponse = accountInfoResponse;
   }
 
@@ -59,13 +58,18 @@ public class SignupResponseMessageSet extends ResponseMessageSet {
    *
    * @return The response messages.
    */
-  public List<ResponseMessage> getResponseMessages() {
-    ArrayList<ResponseMessage> messages = new ArrayList<ResponseMessage>();
+  public getResponseMessages(): Array<ResponseMessage> {
+    var messages: Array<ResponseMessage> = new Array<ResponseMessage>();
 
-    if (getAccountInfoResponse() != null) {
-      messages.add(getAccountInfoResponse());
+    if (this.getAccountInfoResponse() != null) {
+      messages.push(this.getAccountInfoResponse());
     }
 
     return messages;
   }
+}
+
+Aggregate_add(SignupResponseMessageSet, "SIGNUPMSGSRSV1");
+ChildAggregate_add(SignupResponseMessageSet, { order: 0, type: AccountInfoResponseTransaction, read: SignupResponseMessageSet.prototype.getAccountInfoResponse, write: SignupResponseMessageSet.prototype.setAccountInfoResponse });
+
 }

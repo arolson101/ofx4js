@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
+///<reference path='CloseOptionAction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for closing an option position due to expiration, exercise, or assignment.
@@ -28,19 +37,18 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "CLOSUREOPT" )
-public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
+export class CloseOptionTransaction extends BaseOtherInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private SecurityId securityId;
-  private String optionAction;
-  private Double units;
-  private Integer sharesPerContact;
-  private String subAccountSecurity;
-  private String relatedTransactionId;
-  private Double gain;
+  private securityId: SecurityId;
+  private optionAction: string;
+  private units: number;
+  private sharesPerContact: number;
+  private subAccountSecurity: string;
+  private relatedTransactionId: string;
+  private gain: number;
 
-  public CloseOptionTransaction() {
+  constructor() {
     super(TransactionType.CLOSE_OPTION);
   }
 
@@ -50,9 +58,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the security id of the option
    */
-  @ChildAggregate( order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -61,7 +68,7 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param securityId the security id of the option
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -72,9 +79,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the option action
    */
-  @Element( name = "OPTACTION", required = true, order = 30)
-  public String getOptionAction() {
-    return optionAction;
+  public getOptionAction(): string {
+    return this.optionAction;
   }
 
   /**
@@ -84,7 +90,7 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param optionAction the option action
    */
-  public void setOptionAction(String optionAction) {
+  public setOptionAction(optionAction: string): void {
     this.optionAction = optionAction;
   }
 
@@ -93,8 +99,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of close or null if it's not a well-known type
    */
-  public CloseOptionAction getOptionActionEnum() {
-    return  CloseOptionAction.fromOfx(getOptionAction());
+  public getOptionActionEnum(): CloseOptionAction {
+    return  CloseOptionAction_fromOfx(this.getOptionAction());
   }
 
   /**
@@ -104,9 +110,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the number of units closed
    */
-  @Element( name = "UNITS", required = true, order = 40)
-  public Double getUnits() {
-    return units;
+  public getUnits(): number {
+    return this.units;
   }
 
   /**
@@ -116,7 +121,7 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param units the number of units closed
    */
-  public void setUnits(Double units) {
+  public setUnits(units: number): void {
     this.units = units;
   }
 
@@ -126,9 +131,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the number of shares per contact
    */
-  @Element( name = "SHPERCTRCT", required = true, order = 50)
-  public Integer getSharesPerContact() {
-    return sharesPerContact;
+  public getSharesPerContact(): number {
+    return this.sharesPerContact;
   }
 
   /**
@@ -137,7 +141,7 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param sharesPerContact the number of shares per contact
    */
-  public void setSharesPerContact(Integer sharesPerContact) {
+  public setSharesPerContact(sharesPerContact: number): void {
     this.sharesPerContact = sharesPerContact;
   }
 
@@ -147,9 +151,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTSEC", required = true, order = 60)
-  public String getSubAccountSecurity() {
-    return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+    return this.subAccountSecurity;
   }
 
   /**
@@ -158,7 +161,7 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAccountSecurity the sub account type
    */
-  public void setSubAccountSecurity(String subAccountSecurity) {
+  public setSubAccountSecurity(subAccountSecurity: string): void {
     this.subAccountSecurity = subAccountSecurity;
   }
 
@@ -167,8 +170,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -179,9 +182,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the related transaction id
    */
-  @Element( name = "RELFITID", order = 70)
-  public String getRelatedTransactionId() {
-    return relatedTransactionId;
+  public getRelatedTransactionId(): string {
+    return this.relatedTransactionId;
   }
 
   /**
@@ -192,7 +194,7 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param relatedTransactionId the related transaction id
    */
-  public void setRelatedTransactionId(String relatedTransactionId) {
+  public setRelatedTransactionId(relatedTransactionId: string): void {
     this.relatedTransactionId = relatedTransactionId;
   }
 
@@ -202,9 +204,8 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the gain related to the transaction
    */
-  @Element( name = "GAIN", order = 80)
-  public Double getGain() {
-    return gain;
+  public getGain(): number {
+    return this.gain;
   }
 
   /**
@@ -213,7 +214,18 @@ public class CloseOptionTransaction extends BaseOtherInvestmentTransaction
    *
    * @param gain the gain related to the transaction
    */
-  public void setGain(Double gain) {
+  public setGain(gain: number): void {
     this.gain = gain;
   }
+}
+
+Aggregate_add( CloseOptionTransaction, "CLOSUREOPT" );
+ChildAggregate_add(CloseOptionTransaction, { order: 20, type: SecurityId, read: CloseOptionTransaction.prototype.getSecurityId, write: CloseOptionTransaction.prototype.setSecurityId });
+Element_add(CloseOptionTransaction, { name: "OPTACTION", required: true, order: 30, type: String, read: CloseOptionTransaction.prototype.getOptionAction, write: CloseOptionTransaction.prototype.setOptionAction });
+Element_add(CloseOptionTransaction, { name: "UNITS", required: true, order: 40, type: Number, read: CloseOptionTransaction.prototype.getUnits, write: CloseOptionTransaction.prototype.setUnits });
+Element_add(CloseOptionTransaction, { name: "SHPERCTRCT", required: true, order: 50, type: Number, read: CloseOptionTransaction.prototype.getSharesPerContact, write: CloseOptionTransaction.prototype.setSharesPerContact });
+Element_add(CloseOptionTransaction, { name: "SUBACCTSEC", required: true, order: 60, type: String, read: CloseOptionTransaction.prototype.getSubAccountSecurity, write: CloseOptionTransaction.prototype.setSubAccountSecurity });
+Element_add(CloseOptionTransaction, { name: "RELFITID", order: 70, type: String, read: CloseOptionTransaction.prototype.getRelatedTransactionId, write: CloseOptionTransaction.prototype.setRelatedTransactionId });
+Element_add(CloseOptionTransaction, { name: "GAIN", order: 80, type: Number, read: CloseOptionTransaction.prototype.getGain, write: CloseOptionTransaction.prototype.setGain });
+
 }

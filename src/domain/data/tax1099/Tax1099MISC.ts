@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='PayerAddress'/>
+///<reference path='RecAddress'/>
 
-import net.sf.ofx4j.domain.data.tax1099.PayerAddress;
-import net.sf.ofx4j.domain.data.tax1099.RecAddress;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.tax1099 {
 
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Aparna Gawali
@@ -28,59 +32,55 @@ import net.sf.ofx4j.meta.Element;
  */
 
 
-@Aggregate ( "TAX1099MISC_V100")
-public class Tax1099MISC  {
+export class Tax1099MISC  {
 
   
-	private String srvrtId;
-	private String taxYear;
+	private srvrtId: string;
+	private taxYear: string;
 	
-	private String royalties;
-	private String otherIncome;
-	private String fedTaxWh;
-	private String subPmts;
+	private royalties: string;
+	private otherIncome: string;
+	private fedTaxWh: string;
+	private subPmts: string;
 			
-	private PayerAddress payerAddress;
-	private String payerId;
-	private RecAddress recAddress;
-	private String recId;
-	private String recAcct;
+	private payerAddress: PayerAddress;
+	private payerId: string;
+	private recAddress: RecAddress;
+	private recId: string;
+	private recAcct: string;
 	
 	 
-	  @Element ( name = "SRVRTID",required = true , order = 0 )
-	  public String getSrvrtId() {
-	    return srvrtId;
+      public getSrvrtId(): string {
+	    return this.srvrtId;
 	  }
 
 	  
-	  public void setSrvrtId(String srvrtId) {
+      public setSrvrtId(srvrtId: string): void {
 	    this.srvrtId = srvrtId;
 	  }
 
 	 
-	  @Element ( name = "TAXYEAR", required = true, order = 1 )
-	  public String getTaxYear() {
-	    return taxYear;
+      public getTaxYear(): string {
+	    return this.taxYear;
 	  }
 
 	 
-	  public void setTaxYear(String taxYear) {
+	  public setTaxYear(taxYear: string): void {
 	    this.taxYear = taxYear;
 	  }
 
 	/**
 	 * @return the royalties
 	 */
-	@Element ( name = "ROYALTIES",required = false , order = 2 )
-	public String getRoyalties() {
-		return royalties;
+	public getRoyalties(): string {
+		return this.royalties;
 	}
 
 
 	/**
 	 * @param royalties the royalties to set
 	 */
-	public void setRoyalties(String royalties) {
+	public setRoyalties(royalties: string): void {
 		this.royalties = royalties;
 	}
 
@@ -88,16 +88,15 @@ public class Tax1099MISC  {
 	/**
 	 * @return the otherIncome
 	 */
-	@Element ( name = "OTHERINCOME",required = false , order = 3 )
-	public String getOtherIncome() {
-		return otherIncome;
+	public getOtherIncome(): string {
+		return this.otherIncome;
 	}
 
 
 	/**
 	 * @param otherIncome the otherIncome to set
 	 */
-	public void setOtherIncome(String otherIncome) {
+	public setOtherIncome(otherIncome: string): void {
 		this.otherIncome = otherIncome;
 	}
 
@@ -105,16 +104,15 @@ public class Tax1099MISC  {
 	/**
 	 * @return the fedTaxWh
 	 */
-	@Element ( name = "FEDTAXWH",required = false , order = 4 )
-	public String getFedTaxWh() {
-		return fedTaxWh;
+	public getFedTaxWh(): string {
+		return this.fedTaxWh;
 	}
 
 
 	/**
 	 * @param fedTaxWh the fedTaxWh to set
 	 */
-	public void setFedTaxWh(String fedTaxWh) {
+	public setFedTaxWh(fedTaxWh: string): void {
 		this.fedTaxWh = fedTaxWh;
 	}
 
@@ -122,16 +120,15 @@ public class Tax1099MISC  {
 	/**
 	 * @return the subPmts
 	 */
-	@Element ( name = "SUBPMTS",required = false , order = 5 )
-	public String getSubPmts() {
-		return subPmts;
+	public getSubPmts(): string {
+		return this.subPmts;
 	}
 
 
 	/**
 	 * @param subPmts the subPmts to set
 	 */
-	public void setSubPmts(String subPmts) {
+	public setSubPmts(subPmts: string): void {
 		this.subPmts = subPmts;
 	}
 
@@ -139,32 +136,30 @@ public class Tax1099MISC  {
 	/**
 	 * @return the payerAddress
 	 */
-	@ChildAggregate(required=true, order = 6)
-	public PayerAddress getPayerAddress() {
-		return payerAddress;
+	public getPayerAddress(): PayerAddress {
+		return this.payerAddress;
 	}
 
 
 	/**
 	 * @param payerAddress the payerAddress to set
 	 */
-	public void setPayerAddress(PayerAddress payerAddress) {
+	public setPayerAddress(payerAddress: PayerAddress): void {
 		this.payerAddress = payerAddress;
 	}
 	
 	/**
 	 * @return the payerId
 	 */
-	@Element ( name = "PAYERID", required = true, order = 7 )
-	public String getPayerId() {
-		return payerId;
+	public getPayerId(): string {
+		return this.payerId;
 	}
 
 
 	/**
 	 * @param payerId the payerId to set
 	 */
-	public void setPayerId(String payerId) {
+	public setPayerId(payerId: string): void {
 		this.payerId = payerId;
 	}
 	
@@ -172,32 +167,30 @@ public class Tax1099MISC  {
 	/**
 	 * @return the recAddress
 	 */
-	@ChildAggregate(required=true, order = 8)
-	public RecAddress getRecAddress() {
-		return recAddress;
+	public getRecAddress(): RecAddress {
+		return this.recAddress;
 	}
 
 
 	/**
 	 * @param recAddress the recAddress to set
 	 */
-	public void setRecAddress(RecAddress recAddress) {
+	public setRecAddress(recAddress: RecAddress): void {
 		this.recAddress = recAddress;
 	}
 
 	/**
 	 * @return the recId
 	 */
-	@Element ( name = "RECID", required = true, order = 9 )
-	public String getRecId() {
-		return recId;
+	public getRecId(): string {
+		return this.recId;
 	}
 
 
 	/**
 	 * @param recId the recId to set
 	 */
-	public void setRecId(String recId) {
+	public setRecId(recId: string): void {
 		this.recId = recId;
 	}
 
@@ -205,16 +198,30 @@ public class Tax1099MISC  {
 	/**
 	 * @return the recAcct
 	 */
-	@Element ( name = "RECACCT", required = true, order = 10 )
-	public String getRecAcct() {
-		return recAcct;
+	public getRecAcct(): string {
+		return this.recAcct;
 	}
 
 
 	/**
 	 * @param recAcct the recAcct to set
 	 */
-	public void setRecAcct(String recAcct) {
+	public setRecAcct(recAcct: string): void {
 		this.recAcct = recAcct;
 	}
+}
+
+Aggregate_add( Tax1099MISC, "TAX1099MISC_V100");
+Element_add(Tax1099MISC, { name: "SRVRTID",required: true , order: 0, type: String, read: Tax1099MISC.prototype.getSrvrtId, write: Tax1099MISC.prototype.setSrvrtId });
+Element_add(Tax1099MISC, { name: "TAXYEAR", required: true, order: 1, type: String, read: Tax1099MISC.prototype.getTaxYear, write: Tax1099MISC.prototype.setTaxYear });
+Element_add(Tax1099MISC, { name: "ROYALTIES",required: false , order: 2, type: String, read: Tax1099MISC.prototype.getRoyalties, write: Tax1099MISC.prototype.setRoyalties });
+Element_add(Tax1099MISC, { name: "OTHERINCOME",required: false , order: 3, type: String, read: Tax1099MISC.prototype.getOtherIncome, write: Tax1099MISC.prototype.setOtherIncome });
+Element_add(Tax1099MISC, { name: "FEDTAXWH",required: false , order: 4, type: String, read: Tax1099MISC.prototype.getFedTaxWh, write: Tax1099MISC.prototype.setFedTaxWh });
+Element_add(Tax1099MISC, { name: "SUBPMTS",required: false , order: 5, type: String, read: Tax1099MISC.prototype.getSubPmts, write: Tax1099MISC.prototype.setSubPmts });
+ChildAggregate_add(Tax1099MISC, { required:true, order: 6, type: PayerAddress, read: Tax1099MISC.prototype.getPayerAddress, write: Tax1099MISC.prototype.setPayerAddress });
+Element_add(Tax1099MISC, { name: "PAYERID", required: true, order: 7, type: String, read: Tax1099MISC.prototype.getPayerId, write: Tax1099MISC.prototype.setPayerId });
+ChildAggregate_add(Tax1099MISC, { required:true, order: 8, type: RecAddress, read: Tax1099MISC.prototype.getRecAddress, write: Tax1099MISC.prototype.setRecAddress });
+Element_add(Tax1099MISC, { name: "RECID", required: true, order: 9, type: String, read: Tax1099MISC.prototype.getRecId, write: Tax1099MISC.prototype.setRecId });
+Element_add(Tax1099MISC, { name: "RECACCT", required: true, order: 10, type: String, read: Tax1099MISC.prototype.getRecAcct, write: Tax1099MISC.prototype.setRecAcct });
+
 }

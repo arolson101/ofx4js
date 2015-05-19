@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../common/StatementResponse'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.domain.data.common.StatementResponse;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("STMTRS")
-public class BankStatementResponse extends StatementResponse {
+export class BankStatementResponse extends StatementResponse {
 
-  private BankAccountDetails account;
+  private account: BankAccountDetails;
 
-  public String getResponseMessageName() {
+  public getResponseMessageName(): string {
     return "bank statement";
   }
 
@@ -37,9 +39,8 @@ public class BankStatementResponse extends StatementResponse {
    *
    * @return The account for the statement.
    */
-  @ChildAggregate ( name ="BANKACCTFROM", order = 10)
-  public BankAccountDetails getAccount() {
-    return account;
+  public getAccount(): BankAccountDetails {
+    return this.account;
   }
 
   /**
@@ -47,8 +48,13 @@ public class BankStatementResponse extends StatementResponse {
    *
    * @param account The account for the statement.
    */
-  public void setAccount(BankAccountDetails account) {
+  public setAccount(account: BankAccountDetails): void {
     this.account = account;
   }
+
+}
+
+Aggregate_add( BankStatementResponse, "STMTRS" );
+ChildAggregate_add(BankStatementResponse, { name:"BANKACCTFROM", order: 10, type: BankAccountDetails, read: BankStatementResponse.prototype.getAccount, write: BankStatementResponse.prototype.setAccount });
 
 }

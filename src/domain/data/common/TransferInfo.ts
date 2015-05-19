@@ -13,39 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../banking/BankAccountDetails'/>
+///<reference path='../creditcard/CreditCardAccountDetails'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.domain.data.banking.BankAccountDetails;
-import net.sf.ofx4j.domain.data.creditcard.CreditCardAccountDetails;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "XFERINFO" )
-public class TransferInfo {
+export class TransferInfo {
 
-  private BankAccountDetails bankAccountFrom;
-  private CreditCardAccountDetails creditCardAccountFrom;
-  private BankAccountDetails bankAccountTo;
-  private CreditCardAccountDetails creditCardAccountTo;
+  private bankAccountFrom: BankAccountDetails;
+  private creditCardAccountFrom: CreditCardAccountDetails;
+  private bankAccountTo: BankAccountDetails;
+  private creditCardAccountTo: CreditCardAccountDetails;
 
-  private Double amount;
-  private Date due;
+  private amount: number;
+  private due: Date;
 
   /**
    * The bank account to transfer from.
    *
    * @return The bank account to transfer from.
    */
-  @ChildAggregate ( name = "BANKACCTFROM", order = 0)
-  public BankAccountDetails getBankAccountFrom() {
-    return bankAccountFrom;
+  public getBankAccountFrom(): BankAccountDetails {
+    return this.bankAccountFrom;
   }
 
   /**
@@ -53,7 +54,7 @@ public class TransferInfo {
    *
    * @param bankAccountFrom The bank account to transfer from.
    */
-  public void setBankAccountFrom(BankAccountDetails bankAccountFrom) {
+  public setBankAccountFrom(bankAccountFrom: BankAccountDetails): void {
     this.creditCardAccountFrom = null;
     this.bankAccountFrom = bankAccountFrom;
   }
@@ -61,10 +62,14 @@ public class TransferInfo {
   /**
    * The account to transfer from.
    *
-   * @param bankAccountFrom The account to transfer from.
+   * @param acct The account to transfer from.
    */
-  public void setAccountFrom(BankAccountDetails bankAccountFrom) {
-    setBankAccountFrom(bankAccountFrom);
+  public setAccountFrom(acct: BankAccountDetails | CreditCardAccountDetails): void {
+    if(acct instanceof BankAccountDetails) {
+      this.setBankAccountFrom(<BankAccountDetails>acct);
+    } else {
+      this.setCreditCardAccountFrom(<CreditCardAccountDetails>acct);
+    }
   }
 
   /**
@@ -72,9 +77,8 @@ public class TransferInfo {
    *
    * @return The credit card to transfer from.
    */
-  @ChildAggregate ( name = "CCACCTFROM", order = 10 )
-  public CreditCardAccountDetails getCreditCardAccountFrom() {
-    return creditCardAccountFrom;
+  public getCreditCardAccountFrom(): CreditCardAccountDetails {
+    return this.creditCardAccountFrom;
   }
 
   /**
@@ -82,18 +86,9 @@ public class TransferInfo {
    *
    * @param creditCardAccountFrom The credit card to transfer from.
    */
-  public void setCreditCardAccountFrom(CreditCardAccountDetails creditCardAccountFrom) {
+  public setCreditCardAccountFrom(creditCardAccountFrom: CreditCardAccountDetails): void {
     this.bankAccountFrom = null;
     this.creditCardAccountFrom = creditCardAccountFrom;
-  }
-
-  /**
-   * The credit card to transfer from.
-   *
-   * @param creditCardAccountFrom The credit card to transfer from.
-   */
-  public void setAccountFrom(CreditCardAccountDetails creditCardAccountFrom) {
-    setCreditCardAccountFrom(creditCardAccountFrom);
   }
 
   /**
@@ -101,9 +96,8 @@ public class TransferInfo {
    *
    * @return The bank account to transfer to.
    */
-  @ChildAggregate ( name = "BANKACCTTO", order = 20 )
-  public BankAccountDetails getBankAccountTo() {
-    return bankAccountTo;
+  public getBankAccountTo(): BankAccountDetails {
+    return this.bankAccountTo;
   }
 
   /**
@@ -111,28 +105,33 @@ public class TransferInfo {
    *
    * @param bankAccountTo The bank account to transfer to.
    */
-  public void setBankAccountTo(BankAccountDetails bankAccountTo) {
+  public setBankAccountTo(bankAccountTo: BankAccountDetails): void {
     this.creditCardAccountTo = null;
     this.bankAccountTo = bankAccountTo;
   }
 
   /**
-   * The bank account to transfer to.
+   * The bank or credit card account to transfer to.
    *
-   * @param bankAccountTo The bank account to transfer to.
+   * @param accountTo The account to transfer to.
    */
-  public void setAccountTo(BankAccountDetails bankAccountTo) {
-    setBankAccountTo(bankAccountTo);
+  public setAccountTo(accountTo: BankAccountDetails | CreditCardAccountDetails): void {
+    if(accountTo instanceof BankAccountDetails)
+      this.setBankAccountTo(accountTo);
+    else if(accountTo instanceof CreditCardAccountDetails)
+      this.setCreditCardAccountTo(accountTo);
+    else
+      throw new Error("invalid type");
   }
+
 
   /**
    * The credit card account to transfer to.
    *
    * @return The credit card account to transfer to.
    */
-  @ChildAggregate ( name = "CCACCTTO", order = 30 )
-  public CreditCardAccountDetails getCreditCardAccountTo() {
-    return creditCardAccountTo;
+  public getCreditCardAccountTo(): CreditCardAccountDetails {
+    return this.creditCardAccountTo;
   }
 
   /**
@@ -140,18 +139,9 @@ public class TransferInfo {
    *
    * @param creditCardAccountTo The credit card account to transfer to.
    */
-  public void setCreditCardAccountTo(CreditCardAccountDetails creditCardAccountTo) {
+  public setCreditCardAccountTo(creditCardAccountTo: CreditCardAccountDetails): void {
     this.bankAccountTo = null;
     this.creditCardAccountTo = creditCardAccountTo;
-  }
-
-  /**
-   * The credit card account to transfer to.
-   *
-   * @param creditCardAccountTo The credit card account to transfer to.
-   */
-  public void setAccountTo(CreditCardAccountDetails creditCardAccountTo) {
-    setCreditCardAccountTo(creditCardAccountTo);
   }
 
   /**
@@ -159,9 +149,8 @@ public class TransferInfo {
    *
    * @return The amount.
    */
-  @Element ( name = "TRNAMT", required = true, order = 40 )
-  public Double getAmount() {
-    return amount;
+  public getAmount(): number {
+    return this.amount;
   }
 
   /**
@@ -169,7 +158,7 @@ public class TransferInfo {
    *
    * @param amount The amount.
    */
-  public void setAmount(Double amount) {
+  public setAmount(amount: number): void {
     this.amount = amount;
   }
 
@@ -178,9 +167,8 @@ public class TransferInfo {
    *
    * @return The due date.
    */
-  @Element ( name = "DTDUE", order = 50 )
-  public Date getDue() {
-    return due;
+  public getDue(): Date {
+    return this.due;
   }
 
   /**
@@ -188,7 +176,17 @@ public class TransferInfo {
    *
    * @param due The due date.
    */
-  public void setDue(Date due) {
+  public setDue(due: Date): void {
     this.due = due;
   }
+}
+
+Aggregate_add( TransferInfo, "XFERINFO" );
+ChildAggregate_add(TransferInfo, { name: "BANKACCTFROM", order: 0, type: BankAccountDetails, read: TransferInfo.prototype.getBankAccountFrom, write: TransferInfo.prototype.setBankAccountFrom });
+ChildAggregate_add(TransferInfo, { name: "CCACCTFROM", order: 10, type: CreditCardAccountDetails, read: TransferInfo.prototype.getCreditCardAccountFrom, write: TransferInfo.prototype.setCreditCardAccountFrom });
+ChildAggregate_add(TransferInfo, { name: "BANKACCTTO", order: 20, type: BankAccountDetails, read: TransferInfo.prototype.getBankAccountTo, write: TransferInfo.prototype.setBankAccountTo });
+ChildAggregate_add(TransferInfo, { name: "CCACCTTO", order: 30, type: CreditCardAccountDetails, read: TransferInfo.prototype.getCreditCardAccountTo, write: TransferInfo.prototype.setCreditCardAccountTo });
+Element_add(TransferInfo, { name: "TRNAMT", required: true, order: 40, type: Number, read: TransferInfo.prototype.getAmount, write: TransferInfo.prototype.setAmount });
+Element_add(TransferInfo, { name: "DTDUE", order: 50, type: Date, read: TransferInfo.prototype.getDue, write: TransferInfo.prototype.setDue });
+
 }

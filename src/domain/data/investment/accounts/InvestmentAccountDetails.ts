@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/AccountDetails'/>
 
-package net.sf.ofx4j.domain.data.investment.accounts;
+module ofx4js.domain.data.investment.accounts {
 
-import net.sf.ofx4j.domain.data.common.AccountDetails;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import AccountDetails = ofx4js.domain.data.common.AccountDetails;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Aggregate for the details that identifity a brokerage account.
@@ -26,12 +29,11 @@ import net.sf.ofx4j.meta.Element;
  * @author Jon Perlow
  * @see "OFX Spec, Section 13.6.1"
  */
-@Aggregate
-public class InvestmentAccountDetails implements AccountDetails {
+export class InvestmentAccountDetails implements AccountDetails {
 
-  private String brokerId;
-  private String accountNumber;
-  private String accountKey;
+  private brokerId: string;
+  private accountNumber: string;
+  private accountKey: string;
 
 
   /**
@@ -39,9 +41,8 @@ public class InvestmentAccountDetails implements AccountDetails {
    *
    * @return the id of the broker
    */
-  @Element ( name = "BROKERID", required = true, order = 0 )
-  public String getBrokerId() {
-    return brokerId;
+  public getBrokerId(): string {
+    return this.brokerId;
   }
 
   /**
@@ -49,7 +50,7 @@ public class InvestmentAccountDetails implements AccountDetails {
    *
    * @param brokerId the id of the broker
    */
-  public void setBrokerId(String brokerId) {
+  public setBrokerId(brokerId: string): void {
     this.brokerId = brokerId;
   }
 
@@ -58,9 +59,8 @@ public class InvestmentAccountDetails implements AccountDetails {
    *
    * @return the account number
    */
-  @Element( name = "ACCTID", required = true, order = 20)
-  public String getAccountNumber() {
-    return accountNumber;
+  public getAccountNumber(): string {
+    return this.accountNumber;
   }
 
   /**
@@ -68,7 +68,7 @@ public class InvestmentAccountDetails implements AccountDetails {
    *
    * @param accountNumber the account number
    */
-  public void setAccountNumber(String accountNumber) {
+  public setAccountNumber(accountNumber: string): void {
     this.accountNumber = accountNumber;
   }
 
@@ -77,9 +77,8 @@ public class InvestmentAccountDetails implements AccountDetails {
    *
    * @return the account key
    */
-  @Element( name = "ACCTKEY", order = 40 )
-  public String getAccountKey() {
-    return accountKey;
+  public getAccountKey(): string {
+    return this.accountKey;
   }
 
   /**
@@ -87,7 +86,14 @@ public class InvestmentAccountDetails implements AccountDetails {
    *
    * @param accountKey the account key
    */
-  public void setAccountKey(String accountKey) {
+  public setAccountKey(accountKey: string): void {
     this.accountKey = accountKey;
   }
+}
+
+Aggregate_add( InvestmentAccountDetails );
+Element_add(InvestmentAccountDetails, { name: "BROKERID", required: true, order: 0, type: String, read: InvestmentAccountDetails.prototype.getBrokerId, write: InvestmentAccountDetails.prototype.setBrokerId });
+Element_add(InvestmentAccountDetails, { name: "ACCTID", required: true, order: 20, type: String, read: InvestmentAccountDetails.prototype.getAccountNumber, write: InvestmentAccountDetails.prototype.setAccountNumber });
+Element_add(InvestmentAccountDetails, { name: "ACCTKEY", order: 40, type: String, read: InvestmentAccountDetails.prototype.getAccountKey, write: InvestmentAccountDetails.prototype.setAccountKey });
+
 }

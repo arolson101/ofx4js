@@ -13,60 +13,83 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../domain/data/common/StatementResponse'/>
+///<reference path='../../domain/data/common/StatementRequest'/>
+///<reference path='../../domain/data/banking/BankingResponseMessageSet'/>
+///<reference path='../../domain/data/banking/BankStatementRequest'/>
+///<reference path='../../domain/data/banking/BankingRequestMessageSet'/>
+///<reference path='../../OFXException'/>
+///<reference path='../../client/BankAccount'/>
+///<reference path='BaseAccountImpl'/>
+///<reference path='FinancialInstitutionImpl'/>
 
-package net.sf.ofx4j.client.impl;
+module ofx4js.client.impl {
 
-import net.sf.ofx4j.domain.data.common.StatementResponse;
-import net.sf.ofx4j.domain.data.common.StatementRequest;
-import net.sf.ofx4j.domain.data.common.StatementRange;
-import net.sf.ofx4j.domain.data.*;
-import net.sf.ofx4j.domain.data.banking.*;
-import net.sf.ofx4j.OFXException;
-import net.sf.ofx4j.client.BankAccount;
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import StatementRange = ofx4js.domain.data.common.StatementRange;
+//import data.* = ofx4js.domain.data.*;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+//import banking.* = ofx4js.domain.data.banking.*;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+import BankingResponseMessageSet = ofx4js.domain.data.banking.BankingResponseMessageSet;
+import BankStatementRequest = ofx4js.domain.data.banking.BankStatementRequest;
+import BankStatementResponse = ofx4js.domain.data.banking.BankStatementResponse;
+import BankStatementResponseTransaction = ofx4js.domain.data.banking.BankStatementResponseTransaction;
+import BankingRequestMessageSet = ofx4js.domain.data.banking.BankingRequestMessageSet;
+import BankStatementRequestTransaction = ofx4js.domain.data.banking.BankStatementRequestTransaction;
+import OFXException = ofx4js.OFXException;
+import BankAccount = ofx4js.client.BankAccount;
 
 /**
  * @author Ryan Heaton
  */
-public class BankingAccountImpl extends BaseAccountImpl<BankAccountDetails> implements BankAccount {
+export class BankingAccountImpl extends BaseAccountImpl<BankAccountDetails> implements BankAccount {
 
-  public BankingAccountImpl(BankAccountDetails details, String username, String password, FinancialInstitutionImpl institution) {
+  constructor(details: BankAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl) {
     super(details, username, password, institution);
   }
 
-  protected StatementResponse unwrapStatementResponse(ResponseEnvelope response) throws OFXException {
-    BankingResponseMessageSet bankingSet = (BankingResponseMessageSet) response.getMessageSet(MessageSetType.banking);
+  protected unwrapStatementResponse(response: ResponseEnvelope) /*throws OFXException*/: StatementResponse {
+    var bankingSet: BankingResponseMessageSet = <BankingResponseMessageSet> response.getMessageSet(MessageSetType.banking);
     if (bankingSet == null) {
       throw new OFXException("No banking response message set.");
     }
 
-    BankStatementResponseTransaction statementTransactionResponse = bankingSet.getStatementResponse();
+    var statementTransactionResponse: BankStatementResponseTransaction = bankingSet.getStatementResponse();
     if (statementTransactionResponse == null) {
       throw new OFXException("No banking statement response transaction.");
     }
 
-    BankStatementResponse statement = statementTransactionResponse.getMessage();
+    var statement: BankStatementResponse = statementTransactionResponse.getMessage();
     if (statement == null) {
       throw new OFXException("No banking statement in the transaction.");
     }
-    
+
     return statement;
   }
 
-  protected RequestMessageSet createRequestMessageSet(TransactionWrappedRequestMessage transaction) {
-    BankingRequestMessageSet bankingRequest = new BankingRequestMessageSet();
-    bankingRequest.setStatementRequest((BankStatementRequestTransaction) transaction);
+  protected createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet {
+    var bankingRequest: BankingRequestMessageSet = new BankingRequestMessageSet();
+    bankingRequest.setStatementRequest(<BankStatementRequestTransaction> transaction);
     return bankingRequest;
   }
 
-  protected TransactionWrappedRequestMessage createTransaction() {
+  protected createTransaction(): TransactionWrappedRequestMessage<RequestMessage> {
     return new BankStatementRequestTransaction();
   }
 
-  protected StatementRequest createStatementRequest(BankAccountDetails details, StatementRange range) {
-    BankStatementRequest bankRequest = new BankStatementRequest();
+  protected createStatementRequest(details: BankAccountDetails, range: StatementRange): StatementRequest {
+    var bankRequest: BankStatementRequest = new BankStatementRequest();
     bankRequest.setAccount(details);
     bankRequest.setStatementRange(range);
     return bankRequest;
   }
+
+}
 
 }

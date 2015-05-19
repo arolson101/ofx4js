@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ResponseMessage'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Response to a change a user password request.
@@ -28,24 +29,22 @@ import java.util.Date;
  * @author Ryan Heaton
  * @see "Section 2.5.2.2, OFX Spec."
  */
-@Aggregate ( "PINCHRQ" )
-public class PasswordChangeResponse extends ResponseMessage {
+export class PasswordChangeResponse extends ResponseMessage {
 
-  private String userId;
-  private Date changeTimestamp;
+  private userId: string;
+  private changeTimestamp: Date;
 
   /**
    * The id of the user changing password.
    *
    * @return The id of the user changing password.
    */
-  @Element ( name = "USERID", required = true, order = 0 )
-  public String getUserId() {
-    return userId;
+  public getUserId(): string {
+    return this.userId;
   }
 
   // Inherited.
-  public String getResponseMessageName() {
+  public getResponseMessageName(): string {
     return "password change";
   }
 
@@ -54,7 +53,7 @@ public class PasswordChangeResponse extends ResponseMessage {
    *
    * @param userId The id of the user changing password.
    */
-  public void setUserId(String userId) {
+  public setUserId(userId: string): void {
     this.userId = userId;
   }
 
@@ -63,9 +62,8 @@ public class PasswordChangeResponse extends ResponseMessage {
    *
    * @return The timestamp of the password change.
    */
-  @Element ( name = "DTCHANGED", order = 10 )
-  public Date getChangeTimestamp() {
-    return changeTimestamp;
+  public getChangeTimestamp(): Date {
+    return this.changeTimestamp;
   }
 
   /**
@@ -73,7 +71,13 @@ public class PasswordChangeResponse extends ResponseMessage {
    *
    * @param changeTimestamp The timestamp of the password change.
    */
-  public void setChangeTimestamp(Date changeTimestamp) {
+  public setChangeTimestamp(changeTimestamp: Date): void {
     this.changeTimestamp = changeTimestamp;
   }
+}
+  
+Aggregate_add( PasswordChangeResponse, "PINCHRQ" );
+Element_add(PasswordChangeResponse, { name: "USERID", required: true, order: 0, type: String, read: PasswordChangeResponse.prototype.getUserId, write: PasswordChangeResponse.prototype.setUserId });
+Element_add(PasswordChangeResponse, { name: "DTCHANGED", order: 10, type: Date, read: PasswordChangeResponse.prototype.getChangeTimestamp, write: PasswordChangeResponse.prototype.setChangeTimestamp });
+
 }

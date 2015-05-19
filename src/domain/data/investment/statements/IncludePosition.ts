@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 
 /**
@@ -28,11 +28,14 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INCPOS" )
-public class IncludePosition {
+export class IncludePosition {
 
-  private Date sentDownDate;
-  private Boolean includePositions = Boolean.TRUE;
+  private sentDownDate: Date;
+  private includePositions: boolean;
+  
+  constructor() {
+    this.includePositions = true;
+  }
 
   /**
    * Gets the date that the position should be sent down for. This is an optional field according
@@ -40,9 +43,8 @@ public class IncludePosition {
    *
    * @return the date for the position
    */
-  @Element( name = "DTASOF", order = 0)
-  public Date getDateSentDown() {
-    return sentDownDate;
+  public getDateSentDown(): Date {
+    return this.sentDownDate;
   }
 
   /**
@@ -51,7 +53,7 @@ public class IncludePosition {
    *
    * @param sentDownDate the date for the position
    */
-  public void setDateSentDown(Date sentDownDate) {
+  public setDateSentDown(sentDownDate: Date): void {
     this.sentDownDate = sentDownDate;
   }
 
@@ -60,9 +62,8 @@ public class IncludePosition {
    *
    * @return whether to include positions in the statement download
    */
-  @Element( name = "INCLUDE", order = 10)
-  public Boolean getIncludePositions() {
-    return includePositions;
+  public getIncludePositions(): boolean {
+    return this.includePositions;
   }
 
   /**
@@ -70,7 +71,13 @@ public class IncludePosition {
    *
    * @param includePositions whether to include positions in the statement download
    */
-  public void setIncludePositions(Boolean includePositions) {
+  public setIncludePositions(includePositions: boolean): void {
     this.includePositions = includePositions;
   }
+}
+
+Aggregate_add( IncludePosition, "INCPOS" );
+Element_add(IncludePosition, { name: "DTASOF", order: 0, type: Date, read: IncludePosition.prototype.getDateSentDown, write: IncludePosition.prototype.setDateSentDown });
+Element_add(IncludePosition, { name: "INCLUDE", order: 10, type: Boolean, read: IncludePosition.prototype.getIncludePositions, write: IncludePosition.prototype.setIncludePositions });
+
 }

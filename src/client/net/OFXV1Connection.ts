@@ -13,55 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../domain/data/RequestEnvelope'/>
+///<reference path='../../domain/data/ResponseEnvelope'/>
+///<reference path='../../io/OFXParseException'/>
+///<reference path='../../io/OFXWriter'/>
+///<reference path='../../io/AggregateMarshaller'/>
+///<reference path='../../io/AggregateUnmarshaller'/>
+///<reference path='../../io/v1/OFXV1Writer'/>
+///<reference path='../../io/StreamWriter'/>
+///<reference path='../../io/StringReader'/>
+///<reference path='../../log/Log'/>
+///<reference path='OFXConnection'/>
+///<reference path='OFXConnectionException'/>
 
-package net.sf.ofx4j.client.net;
 
-import net.sf.ofx4j.domain.data.RequestEnvelope;
-import net.sf.ofx4j.domain.data.ResponseEnvelope;
-import net.sf.ofx4j.io.OFXParseException;
-import net.sf.ofx4j.io.OFXWriter;
-import net.sf.ofx4j.io.AggregateMarshaller;
-import net.sf.ofx4j.io.v1.OFXV1Writer;
-import net.sf.ofx4j.io.AggregateUnmarshaller;
+module ofx4js.client.net {
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+import OFXParseException = ofx4js.io.OFXParseException;
+import OFXWriter = ofx4js.io.OFXWriter;
+import AggregateMarshaller = ofx4js.io.AggregateMarshaller;
+import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
+import AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
+import StringReader = ofx4js.io.StringReader;
+import OutputBuffer = ofx4js.io.OutputBuffer;
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+// import java.io.*;
+// import java.net.HttpURLConnection;
+// import java.net.URL;
+
+// import org.apache.commons.logging.Log;
+// import org.apache.commons.logging.LogFactory;
+
+var LOG: Log;
 
 /**
  * Base implementation for an OFX connection.
  *
  * @author Ryan Heaton
  */
-public class OFXV1Connection implements OFXConnection {
+export class OFXV1Connection implements OFXConnection {
 
-  private static final Log LOG = LogFactory.getLog(OFXV1Connection.class);
+  private async: boolean;
+  private marshaller: AggregateMarshaller;
+  private unmarshaller: AggregateUnmarshaller<ResponseEnvelope>;
 
-  private AggregateMarshaller marshaller = new AggregateMarshaller();
-  private AggregateUnmarshaller<ResponseEnvelope> unmarshaller = new AggregateUnmarshaller<ResponseEnvelope>(ResponseEnvelope.class);
+  constructor() {
+    this.marshaller = new AggregateMarshaller();
+    this.unmarshaller = new AggregateUnmarshaller<ResponseEnvelope>(ResponseEnvelope);
+  }
 
   // Inherited.
-  public ResponseEnvelope sendRequest(RequestEnvelope request, URL url) throws OFXConnectionException {
-    try {
-      if (!url.getProtocol().toLowerCase().startsWith("http")) {
-        throw new IllegalArgumentException("Invalid URL: " + url + " only http(s) is supported.");
-      }
+  public sendRequest(request: RequestEnvelope, url: string): Promise<ResponseEnvelope> {
+//    if (!url.protocol().toLowerCase().startsWith("http")) {
+//      throw new Error("Invalid URL: " + url + " only http(s) is supported.");
+//    }
 
-      //marshal to memory so we can determine the size...
-      ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
-      OFXWriter ofxWriter = newOFXWriter(outBuffer);
-      getMarshaller().marshal(request, ofxWriter);
-      ofxWriter.close();
-      logRequest(outBuffer);
-      InputStream in = sendBuffer(url, outBuffer);
-      return unmarshal(in);
-    }
-    catch (IOException e) {
-      throw new OFXConnectionException(e);
-    }
+    //marshal to memory so we can determine the size...
+    var outBuffer = new OutputBuffer();
+    var ofxWriter: OFXWriter = this.newOFXWriter(outBuffer);
+    this.getMarshaller().marshal(request, ofxWriter);
+    ofxWriter.close();
+    this.logRequest(outBuffer);
+    var self = this;
+    return self.sendBuffer(url, outBuffer)
+    .then(function(in_: string): ResponseEnvelope {
+      self.logResponse(in_);
+      return self.unmarshal(in_);
+    });
   }
 
   /**
@@ -69,11 +91,19 @@ public class OFXV1Connection implements OFXConnection {
    *
    * @param outBuffer The buffer to log.
    */
-  protected void logRequest(ByteArrayOutputStream outBuffer) throws UnsupportedEncodingException {
+  protected logRequest(outBuffer: OutputBuffer) /*throws UnsupportedEncodingException*/: void {
     if (LOG.isInfoEnabled()) {
       LOG.info("Marshalling " + outBuffer.size() + " bytes of the OFX request.");
       if (LOG.isDebugEnabled()) {
         LOG.debug(outBuffer.toString("utf-8"));
+      }
+    }
+  }
+  
+  protected logResponse(inBuffer: string) {
+    if (LOG.isInfoEnabled()) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Received OFX response:", inBuffer);
       }
     }
   }
@@ -83,33 +113,37 @@ public class OFXV1Connection implements OFXConnection {
    *
    * @param url The URL.
    * @param outBuffer The buffer.
-   * @return The response.
+   * @return a promise that resolves with the response.
    */
-  protected InputStream sendBuffer(URL url, ByteArrayOutputStream outBuffer) throws IOException, OFXConnectionException {
-    HttpURLConnection connection = openConnection(url);
-    connection.setRequestMethod("POST");
-    connection.setRequestProperty("Content-Type", "application/x-ofx");
-    connection.setRequestProperty("Content-Length", String.valueOf(outBuffer.size()));
-    connection.setRequestProperty("Accept", "*/*, application/x-ofx");
-    connection.setDoOutput(true);
-    connection.connect();
-
-    OutputStream out  = connection.getOutputStream();
-    out.write(outBuffer.toByteArray());
-
-    InputStream in;
-    int responseCode = connection.getResponseCode();
-    if (responseCode >= 200 && responseCode < 300) {
-      in = connection.getInputStream();
-    }
-    else if (responseCode >= 400 && responseCode < 500) {
-      throw new OFXServerException("Error with client request: " + connection.getResponseMessage(), responseCode);
-    }
-    else {
-      throw new OFXServerException("Invalid response code from OFX server: " + connection.getResponseMessage(), responseCode);
-    }
-
-    return in;
+  protected sendBuffer(url: string, outBuffer: OutputBuffer) /*throws IOException, OFXConnectionException*/: Promise<string> {
+    var outText = outBuffer.toString();
+    var async: boolean = this.getAsync();
+    return new Promise(function(resolve, reject) {
+      var request = new XMLHttpRequest();
+      var onloadCalled: boolean = false;
+      request.open("POST", url, async);
+      request.setRequestHeader("Content-Type", "application/x-ofx");
+      request.setRequestHeader("Accept", "*/*, application/x-ofx");
+      request.onload = function() {
+        onloadCalled = true;
+        if (request.status >= 200 && request.status < 300) {
+          resolve(request.responseText);
+        } else if (request.status >= 400 && request.status < 500) {
+          reject(new Error("Error " + request.status + " with client request: " + request.responseText));
+        } else {
+          reject(new Error("Invalid response code from OFX server: " + request.status));
+        }
+      };
+      request.onerror = function() {
+        reject(new Error("Network error"));
+      };
+      
+      request.send(outText);
+      
+      if (!async && !onloadCalled) {
+        (<any>request).onload();
+      }
+    });
   }
 
   /**
@@ -118,23 +152,14 @@ public class OFXV1Connection implements OFXConnection {
    * @param in The input stream.
    * @return The response envelope.
    */
-  protected ResponseEnvelope unmarshal(InputStream in) throws IOException, OFXConnectionException {
+  protected unmarshal(in_: string) /*throws IOException, OFXConnectionException*/: ResponseEnvelope {
     try {
-      return getUnmarshaller().unmarshal(in);
+      var reader = new StringReader(in_);
+      return this.getUnmarshaller().unmarshal(reader);
     }
-    catch (OFXParseException e) {
+    catch (e) {
       throw new OFXConnectionException("Unable to parse the OFX response.", e);
     }
-  }
-
-  /**
-   * Open a connection to the specified URL.
-   *
-   * @param url The URL.
-   * @return The connection.
-   */
-  protected HttpURLConnection openConnection(URL url) throws IOException {
-    return (HttpURLConnection) url.openConnection();
   }
 
   /**
@@ -143,7 +168,7 @@ public class OFXV1Connection implements OFXConnection {
    * @param out The output stream for the writer.
    * @return The OFX writer.
    */
-  protected OFXWriter newOFXWriter(OutputStream out) {
+  protected newOFXWriter(out: OutputBuffer): OFXWriter {
     return new OFXV1Writer(out);
   }
 
@@ -152,8 +177,8 @@ public class OFXV1Connection implements OFXConnection {
    *
    * @return The marshaller.
    */
-  public AggregateMarshaller getMarshaller() {
-    return marshaller;
+  public getMarshaller(): AggregateMarshaller {
+    return this.marshaller;
   }
 
   /**
@@ -161,7 +186,7 @@ public class OFXV1Connection implements OFXConnection {
    *
    * @param marshaller The marshaller.
    */
-  public void setMarshaller(AggregateMarshaller marshaller) {
+  public setMarshaller(marshaller: AggregateMarshaller): void {
     this.marshaller = marshaller;
   }
 
@@ -170,8 +195,8 @@ public class OFXV1Connection implements OFXConnection {
    *
    * @return The unmarshaller.
    */
-  public AggregateUnmarshaller<ResponseEnvelope> getUnmarshaller() {
-    return unmarshaller;
+  public getUnmarshaller(): AggregateUnmarshaller<ResponseEnvelope> {
+    return this.unmarshaller;
   }
 
   /**
@@ -179,7 +204,31 @@ public class OFXV1Connection implements OFXConnection {
    *
    * @param unmarshaller The unmarshaller.
    */
-  public void setUnmarshaller(AggregateUnmarshaller<ResponseEnvelope> unmarshaller) {
+  public setUnmarshaller(unmarshaller: AggregateUnmarshaller<ResponseEnvelope>): void {
     this.unmarshaller = unmarshaller;
   }
+
+  /**
+   * Async mode
+   *
+   * @return {bool} Whether in async mode.
+   */
+  public getAsync() {
+    return this.async;
+  }
+  
+  
+  /**
+   * Async mode
+   *
+   * @param {bool} async async mode.
+   */
+  public setAsync(async: boolean) {
+    this.async = async;
+  }
+  
+}
+
+LOG = LogFactory.getLog(OFXV1Connection);
+
 }

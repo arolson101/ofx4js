@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='PasswordChangeResponse'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("PINCHTRNRS")
-public class PasswordChangeResponseTransaction extends TransactionWrappedResponseMessage<PasswordChangeResponse> {
+export class PasswordChangeResponseTransaction extends TransactionWrappedResponseMessage<PasswordChangeResponse> {
 
-  private PasswordChangeResponse message;
+  private message: PasswordChangeResponse;
 
   /**
    * The message.
    *
    * @return The message.
    */
-  @ChildAggregate ( required = true, order = 30 )
-  public PasswordChangeResponse getMessage() {
-    return message;
+  public getMessage(): PasswordChangeResponse {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class PasswordChangeResponseTransaction extends TransactionWrappedRespons
    *
    * @param message The message.
    */
-  public void setMessage(PasswordChangeResponse message) {
+  public setMessage(message: PasswordChangeResponse): void {
     this.message = message;
   }
 
   // Inherited.
-  public PasswordChangeResponse getWrappedMessage() {
-    return getMessage();
+  public getWrappedMessage(): PasswordChangeResponse {
+    return this.getMessage();
   }
+}
+
+Aggregate_add(PasswordChangeResponseTransaction, "PINCHTRNRS");
+ChildAggregate_add(PasswordChangeResponseTransaction, { required: true, order: 30, type: PasswordChangeResponse, read: PasswordChangeResponseTransaction.prototype.getMessage, write: PasswordChangeResponseTransaction.prototype.setMessage });
+
 }

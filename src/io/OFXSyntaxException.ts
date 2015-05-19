@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXParseException'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
 /**
  * @author Ryan Heaton
  */
-public class OFXSyntaxException extends OFXParseException {
+export class OFXSyntaxException extends OFXParseException {
 
-  public OFXSyntaxException() {
-  }
-
-  public OFXSyntaxException(String message) {
+  constructor(message: string) {
     super(message);
   }
+}
 
-  public OFXSyntaxException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public OFXSyntaxException(Throwable cause) {
-    super(cause);
-  }
 }

@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='Tax1099ResponseTransaction'/>
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+module ofx4js.domain.data.tax1099 {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-@Aggregate ( "TAX1099MSGSRSV1" )
-public class Tax1099ResponseMessageSet extends ResponseMessageSet {
+export class Tax1099ResponseMessageSet extends ResponseMessageSet {
 
-  private List<Tax1099ResponseTransaction> taxResponseTransaction;
+  private taxResponseTransaction: Array<Tax1099ResponseTransaction>;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.tax1099;
   }
 
@@ -47,9 +48,8 @@ public class Tax1099ResponseMessageSet extends ResponseMessageSet {
    *
    * @return The taxResponseTransaction list.
    */
-  @ChildAggregate ( order = 0 )
-  public List<Tax1099ResponseTransaction> getTaxResponseTransaction() {
-    return taxResponseTransaction;
+  public getTaxResponseTransaction(): Array<Tax1099ResponseTransaction> {
+    return this.taxResponseTransaction;
   }
 
   /**
@@ -57,13 +57,19 @@ public class Tax1099ResponseMessageSet extends ResponseMessageSet {
    *
    * @param taxResponseTransaction The statement responses.
    */
-  public void setTaxResponseTransaction(List<Tax1099ResponseTransaction> taxResponseTransaction) {
-    this.taxResponseTransaction = taxResponseTransaction;
+  public setTaxResponseTransaction(taxResponseTransaction: Tax1099ResponseTransaction | Array<Tax1099ResponseTransaction>): void {
+    if(taxResponseTransaction instanceof Array) {
+      this.taxResponseTransaction = <Array<Tax1099ResponseTransaction>>taxResponseTransaction;
+    } else if(taxResponseTransaction instanceof Tax1099ResponseTransaction) {
+      this.taxResponseTransaction = [<Tax1099ResponseTransaction>taxResponseTransaction];
+    } else {
+      throw new Error("invalid type");
+    }
   }
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    return new ArrayList<ResponseMessage>(taxResponseTransaction);
+  public getResponseMessages(): Array<ResponseMessage> {
+    return this.taxResponseTransaction;
   }
 
   /**
@@ -72,12 +78,12 @@ public class Tax1099ResponseMessageSet extends ResponseMessageSet {
    * @return the first bank statement response.
    * @deprecated Use getStatementResponses() because sometimes there are multiple responses
    */
-  public Tax1099ResponseTransaction getStatementResponse() {
-    return taxResponseTransaction == null || taxResponseTransaction.isEmpty() ? null : taxResponseTransaction.get(0);
+  public getStatementResponse(): Tax1099ResponseTransaction {
+    return this.taxResponseTransaction == null || this.taxResponseTransaction.length == 0 ? null : this.taxResponseTransaction[0];
   }
-
-  public void setTaxResponseTransaction(Tax1099ResponseTransaction taxResponseTransaction) {
-    this.taxResponseTransaction = Collections.singletonList(taxResponseTransaction);
-  }
+}
+  
+Aggregate_add( Tax1099ResponseMessageSet, "TAX1099MSGSRSV1" );
+ChildAggregate_add(Tax1099ResponseMessageSet, { order: 0, type: Array, collectionEntryType: Tax1099ResponseTransaction, read: Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction, write: Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction });
 
 }

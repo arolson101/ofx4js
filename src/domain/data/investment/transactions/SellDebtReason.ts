@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Reason debt was sold.
@@ -22,20 +22,22 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum SellDebtReason {
+export enum SellDebtReason {
   CALL,
   SELL,
-  MATURITY;
+  MATURITY
+}
 
-  public static SellDebtReason fromOfx(String ofxVal) {
-    if ("CALL".equals(ofxVal)) {
-      return CALL;
-    } else if ("SELL".equals(ofxVal)) {
-      return SELL;
-    } else if ("MATURITY".equals(ofxVal)) {
-      return MATURITY;
-    } else {
-      return null;
-    }
+export function SellDebtReason_fromOfx(ofxVal: string): SellDebtReason {
+  if ("CALL" === ofxVal) {
+    return SellDebtReason.CALL;
+  } else if ("SELL" === ofxVal) {
+    return SellDebtReason.SELL;
+  } else if ("MATURITY" === ofxVal) {
+    return SellDebtReason.MATURITY;
+  } else {
+    return null;
   }
+}
+
 }

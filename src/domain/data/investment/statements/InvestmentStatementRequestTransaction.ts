@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../TransactionWrappedRequestMessage'/>
+///<reference path='InvestmentStatementRequest'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Investment statement transaction request.
@@ -26,20 +30,18 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-@Aggregate("INVSTMTTRNRQ")
-public class InvestmentStatementRequestTransaction
+export class InvestmentStatementRequestTransaction
     extends TransactionWrappedRequestMessage<InvestmentStatementRequest> {
 
-  private InvestmentStatementRequest message;
+  private message: InvestmentStatementRequest;
 
   /**
    * Gets the the statement request message.
    *
    * @return the statement request message.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public InvestmentStatementRequest getMessage() {
-    return message;
+  public getMessage(): InvestmentStatementRequest {
+    return this.message;
   }
 
   /**
@@ -47,12 +49,17 @@ public class InvestmentStatementRequestTransaction
    *
    * @param message the statement request message.
    */
-  public void setMessage(InvestmentStatementRequest message) {
+  public setMessage(message: InvestmentStatementRequest): void {
     this.message = message;
   }
 
   // Inherited.
-  public void setWrappedMessage(InvestmentStatementRequest message) {
-    setMessage(message);
+  public setWrappedMessage(message: InvestmentStatementRequest): void {
+    this.setMessage(message);
   }
+}
+
+Aggregate_add(InvestmentStatementRequestTransaction, "INVSTMTTRNRQ");
+ChildAggregate_add(InvestmentStatementRequestTransaction, { required: true, order: 30, type: InvestmentStatementRequest, read: InvestmentStatementRequestTransaction.prototype.getMessage, write: InvestmentStatementRequestTransaction.prototype.setMessage });
+
 }

@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Original currency aggregate ("ORIGCURRENCY"). For investment transactions in other currencies,
@@ -28,11 +30,10 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "ORIGCURRENCY" )
-public class OriginalCurrency {
+export class OriginalCurrency {
 
-  private double currencyRate;
-  private String currencyCode;
+  private currencyRate: number;
+  private currencyCode: string;
 
   /**
    * Gets the rate of currency conversion. This is the ratio of "CURDEF" (the default currency in
@@ -40,9 +41,8 @@ public class OriginalCurrency {
    *
    * @return the currency rate
    */
-  @Element( name = "CURRATE", required = true, order = 10)
-  public double getCurrencyRate() {
-    return currencyRate;
+  public getCurrencyRate(): number {
+    return this.currencyRate;
   }
 
   /**
@@ -51,7 +51,7 @@ public class OriginalCurrency {
    *
    * @param currencyRate the currency rate
    */
-  public void setCurrencyRate(double currencyRate) {
+  public setCurrencyRate(currencyRate: number): void {
     this.currencyRate = currencyRate;
   }
 
@@ -61,9 +61,8 @@ public class OriginalCurrency {
    *
    * @return the currency code
    */
-  @Element( name = "CURSYM", required = true, order = 20)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -72,7 +71,13 @@ public class OriginalCurrency {
    *
    * @param currencyCode the currency code
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
   }
+}
+
+Aggregate_add( OriginalCurrency, "ORIGCURRENCY" );
+Element_add(OriginalCurrency, { name: "CURRATE", required: true, order: 10, type: Number, read: OriginalCurrency.prototype.getCurrencyRate, write: OriginalCurrency.prototype.setCurrencyRate });
+Element_add(OriginalCurrency, { name: "CURSYM", required: true, order: 20, type: String, read: OriginalCurrency.prototype.getCurrencyCode, write: OriginalCurrency.prototype.setCurrencyCode });
+
 }

@@ -13,61 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../collections/Stack'/>
+///<reference path='OFXParseEvent'/>
+///<reference path='OFXHandler'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
+import Stack = ofx4js.collections.Stack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+var LOG: Log;
 
 /**
  * @author Ryan Heaton
  */
-public class OFXV2ContentHandler extends org.xml.sax.helpers.DefaultHandler {
+export class OFXV2ContentHandler {
 
-  private static final Log LOG = LogFactory.getLog(OFXV2ContentHandler.class);
+  private eventStack: Stack<OFXParseEvent>;
+  private ofxHandler: OFXHandler;
+  private startedEvents: Array<OFXParseEvent>;
 
-  private final Stack<OFXParseEvent> eventStack = new Stack<OFXParseEvent>();
-  private final OFXHandler ofxHandler;
-  private final List<OFXParseEvent> startedEvents = new ArrayList<OFXParseEvent>();
+  constructor(ofxHandler: OFXHandler) {
+    this.eventStack = new Stack<OFXParseEvent>();
+    this.startedEvents = new Array<OFXParseEvent>();
 
-  public OFXV2ContentHandler(OFXHandler ofxHandler) {
     if (ofxHandler == null) {
-      throw new IllegalArgumentException("An OFX handler must be supplied.");
+      throw new Error("An OFX handler must be supplied.");
     }
 
     this.ofxHandler = ofxHandler;
   }
+  
+  public install(parser: SAXParser) {
+    parser.ontext = this.ontext.bind(this);
+    parser.onopentag = this.onopentag.bind(this);
+    parser.onclosetag = this.onclosetag.bind(this);
+  }
 
-  @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+  public onopentag(node: SAXTag): void {
+    var qName: string = node.name;
     if (LOG.isDebugEnabled()) {
       LOG.debug("START ELEMENT: " + qName);
     }
 
-    if ((!eventStack.isEmpty()) && (eventStack.peek().getEventType() == OFXParseEvent.Type.ELEMENT) && (!isAlreadyStarted(eventStack.peek()))) {
-      String eventValue = eventStack.peek().getEventValue();
+    if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEventType.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
+      var eventValue: string = this.eventStack.peek().getEventValue();
       if (LOG.isDebugEnabled()) {
         LOG.debug("Element " + qName + " is starting aggregate " + eventValue);
       }
 
       //the last element started was not ended; we are assuming we've started a new aggregate.
-      try {
-        this.ofxHandler.startAggregate(eventValue);
-      }
-      catch (OFXParseException e) {
-        throw new SAXException(e);
-      }
+      this.ofxHandler.startAggregate(eventValue);
 
-      this.startedEvents.add(eventStack.peek());
+      this.startedEvents.push(this.eventStack.peek());
     }
 
-    eventStack.push(new OFXParseEvent(OFXParseEvent.Type.ELEMENT, qName));
+    this.eventStack.push(new OFXParseEvent(OFXParseEventType.ELEMENT, qName));
   }
 
   /**
@@ -76,81 +78,76 @@ public class OFXV2ContentHandler extends org.xml.sax.helpers.DefaultHandler {
    * @param event The event containing the start.
    * @return Whether the specified element aggregate has already been started.
    */
-  protected boolean isAlreadyStarted(OFXParseEvent event) {
-    return this.startedEvents.contains(event);
+  protected isAlreadyStarted(event: OFXParseEvent): boolean {
+    return this.startedEvents.indexOf(event) != -1;
   }
 
-  @Override
-  public void endElement(String uri, String localName, String qName) throws SAXException {
+  public onclosetag(qName: string): void {
     if (LOG.isDebugEnabled()) {
       LOG.debug("END ELEMENT: " + qName);
     }
 
-    OFXParseEvent eventToFinish = eventStack.pop();
-    if (eventToFinish.getEventType() == OFXParseEvent.Type.CHARACTERS) {
-      String chars = eventToFinish.getEventValue().trim();
+    var eventToFinish: OFXParseEvent = this.eventStack.pop();
+    if (eventToFinish.getEventType() == OFXParseEventType.CHARACTERS) {
+      var chars: string = eventToFinish.getEventValue().trim();
 
-      if (eventStack.isEmpty()) {
-        throw new IllegalStateException("Illegal character data outside main OFX root element: \"" + chars + "\".");
+      if (this.eventStack.isEmpty()) {
+        throw new Error("Illegal character data outside main OFX root element: \"" + chars + "\".");
       }
       else {
-        OFXParseEvent elementEvent = eventStack.pop();
-        if (elementEvent.getEventType() != OFXParseEvent.Type.ELEMENT) {
-          throw new IllegalStateException("Illegal OFX event before characters \"" + chars + "\" (" + elementEvent.getEventType() + ")!");
+        var elementEvent: OFXParseEvent = this.eventStack.pop();
+        if (elementEvent.getEventType() != OFXParseEventType.ELEMENT) {
+          throw new Error("Illegal OFX event before characters \"" + chars + "\" (" + elementEvent.getEventType() + ")!");
         }
         else {
-          String value = elementEvent.getEventValue();
+          var value: string = elementEvent.getEventValue();
           if (LOG.isDebugEnabled()) {
             LOG.debug("Element " + value + " processed with value " + chars);
           }
-          try {
-            this.ofxHandler.onElement(value, chars);
-          }
-          catch (OFXParseException e) {
-            throw new SAXException(e);
-          }
+          this.ofxHandler.onElement(value, chars);
         }
       }
     }
-    else if (eventToFinish.getEventType() == OFXParseEvent.Type.ELEMENT) {
+    else if (eventToFinish.getEventType() == OFXParseEventType.ELEMENT) {
       //we're ending an aggregate (no character data on the stack).
-      if (qName.equals(eventToFinish.getEventValue())) {
+      if (qName === eventToFinish.getEventValue()) {
         //the last element on the stack is ours; we're ending an OFX aggregate.
-        String value = eventToFinish.getEventValue();
+        var value: string = eventToFinish.getEventValue();
         if (LOG.isDebugEnabled()) {
           LOG.debug("Ending aggregate " + value);
         }
-        try {
-          this.ofxHandler.endAggregate(value);
-        }
-        catch (OFXParseException e) {
-          throw new SAXException(e);
-        }
+        this.ofxHandler.endAggregate(value);
 
-        this.startedEvents.remove(eventToFinish);
+        var i = this.startedEvents.indexOf(eventToFinish);
+        console.assert(i !== -1);
+        if (i > -1) {
+          this.startedEvents.splice(i, 1);
+        }
       }
       else {
-        throw new IllegalStateException("Unexpected end tag: " + eventToFinish.getEventValue());
+        throw new Error("Unexpected end tag: " + eventToFinish.getEventValue());
       }
     }
     else {
-      throw new IllegalStateException("Illegal OFX event: " + eventToFinish.getEventType());
+      throw new Error("Illegal OFX event: " + eventToFinish.getEventType());
     }
   }
-
-  @Override
-  public void characters(char ch[], int start, int length) throws SAXException {
-    String value = new String(ch, start, length);
-    if (value.trim().length() > 0) {
-      OFXParseEvent event;
-      if ((!eventStack.isEmpty()) && (eventStack.peek().getEventType() == OFXParseEvent.Type.CHARACTERS)) {
+  
+  public ontext(value: string): void {
+    if (value.trim().length > 0) {
+      var event: OFXParseEvent;
+      if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEventType.CHARACTERS)) {
         //append the characters...
-        event = new OFXParseEvent(OFXParseEvent.Type.CHARACTERS, eventStack.pop().getEventValue() + value);
+        event = new OFXParseEvent(OFXParseEventType.CHARACTERS, this.eventStack.pop().getEventValue() + value);
       }
       else {
-        event = new OFXParseEvent(OFXParseEvent.Type.CHARACTERS, value);
+        event = new OFXParseEvent(OFXParseEventType.CHARACTERS, value);
       }
-      eventStack.push(event);
+      this.eventStack.push(event);
     }
   }
+}
+
+LOG = LogFactory.getLog(OFXV2ContentHandler);
+
 }

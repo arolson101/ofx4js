@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../RequestMessage'/>
+///<reference path='SecurityRequest'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Request aggregate for the security list.
@@ -28,17 +30,20 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate("SECLISTRQ")
-public class SecurityListRequest extends RequestMessage {
+export class SecurityListRequest extends RequestMessage {
 
-  private List<SecurityRequest> securityRequests;
+  private securityRequests: Array<SecurityRequest>;
 
-  @ChildAggregate( required = true, order = 10 )
-  public List<SecurityRequest> getSecurityRequests() {
-    return securityRequests;
+  public getSecurityRequests(): Array<SecurityRequest> {
+    return this.securityRequests;
   }
 
-  public void setSecurityRequests(List<SecurityRequest> securityRequests) {
+  public setSecurityRequests(securityRequests: Array<SecurityRequest>): void {
     this.securityRequests = securityRequests;
   }
+}
+
+Aggregate_add(SecurityListRequest, "SECLISTRQ");
+ChildAggregate_add(SecurityListRequest, { required: true, order: 10, type: Array, collectionEntryType: SecurityRequest, read: SecurityListRequest.prototype.getSecurityRequests, write: SecurityListRequest.prototype.setSecurityRequests });
+
 }

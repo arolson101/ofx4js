@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * @author Ryan Heaton
  */
-public enum TransactionType {
+export enum TransactionType {
 
   /**
    * generic credit.
@@ -105,4 +105,6 @@ public enum TransactionType {
    * other
    */
   OTHER
+}
+
 }

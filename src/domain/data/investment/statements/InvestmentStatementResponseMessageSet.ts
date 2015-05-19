@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../MessageSetType'/>
+///<reference path='../../ResponseMessage'/>
+///<reference path='../../ResponseMessageSet'/>
+///<reference path='InvestmentStatementResponseTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Investment statement response message set.
@@ -32,12 +34,11 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INVSTMTMSGSRSV1" )
-public class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
+export class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
 
-  private List<InvestmentStatementResponseTransaction> statementResponses;
+  private statementResponses: Array<InvestmentStatementResponseTransaction>;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.investment;
   }
 
@@ -46,9 +47,8 @@ public class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
    *
    * @return the statement response list
    */
-  @ChildAggregate( order = 0 )
-  public List<InvestmentStatementResponseTransaction> getStatementResponses() {
-    return statementResponses;
+  public getStatementResponses(): Array<InvestmentStatementResponseTransaction> {
+    return this.statementResponses;
   }
 
 
@@ -57,8 +57,7 @@ public class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
    *
    * @param statementResponses the statement response list
    */
-  public void setStatementResponses(
-      List<InvestmentStatementResponseTransaction> statementResponses) {
+  public setStatementResponses(statementResponses: Array<InvestmentStatementResponseTransaction>): void {
     this.statementResponses = statementResponses;
   }
 
@@ -69,8 +68,8 @@ public class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
    *
    * @return the first investment statement response.
    */
-  public InvestmentStatementResponseTransaction getStatementResponse() {
-    return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+  public getStatementResponse(): InvestmentStatementResponseTransaction {
+    return this.statementResponses == null || this.statementResponses.length == 0 ? null : this.statementResponses[0];
   }
 
   /**
@@ -78,12 +77,17 @@ public class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
    *
    * @param statementResponse The statement response.
    */
-  public void setStatementResponse(InvestmentStatementResponseTransaction statementResponse) {
-    this.statementResponses = Collections.singletonList(statementResponse);
+  public setStatementResponse(statementResponse: InvestmentStatementResponseTransaction): void {
+    this.statementResponses = [statementResponse];
   }
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    return new ArrayList<ResponseMessage>(statementResponses);
+  public getResponseMessages(): Array<ResponseMessage> {
+    return this.statementResponses;
   }
+}
+
+Aggregate_add( InvestmentStatementResponseMessageSet, "INVSTMTMSGSRSV1" );
+ChildAggregate_add(InvestmentStatementResponseMessageSet, { order: 0, type: Array, collectionEntryType: InvestmentStatementResponseTransaction, read: InvestmentStatementResponseMessageSet.prototype.getStatementResponses, write: InvestmentStatementResponseMessageSet.prototype.setStatementResponses });
+
 }

@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+///<reference path='SellType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for selling mutual fund.
@@ -25,14 +29,13 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SELLMF" )
-public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
+export class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
 
-  private String sellType;
-  private Double averageCostBasis;
-  private String relatedTransactionId;
+  private sellType: string;
+  private averageCostBasis: number;
+  private relatedTransactionId: string;
 
-  public SellMutualFundTransaction() {
+  constructor() {
     super(TransactionType.SELL_MUTUAL_FUND);
   }
 
@@ -42,9 +45,8 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @return The type of sale
    */
-  @Element( name = "SELLTYPE", order = 20)
-  public String getSellType() {
-    return sellType;
+  public getSellType(): string {
+    return this.sellType;
   }
 
   /**
@@ -53,7 +55,7 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @param sellType The type of sale
    */
-  public void setSellType(String sellType) {
+  public setSellType(sellType: string): void {
     this.sellType = sellType;
   }
 
@@ -62,8 +64,8 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the type of sale or null if it's not known.
    */
-  public SellType getSellTypeEnum() {
-    return SellType.fromOfx(sellType);
+  public getSellTypeEnum(): SellType {
+    return SellType_fromOfx(this.sellType);
   }
 
   /**
@@ -72,9 +74,8 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @return The average cost basis of the sale
    */
-  @Element( name = "AVGCOSTBASIS", order = 30)
-  public Double getAverageCostBasis() {
-    return averageCostBasis;
+  public getAverageCostBasis(): number {
+    return this.averageCostBasis;
   }
 
   /**
@@ -83,7 +84,7 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @param averageCostBasis The average cost basis of the sale
    */
-  public void setAverageCostBasis(Double averageCostBasis) {
+  public setAverageCostBasis(averageCostBasis: number): void {
     this.averageCostBasis = averageCostBasis;
   }
 
@@ -94,9 +95,8 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the related transaction id
    */
-  @Element( name = "RELFITID", order = 40)
-  public String getRelatedTransactionId() {
-    return relatedTransactionId;
+  public getRelatedTransactionId(): string {
+    return this.relatedTransactionId;
   }
 
   /**
@@ -106,7 +106,14 @@ public class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
    *
    * @param relatedTransactionId the related transaction id
    */
-  public void setRelatedTransactionId(String relatedTransactionId) {
+  public setRelatedTransactionId(relatedTransactionId: string): void {
     this.relatedTransactionId = relatedTransactionId;
   }
+}
+
+Aggregate_add( SellMutualFundTransaction, "SELLMF" );
+Element_add(SellMutualFundTransaction, { name: "SELLTYPE", order: 20, type: String, read: SellMutualFundTransaction.prototype.getSellType, write: SellMutualFundTransaction.prototype.setSellType });
+Element_add(SellMutualFundTransaction, { name: "AVGCOSTBASIS", order: 30, type: Number, read: SellMutualFundTransaction.prototype.getAverageCostBasis, write: SellMutualFundTransaction.prototype.setAverageCostBasis });
+Element_add(SellMutualFundTransaction, { name: "RELFITID", order: 40, type: String, read: SellMutualFundTransaction.prototype.getRelatedTransactionId, write: SellMutualFundTransaction.prototype.setRelatedTransactionId });
+
 }

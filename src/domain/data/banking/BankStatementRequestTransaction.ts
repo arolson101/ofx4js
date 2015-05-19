@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='BankStatementRequest'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("STMTTRNRQ")
-public class BankStatementRequestTransaction extends TransactionWrappedRequestMessage<BankStatementRequest> {
+export class BankStatementRequestTransaction extends TransactionWrappedRequestMessage<BankStatementRequest> {
 
-  private BankStatementRequest message;
+  private message: BankStatementRequest;
 
   /**
    * The message.
    *
    * @return The message.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public BankStatementRequest getMessage() {
-    return message;
+  public getMessage(): BankStatementRequest {
+    return this.message;
   }
 
   /**
@@ -44,12 +46,17 @@ public class BankStatementRequestTransaction extends TransactionWrappedRequestMe
    * @param message The message.
    *
    */
-  public void setMessage(BankStatementRequest message) {
+  public setMessage(message: BankStatementRequest): void {
     this.message = message;
   }
 
   // Inherited.
-  public void setWrappedMessage(BankStatementRequest message) {
-    setMessage(message);
+  public setWrappedMessage(message: BankStatementRequest): void {
+    this.setMessage(message);
   }
+}
+
+Aggregate_add( BankStatementRequestTransaction, "STMTTRNRQ" );
+ChildAggregate_add(BankStatementRequestTransaction, { required: true, order: 30, type: BankStatementRequest, read: BankStatementRequestTransaction.prototype.getMessage, write: BankStatementRequestTransaction.prototype.setMessage });
+
 }

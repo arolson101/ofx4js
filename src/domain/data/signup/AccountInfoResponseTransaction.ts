@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='AccountInfoResponse'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "ACCTINFOTRNRS" )
-public class AccountInfoResponseTransaction extends TransactionWrappedResponseMessage<AccountInfoResponse> {
+export class AccountInfoResponseTransaction extends TransactionWrappedResponseMessage<AccountInfoResponse> {
 
-  private AccountInfoResponse message;
+  private message: AccountInfoResponse;
 
   /**
    * The wrapped message.
    *
    * @return The wrapped message.
    */
-  @ChildAggregate ( required = true, order = 30 )
-  public AccountInfoResponse getMessage() {
-    return message;
+  public getMessage(): AccountInfoResponse {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class AccountInfoResponseTransaction extends TransactionWrappedResponseMe
    *
    * @param message The wrapped message.
    */
-  public void setMessage(AccountInfoResponse message) {
+  public setMessage(message: AccountInfoResponse): void {
     this.message = message;
   }
 
   // Inherited.
-  public AccountInfoResponse getWrappedMessage() {
-    return getMessage();
+  public getWrappedMessage(): AccountInfoResponse {
+    return this.getMessage();
   }
+}
+
+Aggregate_add( AccountInfoResponseTransaction, "ACCTINFOTRNRS" );
+ChildAggregate_add(AccountInfoResponseTransaction, { required: true, order: 30, type: AccountInfoResponse, read: AccountInfoResponseTransaction.prototype.getMessage, write: AccountInfoResponseTransaction.prototype.setMessage });
+
 }

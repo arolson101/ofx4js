@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='InvestmentTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Sell investment transaction aggregate ("INVSELL").
@@ -29,38 +38,36 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INVSELL" )
-public class SellInvestmentTransaction {
-  private InvestmentTransaction investmentTransaction;
-  private SecurityId securityId;
-  private Double units;
-  private Double unitPrice;
-  private Double markdown;
-  private Double commission;
-  private Double taxes;
-  private Double fees;
-  private Double load;
-  private Double withholding;
-  private Boolean taxExempt;
-  private Double total;
-  private Double gain;
-  private String currencyCode;
-  private OriginalCurrency originalCurrencyInfo;
-  private String subAccountSecurity;
-  private String subAccountFund;
-  private String loanId;
-  private Double stateWithholding;
-  private Double penalty;
-  private String inv401kSource;
+export class SellInvestmentTransaction {
+  private investmentTransaction: InvestmentTransaction;
+  private securityId: SecurityId;
+  private units: number;
+  private unitPrice: number;
+  private markdown: number;
+  private commission: number;
+  private taxes: number;
+  private fees: number;
+  private load: number;
+  private withholding: number;
+  private taxExempt: boolean;
+  private total: number;
+  private gain: number;
+  private currencyCode: string;
+  private originalCurrencyInfo: OriginalCurrency;
+  private subAccountSecurity: string;
+  private subAccountFund: string;
+  private loanId: string;
+  private stateWithholding: number;
+  private penalty: number;
+  private inv401kSource: string;
 
   /**
    * Gets the investment transaction child aggregate.
    *
    * @return the investment transaction child aggregate
    */
-  @ChildAggregate( order = 10 )
-  public InvestmentTransaction getInvestmentTransaction() {
-    return investmentTransaction;
+  public getInvestmentTransaction(): InvestmentTransaction {
+    return this.investmentTransaction;
   }
 
   /**
@@ -68,7 +75,7 @@ public class SellInvestmentTransaction {
    *
    * @param investmentTransaction the investment transaction child aggregate
    */
-  public void setInvestmentTransaction(InvestmentTransaction investmentTransaction) {
+  public setInvestmentTransaction(investmentTransaction: InvestmentTransaction): void {
     this.investmentTransaction = investmentTransaction;
   }
 
@@ -79,9 +86,8 @@ public class SellInvestmentTransaction {
    *
    * @return the security id of the security that was sold
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -91,7 +97,7 @@ public class SellInvestmentTransaction {
    *
    * @param securityId the security id of the security that was sold
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -104,9 +110,8 @@ public class SellInvestmentTransaction {
    *
    * @return the number of units sold
    */
-  @Element( name = "UNITS", required = true, order = 30)
-  public Double getUnits() {
-    return units;
+  public getUnits(): number {
+    return this.units;
   }
 
   /**
@@ -118,7 +123,7 @@ public class SellInvestmentTransaction {
    *
    * @param units the number of units sold
    */
-  public void setUnits(Double units) {
+  public setUnits(units: number): void {
     this.units = units;
   }
 
@@ -130,9 +135,8 @@ public class SellInvestmentTransaction {
    *
    * @return the per unit price
    */
-  @Element( name = "UNITPRICE", required = true, order = 40)
-  public Double getUnitPrice() {
-    return unitPrice;
+  public getUnitPrice(): number {
+    return this.unitPrice;
   }
 
   /**
@@ -143,7 +147,7 @@ public class SellInvestmentTransaction {
    *
    * @param unitPrice the per unit price
    */
-  public void setUnitPrice(Double unitPrice) {
+  public setUnitPrice(unitPrice: number): void {
     this.unitPrice = unitPrice;
   }
 
@@ -154,9 +158,8 @@ public class SellInvestmentTransaction {
    *
    * @return the per unit markedown price
    */
-  @Element( name = "MARKDOWN", order = 50)
-  public Double getMarkdown() {
-    return markdown;
+  public getMarkdown(): number {
+    return this.markdown;
   }
 
   /**
@@ -166,7 +169,7 @@ public class SellInvestmentTransaction {
    *
    * @param markdown the per unit markedown price
    */
-  public void setMarkdown(Double markdown) {
+  public setMarkdown(markdown: number): void {
     this.markdown = markdown;
   }
 
@@ -177,9 +180,8 @@ public class SellInvestmentTransaction {
    *
    * @return the transaction commision
    */
-  @Element( name = "COMMISSION", order = 60)
-  public Double getCommission() {
-    return commission;
+  public getCommission(): number {
+    return this.commission;
   }
 
   /**
@@ -189,7 +191,7 @@ public class SellInvestmentTransaction {
    *
    * @param commission the transaction commision
    */
-  public void setCommission(Double commission) {
+  public setCommission(commission: number): void {
     this.commission = commission;
   }
 
@@ -199,9 +201,8 @@ public class SellInvestmentTransaction {
    *
    * @return the transaction taxes
    */
-  @Element( name = "TAXES", order = 70)
-  public Double getTaxes() {
-    return taxes;
+  public getTaxes(): number {
+    return this.taxes;
   }
 
   /**
@@ -210,7 +211,7 @@ public class SellInvestmentTransaction {
    *
    * @param taxes the transaction taxes
    */
-  public void setTaxes(Double taxes) {
+  public setTaxes(taxes: number): void {
     this.taxes = taxes;
   }
 
@@ -220,9 +221,8 @@ public class SellInvestmentTransaction {
    *
    * @return the transaction fees
    */
-  @Element( name = "FEES", order = 80)
-  public Double getFees() {
-    return fees;
+  public getFees(): number {
+    return this.fees;
   }
 
   /**
@@ -231,7 +231,7 @@ public class SellInvestmentTransaction {
    *
    * @param fees the transaction fees
    */
-  public void setFees(Double fees) {
+  public setFees(fees: number): void {
     this.fees = fees;
   }
 
@@ -241,9 +241,8 @@ public class SellInvestmentTransaction {
    *
    * @return the load
    */
-  @Element( name = "LOAD", order = 90)
-  public Double getLoad() {
-    return load;
+  public getLoad(): number {
+    return this.load;
   }
 
   /**
@@ -252,7 +251,7 @@ public class SellInvestmentTransaction {
    *
    * @param load the load
    */
-  public void setLoad(Double load) {
+  public setLoad(load: number): void {
     this.load = load;
   }
 
@@ -262,9 +261,8 @@ public class SellInvestmentTransaction {
    *
    * @return the withholding
    */
-  @Element( name = "WITHHOLDING", order = 93)
-  public Double getWithholding() {
-    return withholding;
+  public getWithholding(): number {
+    return this.withholding;
   }
 
   /**
@@ -273,7 +271,7 @@ public class SellInvestmentTransaction {
    *
    * @param withholding the withholding
    */
-  public void setWithholding(Double withholding) {
+  public setWithholding(withholding: number): void {
     this.withholding = withholding;
   }
 
@@ -283,9 +281,8 @@ public class SellInvestmentTransaction {
    *
    * @return whether the transaction was tax exempt
    */
-  @Element( name = "TAXEXEMPT", order = 97)
-  public Boolean getTaxExempt() {
-    return taxExempt;
+  public getTaxExempt(): boolean {
+    return this.taxExempt;
   }
 
   /**
@@ -294,7 +291,7 @@ public class SellInvestmentTransaction {
    *
    * @param taxExempt whether the transaction was tax exempt
    */
-  public void setTaxExempt(Boolean taxExempt) {
+  public setTaxExempt(taxExempt: boolean): void {
     this.taxExempt = taxExempt;
   }
 
@@ -307,9 +304,8 @@ public class SellInvestmentTransaction {
    *
    * @return the total
    */
-  @Element( name = "TOTAL", required = true, order = 100)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -321,7 +317,7 @@ public class SellInvestmentTransaction {
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
 
@@ -331,9 +327,8 @@ public class SellInvestmentTransaction {
    *
    * @return the gain for the sale
    */
-  @Element( name = "GAIN", order = 105)
-  public Double getGain() {
-    return gain;
+  public getGain(): number {
+    return this.gain;
   }
 
   /**
@@ -342,7 +337,7 @@ public class SellInvestmentTransaction {
    *
    * @param gain the gain for the sale
    */
-  public void setGain(Double gain) {
+  public setGain(gain: number): void {
     this.gain = gain;
   }
 
@@ -353,9 +348,8 @@ public class SellInvestmentTransaction {
    *
    * @return the currency code for the transaction
    */
-  @Element( name = "CURRENCY", order = 110)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -365,7 +359,7 @@ public class SellInvestmentTransaction {
    *
    * @param currencyCode the currency code for the transaction
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
     this.originalCurrencyInfo = null;
   }
@@ -376,9 +370,8 @@ public class SellInvestmentTransaction {
    *
    * @return the original currency info for the transaction
    */
-  @Element( name = "ORIGCURRENCY", order = 120)
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return originalCurrencyInfo;
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.originalCurrencyInfo;
   }
 
   /**
@@ -387,7 +380,7 @@ public class SellInvestmentTransaction {
    *
    * @param originalCurrencyInfo the original currency info for the transaction
    */
-  public void setOriginalCurrencyInfo(OriginalCurrency originalCurrencyInfo) {
+  public setOriginalCurrencyInfo(originalCurrencyInfo: OriginalCurrency): void {
     this.originalCurrencyInfo = originalCurrencyInfo;
     this.currencyCode = null;
   }
@@ -398,9 +391,8 @@ public class SellInvestmentTransaction {
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTSEC", order = 130)
-  public String getSubAccountSecurity() {
-    return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+    return this.subAccountSecurity;
   }
 
   /**
@@ -409,7 +401,7 @@ public class SellInvestmentTransaction {
    *
    * @param subAccountSecurity the sub account type
    */
-  public void setSubAccountSecurity(String subAccountSecurity) {
+  public setSubAccountSecurity(subAccountSecurity: string): void {
     this.subAccountSecurity = subAccountSecurity;
   }
 
@@ -418,8 +410,8 @@ public class SellInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -429,9 +421,8 @@ public class SellInvestmentTransaction {
    *
    * @return the sub account fund
    */
-  @Element( name = "SUBACCTFUND", order = 140)
-  public String getSubAccountFund() {
-    return subAccountFund;
+  public getSubAccountFund(): string {
+    return this.subAccountFund;
   }
 
   /**
@@ -441,7 +432,7 @@ public class SellInvestmentTransaction {
    *
    * @param subAccountFund the sub account fund
    */
-  public void setSubAccountFund(String subAccountFund) {
+  public setSubAccountFund(subAccountFund: string): void {
     this.subAccountFund = subAccountFund;
   }
 
@@ -450,8 +441,8 @@ public class SellInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
 
   /**
@@ -461,9 +452,8 @@ public class SellInvestmentTransaction {
    *
    * @return the loan id
    */
-  @Element( name = "LOANID", order = 150)
-  public String getLoanId() {
-    return loanId;
+  public getLoanId(): string {
+    return this.loanId;
   }
 
   /**
@@ -473,7 +463,7 @@ public class SellInvestmentTransaction {
    *
    * @param loanId the loan id
    */
-  public void setLoanId(String loanId) {
+  public setLoanId(loanId: string): void {
     this.loanId = loanId;
   }
 
@@ -483,9 +473,8 @@ public class SellInvestmentTransaction {
    *
    * @return the state withholding
    */
-  @Element( name = "STATEWITHHOLDING", order = 160)
-  public Double getStateWithholding() {
-    return stateWithholding;
+  public getStateWithholding(): number {
+    return this.stateWithholding;
   }
 
   /**
@@ -494,7 +483,7 @@ public class SellInvestmentTransaction {
    *
    * @param stateWithholding the state withholding
    */
-  public void setStateWithholding(Double stateWithholding) {
+  public setStateWithholding(stateWithholding: number): void {
     this.stateWithholding = stateWithholding;
   }
 
@@ -504,9 +493,8 @@ public class SellInvestmentTransaction {
    *
    * @return the state withholding
    */
-  @Element( name = "PENALTY", order = 170)
-  public Double getPenalty() {
-    return penalty;
+  public getPenalty(): number {
+    return this.penalty;
   }
 
   /**
@@ -515,7 +503,7 @@ public class SellInvestmentTransaction {
    *
    * @param penalty the state withholding
    */
-  public void setPenalty(Double penalty) {
+  public setPenalty(penalty: number): void {
     this.penalty = penalty;
   }
 
@@ -527,9 +515,8 @@ public class SellInvestmentTransaction {
    *
    * @return the 401k source
    */
-  @Element( name = "INV401KSOURCE", order = 180)
-  public String get401kSource() {
-    return inv401kSource;
+  public get401kSource(): string {
+    return this.inv401kSource;
   }
 
   /**
@@ -540,7 +527,7 @@ public class SellInvestmentTransaction {
    *
    * @param inv401kSource the 401k source
    */
-  public void set401kSource(String inv401kSource) {
+  public set401kSource(inv401kSource: string): void {
     this.inv401kSource = inv401kSource;
   }
 
@@ -549,7 +536,32 @@ public class SellInvestmentTransaction {
    *
    * @return the 401k source or null if its not one of the well-known types
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+Aggregate_add( SellInvestmentTransaction, "INVSELL" );
+ChildAggregate_add(SellInvestmentTransaction, { order: 10, type: InvestmentTransaction, read: SellInvestmentTransaction.prototype.getInvestmentTransaction, write: SellInvestmentTransaction.prototype.setInvestmentTransaction });
+ChildAggregate_add(SellInvestmentTransaction, { required: true, order: 20, type: SecurityId, read: SellInvestmentTransaction.prototype.getSecurityId, write: SellInvestmentTransaction.prototype.setSecurityId });
+Element_add(SellInvestmentTransaction, { name: "UNITS", required: true, order: 30, type: Number, read: SellInvestmentTransaction.prototype.getUnits, write: SellInvestmentTransaction.prototype.setUnits });
+Element_add(SellInvestmentTransaction, { name: "UNITPRICE", required: true, order: 40, type: Number, read: SellInvestmentTransaction.prototype.getUnitPrice, write: SellInvestmentTransaction.prototype.setUnitPrice });
+Element_add(SellInvestmentTransaction, { name: "MARKDOWN", order: 50, type: Number, read: SellInvestmentTransaction.prototype.getMarkdown, write: SellInvestmentTransaction.prototype.setMarkdown });
+Element_add(SellInvestmentTransaction, { name: "COMMISSION", order: 60, type: Number, read: SellInvestmentTransaction.prototype.getCommission, write: SellInvestmentTransaction.prototype.setCommission });
+Element_add(SellInvestmentTransaction, { name: "TAXES", order: 70, type: Number, read: SellInvestmentTransaction.prototype.getTaxes, write: SellInvestmentTransaction.prototype.setTaxes });
+Element_add(SellInvestmentTransaction, { name: "FEES", order: 80, type: Number, read: SellInvestmentTransaction.prototype.getFees, write: SellInvestmentTransaction.prototype.setFees });
+Element_add(SellInvestmentTransaction, { name: "LOAD", order: 90, type: Number, read: SellInvestmentTransaction.prototype.getLoad, write: SellInvestmentTransaction.prototype.setLoad });
+Element_add(SellInvestmentTransaction, { name: "WITHHOLDING", order: 93, type: Number, read: SellInvestmentTransaction.prototype.getWithholding, write: SellInvestmentTransaction.prototype.setWithholding });
+Element_add(SellInvestmentTransaction, { name: "TAXEXEMPT", order: 97, type: Boolean, read: SellInvestmentTransaction.prototype.getTaxExempt, write: SellInvestmentTransaction.prototype.setTaxExempt });
+Element_add(SellInvestmentTransaction, { name: "TOTAL", required: true, order: 100, type: Number, read: SellInvestmentTransaction.prototype.getTotal, write: SellInvestmentTransaction.prototype.setTotal });
+Element_add(SellInvestmentTransaction, { name: "GAIN", order: 105, type: Number, read: SellInvestmentTransaction.prototype.getGain, write: SellInvestmentTransaction.prototype.setGain });
+Element_add(SellInvestmentTransaction, { name: "CURRENCY", order: 110, type: String, read: SellInvestmentTransaction.prototype.getCurrencyCode, write: SellInvestmentTransaction.prototype.setCurrencyCode });
+Element_add(SellInvestmentTransaction, { name: "ORIGCURRENCY", order: 120, type: OriginalCurrency, read: SellInvestmentTransaction.prototype.getOriginalCurrencyInfo, write: SellInvestmentTransaction.prototype.setOriginalCurrencyInfo });
+Element_add(SellInvestmentTransaction, { name: "SUBACCTSEC", order: 130, type: String, read: SellInvestmentTransaction.prototype.getSubAccountSecurity, write: SellInvestmentTransaction.prototype.setSubAccountSecurity });
+Element_add(SellInvestmentTransaction, { name: "SUBACCTFUND", order: 140, type: String, read: SellInvestmentTransaction.prototype.getSubAccountFund, write: SellInvestmentTransaction.prototype.setSubAccountFund });
+Element_add(SellInvestmentTransaction, { name: "LOANID", order: 150, type: String, read: SellInvestmentTransaction.prototype.getLoanId, write: SellInvestmentTransaction.prototype.setLoanId });
+Element_add(SellInvestmentTransaction, { name: "STATEWITHHOLDING", order: 160, type: Number, read: SellInvestmentTransaction.prototype.getStateWithholding, write: SellInvestmentTransaction.prototype.setStateWithholding });
+Element_add(SellInvestmentTransaction, { name: "PENALTY", order: 170, type: Number, read: SellInvestmentTransaction.prototype.getPenalty, write: SellInvestmentTransaction.prototype.setPenalty });
+Element_add(SellInvestmentTransaction, { name: "INV401KSOURCE", order: 180, type: String, read: SellInvestmentTransaction.prototype.get401kSource, write: SellInvestmentTransaction.prototype.set401kSource });
+
 }

@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.investment.statements;
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/BalanceRecord'/>
 
-import net.sf.ofx4j.domain.data.common.BalanceRecord;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.investment.statements {
 
-import java.util.List;
+import BalanceRecord = ofx4js.domain.data.common.BalanceRecord;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Aggregate for the investment balance list.
@@ -27,19 +30,17 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate("BALLIST")
-public class BalanceList {
+export class BalanceList {
 
-  private List<BalanceRecord> balanceRecords;
+  private balanceRecords: Array<BalanceRecord>;
 
   /**
    * Gets the list of balance records.
    *
    * @return the list of balance records.
    */
-  @ChildAggregate( order = 10 )
-  public List<BalanceRecord> getBalanceRecords() {
-    return balanceRecords;
+  public getBalanceRecords(): Array<BalanceRecord> {
+    return this.balanceRecords;
   }
 
   /**
@@ -47,7 +48,12 @@ public class BalanceList {
    *
    * @param balanceRecords the list of balance records.
    */
-  public void setBalanceRecords(List<BalanceRecord> balanceRecords) {
+  public setBalanceRecords(balanceRecords: Array<BalanceRecord>): void {
     this.balanceRecords = balanceRecords;
   }
+}
+
+Aggregate_add( BalanceList, "BALLIST" );
+ChildAggregate_add(BalanceList, { order: 10, type: Array, collectionEntryType: BalanceRecord, read: BalanceList.prototype.getBalanceRecords, write: BalanceList.prototype.setBalanceRecords });
+
 }

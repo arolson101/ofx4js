@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../OFXException'/>
+///<reference path='AccountStatement'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.OFXException;
-
-import java.util.Date;
+import OFXException = ofx4js.OFXException;
 
 /**
  * A specific account at a financial institution.
  *
  * @author Ryan Heaton
  */
-public interface FinancialInstitutionAccount {
+export interface FinancialInstitutionAccount {
 
   /**
    * Read an account statement.
@@ -34,5 +34,7 @@ public interface FinancialInstitutionAccount {
    * @param end The end date of the statement.
    * @return The account statement.
    */
-  AccountStatement readStatement(Date start, Date end) throws OFXException;
+  readStatement(start: Date, end: Date) /*throws OFXException*/: Promise<AccountStatement>;
+}
+
 }

@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXHandler'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
 /**
  * Default (no-op) implementation of an OFX handler.
  *
  * @author Ryan Heaton
  */
-public class DefaultHandler implements OFXHandler {
+export class DefaultHandler implements OFXHandler {
 
-  public void onHeader(String name, String value) {
+  public onHeader(name: string, value: string): void {
   }
 
-  public void onElement(String name, String value) {
+  public onElement(name: string, value: string): void {
   }
 
-  public void startAggregate(String aggregateName) {
+  public startAggregate(aggregateName: string): void {
   }
 
-  public void endAggregate(String aggregateName) {
+  public endAggregate(aggregateName: string): void {
   }
+
+}
 
 }

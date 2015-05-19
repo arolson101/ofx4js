@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
 /**
  * @author Ryan Heaton
  *
  * @see "OFX Spec, Section 11.3.1.1"
  */
-public enum AccountType {
+export enum AccountType {
 
   CHECKING,
 
@@ -30,5 +30,7 @@ public enum AccountType {
   MONEYMRKT,
 
   CREDITLINE
-  
+
+}
+
 }

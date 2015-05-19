@@ -13,30 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../OFXRuntimeException'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import net.sf.ofx4j.OFXRuntimeException;
+import OFXRuntimeException = ofx4js.OFXRuntimeException;
 
 /**
  * Thrown when a required attribute of an aggregate is null or empty.
  *
  * @author Ryan Heaton
  */
-public class RequiredAttributeException extends OFXRuntimeException {
+export class RequiredAttributeException extends OFXRuntimeException {
 
-  public RequiredAttributeException() {
-  }
-
-  public RequiredAttributeException(String message) {
+  constructor(message: string) {
     super(message);
   }
+}
 
-  public RequiredAttributeException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public RequiredAttributeException(Throwable cause) {
-    super(cause);
-  }
 }

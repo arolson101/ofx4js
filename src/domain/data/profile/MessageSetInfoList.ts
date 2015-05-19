@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='AbstractMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  * @see "Section 7.2, OFX Spec"
  */
-@Aggregate ( "MSGSETLIST" )
-public class MessageSetInfoList {
+export class MessageSetInfoList {
 
-  private List<AbstractMessageSetInfo> informationList;
+  private informationList: Array<AbstractMessageSetInfo>;
 
   /**
    * The list of information for each message set.
    *
    * @return The list of information for each message set.
    */
-  @ChildAggregate ( order = 0 )
-  public List<AbstractMessageSetInfo> getInformationList() {
-    return informationList;
+  public getInformationList(): Array<AbstractMessageSetInfo> {
+    return this.informationList;
   }
 
   /**
@@ -45,7 +44,12 @@ public class MessageSetInfoList {
    *
    * @param informationList The list of information for each message set.
    */
-  public void setInformationList(List<AbstractMessageSetInfo> informationList) {
+  public setInformationList(informationList: Array<AbstractMessageSetInfo>): void {
     this.informationList = informationList;
   }
+}
+
+Aggregate_add( MessageSetInfoList, "MSGSETLIST" );
+ChildAggregate_add(MessageSetInfoList, { order: 0, type: Array, collectionEntryType: AbstractMessageSetInfo, read: MessageSetInfoList.prototype.getInformationList, write: MessageSetInfoList.prototype.setInformationList });
+
 }

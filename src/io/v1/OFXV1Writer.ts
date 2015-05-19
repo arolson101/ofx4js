@@ -13,155 +13,154 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../project.d.ts'/>
+///<reference path='../OFXWriter'/>
+///<reference path='../StreamWriter'/>
 
-package net.sf.ofx4j.io.v1;
+module ofx4js.io.v1 {
 
-import net.sf.ofx4j.io.OFXWriter;
+import OFXWriter = ofx4js.io.OFXWriter;
 
-import java.util.Map;
-import java.io.*;
+//import Map = java.util.Map;
 
 /**
  * OFX writer to SGML, suitable for OFX versions < 2.0.
  *
  * @author Ryan Heaton
  */
-public class OFXV1Writer implements OFXWriter {
+export class OFXV1Writer implements OFXWriter {
 
-  private static final String LINE_SEPARATOR = "\r\n";
-  protected boolean headersWritten = false;
-  protected final Writer writer;
-  private boolean writeAttributesOnNewLine = false;
+  private LINE_SEPARATOR: string;
+  protected headersWritten: boolean;
+  protected writer: StreamWriter;
+  private writeAttributesOnNewLine: boolean;
+  
+  constructor(out: OutputBuffer | StreamWriter) {
+    this.LINE_SEPARATOR = "\r\n";
+    this.headersWritten = false;
+    this.writeAttributesOnNewLine = false;
 
-  public OFXV1Writer(OutputStream out) {
-    try {
-      this.writer = newWriter(out);
+    if(out instanceof StreamWriter) {
+      this.writer = out;
+    } else if(out instanceof OutputBuffer) {
+      this.writer = this.newWriter(out);
+    } else {
+      throw new Error("invalid parameter type");
     }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
   }
 
-  public OFXV1Writer(Writer writer) {
-    this.writer = writer;
+  protected newWriter(out: OutputBuffer): StreamWriter {
+    return new StreamWriter(out, "ISO-8859-1");
   }
 
-  protected OutputStreamWriter newWriter(OutputStream out) throws UnsupportedEncodingException {
-    return new OutputStreamWriter(out, "ISO-8859-1");
-  }
-
-  public void writeHeaders(Map<String, String> headers) throws IOException {
-    if (headersWritten) {
-      throw new IllegalStateException("Headers have already been written!");
+  public writeHeaders(headers: StringMap) /*throws IOException*/: void {
+    if (this.headersWritten) {
+      throw new Error("Headers have already been written!");
     }
 
     //write out the 1.0 headers
-    println("OFXHEADER:100");
-    println("DATA:OFXSGML");
-    println("VERSION:102");
+    this.println("OFXHEADER:100");
+    this.println("DATA:OFXSGML");
+    this.println("VERSION:102");
 
-    print("SECURITY:");
-    String security = headers.get("SECURITY");
+    this.print("SECURITY:");
+    var security: string = headers["SECURITY"];
     if (security == null) {
       security = "NONE";
     }
-    println(security);
-    println("ENCODING:USASCII"); //too many ofx v1 servers don't read unicode...
-    println("CHARSET:1252"); //windows-compatible.
-    println("COMPRESSION:NONE");
-    print("OLDFILEUID:");
-    String olduid = headers.get("OLDFILEUID");
+    this.println(security);
+    this.println("ENCODING:USASCII"); //too many ofx v1 servers don't read unicode...
+    this.println("CHARSET:1252"); //windows-compatible.
+    this.println("COMPRESSION:NONE");
+    this.print("OLDFILEUID:");
+    var olduid: string = headers["OLDFILEUID"];
     if (olduid == null) {
       olduid = "NONE";
     }
-    println(olduid);
-    print("NEWFILEUID:");
-    String uid = headers.get("NEWFILEUID");
+    this.println(olduid);
+    this.print("NEWFILEUID:");
+    var uid: string = headers["NEWFILEUID"];
     if (uid == null) {
       uid = "NONE";
     }
-    println(uid);
-    println();
+    this.println(uid);
+    this.println();
 
     this.headersWritten = true;
   }
 
-  public void writeStartAggregate(String aggregateName) throws IOException {
-    print('<');
-    print(aggregateName);
-    print('>');
-    if (isWriteAttributesOnNewLine()) {
-      println();
+  public writeStartAggregate(aggregateName: string) /*throws IOException*/: void {
+    this.print('<');
+    this.print(aggregateName);
+    this.print('>');
+    if (this.isWriteAttributesOnNewLine()) {
+      this.println();
     }
   }
 
-  public void writeElement(String name, String value) throws IOException {
-    if ((value == null) || ("".equals(value))) {
-      throw new IllegalArgumentException("Illegal element value for element '" + name + "' (value must not be null or empty).");
+  public writeElement(name: string, value: string) /*throws IOException*/: void {
+    if ((value == null) || ("" === value)) {
+      throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
     }
 
     //todo: optimize performance of the character escaping
     if (value.indexOf('&') >= 0) {
-      value = value.replaceAll("\\&", "&amp;");
+      value = value.replace(/\\&/g, "&amp;");
     }
 
     if (value.indexOf('<') >= 0) {
-      value = value.replaceAll("<", "&lt;");
+      value = value.replace(/</g, "&lt;");
     }
 
     if (value.indexOf('>') >= 0) {
-      value = value.replaceAll(">", "&gt;");
+      value = value.replace(/>/g, "&gt;");
     }
     
-    print('<');
-    print(name);
-    print('>');
-    print(value);
-    if (isWriteAttributesOnNewLine()) {
-      println();
+    this.print('<');
+    this.print(name);
+    this.print('>');
+    this.print(value);
+    if (this.isWriteAttributesOnNewLine()) {
+      this.println();
     }
   }
 
-  public void writeEndAggregate(String aggregateName) throws IOException {
-    print("</");
-    print(aggregateName);
-    print('>');
-    if (isWriteAttributesOnNewLine()) {
-      println();
+  public writeEndAggregate(aggregateName: string) /*throws IOException*/:void {
+    this.print("</");
+    this.print(aggregateName);
+    this.print('>');
+    if (this.isWriteAttributesOnNewLine()) {
+      this.println();
     }
   }
 
-  public boolean isWriteAttributesOnNewLine() {
-    return writeAttributesOnNewLine;
+  public isWriteAttributesOnNewLine(): boolean {
+    return this.writeAttributesOnNewLine;
   }
 
-  public void setWriteAttributesOnNewLine(boolean writeAttributesOnNewLine) {
+  public setWriteAttributesOnNewLine(writeAttributesOnNewLine: boolean): void {
     this.writeAttributesOnNewLine = writeAttributesOnNewLine;
   }
 
-  public void close() throws IOException {
-    flush();
+  public close() /*throws IOException*/: void {
+    this.flush();
     this.writer.close();
   }
 
-  public void flush() throws IOException {
+  public flush() /*throws IOException*/: void {
     this.writer.flush();
   }
 
-  protected void println(String line) throws IOException {
-    print(line);
-    println();
+  /*protected*/ println(line: string = null) /*throws IOException*/: void {
+    if(line != null) {
+      this.print(line);
+    }
+    this.writer.write(this.LINE_SEPARATOR);
   }
 
-  protected void println() throws IOException {
-    this.writer.write(LINE_SEPARATOR);
-  }
-
-  protected void print(String line) throws IOException {
+  /*protected*/ print(line: string) /*throws IOException*/: void {
     this.writer.write(line == null ? "null" : line);
   }
+}
 
-  protected void print(char ch) throws IOException {
-    this.writer.write(ch);
-  }
 }

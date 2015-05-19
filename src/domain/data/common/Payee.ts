@@ -13,36 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("PAYEE")
-public class Payee {
-  
-  private String name;
-  private String address1;
-  private String address2;
-  private String address3;
-  private String city;
-  private String state;
-  private String zip;
-  private String country;
-  private String phone;
+export class Payee {
+
+  private name: string;
+  private address1: string;
+  private address2: string;
+  private address3: string;
+  private city: string;
+  private state: string;
+  private zip: string;
+  private country: string;
+  private phone: string;
 
   /**
    * The name of the payee.
    *
    * @return The name of the payee.
    */
-  @Element ( name = "NAME", order = 30 )
-  public String getName() {
-    return name;
+  public getName(): string {
+    return this.name;
   }
 
   /**
@@ -50,7 +50,7 @@ public class Payee {
    *
    * @param name The name of the payee.
    */
-  public void setName(String name) {
+  public setName(name: string): void {
     this.name = name;
   }
 
@@ -59,9 +59,8 @@ public class Payee {
    *
    * @return The address of the payee.
    */
-  @Element ( name = "ADDR1", required = true, order = 40 )
-  public String getAddress1() {
-    return address1;
+  public getAddress1(): string {
+    return this.address1;
   }
 
   /**
@@ -69,7 +68,7 @@ public class Payee {
    *
    * @param address1 The address of the payee.
    */
-  public void setAddress1(String address1) {
+  public setAddress1(address1: string): void {
     this.address1 = address1;
   }
 
@@ -78,9 +77,8 @@ public class Payee {
    *
    * @return The address of the payee.
    */
-  @Element ( name = "ADDR2", order = 50 )
-  public String getAddress2() {
-    return address2;
+  public getAddress2(): string {
+    return this.address2;
   }
 
   /**
@@ -88,7 +86,7 @@ public class Payee {
    *
    * @param address2 The address of the payee.
    */
-  public void setAddress2(String address2) {
+  public setAddress2(address2: string): void {
     this.address2 = address2;
   }
 
@@ -97,9 +95,8 @@ public class Payee {
    *
    * @return The address of the payee.
    */
-  @Element ( name = "ADDR3", order = 60 )
-  public String getAddress3() {
-    return address3;
+  public getAddress3(): string {
+    return this.address3;
   }
 
   /**
@@ -107,7 +104,7 @@ public class Payee {
    *
    * @param address3 The address of the payee.
    */
-  public void setAddress3(String address3) {
+  public setAddress3(address3: string): void {
     this.address3 = address3;
   }
 
@@ -116,9 +113,8 @@ public class Payee {
    *
    * @return The city of the payee.
    */
-  @Element ( name = "CITY", required = true, order = 70 )
-  public String getCity() {
-    return city;
+  public getCity(): string {
+    return this.city;
   }
 
   /**
@@ -126,7 +122,7 @@ public class Payee {
    *
    * @param city The city of the payee.
    */
-  public void setCity(String city) {
+  public setCity(city: string): void {
     this.city = city;
   }
 
@@ -135,9 +131,8 @@ public class Payee {
    *
    * @return The state of this payee.
    */
-  @Element ( name = "STATE", required = true, order = 80 )
-  public String getState() {
-    return state;
+  public getState(): string {
+    return this.state;
   }
 
   /**
@@ -145,7 +140,7 @@ public class Payee {
    *
    * @param state The state of this payee.
    */
-  public void setState(String state) {
+  public setState(state: string): void {
     this.state = state;
   }
 
@@ -154,9 +149,8 @@ public class Payee {
    *
    * @return The postal code of this payee.
    */
-  @Element ( name = "POSTALCODE", required = true, order = 90 )
-  public String getZip() {
-    return zip;
+  public getZip(): string {
+    return this.zip;
   }
 
   /**
@@ -164,7 +158,7 @@ public class Payee {
    *
    * @param zip The postal code of this payee.
    */
-  public void setZip(String zip) {
+  public setZip(zip: string): void {
     this.zip = zip;
   }
 
@@ -174,9 +168,8 @@ public class Payee {
    * @return The country code for this payee.
    * @see java.util.Locale#getISO3Country()
    */
-  @Element ( name = "COUNTRY", required = true, order = 100 )
-  public String getCountry() {
-    return country;
+  public getCountry(): string {
+    return this.country;
   }
 
   /**
@@ -184,7 +177,7 @@ public class Payee {
    *
    * @param country The country code for this payee.
    */
-  public void setCountry(String country) {
+  public setCountry(country: string): void {
     this.country = country;
   }
 
@@ -193,9 +186,8 @@ public class Payee {
    *
    * @return The phone number.
    */
-  @Element ( name = "PHONE", order = 110 )
-  public String getPhone() {
-    return phone;
+  public getPhone(): string {
+    return this.phone;
   }
 
   /**
@@ -203,8 +195,21 @@ public class Payee {
    *
    * @param phone The phone number.
    */
-  public void setPhone(String phone) {
+  public setPhone(phone: string): void {
     this.phone = phone;
   }
+
+}
+
+Aggregate_add( Payee, "PAYEE" );
+Element_add(Payee, { name: "NAME", order: 30, type: String, read: Payee.prototype.getName, write: Payee.prototype.setName });
+Element_add(Payee, { name: "ADDR1", required: true, order: 40, type: String, read: Payee.prototype.getAddress1, write: Payee.prototype.setAddress1 });
+Element_add(Payee, { name: "ADDR2", order: 50, type: String, read: Payee.prototype.getAddress2, write: Payee.prototype.setAddress2 });
+Element_add(Payee, { name: "ADDR3", order: 60, type: String, read: Payee.prototype.getAddress3, write: Payee.prototype.setAddress3 });
+Element_add(Payee, { name: "CITY", required: true, order: 70, type: String, read: Payee.prototype.getCity, write: Payee.prototype.setCity });
+Element_add(Payee, { name: "STATE", required: true, order: 80, type: String, read: Payee.prototype.getState, write: Payee.prototype.setState });
+Element_add(Payee, { name: "POSTALCODE", required: true, order: 90, type: String, read: Payee.prototype.getZip, write: Payee.prototype.setZip });
+Element_add(Payee, { name: "COUNTRY", required: true, order: 100, type: String, read: Payee.prototype.getCountry, write: Payee.prototype.setCountry });
+Element_add(Payee, { name: "PHONE", order: 110, type: String, read: Payee.prototype.getPhone, write: Payee.prototype.setPhone });
 
 }

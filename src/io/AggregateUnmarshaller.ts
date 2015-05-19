@@ -13,62 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='StringConversion'/>
+///<reference path='DefaultStringConversion'/>
+///<reference path='AggregateStackContentHandler'/>
+///<reference path='OFXReader'/>
+///<reference path='BaseOFXReader'/>
 
-package net.sf.ofx4j.io;
-
-import net.sf.ofx4j.io.nanoxml.NanoXMLOFXReader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+module ofx4js.io {
 
 /**
  * Unmarshaller for aggregate objects.
  * 
  * @author Ryan Heaton
  */
-public class AggregateUnmarshaller<A> {
+export class AggregateUnmarshaller<A> {
 
-  private final Class<A> clazz;
-  private StringConversion conversion = new DefaultStringConversion();
+  private clazz: any;
+  private conversion: StringConversion;
 
-  public AggregateUnmarshaller(Class<A> clazz) {
+  constructor(clazz: any) {
     this.clazz = clazz;
+    this.conversion = new DefaultStringConversion();
   }
 
-  public A unmarshal(InputStream stream) throws IOException, OFXParseException {
-    try {
-      A aggregate = clazz.newInstance();
-      OFXReader reader = newReader();
-      reader.setContentHandler(new AggregateStackContentHandler<A>(aggregate, getConversion()));
-      reader.parse(stream);
-      return aggregate;
-    }
-    catch (OFXParseException e) {
-      throw e;
-    }
-    catch (RuntimeException e) {
-      throw e;
-    }
-    catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  public A unmarshal(Reader reader) throws IOException, OFXParseException {
-    try {
-      A aggregate = clazz.newInstance();
-      OFXReader ofxReader = newReader();
-      ofxReader.setContentHandler(new AggregateStackContentHandler<A>(aggregate, getConversion()));
-      ofxReader.parse(reader);
-      return aggregate;
-    }
-    catch (OFXParseException e) {
-      throw e;
-    }
-    catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
+  public unmarshal(arg: StringReader | string): A {
+    var stream: StringReader = (<any>arg instanceof StringReader) ? <StringReader>arg : new StringReader(<string>arg);
+    var aggregate: A = new this.clazz();
+    var reader: OFXReader = this.newReader();
+    reader.setContentHandler(new AggregateStackContentHandler<A>(aggregate, this.getConversion()));
+    reader.parse(stream);
+    return aggregate;
   }
 
   /**
@@ -76,8 +50,8 @@ public class AggregateUnmarshaller<A> {
    *
    * @return new OFX reader.
    */
-  protected OFXReader newReader() {
-    return new NanoXMLOFXReader();
+  protected newReader(): OFXReader {
+    return new BaseOFXReader();
   }
 
   /**
@@ -85,8 +59,8 @@ public class AggregateUnmarshaller<A> {
    *
    * @return The conversion.
    */
-  public StringConversion getConversion() {
-    return conversion;
+  public getConversion(): StringConversion {
+    return this.conversion;
   }
 
   /**
@@ -94,7 +68,9 @@ public class AggregateUnmarshaller<A> {
    *
    * @param conversion The conversion.
    */
-  public void setConversion(StringConversion conversion) {
+  public setConversion(conversion: StringConversion): void {
     this.conversion = conversion;
   }
+}
+
 }

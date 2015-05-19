@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='AssetClass'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about any other type of security.
@@ -25,12 +29,11 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "OTHERINFO" )
-public class OtherSecurityInfo extends BaseSecurityInfo {
+export class OtherSecurityInfo extends BaseSecurityInfo {
 
-  private String typeDesc;
-  private String assetClass;
-  private String fiAssetClass;
+  private typeDesc: string;
+  private assetClass: string;
+  private fiAssetClass: string;
 
   /**
    * Gets a description of the type of security. This is an optional field according to the OFX
@@ -38,9 +41,8 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @return the description of the security
    */
-  @Element( name = "TYPEDESC", order = 20)
-  public String getTypeDesc() {
-    return typeDesc;
+  public getTypeDesc(): string {
+    return this.typeDesc;
   }
 
   /**
@@ -49,7 +51,7 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @param typeDesc the description of the security
    */
-  public void setTypeDesc(String typeDesc) {
+  public setTypeDesc(typeDesc: string): void {
     this.typeDesc = typeDesc;
   }
 
@@ -58,9 +60,8 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class of the debt
    */
-  @Element( name = "ASSETCLASS", order = 30)
-  public String getAssetClass() {
-    return assetClass;
+  public getAssetClass(): string {
+    return this.assetClass;
   }
 
   /**
@@ -68,7 +69,7 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @param assetClass the asset class of the debt
    */
-  public void setAssetClass(String assetClass) {
+  public setAssetClass(assetClass: string): void {
     this.assetClass = assetClass;
   }
 
@@ -77,8 +78,8 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class or null if it's not one of the well-known types
    */
-  public AssetClass getAssetClassEnum() {
-    return AssetClass.fromOfx(getAssetClass());
+  public getAssetClassEnum(): AssetClass {
+    return AssetClass_fromOfx(this.getAssetClass());
   }
 
   /**
@@ -87,9 +88,8 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @return the FI-defined asset class of the debt
    */
-  @Element( name = "FIASSETCLASS", order = 40)
-  public String getFiAssetClass() {
-    return fiAssetClass;
+  public getFiAssetClass(): string {
+    return this.fiAssetClass;
   }
 
   /**
@@ -98,7 +98,14 @@ public class OtherSecurityInfo extends BaseSecurityInfo {
    *
    * @param fiAssetClass the FI-defined asset class of the debt
    */
-  public void setFiAssetClass(String fiAssetClass) {
+  public setFiAssetClass(fiAssetClass: string): void {
     this.fiAssetClass = fiAssetClass;
   }
+}
+
+Aggregate_add( OtherSecurityInfo, "OTHERINFO" );
+Element_add(OtherSecurityInfo, { name: "TYPEDESC", order: 20, type: String, read: OtherSecurityInfo.prototype.getTypeDesc, write: OtherSecurityInfo.prototype.setTypeDesc });
+Element_add(OtherSecurityInfo, { name: "ASSETCLASS", order: 30, type: String, read: OtherSecurityInfo.prototype.getAssetClass, write: OtherSecurityInfo.prototype.setAssetClass });
+Element_add(OtherSecurityInfo, { name: "FIASSETCLASS", order: 40, type: String, read: OtherSecurityInfo.prototype.getFiAssetClass, write: OtherSecurityInfo.prototype.setFiAssetClass });
+
 }

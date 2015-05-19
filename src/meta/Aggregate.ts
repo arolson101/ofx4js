@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.meta;
-
-import java.lang.annotation.*;
+module ofx4js.meta {
 
 /**
  * Annotation for a method that returns an OFX aggregate.
  *
  * @author Ryan Heaton
  */
-@Target ( ElementType.TYPE )
-@Retention ( RetentionPolicy.RUNTIME )
-public @interface Aggregate {
+export class Aggregate {
+  private _value: string;
+  
+  constructor(value: string) {
+    this._value = value;
+  }
 
   /**
    * The name of the aggregate.
    *
    * @return The name of the aggregate.
    */
-  String value() default "#NOT_SET#";
+  public value(): string {
+    return this._value;
+  }
+}
+
 }

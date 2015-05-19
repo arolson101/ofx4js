@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='ProfileResponse'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("PROFTRNRS")
-public class ProfileResponseTransaction extends TransactionWrappedResponseMessage<ProfileResponse> {
+export class ProfileResponseTransaction extends TransactionWrappedResponseMessage<ProfileResponse> {
 
-  private ProfileResponse message;
+  private message: ProfileResponse;
 
   /**
    * The message.
    *
    * @return The message.
    */
-  @ChildAggregate ( required = true, order = 30 )
-  public ProfileResponse getMessage() {
-    return message;
+  public getMessage(): ProfileResponse {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class ProfileResponseTransaction extends TransactionWrappedResponseMessag
    *
    * @param message The message.
    */
-  public void setMessage(ProfileResponse message) {
+  public setMessage(message: ProfileResponse): void {
     this.message = message;
   }
 
   // Inherited.
-  public ProfileResponse getWrappedMessage() {
-    return getMessage();
+  public getWrappedMessage(): ProfileResponse {
+    return this.getMessage();
   }
+}
+
+Aggregate_add(ProfileResponseTransaction, "PROFTRNRS");
+ChildAggregate_add(ProfileResponseTransaction, { required: true, order: 30, type: ProfileResponse, read: ProfileResponseTransaction.prototype.getMessage, write: ProfileResponseTransaction.prototype.setMessage });
+
 }

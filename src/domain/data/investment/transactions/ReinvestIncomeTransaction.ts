@@ -13,15 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
+///<reference path='OriginalCurrency'/>
+///<reference path='IncomeType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for reinvestment transactions.
@@ -29,26 +41,25 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "REINVEST" )
-public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
+export class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private SecurityId securityId;
-  private String incomeType;
-  private Double total;
-  private String subAccountSecurity;
-  private Double units;
-  private Double unitPrice;
-  private Double commission;
-  private Double taxes;
-  private Double fees;
-  private Double load;
-  private Boolean taxExempt;
-  private String currencyCode;
-  private OriginalCurrency originalCurrencyInfo;
-  private String inv401kSource;
+  private securityId: SecurityId;
+  private incomeType: string;
+  private total: number;
+  private subAccountSecurity: string;
+  private units: number;
+  private unitPrice: number;
+  private commission: number;
+  private taxes: number;
+  private fees: number;
+  private load: number;
+  private taxExempt: boolean;
+  private currencyCode: string;
+  private originalCurrencyInfo: OriginalCurrency;
+  private inv401kSource: string;
 
-  public ReinvestIncomeTransaction() {
+  constructor() {
     super(TransactionType.REINVEST_INCOME);
   }
 
@@ -59,9 +70,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the security id of the security that was reinvested in
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -71,7 +81,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param securityId the security id of the security that was reinvested in
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -83,9 +93,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of income
    */
-  @Element( name = "INCOMETYPE", required = true, order = 30)
-  public String getIncomeType() {
-    return incomeType;
+  public getIncomeType(): string {
+    return this.incomeType;
   }
 
   /**
@@ -96,7 +105,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param incomeType the type of income
    */
-  public void setIncomeType(String incomeType) {
+  public setIncomeType(incomeType: string): void {
     this.incomeType = incomeType;
   }
 
@@ -105,8 +114,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the income type or null if it's not one of the well-known types
    */
-  public IncomeType getIncomeTypeEnum() {
-    return IncomeType.fromOfx(getIncomeType());
+  public getIncomeTypeEnum(): IncomeType {
+    return IncomeType_fromOfx(this.getIncomeType());
   }
 
   /**
@@ -115,9 +124,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the total
    */
-  @Element( name = "TOTAL", required = true, order = 40)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -126,7 +134,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
 
@@ -137,9 +145,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTSEC", order = 50)
-  public String getSubAccountSecurity() {
-    return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+    return this.subAccountSecurity;
   }
 
   /**
@@ -149,7 +156,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAccountSecurity the sub account type
    */
-  public void setSubAccountSecurity(String subAccountSecurity) {
+  public setSubAccountSecurity(subAccountSecurity: string): void {
     this.subAccountSecurity = subAccountSecurity;
   }
 
@@ -158,8 +165,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -169,9 +176,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the number of units purchased
    */
-  @Element( name = "UNITS", required = true, order = 60)
-  public Double getUnits() {
-    return units;
+  public getUnits(): number {
+    return this.units;
   }
 
   /**
@@ -181,7 +187,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param units the number of units purchased
    */
-  public void setUnits(Double units) {
+  public setUnits(units: number): void {
     this.units = units;
   }
 
@@ -191,9 +197,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the per unit price
    */
-  @Element( name = "UNITPRICE", required = true, order = 70)
-  public Double getUnitPrice() {
-    return unitPrice;
+  public getUnitPrice(): number {
+    return this.unitPrice;
   }
 
   /**
@@ -202,7 +207,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param unitPrice the per unit price
    */
-  public void setUnitPrice(Double unitPrice) {
+  public setUnitPrice(unitPrice: number): void {
     this.unitPrice = unitPrice;
   }
 
@@ -213,9 +218,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the transaction commision
    */
-  @Element( name = "COMMISSION", order = 80)
-  public Double getCommission() {
-    return commission;
+  public getCommission(): number {
+    return this.commission;
   }
 
   /**
@@ -225,7 +229,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param commission the transaction commision
    */
-  public void setCommission(Double commission) {
+  public setCommission(commission: number): void {
     this.commission = commission;
   }
 
@@ -235,9 +239,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the transaction taxes
    */
-  @Element( name = "TAXES", order = 90)
-  public Double getTaxes() {
-    return taxes;
+  public getTaxes(): number {
+    return this.taxes;
   }
 
   /**
@@ -246,7 +249,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param taxes the transaction taxes
    */
-  public void setTaxes(Double taxes) {
+  public setTaxes(taxes: number): void {
     this.taxes = taxes;
   }
 
@@ -256,9 +259,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the transaction fees
    */
-  @Element( name = "FEES", order = 100)
-  public Double getFees() {
-    return fees;
+  public getFees(): number {
+    return this.fees;
   }
 
   /**
@@ -267,7 +269,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param fees the transaction fees
    */
-  public void setFees(Double fees) {
+  public setFees(fees: number): void {
     this.fees = fees;
   }
 
@@ -277,9 +279,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the load
    */
-  @Element( name = "LOAD", order = 110)
-  public Double getLoad() {
-    return load;
+  public getLoad(): number {
+    return this.load;
   }
 
   /**
@@ -288,7 +289,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param load the load
    */
-  public void setLoad(Double load) {
+  public setLoad(load: number): void {
     this.load = load;
   }
 
@@ -298,9 +299,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return whether the transaction was tax exempt
    */
-  @Element( name = "TAXEXEMPT", order = 120)
-  public Boolean getTaxExempt() {
-    return taxExempt;
+  public getTaxExempt(): boolean {
+    return this.taxExempt;
   }
 
   /**
@@ -309,7 +309,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param taxExempt whether the transaction was tax exempt
    */
-  public void setTaxExempt(Boolean taxExempt) {
+  public setTaxExempt(taxExempt: boolean): void {
     this.taxExempt = taxExempt;
   }
 
@@ -320,9 +320,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the currency code for the transaction
    */
-  @Element( name = "CURRENCY", order = 130)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -332,7 +331,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param currencyCode the currency code for the transaction
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
     this.originalCurrencyInfo = null;
   }
@@ -343,9 +342,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the original currency info for the transaction.
    */
-  @Element( name = "ORIGCURRENCY", order = 140)
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return originalCurrencyInfo;
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.originalCurrencyInfo;
   }
 
   /**
@@ -354,7 +352,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param originalCurrencyInfo the original currency info for the transaction.
    */
-  public void setOriginalCurrencyInfo(OriginalCurrency originalCurrencyInfo) {
+  public setOriginalCurrencyInfo(originalCurrencyInfo: OriginalCurrency): void {
     this.originalCurrencyInfo = originalCurrencyInfo;
     this.currencyCode = null;
   }
@@ -367,9 +365,8 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the state withholding
    */
-  @Element( name = "INV401KSOURCE", order = 150)
-  public String get401kSource() {
-    return inv401kSource;
+  public get401kSource(): string {
+    return this.inv401kSource;
   }
 
   /**
@@ -380,7 +377,7 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @param inv401kSource the state withholding
    */
-  public void set401kSource(String inv401kSource) {
+  public set401kSource(inv401kSource: string): void {
     this.inv401kSource = inv401kSource;
   }
 
@@ -389,7 +386,25 @@ public class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of close or null if it's not well known
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+Aggregate_add( ReinvestIncomeTransaction, "REINVEST" );
+ChildAggregate_add(ReinvestIncomeTransaction, { required: true, order: 20, type: SecurityId, read: ReinvestIncomeTransaction.prototype.getSecurityId, write: ReinvestIncomeTransaction.prototype.setSecurityId });
+Element_add(ReinvestIncomeTransaction, { name: "INCOMETYPE", required: true, order: 30, type: String, read: ReinvestIncomeTransaction.prototype.getIncomeType, write: ReinvestIncomeTransaction.prototype.setIncomeType });
+Element_add(ReinvestIncomeTransaction, { name: "TOTAL", required: true, order: 40, type: Number, read: ReinvestIncomeTransaction.prototype.getTotal, write: ReinvestIncomeTransaction.prototype.setTotal });
+Element_add(ReinvestIncomeTransaction, { name: "SUBACCTSEC", order: 50, type: String, read: ReinvestIncomeTransaction.prototype.getSubAccountSecurity, write: ReinvestIncomeTransaction.prototype.setSubAccountSecurity });
+Element_add(ReinvestIncomeTransaction, { name: "UNITS", required: true, order: 60, type: Number, read: ReinvestIncomeTransaction.prototype.getUnits, write: ReinvestIncomeTransaction.prototype.setUnits });
+Element_add(ReinvestIncomeTransaction, { name: "UNITPRICE", required: true, order: 70, type: Number, read: ReinvestIncomeTransaction.prototype.getUnitPrice, write: ReinvestIncomeTransaction.prototype.setUnitPrice });
+Element_add(ReinvestIncomeTransaction, { name: "COMMISSION", order: 80, type: Number, read: ReinvestIncomeTransaction.prototype.getCommission, write: ReinvestIncomeTransaction.prototype.setCommission });
+Element_add(ReinvestIncomeTransaction, { name: "TAXES", order: 90, type: Number, read: ReinvestIncomeTransaction.prototype.getTaxes, write: ReinvestIncomeTransaction.prototype.setTaxes });
+Element_add(ReinvestIncomeTransaction, { name: "FEES", order: 100, type: Number, read: ReinvestIncomeTransaction.prototype.getFees, write: ReinvestIncomeTransaction.prototype.setFees });
+Element_add(ReinvestIncomeTransaction, { name: "LOAD", order: 110, type: Number, read: ReinvestIncomeTransaction.prototype.getLoad, write: ReinvestIncomeTransaction.prototype.setLoad });
+Element_add(ReinvestIncomeTransaction, { name: "TAXEXEMPT", order: 120, type: Boolean, read: ReinvestIncomeTransaction.prototype.getTaxExempt, write: ReinvestIncomeTransaction.prototype.setTaxExempt });
+Element_add(ReinvestIncomeTransaction, { name: "CURRENCY", order: 130, type: String, read: ReinvestIncomeTransaction.prototype.getCurrencyCode, write: ReinvestIncomeTransaction.prototype.setCurrencyCode });
+Element_add(ReinvestIncomeTransaction, { name: "ORIGCURRENCY", order: 140, type: OriginalCurrency, read: ReinvestIncomeTransaction.prototype.getOriginalCurrencyInfo, write: ReinvestIncomeTransaction.prototype.setOriginalCurrencyInfo });
+Element_add(ReinvestIncomeTransaction, { name: "INV401KSOURCE", order: 150, type: String, read: ReinvestIncomeTransaction.prototype.get401kSource, write: ReinvestIncomeTransaction.prototype.set401kSource });
+
 }

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='SecurityInfo'/>
+///<reference path='SecurityId'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.Date;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for info about the various types of securities.
@@ -30,17 +31,16 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-public class BaseSecurityInfo {
-  private SecurityInfo securityInfo;
+export class BaseSecurityInfo {
+  private securityInfo: SecurityInfo;
 
   /**
    * Gets the security info aggregate.
    *
    * @return the security info aggregate.
    */
-  @ChildAggregate( required = true, order = 10 )
-  public SecurityInfo getSecurityInfo() {
-    return securityInfo;
+  public getSecurityInfo(): SecurityInfo {
+    return this.securityInfo;
   }
 
   /**
@@ -48,7 +48,7 @@ public class BaseSecurityInfo {
    *
    * @param securityInfo the security info aggregate.
    */
-  public void setSecurityInfo(SecurityInfo securityInfo) {
+  public setSecurityInfo(securityInfo: SecurityInfo): void {
     this.securityInfo = securityInfo;
   }
 
@@ -58,8 +58,8 @@ public class BaseSecurityInfo {
    *
    * @return the security id
    */
-  public SecurityId getSecurityId() {
-    return getSecurityInfo().getSecurityId();
+  public getSecurityId(): SecurityId {
+    return this.getSecurityInfo().getSecurityId();
   }
 
   /**
@@ -67,8 +67,8 @@ public class BaseSecurityInfo {
    *
    * @return the full name of the security.
    */
-  public String getSecurityName() {
-    return getSecurityInfo().getSecurityName();
+  public getSecurityName(): string {
+    return this.getSecurityInfo().getSecurityName();
   }
 
   /**
@@ -76,8 +76,8 @@ public class BaseSecurityInfo {
    *
    * @return the ticket symbol or null if there's no ticker symbol
    */
-  public String getTickerSymbol() {
-    return getSecurityInfo().getTickerSymbol();
+  public getTickerSymbol(): string {
+    return this.getSecurityInfo().getTickerSymbol();
   }
 
   /**
@@ -85,8 +85,8 @@ public class BaseSecurityInfo {
    *
    * @return the FI ID number for the security
    */
-  public String getFiId() {
-    return getSecurityInfo().getFiId();
+  public getFiId(): string {
+    return this.getSecurityInfo().getFiId();
   }
 
   /**
@@ -94,8 +94,8 @@ public class BaseSecurityInfo {
    *
    * @return the rating
    */
-  public String getRating() {
-    return getSecurityInfo().getRating();
+  public getRating(): string {
+    return this.getSecurityInfo().getRating();
   }
 
   /**
@@ -106,8 +106,8 @@ public class BaseSecurityInfo {
    *
    * @return the per unit price
    */
-  public Double getUnitPrice() {
-    return getSecurityInfo().getUnitPrice();
+  public getUnitPrice(): number {
+    return this.getSecurityInfo().getUnitPrice();
   }
 
   /**
@@ -115,8 +115,8 @@ public class BaseSecurityInfo {
    *
    * @return the date as-of for the unit price
    */
-  public Date getUnitPriceAsOfDate() {
-    return getSecurityInfo().getUnitPriceAsOfDate();
+  public getUnitPriceAsOfDate(): Date {
+    return this.getSecurityInfo().getUnitPriceAsOfDate();
   }
 
   /**
@@ -125,8 +125,8 @@ public class BaseSecurityInfo {
    *
    * @return the overriding currency code or null to mean the default currency
    */
-  public String getCurrencyCode() {
-    return getSecurityInfo().getCurrencyCode();
+  public getCurrencyCode(): string {
+    return this.getSecurityInfo().getCurrencyCode();
   }
 
   /**
@@ -135,7 +135,10 @@ public class BaseSecurityInfo {
    *
    * @return the memo
    */
-  public String getMemo() {
-    return getSecurityInfo().getMemo();
+  public getMemo(): string {
+    return this.getSecurityInfo().getMemo();
   }
+}
+
+ChildAggregate_add(BaseSecurityInfo, { required: true, order: 10, type: SecurityInfo, read: BaseSecurityInfo.prototype.getSecurityInfo, write: BaseSecurityInfo.prototype.setSecurityInfo });
 }

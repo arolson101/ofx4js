@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
+///<reference path='SellInvestmentTransaction'/>
+///<reference path='InvestmentTransaction'/>
+///<reference path='OriginalCurrency'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.meta.ChildAggregate;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for all investment transactions for selling securities.
@@ -30,12 +41,12 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransaction
+export /*abstract*/ class BaseSellInvestmentTransaction extends BaseInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private SellInvestmentTransaction sellInvestment;
+  private sellInvestment: SellInvestmentTransaction;
 
-  BaseSellInvestmentTransaction(TransactionType transactionType) {
+  constructor(transactionType: TransactionType) {
     super(transactionType);
   }
 
@@ -45,9 +56,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    * @return the sell investment transaction child aggregate
    */
   // @Override
-  @ChildAggregate( order = 10 )
-  public SellInvestmentTransaction getSellInvestment() {
-    return sellInvestment;
+  public getSellInvestment(): SellInvestmentTransaction {
+    return this.sellInvestment;
   }
 
   /**
@@ -55,7 +65,7 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @param sellInvestment the sell investment transaction child aggregate
    */
-  public void setSellInvestment(SellInvestmentTransaction sellInvestment) {
+  public setSellInvestment(sellInvestment: SellInvestmentTransaction): void {
     this.sellInvestment = sellInvestment;
   }
 
@@ -65,8 +75,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    * @return the investment transaction aggregate
    */
   // @Overridden
-  public InvestmentTransaction getInvestmentTransaction() {
-    return getSellInvestment().getInvestmentTransaction();
+  public getInvestmentTransaction(): InvestmentTransaction {
+    return this.getSellInvestment().getInvestmentTransaction();
   }
 
   /**
@@ -76,8 +86,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the security id of the security that was bought
    */
-  public SecurityId getSecurityId() {
-    return getSellInvestment().getSecurityId();
+  public getSecurityId(): SecurityId {
+    return this.getSellInvestment().getSecurityId();
   }
 
   /**
@@ -89,8 +99,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the number of units purchased.
    */
-  public Double getUnits() {
-    return getSellInvestment().getUnits();
+  public getUnits(): number {
+    return this.getSellInvestment().getUnits();
   }
 
   /**
@@ -101,8 +111,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the per unit price
    */
-  public Double getUnitPrice() {
-    return getSellInvestment().getUnitPrice();
+  public getUnitPrice(): number {
+    return this.getSellInvestment().getUnitPrice();
   }
 
   /**
@@ -112,8 +122,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the per unit markedown price
    */
-  public Double getMarkdown() {
-    return getSellInvestment().getMarkdown();
+  public getMarkdown(): number {
+    return this.getSellInvestment().getMarkdown();
   }
 
   /**
@@ -123,8 +133,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the transaction commision
    */
-  public Double getCommission() {
-    return getSellInvestment().getCommission();
+  public getCommission(): number {
+    return this.getSellInvestment().getCommission();
   }
 
   /**
@@ -133,8 +143,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the transaction taxes
    */
-  public Double getTaxes() {
-    return getSellInvestment().getTaxes();
+  public getTaxes(): number {
+    return this.getSellInvestment().getTaxes();
   }
 
   /**
@@ -143,8 +153,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the transaction fees
    */
-  public Double getFees() {
-    return getSellInvestment().getFees();
+  public getFees(): number {
+    return this.getSellInvestment().getFees();
   }
 
   /**
@@ -153,8 +163,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the load
    */
-  public Double getLoad() {
-    return getSellInvestment().getLoad();
+  public getLoad(): number {
+    return this.getSellInvestment().getLoad();
   }
 
   /**
@@ -163,8 +173,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the withholding
    */
-  public Double getWithholding() {
-    return getSellInvestment().getWithholding();
+  public getWithholding(): number {
+    return this.getSellInvestment().getWithholding();
   }
 
   /**
@@ -173,8 +183,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return whether the transaction was tax exempt
    */
-  public Boolean getTaxExempt() {
-    return getSellInvestment().getTaxExempt();
+  public getTaxExempt(): boolean {
+    return this.getSellInvestment().getTaxExempt();
   }
 
   /**
@@ -186,8 +196,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the total
    */
-  public Double getTotal() {
-    return getSellInvestment().getTotal();
+  public getTotal(): number {
+    return this.getSellInvestment().getTotal();
   }
 
   /**
@@ -196,8 +206,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the gain for the sale
    */
-  public Double getGain() {
-    return getSellInvestment().getGain();
+  public getGain(): number {
+    return this.getSellInvestment().getGain();
   }
 
   /**
@@ -207,8 +217,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the currency code for the transaction.
    */
-  public String getCurrencyCode() {
-    return getSellInvestment().getCurrencyCode();
+  public getCurrencyCode(): string {
+    return this.getSellInvestment().getCurrencyCode();
   }
 
   /**
@@ -217,8 +227,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the currency info for the transaction.
    */
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return getSellInvestment().getOriginalCurrencyInfo();
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.getSellInvestment().getOriginalCurrencyInfo();
   }
 
   /**
@@ -227,8 +237,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the sub account type
    */
-  public String getSubAccountSecurity() {
-    return getSellInvestment().getSubAccountSecurity();
+  public getSubAccountSecurity(): string {
+    return this.getSellInvestment().getSubAccountSecurity();
   }
 
   /**
@@ -236,8 +246,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -246,8 +256,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the sub account fund
    */
-  public String getSubAccountFund() {
-    return getSellInvestment().getSubAccountFund();
+  public getSubAccountFund(): string {
+    return this.getSellInvestment().getSubAccountFund();
   }
 
   /**
@@ -255,8 +265,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
 
   /**
@@ -266,8 +276,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the loan id
    */
-  public String getLoadId() {
-    return getSellInvestment().getLoanId();
+  public getLoadId(): string {
+    return this.getSellInvestment().getLoanId();
   }
 
   /**
@@ -276,8 +286,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the state withholding
    */
-  public Double getStateWithholding() {
-    return getSellInvestment().getStateWithholding();
+  public getStateWithholding(): number {
+    return this.getSellInvestment().getStateWithholding();
   }
 
   /**
@@ -286,8 +296,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the state withholding
    */
-  public Double getPenalty() {
-    return getSellInvestment().getPenalty();
+  public getPenalty(): number {
+    return this.getSellInvestment().getPenalty();
   }
 
   /**
@@ -298,8 +308,8 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the 401k source
    */
-  public String get401kSource() {
-    return getSellInvestment().get401kSource();
+  public get401kSource(): string {
+    return this.getSellInvestment().get401kSource();
   }
 
   /**
@@ -307,7 +317,10 @@ public abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransa
    *
    * @return the 401k source or null if its not one of the well-known types
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+ChildAggregate_add(BaseSellInvestmentTransaction, { order: 10, type: SellInvestmentTransaction, read: BaseSellInvestmentTransaction.prototype.getSellInvestment, write: BaseSellInvestmentTransaction.prototype.setSellInvestment });
 }

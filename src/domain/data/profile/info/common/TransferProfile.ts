@@ -13,36 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
+///<reference path='../../../common/ProcessorDayOff'/>
 
-package net.sf.ofx4j.domain.data.profile.info.common;
+module ofx4js.domain.data.profile.info.common {
 
-import net.sf.ofx4j.domain.data.common.ProcessorDayOff;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
-import java.util.List;
+import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Funds Transfer Profile
  * @author Scott Priddy
  * @see "Section 11.13.2.2 OFX Spec"
  */
-@Aggregate( "XFERPROF" )
-public class TransferProfile {
+export class TransferProfile {
 
-  private List<ProcessorDayOff> processorDaysOff;
-  private String processEndTime;
-  private Boolean supportsScheduledTransfers;
-  private Boolean supportsRecurringTransfers;
-  private Boolean supportsLoanTransfers;
-  private Boolean supportsScheduledLoanTransfers;
-  private Boolean supportsRecurringLoanTransfers;
-  private Boolean supportsTransferModification;
-  private Boolean supportsModelModification;
-  private Integer modelWindow;
-  private Integer withdrawnDays;
-  private Integer defaultDaysToPay;
+  private processorDaysOff: Array<ProcessorDayOff>;
+  private processEndTime: string;
+  private supportsScheduledTransfers: boolean;
+  private supportsRecurringTransfers: boolean;
+  private supportsLoanTransfers: boolean;
+  private supportsScheduledLoanTransfers: boolean;
+  private supportsRecurringLoanTransfers: boolean;
+  private supportsTransferModification: boolean;
+  private supportsModelModification: boolean;
+  private modelWindow: number;
+  private withdrawnDays: number;
+  private defaultDaysToPay: number;
 
 
   /**
@@ -50,12 +49,11 @@ public class TransferProfile {
    * FRIDAY, SATURDAY, or SUNDAY. 0 or more <PROCDAYSOFF> can be sent.
    * @return List of days during the week that no processing occurs.
    */
-  @Element( name = "PROCDAYSOFF", order = 0 )
-  public List<ProcessorDayOff> getProcessorDaysOff() {
-    return processorDaysOff;
+  public getProcessorDaysOff(): Array<ProcessorDayOff> {
+    return this.processorDaysOff;
   }
 
-  public void setProcessorDaysOff(List<ProcessorDayOff> processorDaysOff) {
+  public setProcessorDaysOff(processorDaysOff: Array<ProcessorDayOff>): void  {
     this.processorDaysOff = processorDaysOff;
   }
 
@@ -67,9 +65,8 @@ public class TransferProfile {
    * @see "Section 3.2.8.3 OFX Spec"
    * @return Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
    */
-  @Element( name = "PROCENDTM", required = true, order = 10 )
-  public String getProcessEndTime() {
-    return processEndTime;
+  public getProcessEndTime(): string  {
+    return this.processEndTime;
   }
 
   /**
@@ -81,16 +78,15 @@ public class TransferProfile {
    * @see "Section 3.2.8.3 OFX Spec"
    * @param processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
    */
-  public void setProcessEndTime(String processEndTime) {
+  public setProcessEndTime(processEndTime: string): void  {
     this.processEndTime = processEndTime;
   }
 
-  @Element( name = "CANSCHED", required = true, order = 20 )
-  public Boolean getSupportsScheduledTransfers() {
-    return supportsScheduledTransfers;
+  public getSupportsScheduledTransfers(): boolean  {
+    return this.supportsScheduledTransfers;
   }
 
-  public void setSupportsScheduledTransfers(Boolean supportsScheduledTransfers) {
+  public setSupportsScheduledTransfers(supportsScheduledTransfers: boolean): void  {
     this.supportsScheduledTransfers = supportsScheduledTransfers;
   }
 
@@ -98,12 +94,11 @@ public class TransferProfile {
    * Requires <CANSCHED>
    * @return Boolean whether supports recurring transfers
    */
-  @Element( name = "CANRECUR", required = true, order = 30 )
-  public Boolean getSupportsRecurringTransfers() {
-    return supportsRecurringTransfers;
+  public getSupportsRecurringTransfers(): boolean  {
+    return this.supportsRecurringTransfers;
   }
 
-  public void setSupportsRecurringTransfers(Boolean supportsRecurringTransfers) {
+  public setSupportsRecurringTransfers(supportsRecurringTransfers: boolean): void  {
     this.supportsRecurringTransfers = supportsRecurringTransfers;
   }
 
@@ -111,48 +106,43 @@ public class TransferProfile {
    * <CANLOAN>Y must be present for transfers to involve loans
    * @return Boolean whether supports loan transfers
    */
-  @Element( name = "CANLOAN", order = 40 )
-  public Boolean getSupportsLoanTransfers() {
-    return supportsLoanTransfers;
+  public getSupportsLoanTransfers(): boolean  {
+    return this.supportsLoanTransfers;
   }
 
-  public void setSupportsLoanTransfers(Boolean supportsLoanTransfers) {
+  public setSupportsLoanTransfers(supportsLoanTransfers: boolean): void  {
     this.supportsLoanTransfers = supportsLoanTransfers;
   }
 
-  @Element( name = "CANSCHEDLOAN", order = 50 )
-  public Boolean getSupportsScheduledLoanTransfers() {
-    return supportsScheduledLoanTransfers;
+  public getSupportsScheduledLoanTransfers(): boolean  {
+    return this.supportsScheduledLoanTransfers;
   }
 
-  public void setSupportsScheduledLoanTransfers(Boolean supportsScheduledLoanTransfers) {
+  public setSupportsScheduledLoanTransfers(supportsScheduledLoanTransfers: boolean): void  {
     this.supportsScheduledLoanTransfers = supportsScheduledLoanTransfers;
   }
 
-  @Element( name = "CANRECURLOAN", order = 60 )
-  public Boolean getSupportsRecurringLoanTransfers() {
-    return supportsRecurringLoanTransfers;
+  public getSupportsRecurringLoanTransfers(): boolean  {
+    return this.supportsRecurringLoanTransfers;
   }
 
-  public void setSupportsRecurringLoanTransfers(Boolean supportsRecurringLoanTransfers) {
+  public setSupportsRecurringLoanTransfers(supportsRecurringLoanTransfers: boolean): void  {
     this.supportsRecurringLoanTransfers = supportsRecurringLoanTransfers;
   }
 
-  @Element( name = "CANMODXFERS", required = true, order = 70 )
-  public Boolean getSupportsTransferModification() {
-    return supportsTransferModification;
+  public getSupportsTransferModification(): boolean  {
+    return this.supportsTransferModification;
   }
 
-  public void setSupportsTransferModification(Boolean supportsTransferModification) {
+  public setSupportsTransferModification(supportsTransferModification: boolean): void  {
     this.supportsTransferModification = supportsTransferModification;
   }
 
-  @Element( name = "CANMODMDLS", required = true, order = 80 )
-  public Boolean getSupportsModelModification() {
-    return supportsModelModification;
+  public getSupportsModelModification(): boolean  {
+    return this.supportsModelModification;
   }
 
-  public void setSupportsModelModification(Boolean supportsModelModification) {
+  public setSupportsModelModification(supportsModelModification: boolean): void  {
     this.supportsModelModification = supportsModelModification;
   }
 
@@ -160,40 +150,53 @@ public class TransferProfile {
    * Model window
    * the number of days before a recurring transaction is scheduled to be processed that it is
    * instantiated on the system
-   * @return Integer number of days before a recurring transaction is scheduled to be processed that it is instantiated on the system
+   * @return Number number of days before a recurring transaction is scheduled to be processed that it is instantiated on the system
    */
-  @Element( name = "MODELWND", required = true, order = 90 )
-  public Integer getModelWindow() {
-    return modelWindow;
+  public getModelWindow(): number  {
+    return this.modelWindow;
   }
 
-  public void setModelWindow(Integer modelWindow) {
+  public setModelWindow(modelWindow: number): void  {
     this.modelWindow = modelWindow;
   }
 
   /**
    * Number of days before processing date that funds are withdrawn
-   * @return Integer number of days before processing date that funds are withdrawn
+   * @return Number number of days before processing date that funds are withdrawn
    */
-  @Element( name = "DAYSWITH", required = true, order = 100 )
-  public Integer getWithdrawnDays() {
-    return withdrawnDays;
+  public getWithdrawnDays(): number  {
+    return this.withdrawnDays;
   }
 
-  public void setWithdrawnDays(Integer withdrawnDays) {
+  public setWithdrawnDays(withdrawnDays: number): void  {
     this.withdrawnDays = withdrawnDays;
   }
 
   /**
    * Default number of days to pay
-   * @return Integer Default number of days to pay
+   * @return Number Default number of days to pay
    */
-  @Element( name = "DFLTDAYSTOPAY", required = true, order = 110 )
-  public Integer getDefaultDaysToPay() {
-    return defaultDaysToPay;
+  public getDefaultDaysToPay(): number  {
+    return this.defaultDaysToPay;
   }
 
-  public void setDefaultDaysToPay(Integer defaultDaysToPay) {
+  public setDefaultDaysToPay(defaultDaysToPay: number): void  {
     this.defaultDaysToPay = defaultDaysToPay;
   }
+}
+
+Aggregate_add( TransferProfile, "XFERPROF" );
+Element_add(TransferProfile, { name: "PROCDAYSOFF", order: 0, type: Array, collectionEntryType: ProcessorDayOff, read: TransferProfile.prototype.getProcessorDaysOff, write: TransferProfile.prototype.setProcessorDaysOff });
+Element_add(TransferProfile, { name: "PROCENDTM", required: true, order: 10, type: String, read: TransferProfile.prototype.getProcessEndTime, write: TransferProfile.prototype.setProcessEndTime });
+Element_add(TransferProfile, { name: "CANSCHED", required: true, order: 20, type: Boolean, read: TransferProfile.prototype.getSupportsScheduledTransfers, write: TransferProfile.prototype.setSupportsScheduledTransfers });
+Element_add(TransferProfile, { name: "CANRECUR", required: true, order: 30, type: Boolean, read: TransferProfile.prototype.getSupportsRecurringTransfers, write: TransferProfile.prototype.setSupportsRecurringTransfers });
+Element_add(TransferProfile, { name: "CANLOAN", order: 40, type: Boolean, read: TransferProfile.prototype.getSupportsLoanTransfers, write: TransferProfile.prototype.setSupportsLoanTransfers });
+Element_add(TransferProfile, { name: "CANSCHEDLOAN", order: 50, type: Boolean, read: TransferProfile.prototype.getSupportsScheduledLoanTransfers, write: TransferProfile.prototype.setSupportsScheduledLoanTransfers });
+Element_add(TransferProfile, { name: "CANRECURLOAN", order: 60, type: Boolean, read: TransferProfile.prototype.getSupportsRecurringLoanTransfers, write: TransferProfile.prototype.setSupportsRecurringLoanTransfers });
+Element_add(TransferProfile, { name: "CANMODXFERS", required: true, order: 70, type: Boolean, read: TransferProfile.prototype.getSupportsTransferModification, write: TransferProfile.prototype.setSupportsTransferModification });
+Element_add(TransferProfile, { name: "CANMODMDLS", required: true, order: 80, type: Boolean, read: TransferProfile.prototype.getSupportsModelModification, write: TransferProfile.prototype.setSupportsModelModification });
+Element_add(TransferProfile, { name: "MODELWND", required: true, order: 90, type: Number, read: TransferProfile.prototype.getModelWindow, write: TransferProfile.prototype.setModelWindow });
+Element_add(TransferProfile, { name: "DAYSWITH", required: true, order: 100, type: Number, read: TransferProfile.prototype.getWithdrawnDays, write: TransferProfile.prototype.setWithdrawnDays });
+Element_add(TransferProfile, { name: "DFLTDAYSTOPAY", required: true, order: 110, type: Number, read: TransferProfile.prototype.getDefaultDaysToPay, write: TransferProfile.prototype.setDefaultDaysToPay });
+
 }

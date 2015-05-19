@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ResponseMessage'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.client.AccountStatement;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
-import java.util.Locale;
+//import java.util.Locale;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-public abstract class T1099Response extends ResponseMessage {
+export /*abstract*/ class T1099Response extends ResponseMessage {
 
  
+}
+
 }

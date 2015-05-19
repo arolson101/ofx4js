@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../RequestMessage'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-@Aggregate ( "STMTRQ" )
-public class T1099Request extends RequestMessage {
+export class T1099Request extends RequestMessage {
+}
 
-  
+Aggregate_add( T1099Request, "STMTRQ" );
+
 }

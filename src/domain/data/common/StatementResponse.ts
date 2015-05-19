@@ -13,26 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='../../../client/AccountStatement'/>
+///<reference path='BalanceInfo'/>
+///<reference path='TransactionList'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.client.AccountStatement;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import AccountStatement = ofx4js.client.AccountStatement;
 
-import java.util.Locale;
+//import java.util.Locale;
 
 /**
  * @author Ryan Heaton
  */
-public abstract class StatementResponse extends ResponseMessage implements AccountStatement {
+export /*abstract*/ class StatementResponse extends ResponseMessage implements AccountStatement {
 
-  private String currencyCode = java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
-  private TransactionList transactionList;
-  private BalanceInfo ledgerBalance;
-  private BalanceInfo availableBalance;
-  private String marketingInfo;
+  private currencyCode: string;
+  private transactionList: TransactionList;
+  private ledgerBalance: BalanceInfo;
+  private availableBalance: BalanceInfo;
+  private marketingInfo: string;
+
+  constructor() {
+    super();
+    this.currencyCode = "USD"; //java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
+  }
 
   /**
    * The currency code.
@@ -40,9 +51,8 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    * @return The currency code.
    * @see java.util.Currency#getCurrencyCode()
    */
-  @Element ( name = "CURDEF", required = true, order = 0 )
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -50,7 +60,7 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @param currencyCode The currency code.
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
   }
 
@@ -59,9 +69,8 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @return The transaction list.
    */
-  @ChildAggregate ( order = 20 )
-  public TransactionList getTransactionList() {
-    return transactionList;
+  public getTransactionList(): TransactionList {
+    return this.transactionList;
   }
 
   /**
@@ -69,7 +78,7 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @param transactionList The transaction list.
    */
-  public void setTransactionList(TransactionList transactionList) {
+  public setTransactionList(transactionList: TransactionList): void {
     this.transactionList = transactionList;
   }
 
@@ -78,9 +87,8 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @return The ledger balance.
    */
-  @ChildAggregate ( name = "LEDGERBAL", order = 30)
-  public BalanceInfo getLedgerBalance() {
-    return ledgerBalance;
+  public getLedgerBalance(): BalanceInfo {
+    return this.ledgerBalance;
   }
 
   /**
@@ -88,7 +96,7 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @param ledgerBalance The ledger balance.
    */
-  public void setLedgerBalance(BalanceInfo ledgerBalance) {
+  public setLedgerBalance(ledgerBalance: BalanceInfo): void {
     this.ledgerBalance = ledgerBalance;
   }
 
@@ -97,9 +105,8 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @return The available balance.
    */
-  @ChildAggregate ( name = "AVAILBAL", order = 40 )
-  public BalanceInfo getAvailableBalance() {
-    return availableBalance;
+  public getAvailableBalance(): BalanceInfo {
+    return this.availableBalance;
   }
 
   /**
@@ -107,7 +114,7 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @param availableBalance The available balance.
    */
-  public void setAvailableBalance(BalanceInfo availableBalance) {
+  public setAvailableBalance(availableBalance: BalanceInfo): void {
     this.availableBalance = availableBalance;
   }
 
@@ -116,9 +123,8 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @return Marketing information.
    */
-  @Element ( name = "MKTGINFO", order = 50)
-  public String getMarketingInfo() {
-    return marketingInfo;
+  public getMarketingInfo(): string {
+    return this.marketingInfo;
   }
 
   /**
@@ -126,7 +132,14 @@ public abstract class StatementResponse extends ResponseMessage implements Accou
    *
    * @param marketingInfo Marketing information.
    */
-  public void setMarketingInfo(String marketingInfo) {
+  public setMarketingInfo(marketingInfo: string): void {
     this.marketingInfo = marketingInfo;
   }
+}
+
+Element_add(StatementResponse, { name: "CURDEF", required: true, order: 0, type: String, read: StatementResponse.prototype.getCurrencyCode, write: StatementResponse.prototype.setCurrencyCode });
+ChildAggregate_add(StatementResponse, { order: 20, type: TransactionList, read: StatementResponse.prototype.getTransactionList, write: StatementResponse.prototype.setTransactionList });
+ChildAggregate_add(StatementResponse, { name: "LEDGERBAL", order: 30, type: BalanceInfo, read: StatementResponse.prototype.getLedgerBalance, write: StatementResponse.prototype.setLedgerBalance });
+ChildAggregate_add(StatementResponse, { name: "AVAILBAL", order: 40, type: BalanceInfo, read: StatementResponse.prototype.getAvailableBalance, write: StatementResponse.prototype.setAvailableBalance });
+Element_add(StatementResponse, { name: "MKTGINFO", order: 50, type: String, read: StatementResponse.prototype.getMarketingInfo, write: StatementResponse.prototype.setMarketingInfo });
 }

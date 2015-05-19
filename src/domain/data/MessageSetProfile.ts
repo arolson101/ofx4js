@@ -13,58 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='profile/SynchronizationCapability'/>
+///<reference path='ApplicationSecurity'/>
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
-import net.sf.ofx4j.domain.data.profile.SynchronizationCapability;
+import SynchronizationCapability = ofx4js.domain.data.profile.SynchronizationCapability;
 
-import java.net.URL;
+//import java.net.URL;
 
 /**
  * @author Ryan Heaton
  */
-public interface MessageSetProfile {
+export interface MessageSetProfile {
   /**
    * Version of the message set.
    *
    * @return The version of the message set.
    */
-  String getVersion();
+  getVersion(): string;
 
   /**
    * The name of the service provider (sometimes the message set processing is outsourced).
    *
    * @return The name of the service provider (sometimes the message set processing is outsourced).
    */
-  String getServiceProviderName();
+  getServiceProviderName(): string;
 
   /**
    * The URL at which the message set is processed.
    *
    * @return The URL at which the message set is processed.
    */
-  String getUrl();
+  getUrl(): string;
 
   /**
    * The application-level security required for this message set.
    *
    * @return The application-level security required for this message set.
    */
-  ApplicationSecurity getSecurity();
+  getSecurity(): ApplicationSecurity;
 
   /**
    * Whether transport-level security is required for this message set.
    *
    * @return Whether transport-level security is required for this message set.
    */
-  boolean isSslRequired();
+  isSslRequired(): boolean;
 
   /**
    * The sign-on realm.
    *
    * @return The sign-on realm.
    */
-  String getRealm();
+  getRealm(): string;
 
   /**
    * The language.
@@ -72,19 +74,21 @@ public interface MessageSetProfile {
    * @return The language.
    * @see java.util.Locale#getISO3Language()
    */
-  String getLanguage();
+  getLanguage(): string;
 
   /**
    * The synchronization capability for this message set.
    *
    * @return The synchronization capability for this message set.
    */
-  SynchronizationCapability getSyncCapability();
+  getSyncCapability(): SynchronizationCapability;
 
   /**
    * Whether there exists support for resposne-file based error recovery.
    *
    * @return Whether there exists support for resposne-file based error recovery.
    */
-  boolean hasFileBasedErrorRecoverySupport();
+  hasFileBasedErrorRecoverySupport(): boolean;
+}
+
 }

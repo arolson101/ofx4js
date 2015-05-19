@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../RequestMessage'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Request to change a user password.
@@ -26,20 +29,18 @@ import net.sf.ofx4j.meta.Element;
  * @author Ryan Heaton
  * @see "Section 2.5.2.1, OFX Spec."
  */
-@Aggregate ( "PINCHRQ" )
-public class PasswordChangeRequest extends RequestMessage {
+export class PasswordChangeRequest extends RequestMessage {
 
-  private String userId;
-  private String newPassword;
+  private userId: string;
+  private newPassword: string;
 
   /**
    * The id of the user changing password.
    *
    * @return The id of the user changing password.
    */
-  @Element ( name = "USERID", required = true, order = 0 )
-  public String getUserId() {
-    return userId;
+  public getUserId(): string {
+    return this.userId;
   }
 
   /**
@@ -47,7 +48,7 @@ public class PasswordChangeRequest extends RequestMessage {
    *
    * @param userId The id of the user changing password.
    */
-  public void setUserId(String userId) {
+  public setUserId(userId: string): void {
     this.userId = userId;
   }
 
@@ -56,9 +57,8 @@ public class PasswordChangeRequest extends RequestMessage {
    *
    * @return The new password.
    */
-  @Element ( name = "NEWUSERPASS", required = true, order = 10 )
-  public String getNewPassword() {
-    return newPassword;
+  public getNewPassword(): string {
+    return this.newPassword;
   }
 
   /**
@@ -66,7 +66,13 @@ public class PasswordChangeRequest extends RequestMessage {
    *
    * @param newPassword The new password.
    */
-  public void setNewPassword(String newPassword) {
+  public setNewPassword(newPassword: string): void {
     this.newPassword = newPassword;
   }
+}
+
+Aggregate_add( PasswordChangeRequest, "PINCHRQ" );
+Element_add(PasswordChangeRequest, { name: "USERID", required: true, order: 0, type: String, read: PasswordChangeRequest.prototype.getUserId, write: PasswordChangeRequest.prototype.setUserId });
+Element_add(PasswordChangeRequest, { name: "NEWUSERPASS", required: true, order: 10, type: String, read: PasswordChangeRequest.prototype.getNewPassword, write: PasswordChangeRequest.prototype.setNewPassword });
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * The type of debt.
@@ -22,17 +22,19 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum DebtType {
+export enum DebtType {
   COUPON,
-  ZERO;
+  ZERO
+}
 
-  public static DebtType fromOfx(String ofxVal) {
-    if ("COUPON".equals(ofxVal)) {
-      return COUPON;
-    } else if ("ZERO".equals(ofxVal)) {
-      return ZERO;
-    } else {
-      return null;
-    }
+export function DebtType_fromOfx(ofxVal: string): DebtType {
+  if ("COUPON" === ofxVal) {
+    return DebtType.COUPON;
+  } else if ("ZERO" === ofxVal) {
+    return DebtType.ZERO;
+  } else {
+    return null;
   }
+}
+
 }

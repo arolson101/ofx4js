@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Related option transaction type.
@@ -21,23 +21,25 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum RelatedOptionType {
+export enum RelatedOptionType {
   SPREAD,
   STRADDLE,
   NONE,
-  OTHER;
+  OTHER
+}
 
-  public static RelatedOptionType fromOfx(String ofxVal) {
-    if ("SPREAD".equals(ofxVal)) {
-      return SPREAD;
-    } else if ("STRADDLE".equals(ofxVal)) {
-      return STRADDLE;
-    } else if ("NONE".equals(ofxVal)) {
-      return NONE;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function RelatedOptionType_fromOfx(ofxVal: string): RelatedOptionType {
+  if ("SPREAD" === ofxVal) {
+    return RelatedOptionType.SPREAD;
+  } else if ("STRADDLE" === ofxVal) {
+    return RelatedOptionType.STRADDLE;
+  } else if ("NONE" === ofxVal) {
+    return RelatedOptionType.NONE;
+  } else if ("OTHER" === ofxVal) {
+    return RelatedOptionType.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

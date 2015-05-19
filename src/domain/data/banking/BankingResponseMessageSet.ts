@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='BankStatementResponseTransaction'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "BANKMSGSRSV1" )
-public class BankingResponseMessageSet extends ResponseMessageSet {
+export class BankingResponseMessageSet extends ResponseMessageSet {
 
-  private List<BankStatementResponseTransaction> statementResponses;
+  private statementResponses: Array<BankStatementResponseTransaction>;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.banking;
   }
 
@@ -47,9 +48,8 @@ public class BankingResponseMessageSet extends ResponseMessageSet {
    *
    * @return The statement response list.
    */
-  @ChildAggregate ( order = 0 )
-  public List<BankStatementResponseTransaction> getStatementResponses() {
-    return statementResponses;
+  public getStatementResponses(): Array<BankStatementResponseTransaction> {
+    return this.statementResponses;
   }
 
   /**
@@ -57,13 +57,13 @@ public class BankingResponseMessageSet extends ResponseMessageSet {
    *
    * @param statementResponses The statement responses.
    */
-  public void setStatementResponses(List<BankStatementResponseTransaction> statementResponses) {
+  public setStatementResponses(statementResponses: Array<BankStatementResponseTransaction>): void {
     this.statementResponses = statementResponses;
   }
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    return new ArrayList<ResponseMessage>(statementResponses);
+  public getResponseMessages(): Array<ResponseMessage> {
+    return this.statementResponses;
   }
 
   /**
@@ -72,12 +72,17 @@ public class BankingResponseMessageSet extends ResponseMessageSet {
    * @return the first bank statement response.
    * @deprecated Use getStatementResponses() because sometimes there are multiple responses
    */
-  public BankStatementResponseTransaction getStatementResponse() {
-    return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+  public getStatementResponse(): BankStatementResponseTransaction {
+    return this.statementResponses == null || this.statementResponses.length == 0 ? null : this.statementResponses[0];
   }
 
-  public void setStatementResponse(BankStatementResponseTransaction statementResponse) {
-    this.statementResponses = Collections.singletonList(statementResponse);
+  public setStatementResponse(statementResponse: BankStatementResponseTransaction): void {
+    this.statementResponses = [statementResponse];
   }
+
+}
+
+Aggregate_add( BankingResponseMessageSet, "BANKMSGSRSV1" );
+ChildAggregate_add(BankingResponseMessageSet, { order: 0, type: Array, collectionEntryType: BankStatementResponseTransaction, read: BankingResponseMessageSet.prototype.getStatementResponses, write: BankingResponseMessageSet.prototype.setStatementResponses });
 
 }

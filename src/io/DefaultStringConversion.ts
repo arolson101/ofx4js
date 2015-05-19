@@ -13,103 +13,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../domain/data/common/Status'/>
+///<reference path='../domain/data/common/StatusCode'/>
+///<reference path='../domain/data/common/UnknownStatusCode'/>
+///<reference path='../meta/PropertyDescriptor'/>
+///<reference path='StringConversion'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import net.sf.ofx4j.domain.data.common.Status;
-import net.sf.ofx4j.domain.data.common.StatusCode;
-import net.sf.ofx4j.domain.data.common.UnknownStatusCode;
+import Status = ofx4js.domain.data.common.Status;
+import StatusCode = ofx4js.domain.data.common.StatusCode;
+import Severity = ofx4js.domain.data.common.Severity;
+import KnownCode = ofx4js.domain.data.common.KnownCode;
+import UnknownStatusCode = ofx4js.domain.data.common.UnknownStatusCode;
+import isAssignableFrom = ofx4js.meta.isAssignableFrom;
 
-import java.sql.Time;
-import java.util.*;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * Utility class for conversion to/from OFX strings.
  *
  * @author Ryan Heaton
  */
-public class DefaultStringConversion implements StringConversion {
+export class DefaultStringConversion implements StringConversion {
 
-  public static final TimeZone GMT_TIME_ZONE = TimeZone.getTimeZone("GMT");
-  public static final int DATE_FORMAT_LENGTH = "yyyyMMddHHmmss.SSS".length();
-  public static final int TIME_FORMAT_LENGTH = "HHmmss.SSS".length();
-
-  public String toString(Object value) {
-    if (value == null) {
+  public toString(value: Object): string {
+    if (!value) {
       return null;
     }
-    else if (Boolean.class.isInstance(value)) {
-      return ((Boolean) value) ? "Y" : "N";
+    else if (value instanceof Boolean) {
+      return value ? "Y" : "N";
     }
-    else if (Time.class.isInstance(value)) {
-      return formatTime((Time) value);
+    else if (value instanceof Date) {
+      return this.formatDate(value);
     }
-    else if (Date.class.isInstance(value)) {
-      return formatDate((Date) value);
+    else if (typeof value === "number") {
+      return value + "";
     }
     else {
-      return String.valueOf(value);
+      return value.toString();
     }
   }
 
-  public <E> E fromString(Class<E> clazz, String value) throws OFXSyntaxException {
-    if (value == null) {
+  public fromString<E>(clazz: any, value: string): E {
+    if (!value) {
       return null;
     }
-    else if (String.class.isAssignableFrom(clazz)) {
-      return (E) value;
-    }
-    else if (StatusCode.class.isAssignableFrom(clazz)) {
-      int code = 2000;
-      try {
-        code = Integer.parseInt(value);
-      }
-      catch (NumberFormatException e) {
-        throw new OFXSyntaxException(e);
-      }
-
-      StatusCode statusCode = Status.KnownCode.fromCode(code);
-      if (statusCode == null) {
-        statusCode = new UnknownStatusCode(code, "Unknown status code.", Status.Severity.ERROR);
+    else if (clazz === StatusCode) {
+      var code: number = <number><any>value;
+      var statusCode: StatusCode = KnownCode.fromCode(code);
+      if (!statusCode) {
+        statusCode = new UnknownStatusCode(code, "Unknown status code.", Severity.ERROR);
       }
       
-      return (E) statusCode;
+      return <E><any>statusCode;
     }
-    else if (Enum.class.isAssignableFrom(clazz)) {
-      return (E) Enum.valueOf((Class<? extends Enum>) clazz, value);
+    else if (isAssignableFrom(Boolean, clazz)) {
+      return <E><any>("Y" === value.toUpperCase());
     }
-    else if ((Boolean.class.isAssignableFrom(clazz)) || (Boolean.TYPE == clazz)) {
-      return (E) (Boolean) "Y".equals(value.toUpperCase());
+    else if (isAssignableFrom(Date, clazz)) {
+      return <E><any>this.parseDate(value);
     }
-    else if ((Integer.class.isAssignableFrom(clazz)) || (Integer.TYPE == clazz)) {
-      return (E) new Integer(Integer.parseInt(value));
-    }
-    else if ((Short.class.isAssignableFrom(clazz)) || (Short.TYPE == clazz)) {
-      return (E) new Short(Short.parseShort(value));
-    }
-    else if ((Float.class.isAssignableFrom(clazz)) || (Float.TYPE == clazz)) {
-      return (E) new Float(Float.parseFloat(value));
-    }
-    else if ((Double.class.isAssignableFrom(clazz)) || (Double.TYPE == clazz)) {
-      return (E) new Double(Double.parseDouble(value));
-    }
-    else if (Time.class.isAssignableFrom(clazz)) {
-      return (E) parseTime(value);
-    }
-    else if (Date.class.isAssignableFrom(clazz)) {
-      return (E) parseDate(value);
-    }
-    else if (URL.class.isAssignableFrom(clazz)) {
-      try {
-        return (E) new URL(value);
-      }
-      catch (MalformedURLException e) {
-        throw new OFXSyntaxException(e);
+    // this goes last because a lot of things are objects
+    else if (typeof clazz === "object") {
+      // enum
+      console.assert(value in clazz);
+      if(value in clazz) {
+        return clazz[value];
       }
     }
-    return (E) value;
+    return <E><any>value;
   }
 
   /**
@@ -118,40 +90,28 @@ public class DefaultStringConversion implements StringConversion {
    * @param value The value of the date.
    * @return The date value.
    */
-  protected Date parseDate(String value) {
-    char[] parseableDate = new char[DATE_FORMAT_LENGTH];
-    Arrays.fill(parseableDate, '0');
-    parseableDate[parseableDate.length - 4] = '.';
-    char[] valueChars = value.toCharArray();
-    int index = 0;
-    while (index < valueChars.length && valueChars[index] != '[') {
-      if (index < DATE_FORMAT_LENGTH) {
-        parseableDate[index] = valueChars[index];
+  protected parseDate(value: string) {
+    var year: number = parseInt(value.substr(0, 4));
+    var month: number = parseInt(value.substr(4, 2)) - 1; // javascript month numbers are zero-based
+    var day: number = parseInt(value.substr(6, 2));
+    var hour: number = parseInt(value.substr(8, 2));
+    var minute: number = parseInt(value.substr(10, 2));
+    var second: number = parseInt(value.substr(12, 2));
+    var milli: number = parseInt(value.substr(15, 3));
+  
+    // add timezone offset
+    var bracket: number = value.indexOf("[");
+    if(bracket != -1) {
+      var close = value.indexOf(":");
+      if(close === -1) {
+        close = value.indexOf("]");
       }
-      
-      index++;
+      var gmtOffset: any = value.substring(bracket+1, close);
+      hour -= 1.0 * gmtOffset;
     }
-
-    int year = Integer.parseInt(new String(parseableDate, 0, 4));
-    int month = Integer.parseInt(new String(parseableDate, 4, 2)) - 1; //java month numberss are zero-based
-    int day = Integer.parseInt(new String(parseableDate, 6, 2));
-    int hour = Integer.parseInt(new String(parseableDate, 8, 2));
-    int minute = Integer.parseInt(new String(parseableDate, 10, 2));
-    int second = Integer.parseInt(new String(parseableDate, 12, 2));
-    int milli = Integer.parseInt(new String(parseableDate, 15, 3));
-
-    //set up a new calendar at zero, then set all the fields.
-    GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
-    if (index < valueChars.length && valueChars[index] == '[') {
-      String tzoffset = value.substring(index);
-      calendar.setTimeZone(parseTimeZone(tzoffset));
-    }
-    else {
-      calendar.setTimeZone(GMT_TIME_ZONE);
-    }
-    calendar.add(GregorianCalendar.MILLISECOND, milli);
-
-    return calendar.getTime();
+    
+    // create date as UTC
+    return new Date(Date.UTC(year, month, day, hour, minute, second, milli));
   }
 
   /**
@@ -160,69 +120,49 @@ public class DefaultStringConversion implements StringConversion {
    * @param date The date.
    * @return The date format.
    */
-  protected String formatDate(Date date) {
-    GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
-    calendar.setTime(date);
-    return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.%1$tL", calendar);
+  protected formatDate(date: Date): string {
+    var gmt = new Date(date.valueOf() + date.getTimezoneOffset() * 60000);
+    return this.pad(gmt.getFullYear(), 4) +
+      this.pad(gmt.getMonth() + 1, 2) +
+      this.pad(gmt.getDay(), 2) +
+      this.pad(gmt.getHours(), 2) +
+      this.pad(gmt.getMinutes(), 2) +
+      this.pad(gmt.getSeconds(), 2) +
+      "." +
+      this.dpad(gmt.getMilliseconds(), 3);
   }
+
 
   /**
-   * Parses a time according to OFX.
+   * Pad a number with leading zeroes until it is of <tt>size</tt> length
    *
-   * @param value The value of the date.
-   * @return The date value.
+   * @param num number
+   * @param size number of digits in final number
+   * @return padded number
    */
-  protected Time parseTime(String value) {
-    char[] parseableTime = new char[TIME_FORMAT_LENGTH];
-    Arrays.fill(parseableTime, '0');
-    parseableTime[parseableTime.length - 4] = '.';
-    value.getChars(0, Math.min(parseableTime.length, value.length()), parseableTime, 0);
-
-    int hour = Integer.parseInt(new String(parseableTime, 0, 2));
-    int minute = Integer.parseInt(new String(parseableTime, 2, 2));
-    int second = Integer.parseInt(new String(parseableTime, 4, 2));
-    int milli = Integer.parseInt(new String(parseableTime, 7, 3));
-
-    //set up a new calendar at zero, then set all the fields.
-    GregorianCalendar calendar = new GregorianCalendar(0, 0, 0, hour, minute, second);
-    if (value.length() > parseableTime.length) {
-      String tzoffset = value.substring(parseableTime.length);
-      calendar.setTimeZone(parseTimeZone(tzoffset));
+  private pad(num: number, size: number): string {
+    var s = num+"";
+    while (s.length < size) {
+      s = "0" + s;
     }
-    else {
-      calendar.setTimeZone(GMT_TIME_ZONE);
-    }
-    calendar.add(GregorianCalendar.MILLISECOND, milli);
-
-    return new Time(calendar.getTimeInMillis());
+    return s;
   }
-
+  
   /**
-   * Format the time according to the OFX spec.
+   * Pad a number with trailing zeroes until it is of <tt>size</tt> length.
+   * Intended for numbers after a decimal point to get a fixed number of decimals
    *
-   * @param time The time to format.
-   * @return The formatted time.
+   * @param num number
+   * @param size number of digits in final number
+   * @return padded number
    */
-  protected String formatTime(Time time) {
-    GregorianCalendar calendar = new GregorianCalendar(GMT_TIME_ZONE);
-    calendar.setTime(time);
-    return String.format("%1$tH%1$tM%1$tS.%1$tL", calendar);
-  }
-
-  /**
-   * Parse the timezone offset of the form [HOURS_OFF_GMT:TZ_ID]
-   *
-   * @param tzoffset The offset pattern.
-   * @return The timezone.
-   */
-  protected TimeZone parseTimeZone(String tzoffset) {
-    StringTokenizer tokenizer = new StringTokenizer(tzoffset, "[]:");
-    TimeZone tz = GMT_TIME_ZONE;
-    if (tokenizer.hasMoreTokens()) {
-      String hoursOff = tokenizer.nextToken();
-      tz = TimeZone.getTimeZone("GMT" + hoursOff);
+  private dpad(num: number, size: number): string {
+    var s = num+"";
+    while (s.length < size) {
+      s = s + "0";
     }
-
-    return tz;
+    return s;
   }
+}
+
 }

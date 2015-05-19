@@ -13,33 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.profile.info.signup;
+module ofx4js.domain.data.profile.info.signup {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Web Enrollment option containing URL to direct user for web based enrollment, if supported.
  * @author Scott Priddy
  * @see "Section 8.8 OFX Spec"
  */
-@Aggregate( "WEBENROLL" )
-public class WebEnrollment {
+export class WebEnrollment {
 
-  private String url;
+  private url: string;
 
   /**
    * URL to start enrollment process
    * @return String
    */
-  @Element( name = "URL", required = true, order = 0)
-  public String getUrl() {
-    return url;
+  public getUrl(): string {
+    return this.url;
   }
 
-  public void setUrl(String url) {
+  public setUrl(url: string): void {
     this.url = url;
   }
+
+}
+
+Aggregate_add( WebEnrollment, "WEBENROLL" );
+Element_add(WebEnrollment, { name: "URL", required: true, order: 0, type: String, read: WebEnrollment.prototype.getUrl, write: WebEnrollment.prototype.setUrl });
 
 }

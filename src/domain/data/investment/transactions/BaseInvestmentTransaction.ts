@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='TransactionType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
-
-import java.util.Date;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Base class for all investment transactions.
@@ -27,11 +26,11 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-public abstract class BaseInvestmentTransaction {
+export /*abstract*/ class BaseInvestmentTransaction {
 
-  private final TransactionType transactionType;
+  private transactionType: TransactionType;
 
-  BaseInvestmentTransaction(TransactionType transactionType) {
+  constructor(transactionType: TransactionType) {
     this.transactionType = transactionType;
   }
 
@@ -40,8 +39,8 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the type of transaction
    */
-  public TransactionType getTransactionType() {
-    return transactionType;
+  public getTransactionType(): TransactionType {
+    return this.transactionType;
   }
 
   /**
@@ -49,7 +48,7 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the {@link InvestmentTransaction} aggregate
    */
-  public abstract InvestmentTransaction getInvestmentTransaction();
+  public /*abstract*/ getInvestmentTransaction(): InvestmentTransaction { throw new Error("abstract"); }
 
   /**
    * Gets the unique financial institution assigned transaction id. This is a
@@ -58,8 +57,8 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the financial institution asssigned transaction id
    */
-  public String getTransactionId() {
-    return getInvestmentTransaction().getTransactionId();
+  public getTransactionId(): string {
+    return this.getInvestmentTransaction().getTransactionId();
   }
 
   /**
@@ -69,8 +68,8 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the server assigned transaction id
    */
-  public String getServerId() {
-    return getInvestmentTransaction().getServerId();
+  public getServerId(): string {
+    return this.getInvestmentTransaction().getServerId();
   }
 
   /**
@@ -80,8 +79,8 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the trade date
    */
-  public Date getTradeDate() {
-    return getInvestmentTransaction().getTradeDate();
+  public getTradeDate(): Date {
+    return this.getInvestmentTransaction().getTradeDate();
   }
 
   /**
@@ -91,8 +90,8 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the trade date
    */
-  public Date getSettlementDate() {
-    return getInvestmentTransaction().getSettlementDate();
+  public getSettlementDate(): Date {
+    return this.getInvestmentTransaction().getSettlementDate();
   }
 
   /**
@@ -102,8 +101,8 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the transaction id of the transaction being reversed
    */
-  public String getReversalTransactionId() {
-    return getInvestmentTransaction().getReversalTransactionId();
+  public getReversalTransactionId(): string {
+    return this.getInvestmentTransaction().getReversalTransactionId();
   }
 
   /**
@@ -113,7 +112,9 @@ public abstract class BaseInvestmentTransaction {
    *
    * @return the memo
    */
-  public String getMemo() {
-    return getInvestmentTransaction().getMemo();
+  public getMemo(): string {
+    return this.getInvestmentTransaction().getMemo();
   }
+}
+
 }

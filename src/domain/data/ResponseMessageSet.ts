@@ -13,29 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='ResponseMessage'/>
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
-import java.util.List;
 
 /**
  * A message set enclosed in a response envelope.
  *
  * @author Ryan Heaton
  */
-public abstract class ResponseMessageSet implements Comparable<ResponseMessageSet> {
+export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMessageSet>*/ {
 
-  private String version = "1";
+  private version: string;
 
-  public abstract MessageSetType getType();
+  public /*abstract*/ getType(): MessageSetType { throw new Error("abstract"); }
+
+  constructor() {
+    this.version = "1";
+  }
 
   /**
    * The version of this message set.
    *
    * @return The version of this message set.
    */
-  public String getVersion() {
-    return version;
+  public getVersion(): string {
+    return this.version;
   }
 
   /**
@@ -43,7 +47,7 @@ public abstract class ResponseMessageSet implements Comparable<ResponseMessageSe
    *
    * @param version The version of this message set.
    */
-  public void setVersion(String version) {
+  public setVersion(version: string): void {
     this.version = version;
   }
 
@@ -52,11 +56,13 @@ public abstract class ResponseMessageSet implements Comparable<ResponseMessageSe
    *
    * @return The list of response messages.
    */
-  public abstract List<ResponseMessage> getResponseMessages();
-
+  public /*abstract*/ getResponseMessages(): Array<ResponseMessage> { throw new Error("abstract"); }
+/*
   // Inherited.
-  public int compareTo(ResponseMessageSet o) {
+  public compareTo(o: ResponseMessageSet): number {
     return getType().compareTo(o.getType());
   }
+*/
+}
 
 }

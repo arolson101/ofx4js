@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.accounts;
+module ofx4js.domain.data.investment.accounts {
 
 /**
  * Activation status of an account.
@@ -22,20 +22,22 @@ package net.sf.ofx4j.domain.data.investment.accounts;
  *
  * @author Jon Perlow
  */
-public enum ActivationStatus {
+export enum ActivationStatus {
   ACTIVE,
   PENDING,
-  AVAILABLE;
+  AVAILABLE
+}
 
-  public static ActivationStatus fromOfx(String ofxVal) {
-    if ("ACTIVE".equals(ofxVal)) {
-      return ACTIVE;
-    } else if ("PEND".equals(ofxVal)) {
-      return PENDING;
-    } else if ("AVAIL".equals(ofxVal)) {
-      return AVAILABLE;
-    } else {
-      return null;
-    }
+export function ActivationStatus_fromOfx(ofxVal: string): ActivationStatus {
+  if ("ACTIVE" === ofxVal) {
+    return ActivationStatus.ACTIVE;
+  } else if ("PEND" === ofxVal) {
+    return ActivationStatus.PENDING;
+  } else if ("AVAIL" === ofxVal) {
+    return ActivationStatus.AVAILABLE;
+  } else {
+    return null;
   }
+}
+
 }

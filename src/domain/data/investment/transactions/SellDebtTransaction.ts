@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+///<reference path='SellDebtReason'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for selling debt (i.e. bonds, CDs, etc.,).
@@ -26,13 +31,12 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SELLDEBT" )
-public class SellDebtTransaction extends BaseSellInvestmentTransaction {
+export class SellDebtTransaction extends BaseSellInvestmentTransaction {
 
-  private String sellReason;
-  private Double accruedInterest;
+  private sellReason: string;
+  private accruedInterest: number;
 
-  public SellDebtTransaction() {
+  constructor() {
     super(TransactionType.SELL_DEBT);
   }
 
@@ -43,9 +47,8 @@ public class SellDebtTransaction extends BaseSellInvestmentTransaction {
    *
    * @return The reason for the sale
    */
-  @Element( name = "SELLREASON", order = 30)
-  public String getSellReason() {
-    return sellReason;
+  public getSellReason(): string {
+    return this.sellReason;
   }
 
   /**
@@ -55,7 +58,7 @@ public class SellDebtTransaction extends BaseSellInvestmentTransaction {
    *
    * @param sellReason The reason for the sale
    */
-  public void setSellReason(String sellReason) {
+  public setSellReason(sellReason: string): void {
     this.sellReason = sellReason;
   }
 
@@ -64,8 +67,8 @@ public class SellDebtTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the sell reason or null if it's not well known
    */
-  public SellDebtReason getSellReasonEnum() {
-    return SellDebtReason.fromOfx(getSellReason());
+  public getSellReasonEnum(): SellDebtReason {
+    return SellDebtReason_fromOfx(this.getSellReason());
   }
 
   /**
@@ -75,9 +78,8 @@ public class SellDebtTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the amount of accrued interest
    */
-  @Element( name = "ACCRDINT", order = 40)
-  public Double getAccruedInterest() {
-    return accruedInterest;
+  public getAccruedInterest(): number {
+    return this.accruedInterest;
   }
 
   /**
@@ -87,7 +89,13 @@ public class SellDebtTransaction extends BaseSellInvestmentTransaction {
    *
    * @param accruedInterest the amount of accrued interest
    */
-  public void setAccruedInterest(Double accruedInterest) {
+  public setAccruedInterest(accruedInterest: number): void {
     this.accruedInterest = accruedInterest;
   }
+}
+
+Aggregate_add( SellDebtTransaction, "SELLDEBT" );
+Element_add(SellDebtTransaction, { name: "SELLREASON", order: 30, type: String, read: SellDebtTransaction.prototype.getSellReason, write: SellDebtTransaction.prototype.setSellReason });
+Element_add(SellDebtTransaction, { name: "ACCRDINT", order: 40, type: Number, read: SellDebtTransaction.prototype.getAccruedInterest, write: SellDebtTransaction.prototype.setAccruedInterest });
+
 }

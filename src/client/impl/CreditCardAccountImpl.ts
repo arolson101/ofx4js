@@ -13,38 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../domain/data/common/StatementResponse'/>
+///<reference path='../../domain/data/common/StatementRequest'/>
+///<reference path='../../domain/data/common/StatementRange'/>
+///<reference path='../../domain/data/ResponseEnvelope'/>
+///<reference path='../../domain/data/creditcard/CreditCardStatementRequest'/>
+///<reference path='../../domain/data/creditcard/CreditCardRequestMessageSet'/>
+///<reference path='../../domain/data/creditcard/CreditCardResponseMessageSet'/>
+///<reference path='../../domain/data/creditcard/CreditCardStatementResponse'/>
+///<reference path='../../OFXException'/>
+///<reference path='../CreditCardAccount'/>
+///<reference path='BaseAccountImpl'/>
+///<reference path='FinancialInstitutionImpl'/>
 
-package net.sf.ofx4j.client.impl;
+module ofx4js.client.impl {
 
-import net.sf.ofx4j.domain.data.common.StatementResponse;
-import net.sf.ofx4j.domain.data.common.StatementRequest;
-import net.sf.ofx4j.domain.data.common.StatementRange;
-import net.sf.ofx4j.domain.data.*;
-import net.sf.ofx4j.domain.data.creditcard.*;
-import net.sf.ofx4j.OFXException;
-import net.sf.ofx4j.client.CreditCardAccount;
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import StatementRange = ofx4js.domain.data.common.StatementRange;
+//import data.* = ofx4js.domain.data.*;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+//import creditcard.* = ofx4js.domain.data.creditcard.*;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+import CreditCardRequestMessageSet = ofx4js.domain.data.creditcard.CreditCardRequestMessageSet;
+import CreditCardResponseMessageSet = ofx4js.domain.data.creditcard.CreditCardResponseMessageSet;
+import CreditCardStatementRequest = ofx4js.domain.data.creditcard.CreditCardStatementRequest;
+import CreditCardStatementResponse = ofx4js.domain.data.creditcard.CreditCardStatementResponse;
+import CreditCardStatementRequestTransaction = ofx4js.domain.data.creditcard.CreditCardStatementRequestTransaction;
+import CreditCardStatementResponseTransaction = ofx4js.domain.data.creditcard.CreditCardStatementResponseTransaction;
+import OFXException = ofx4js.OFXException;
+import CreditCardAccount = ofx4js.client.CreditCardAccount;
 
 /**
  * @author Ryan Heaton
  */
-public class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDetails> implements CreditCardAccount {
+export class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDetails> implements CreditCardAccount {
 
-  public CreditCardAccountImpl(CreditCardAccountDetails details, String username, String password, FinancialInstitutionImpl institution) {
+  constructor(details: CreditCardAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl) {
     super(details, username, password, institution);
   }
 
-  protected StatementResponse unwrapStatementResponse(ResponseEnvelope response) throws OFXException {
-    CreditCardResponseMessageSet creditCardSet = (CreditCardResponseMessageSet) response.getMessageSet(MessageSetType.creditcard);
+  protected unwrapStatementResponse(response: ResponseEnvelope) /*throws OFXException*/: StatementResponse {
+    var creditCardSet: CreditCardResponseMessageSet = <CreditCardResponseMessageSet> response.getMessageSet(MessageSetType.creditcard);
     if (creditCardSet == null) {
       throw new OFXException("No credit card response message set.");
     }
 
-    CreditCardStatementResponseTransaction statementTransactionResponse = creditCardSet.getStatementResponse();
+    var statementTransactionResponse: CreditCardStatementResponseTransaction = creditCardSet.getStatementResponse();
     if (statementTransactionResponse == null) {
       throw new OFXException("No credit card statement response transaction.");
     }
 
-    CreditCardStatementResponse statement = statementTransactionResponse.getMessage();
+    var statement: CreditCardStatementResponse = statementTransactionResponse.getMessage();
     if (statement == null) {
       throw new OFXException("No credit card statement in the transaction.");
     }
@@ -52,21 +76,23 @@ public class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDeta
     return statement;
   }
 
-  protected RequestMessageSet createRequestMessageSet(TransactionWrappedRequestMessage transaction) {
-    CreditCardRequestMessageSet creditCardRequest = new CreditCardRequestMessageSet();
-    creditCardRequest.setStatementRequest((CreditCardStatementRequestTransaction) transaction);
+  protected createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet {
+    var creditCardRequest: CreditCardRequestMessageSet = new CreditCardRequestMessageSet();
+    creditCardRequest.setStatementRequest(<CreditCardStatementRequestTransaction> transaction);
     return creditCardRequest;
   }
 
-  protected TransactionWrappedRequestMessage createTransaction() {
+  protected createTransaction(): TransactionWrappedRequestMessage<RequestMessage> {
     return new CreditCardStatementRequestTransaction();
   }
 
-  protected StatementRequest createStatementRequest(CreditCardAccountDetails details, StatementRange range) {
-    CreditCardStatementRequest bankRequest = new CreditCardStatementRequest();
+  protected createStatementRequest(details: CreditCardAccountDetails, range: StatementRange): StatementRequest {
+    var bankRequest: CreditCardStatementRequest = new CreditCardStatementRequest();
     bankRequest.setAccount(details);
     bankRequest.setStatementRange(range);
     return bankRequest;
   }
+
+}
 
 }

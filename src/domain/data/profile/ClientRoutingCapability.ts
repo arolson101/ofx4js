@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
 /**
  * @author Ryan Heaton
  * @see "Section 7.1.5, OFX Spec"
  */
-public enum ClientRoutingCapability {
+export enum ClientRoutingCapability {
 
   NONE,
 
   SERVICE,
 
   MESSAGE_SET
+}
+
 }

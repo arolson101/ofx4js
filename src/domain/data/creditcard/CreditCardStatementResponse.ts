@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../common/StatementResponse'/>
+///<reference path='CreditCardAccountDetails'/>
 
-package net.sf.ofx4j.domain.data.creditcard;
+module ofx4js.domain.data.creditcard {
 
-import net.sf.ofx4j.domain.data.common.StatementResponse;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("CCSTMTRS")
-public class CreditCardStatementResponse extends StatementResponse {
+export class CreditCardStatementResponse extends StatementResponse {
 
-  private CreditCardAccountDetails account;
+  private account: CreditCardAccountDetails;
 
-  public String getResponseMessageName() {
+  public getResponseMessageName(): string {
     return "credit card statement";
   }
 
@@ -37,9 +40,8 @@ public class CreditCardStatementResponse extends StatementResponse {
    *
    * @return The account for the statement.
    */
-  @ChildAggregate ( name ="CCACCTFROM", order = 10)
-  public CreditCardAccountDetails getAccount() {
-    return account;
+  public getAccount(): CreditCardAccountDetails {
+    return this.account;
   }
 
   /**
@@ -47,8 +49,12 @@ public class CreditCardStatementResponse extends StatementResponse {
    *
    * @param account The account for the statement.
    */
-  public void setAccount(CreditCardAccountDetails account) {
+  public setAccount(account: CreditCardAccountDetails): void {
     this.account = account;
   }
+}
 
+Aggregate_add( CreditCardStatementResponse, "CCSTMTRS");
+ChildAggregate_add(CreditCardStatementResponse, { name:"CCACCTFROM", order: 10, type: CreditCardAccountDetails, read: CreditCardStatementResponse.prototype.getAccount, write: CreditCardStatementResponse.prototype.setAccount });
+  
 }

@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a security.
@@ -28,17 +29,16 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SECINFO" )
-public class SecurityInfo {
-  private SecurityId securityId;
-  private String securityName;
-  private String tickerSymbol;
-  private String fiId;
-  private String rating;
-  private Double unitPrice;
-  private Date marketValueDate;
-  private String currencyCode;
-  private String memo;
+export class SecurityInfo {
+  private securityId: SecurityId;
+  private securityName: string;
+  private tickerSymbol: string;
+  private fiId: string;
+  private rating: string;
+  private unitPrice: number;
+  private marketValueDate: Date;
+  private currencyCode: string;
+  private memo: string;
 
   /**
    * Gets the unique security id for the security. This is a required field according to the OFX
@@ -46,9 +46,8 @@ public class SecurityInfo {
    *
    * @return the security id
    */
-  @ChildAggregate( required = true, order = 10 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -57,7 +56,7 @@ public class SecurityInfo {
    *
    * @param securityId the security id
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -66,9 +65,8 @@ public class SecurityInfo {
    *
    * @return the full name of the security
    */
-  @Element( name = "SECNAME", required = true, order = 20)
-  public String getSecurityName() {
-    return securityName;
+  public getSecurityName(): string {
+    return this.securityName;
   }
 
   /**
@@ -76,7 +74,7 @@ public class SecurityInfo {
    *
    * @param securityName the full name of the security
    */
-  public void setSecurityName(String securityName) {
+  public setSecurityName(securityName: string): void {
     this.securityName = securityName;
   }
 
@@ -85,9 +83,8 @@ public class SecurityInfo {
    *
    * @return the ticket symbol or null if there's no ticker symbol
    */
-  @Element( name = "TICKER", order = 30)
-  public String getTickerSymbol() {
-    return tickerSymbol;
+  public getTickerSymbol(): string {
+    return this.tickerSymbol;
   }
 
   /**
@@ -95,7 +92,7 @@ public class SecurityInfo {
    *
    * @param tickerSymbol the ticket symbol or null if there's no ticker symbol
    */
-  public void setTickerSymbol(String tickerSymbol) {
+  public setTickerSymbol(tickerSymbol: string): void {
     this.tickerSymbol = tickerSymbol;
   }
 
@@ -104,9 +101,8 @@ public class SecurityInfo {
    *
    * @return the FI ID number for the security
    */
-  @Element( name = "FIID", order = 40)
-  public String getFiId() {
-    return fiId;
+  public getFiId(): string {
+    return this.fiId;
   }
 
   /**
@@ -114,7 +110,7 @@ public class SecurityInfo {
    *
    * @param fiId the FI ID number for the security
    */
-  public void setFiId(String fiId) {
+  public setFiId(fiId: string): void {
     this.fiId = fiId;
   }
 
@@ -123,9 +119,8 @@ public class SecurityInfo {
    *
    * @return the rating
    */
-  @Element( name = "RATING", order = 50)
-  public String getRating() {
-    return rating;
+  public getRating(): string {
+    return this.rating;
   }
 
   /**
@@ -133,7 +128,7 @@ public class SecurityInfo {
    *
    * @param rating the rating
    */
-  public void setRating(String rating) {
+  public setRating(rating: string): void {
     this.rating = rating;
   }
 
@@ -145,9 +140,8 @@ public class SecurityInfo {
    *
    * @return the per unit price
    */
-  @Element( name = "UNITPRICE", order = 60)
-  public Double getUnitPrice() {
-    return unitPrice;
+  public getUnitPrice(): number {
+    return this.unitPrice;
   }
 
   /**
@@ -158,7 +152,7 @@ public class SecurityInfo {
    *
    * @param unitPrice the per unit price
    */
-  public void setUnitPrice(Double unitPrice) {
+  public setUnitPrice(unitPrice: number): void {
     this.unitPrice = unitPrice;
   }
 
@@ -167,9 +161,8 @@ public class SecurityInfo {
    *
    * @return the date as-of for the unit price
    */
-  @Element( name = "DTASOF", order = 70)
-  public Date getUnitPriceAsOfDate() {
-    return marketValueDate;
+  public getUnitPriceAsOfDate(): Date {
+    return this.marketValueDate;
   }
 
   /**
@@ -177,7 +170,7 @@ public class SecurityInfo {
    *
    * param marketValueDate the date as-of for the unit price
    */
-  public void setUnitPriceAsOfDate(Date marketValueDate) {
+  public setUnitPriceAsOfDate(marketValueDate: Date): void {
     this.marketValueDate = marketValueDate;
   }
 
@@ -187,9 +180,8 @@ public class SecurityInfo {
    *
    * @return the overriding currency code or null to mean the default currency
    */
-  @Element( name = "CURRENCY", order = 80)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -198,7 +190,7 @@ public class SecurityInfo {
    *
    * @param currencyCode the overriding currency code or null to mean the default currency
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
   }
 
@@ -208,9 +200,8 @@ public class SecurityInfo {
    *
    * @return the memo
    */
-  @Element( name = "MEMO", order = 90)
-  public String getMemo() {
-    return memo;
+  public getMemo(): string {
+    return this.memo;
   }
 
   /**
@@ -219,7 +210,20 @@ public class SecurityInfo {
    *
    * @param memo the memo
    */
-  public void setMemo(String memo) {
+  public setMemo(memo: string): void {
     this.memo = memo;
   }
+}
+
+Aggregate_add( SecurityInfo, "SECINFO" );
+ChildAggregate_add(SecurityInfo, { required: true, order: 10, type: SecurityId, read: SecurityInfo.prototype.getSecurityId, write: SecurityInfo.prototype.setSecurityId });
+Element_add(SecurityInfo, { name: "SECNAME", required: true, order: 20, type: String, read: SecurityInfo.prototype.getSecurityName, write: SecurityInfo.prototype.setSecurityName });
+Element_add(SecurityInfo, { name: "TICKER", order: 30, type: String, read: SecurityInfo.prototype.getTickerSymbol, write: SecurityInfo.prototype.setTickerSymbol });
+Element_add(SecurityInfo, { name: "FIID", order: 40, type: String, read: SecurityInfo.prototype.getFiId, write: SecurityInfo.prototype.setFiId });
+Element_add(SecurityInfo, { name: "RATING", order: 50, type: String, read: SecurityInfo.prototype.getRating, write: SecurityInfo.prototype.setRating });
+Element_add(SecurityInfo, { name: "UNITPRICE", order: 60, type: Number, read: SecurityInfo.prototype.getUnitPrice, write: SecurityInfo.prototype.setUnitPrice });
+Element_add(SecurityInfo, { name: "DTASOF", order: 70, type: Date, read: SecurityInfo.prototype.getUnitPriceAsOfDate, write: SecurityInfo.prototype.setUnitPriceAsOfDate });
+Element_add(SecurityInfo, { name: "CURRENCY", order: 80, type: String, read: SecurityInfo.prototype.getCurrencyCode, write: SecurityInfo.prototype.setCurrencyCode });
+Element_add(SecurityInfo, { name: "MEMO", order: 90, type: String, read: SecurityInfo.prototype.getMemo, write: SecurityInfo.prototype.setMemo });
+
 }

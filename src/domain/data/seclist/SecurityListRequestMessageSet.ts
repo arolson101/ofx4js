@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../RequestMessage'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='../investment/statements/InvestmentStatementRequestTransaction'/>
+///<reference path='SecurityListRequestTransaction'/>
 
+module ofx4js.domain.data.seclist {
 
-package net.sf.ofx4j.domain.data.seclist;
-
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.domain.data.investment.statements.InvestmentStatementRequestTransaction;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.ArrayList;
-import java.util.List;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import InvestmentStatementRequestTransaction = ofx4js.domain.data.investment.statements.InvestmentStatementRequestTransaction;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Security list request message set.
@@ -33,12 +36,11 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SECLISTMSGSRQV1" )
-public class SecurityListRequestMessageSet extends RequestMessageSet {
+export class SecurityListRequestMessageSet extends RequestMessageSet {
 
-  private SecurityListRequestTransaction securityListRequest;
+  private securityListRequest: SecurityListRequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.investment;
   }
 
@@ -47,9 +49,8 @@ public class SecurityListRequestMessageSet extends RequestMessageSet {
    *
    * @return the request
    */
-  @ChildAggregate(order = 0)
-  public SecurityListRequestTransaction getSecurityListRequest() {
-    return securityListRequest;
+  public getSecurityListRequest(): SecurityListRequestTransaction {
+    return this.securityListRequest;
   }
 
   /**
@@ -57,16 +58,21 @@ public class SecurityListRequestMessageSet extends RequestMessageSet {
    *
    * @param statementRequest the request
    */
-  public void setSecurityListRequest(SecurityListRequestTransaction statementRequest) {
+  public setSecurityListRequest(statementRequest: SecurityListRequestTransaction): void {
     this.securityListRequest = statementRequest;
   }
 
   // Inherited.
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-    if (getSecurityListRequest() != null) {
-      requestMessages.add(getSecurityListRequest());
+  public getRequestMessages(): Array<RequestMessage> {
+    var requestMessages: Array<RequestMessage> = new Array<RequestMessage>();
+    if (this.getSecurityListRequest() != null) {
+      requestMessages.push(this.getSecurityListRequest());
     }
     return requestMessages;
   }
+}
+
+Aggregate_add( SecurityListRequestMessageSet, "SECLISTMSGSRQV1" );
+ChildAggregate_add(SecurityListRequestMessageSet, { order: 0, type: SecurityListRequestTransaction, read: SecurityListRequestMessageSet.prototype.getSecurityListRequest, write: SecurityListRequestMessageSet.prototype.setSecurityListRequest });
+
 }

@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../MessageSetType'/>
+///<reference path='../../RequestMessage'/>
+///<reference path='../../RequestMessageSet'/>
+///<reference path='InvestmentStatementRequestTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.ArrayList;
-import java.util.List;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Investment statement request message set.
@@ -31,12 +34,11 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INVSTMTMSGSRQV1" )
-public class InvestmentStatementRequestMessageSet extends RequestMessageSet {
+export class InvestmentStatementRequestMessageSet extends RequestMessageSet {
 
-  private InvestmentStatementRequestTransaction statementRequest;
+  private statementRequest: InvestmentStatementRequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.investment;
   }
 
@@ -45,9 +47,8 @@ public class InvestmentStatementRequestMessageSet extends RequestMessageSet {
    *
    * @return the request
    */
-  @ChildAggregate(order = 0)
-  public InvestmentStatementRequestTransaction getStatementRequest() {
-    return statementRequest;
+  public getStatementRequest(): InvestmentStatementRequestTransaction {
+    return this.statementRequest;
   }
 
   /**
@@ -55,16 +56,21 @@ public class InvestmentStatementRequestMessageSet extends RequestMessageSet {
    *
    * @param statementRequest the request
    */
-  public void setStatementRequest(InvestmentStatementRequestTransaction statementRequest) {
+  public setStatementRequest(statementRequest: InvestmentStatementRequestTransaction): void {
     this.statementRequest = statementRequest;
   }
 
   // Inherited.
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-    if (getStatementRequest() != null) {
-      requestMessages.add(getStatementRequest());
+  public getRequestMessages(): Array<RequestMessage> {
+    var requestMessages: Array<RequestMessage> = new Array<RequestMessage>();
+    if (this.getStatementRequest() != null) {
+      requestMessages.push(this.getStatementRequest());
     }
     return requestMessages;
   }
+}
+
+Aggregate_add( InvestmentStatementRequestMessageSet, "INVSTMTMSGSRQV1" );
+ChildAggregate_add(InvestmentStatementRequestMessageSet, { order: 0, type: InvestmentStatementRequestTransaction, read: InvestmentStatementRequestMessageSet.prototype.getStatementRequest, write: InvestmentStatementRequestMessageSet.prototype.setStatementRequest });
+
 }

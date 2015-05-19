@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='FinancialInstitution'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
 /**
  * @author Ryan Heaton
  */
-public interface FinancialInstitutionService {
+export interface FinancialInstitutionService {
 
   /**
    * Get the financial institution by the specified id.
@@ -27,7 +28,7 @@ public interface FinancialInstitutionService {
    * @param fid The financial institution id.
    * @return The financial institution, or null if not found.
    */
-  public FinancialInstitution getFinancialInstitution(String fid);
+  getFinancialInstitution(fid: string): FinancialInstitution;
 
   /**
    * Get the financial institution by the specified data.
@@ -35,6 +36,8 @@ public interface FinancialInstitutionService {
    * @param data The financial institution data.
    * @return The financial institution, or null if not found.
    */
-  public FinancialInstitution getFinancialInstitution(FinancialInstitutionData data);
+  getFinancialInstitution(data: FinancialInstitutionData): FinancialInstitution;
+
+}
 
 }

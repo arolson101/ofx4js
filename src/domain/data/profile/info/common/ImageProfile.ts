@@ -13,40 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.profile.info.common;
+module ofx4js.domain.data.profile.info.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Image Profile
  * @author Scott Priddy
  * @see "Section 3.1.6.2 OFX Spec"
  */
-@Aggregate( "IMAGEPROF" )
-public class ImageProfile {
+export class ImageProfile {
 
-  private Boolean closingImageAvailable;
-  private Boolean transactionImageAvailable;
+  private closingImageAvailable: boolean;
+  private transactionImageAvailable: boolean;
 
-  @Element( name = "CLOSINGIMGAVAIL", required = true, order = 10 )
-  public Boolean getClosingImageAvailable() {
-    return closingImageAvailable;
+  public getClosingImageAvailable(): boolean {
+    return this.closingImageAvailable;
   }
 
-  public void setClosingImageAvailable(Boolean closingImageAvailable) {
+  public setClosingImageAvailable(closingImageAvailable: boolean): void {
     this.closingImageAvailable = closingImageAvailable;
   }
 
-  @Element( name = "TRANIMGAVAIL", required = true, order = 20 )
-  public Boolean getTransactionImageAvailable() {
-    return transactionImageAvailable;
+  public getTransactionImageAvailable(): boolean {
+    return this.transactionImageAvailable;
   }
 
-  public void setTransactionImageAvailable(Boolean transactionImageAvailable) {
+  public setTransactionImageAvailable(transactionImageAvailable: boolean): void {
     this.transactionImageAvailable = transactionImageAvailable;
   }
+}
 
+Aggregate_add( ImageProfile, "IMAGEPROF" );
+Element_add(ImageProfile, { name: "CLOSINGIMGAVAIL", required: true, order: 10, type: Boolean, read: ImageProfile.prototype.getClosingImageAvailable, write: ImageProfile.prototype.setClosingImageAvailable });
+Element_add(ImageProfile, { name: "TRANIMGAVAIL", required: true, order: 20, type: Boolean, read: ImageProfile.prototype.getTransactionImageAvailable, write: ImageProfile.prototype.setTransactionImageAvailable });
 
 }

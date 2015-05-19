@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BaseSellInvestmentTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Transaction for buying other types of securities.
@@ -25,10 +28,13 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SELLOTHER" )
-public class SellOtherTransaction extends BaseSellInvestmentTransaction {
+export class SellOtherTransaction extends BaseSellInvestmentTransaction {
 
-  public SellOtherTransaction() {
+  constructor() {
     super(TransactionType.SELL_OTHER);
   }
+}
+
+Aggregate_add( SellOtherTransaction, "SELLOTHER" );
+
 }

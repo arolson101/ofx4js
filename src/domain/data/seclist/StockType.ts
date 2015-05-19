@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * The type of debt.
@@ -22,23 +22,25 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum StockType {
+export enum StockType {
   COMMON,
   PREFERRED,
   CONVERTIBLE,
-  OTHER;
+  OTHER
+}
 
-  public static StockType fromOfx(String ofxVal) {
-    if ("COMMON".equals(ofxVal)) {
-      return COMMON;
-    } else if ("PREFERRED".equals(ofxVal)) {
-      return PREFERRED;
-    } else if ("CONVERTIBLE".equals(ofxVal)) {
-      return CONVERTIBLE;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function StockType_fromOfx(ofxVal: string): StockType {
+  if ("COMMON" === ofxVal) {
+    return StockType.COMMON;
+  } else if ("PREFERRED" === ofxVal) {
+    return StockType.PREFERRED;
+  } else if ("CONVERTIBLE" === ofxVal) {
+    return StockType.CONVERTIBLE;
+  } else if ("OTHER" === ofxVal) {
+    return StockType.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

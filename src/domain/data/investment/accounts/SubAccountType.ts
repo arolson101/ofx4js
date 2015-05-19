@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.accounts;
+module ofx4js.domain.data.investment.accounts {
 
 /**
  * Types of well-known sub-accounts.
@@ -22,23 +22,25 @@ package net.sf.ofx4j.domain.data.investment.accounts;
  *
  * @author Jon Perlow
  */
-public enum SubAccountType {
+export enum SubAccountType {
   CASH,
   MARGIN,
   SHORT,
-  OTHER;
+  OTHER
+}
 
-  public static SubAccountType fromOfx(String ofxVal) {
-    if ("CASH".equals(ofxVal)) {
-      return CASH;
-    } else if ("MARGIN".equals(ofxVal)) {
-      return MARGIN;
-    } else if ("SHORT".equals(ofxVal)) {
-      return SHORT;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function SubAccountType_fromOfx(ofxVal: string): SubAccountType {
+  if ("CASH" === ofxVal) {
+    return SubAccountType.CASH;
+  } else if ("MARGIN" === ofxVal) {
+    return SubAccountType.MARGIN;
+  } else if ("SHORT" === ofxVal) {
+    return SubAccountType.SHORT;
+  } else if ("OTHER" === ofxVal) {
+    return SubAccountType.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

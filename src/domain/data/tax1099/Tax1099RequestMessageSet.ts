@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='Tax1099RequestTransaction'/>
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.tax1099 {
 
-import java.util.List;
-import java.util.ArrayList;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author aparna.gawali
  * aparna.gawali@sungard.com
  * 
  */
-@Aggregate ( "TAX1099MSGSRQV1" )
-public class Tax1099RequestMessageSet extends RequestMessageSet {
+export class Tax1099RequestMessageSet extends RequestMessageSet {
 
-  private Tax1099RequestTransaction taxRequestTransaction;
+  private taxRequestTransaction: Tax1099RequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.tax1099;
   }
 
@@ -43,9 +45,8 @@ public class Tax1099RequestMessageSet extends RequestMessageSet {
    *
    * @return The statement request.
    */
-  @ChildAggregate( order = 0 )
-  public Tax1099RequestTransaction getTaxRequestTransaction() {
-    return taxRequestTransaction;
+  public getTaxRequestTransaction(): Tax1099RequestTransaction {
+    return this.taxRequestTransaction;
   }
 
   /**
@@ -53,16 +54,21 @@ public class Tax1099RequestMessageSet extends RequestMessageSet {
    *
    * @param taxRequestTransaction The statement request.
    */
-  public void setTaxRequestTransaction(Tax1099RequestTransaction taxRequestTransaction) {
+  public setTaxRequestTransaction(taxRequestTransaction: Tax1099RequestTransaction) {
     this.taxRequestTransaction = taxRequestTransaction;
   }
 
   // Inherited.
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> requestMessages = new ArrayList<RequestMessage>();
-    if (getTaxRequestTransaction() != null) {
-      requestMessages.add(getTaxRequestTransaction());
+  public getRequestMessages(): Array<RequestMessage> {
+    var requestMessages: Array<RequestMessage> = new Array<RequestMessage>();
+    if (this.getTaxRequestTransaction() != null) {
+      requestMessages.push(this.getTaxRequestTransaction());
     }
     return requestMessages;
   }
+}
+
+Aggregate_add(Tax1099RequestMessageSet, "TAX1099MSGSRQV1" );
+ChildAggregate_add(Tax1099RequestMessageSet, { order: 0, type: Tax1099RequestTransaction, read: Tax1099RequestMessageSet.prototype.getTaxRequestTransaction, write: Tax1099RequestMessageSet.prototype.setTaxRequestTransaction });
+
 }

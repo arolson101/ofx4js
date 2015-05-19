@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Investment transaction aggregate ("INVTRAN").
@@ -27,15 +27,14 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INVTRAN" )
-public class InvestmentTransaction {
+export class InvestmentTransaction {
 
-  private String transactionId;
-  private String serverId;
-  private Date tradeDate;
-  private Date settlementDate;
-  private String reversalTransactionId;
-  private String memo;
+  private transactionId: string;
+  private serverId: string;
+  private tradeDate: Date;
+  private settlementDate: Date;
+  private reversalTransactionId: string;
+  private memo: string;
 
   /**
    * Gets the unique financial institution assigned transaction id. This is a
@@ -44,9 +43,8 @@ public class InvestmentTransaction {
    *
    * @return the financial institution asssigned transaction id
    */
-  @Element( name = "FITID", required = true, order = 0)
-  public String getTransactionId() {
-    return transactionId;
+  public getTransactionId(): string {
+    return this.transactionId;
   }
 
   /**
@@ -56,7 +54,7 @@ public class InvestmentTransaction {
    *
    * @param transactionId the financial institution asssigned transaction id
    */
-  public void setTransactionId(String transactionId) {
+  public setTransactionId(transactionId: string): void {
     this.transactionId = transactionId;
   }
 
@@ -67,9 +65,8 @@ public class InvestmentTransaction {
    *
    * @return the server assigned transaction id
    */
-  @Element( name = "SRVRTID", order = 10)
-  public String getServerId() {
-    return serverId;
+  public getServerId(): string {
+    return this.serverId;
   }
 
   /**
@@ -79,7 +76,7 @@ public class InvestmentTransaction {
    *
    * @param serverId the server assigned transaction id
    */
-  public void setServerId(String serverId) {
+  public setServerId(serverId: string): void {
     this.serverId = serverId;
   }
 
@@ -90,9 +87,8 @@ public class InvestmentTransaction {
    *
    * @return the trade date
    */
-  @Element( name = "DTTRADE", required = true, order = 20)
-  public Date getTradeDate() {
-    return tradeDate;
+  public getTradeDate(): Date {
+    return this.tradeDate;
   }
 
   /**
@@ -102,7 +98,7 @@ public class InvestmentTransaction {
    *
    * @param tradeDate the trade date
    */
-  public void setTradeDate(Date tradeDate) {
+  public setTradeDate(tradeDate: Date): void {
     this.tradeDate = tradeDate;
   }
 
@@ -113,9 +109,8 @@ public class InvestmentTransaction {
    *
    * @return the trade date
    */
-  @Element( name = "DTSETTLE", order = 30)
-  public Date getSettlementDate() {
-    return settlementDate;
+  public getSettlementDate(): Date {
+    return this.settlementDate;
   }
 
   /**
@@ -125,7 +120,7 @@ public class InvestmentTransaction {
    *
    * @param settlementDate the trade date
    */
-  public void setSettlementDate(Date settlementDate) {
+  public setSettlementDate(settlementDate: Date): void {
     this.settlementDate = settlementDate;
   }
 
@@ -136,9 +131,8 @@ public class InvestmentTransaction {
    *
    * @return the transaction id of the transaction being reversed
    */
-  @Element( name = "REVERSALFITID", order = 40)
-  public String getReversalTransactionId() {
-    return reversalTransactionId;
+  public getReversalTransactionId(): string {
+    return this.reversalTransactionId;
   }
 
   /**
@@ -148,7 +142,7 @@ public class InvestmentTransaction {
    *
    * @param reversalTransactionId the transaction id of the transaction being reversed
    */
-  public void setReversalTransactionId(String reversalTransactionId) {
+  public setReversalTransactionId(reversalTransactionId: string): void {
     this.reversalTransactionId = reversalTransactionId;
   }
 
@@ -159,9 +153,8 @@ public class InvestmentTransaction {
    *
    * @return the memo
    */
-  @Element( name = "MEMO", order = 50)
-  public String getMemo() {
-    return memo;
+  public getMemo(): string {
+    return this.memo;
   }
 
   /**
@@ -171,7 +164,17 @@ public class InvestmentTransaction {
    *
    * @param memo the memo
    */
-  public void setMemo(String memo) {
+  public setMemo(memo: string): void {
     this.memo = memo;
   }
+}
+
+Aggregate_add( InvestmentTransaction, "INVTRAN" );
+Element_add(InvestmentTransaction, { name: "FITID", required: true, order: 0, type: String, read: InvestmentTransaction.prototype.getTransactionId, write: InvestmentTransaction.prototype.setTransactionId });
+Element_add(InvestmentTransaction, { name: "SRVRTID", order: 10, type: String, read: InvestmentTransaction.prototype.getServerId, write: InvestmentTransaction.prototype.setServerId });
+Element_add(InvestmentTransaction, { name: "DTTRADE", required: true, order: 20, type: Date, read: InvestmentTransaction.prototype.getTradeDate, write: InvestmentTransaction.prototype.setTradeDate });
+Element_add(InvestmentTransaction, { name: "DTSETTLE", order: 30, type: Date, read: InvestmentTransaction.prototype.getSettlementDate, write: InvestmentTransaction.prototype.setSettlementDate });
+Element_add(InvestmentTransaction, { name: "REVERSALFITID", order: 40, type: String, read: InvestmentTransaction.prototype.getReversalTransactionId, write: InvestmentTransaction.prototype.setReversalTransactionId });
+Element_add(InvestmentTransaction, { name: "MEMO", order: 50, type: String, read: InvestmentTransaction.prototype.getMemo, write: InvestmentTransaction.prototype.setMemo });
+
 }

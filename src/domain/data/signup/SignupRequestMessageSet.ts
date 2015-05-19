@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='AccountInfoRequestTransaction'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.RequestMessageSet;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("SIGNUPMSGSRQV1")
-public class SignupRequestMessageSet extends RequestMessageSet {
+export class SignupRequestMessageSet extends RequestMessageSet {
 
-  private AccountInfoRequestTransaction accountInfoRequest;
+  private accountInfoRequest: AccountInfoRequestTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.signup;
   }
 
@@ -42,9 +42,8 @@ public class SignupRequestMessageSet extends RequestMessageSet {
    *
    * @return The account info request.
    */
-  @ChildAggregate ( order = 0 )
-  public AccountInfoRequestTransaction getAccountInfoRequest() {
-    return accountInfoRequest;
+  public getAccountInfoRequest(): AccountInfoRequestTransaction {
+    return this.accountInfoRequest;
   }
 
   /**
@@ -52,7 +51,7 @@ public class SignupRequestMessageSet extends RequestMessageSet {
    *
    * @param accountInfoRequest The account info request.
    */
-  public void setAccountInfoRequest(AccountInfoRequestTransaction accountInfoRequest) {
+  public setAccountInfoRequest(accountInfoRequest: AccountInfoRequestTransaction): void {
     this.accountInfoRequest = accountInfoRequest;
   }
 
@@ -61,13 +60,18 @@ public class SignupRequestMessageSet extends RequestMessageSet {
    *
    * @return The request messages.
    */
-  public List<RequestMessage> getRequestMessages() {
-    ArrayList<RequestMessage> messages = new ArrayList<RequestMessage>();
+  public getRequestMessages(): Array<RequestMessage> {
+    var messages: Array<RequestMessage> = new Array<RequestMessage>();
 
-    if (getAccountInfoRequest() != null) {
-      messages.add(getAccountInfoRequest());
+    if (this.getAccountInfoRequest() != null) {
+      messages.push(this.getAccountInfoRequest());
     }
     
     return messages;
   }
+}
+
+Aggregate_add(SignupRequestMessageSet, "SIGNUPMSGSRQV1");
+ChildAggregate_add(SignupRequestMessageSet, { order: 0, type: AccountInfoRequestTransaction, read: SignupRequestMessageSet.prototype.getAccountInfoRequest, write: SignupRequestMessageSet.prototype.setAccountInfoRequest });
+
 }

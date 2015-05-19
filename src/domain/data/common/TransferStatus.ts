@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='TransferStatusEvent'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "XFERPRCSTS" )
-public class TransferStatus {
+export class TransferStatus {
 
-  private TransferStatusEvent event;
-  private Date date;
+  private event: TransferStatusEvent;
+  private date: Date;
 
   /**
    * The event.
    *
    * @return The event.
    */
-  @Element ( name = "XFERPRCCODE", required = true, order = 0 )
-  public TransferStatusEvent getEvent() {
-    return event;
+  public getEvent(): TransferStatusEvent {
+    return this.event;
   }
 
   /**
@@ -45,7 +44,7 @@ public class TransferStatus {
    *
    * @param event The event.
    */
-  public void setEvent(TransferStatusEvent event) {
+  public setEvent(event: TransferStatusEvent): void {
     this.event = event;
   }
 
@@ -54,9 +53,8 @@ public class TransferStatus {
    *
    * @return The date of the event.
    */
-  @Element ( name = "DTXFERPRC", required = true, order = 10 )
-  public Date getDate() {
-    return date;
+  public getDate(): Date {
+    return this.date;
   }
 
   /**
@@ -64,7 +62,13 @@ public class TransferStatus {
    *
    * @param date The date of the event.
    */
-  public void setDate(Date date) {
+  public setDate(date: Date): void {
     this.date = date;
   }
+}
+
+Aggregate_add( TransferStatus, "XFERPRCSTS" );
+Element_add(TransferStatus, { name: "XFERPRCCODE", required: true, order: 0, type: TransferStatusEvent, read: TransferStatus.prototype.getEvent, write: TransferStatus.prototype.setEvent });
+Element_add(TransferStatus, { name: "DTXFERPRC", required: true, order: 10, type: Date, read: TransferStatus.prototype.getDate, write: TransferStatus.prototype.setDate });
+
 }

@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='Tax1099Response'/>
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.tax1099 {
+
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-@Aggregate ( "TAX1099TRNRS")
-public class Tax1099ResponseTransaction extends TransactionWrappedResponseMessage<Tax1099Response> {
+export class Tax1099ResponseTransaction extends TransactionWrappedResponseMessage<Tax1099Response> {
 
-  private Tax1099Response tax1099Response;
+  private tax1099Response: Tax1099Response;
 
   /**
    * The tax1099Response.
    *
    * @return The tax1099Response.
    */
-  @ChildAggregate(required=false, order = 2)
-  public Tax1099Response getTax1099Response() {
-    return tax1099Response;
+  public getTax1099Response(): Tax1099Response {
+    return this.tax1099Response;
   }
 
   /**
@@ -43,12 +46,17 @@ public class Tax1099ResponseTransaction extends TransactionWrappedResponseMessag
    *
    * @param tax1099Response The message.
    */
-  public void setTax1099Response(Tax1099Response tax1099Response) {
+  public setTax1099Response(tax1099Response: Tax1099Response): void {
     this.tax1099Response = tax1099Response;
   }
 
   // Inherited.
-  public Tax1099Response getWrappedMessage() {
-    return getTax1099Response();
+  public getWrappedMessage(): Tax1099Response {
+    return this.getTax1099Response();
   }
+}
+
+Aggregate_add( Tax1099ResponseTransaction, "TAX1099TRNRS");
+ChildAggregate_add(Tax1099ResponseTransaction, { required:false, order: 2, type: Tax1099Response, read: Tax1099ResponseTransaction.prototype.getTax1099Response, write: Tax1099ResponseTransaction.prototype.setTax1099Response });
+
 }

@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXApplicationContext'/>
+///<reference path='DefaultApplicationContext'/>
 
-package net.sf.ofx4j.client.context;
+module ofx4js.client.context {
 
 /**
  * @author Ryan Heaton
  */
-public class OFXApplicationContextHolder {
+export class OFXApplicationContextHolder {
 
-  private static OFXApplicationContext CURRENT_CONTEXT = new DefaultApplicationContext("Money", "1600"); //some apps fail unless you're Quicken or Money...
+  private static CURRENT_CONTEXT: OFXApplicationContext = new DefaultApplicationContext("Money", "1600"); //some apps fail unless you're Quicken or Money...
 
   /**
    * Get the current (thread-safe) context.
    *
    * @return The thread-safe context.
    */
-  public static OFXApplicationContext getCurrentContext() {
+  public static getCurrentContext(): OFXApplicationContext {
     //todo: implement a strategy (perhaps for thread-local access or something)?
-    return CURRENT_CONTEXT;
+    return this.CURRENT_CONTEXT;
   }
 
   /**
@@ -38,7 +40,9 @@ public class OFXApplicationContextHolder {
    *
    * @param context The context.
    */
-  public static void setCurrentContext(OFXApplicationContext context) {
-    CURRENT_CONTEXT = context;
+  public static setCurrentContext(context: OFXApplicationContext): void {
+    this.CURRENT_CONTEXT = context;
   }
+}
+
 }

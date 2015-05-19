@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='MutualFundType'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a mutual fund security.
@@ -27,11 +29,10 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "MFINFO" )
-public class MutualFundSecurityInfo extends BaseSecurityInfo {
-  private String mfType;
-  private Double yield;
-  private Date dateYieldAsOf;
+export class MutualFundSecurityInfo extends BaseSecurityInfo {
+  private mfType: string;
+  private yield: number;
+  private dateYieldAsOf: Date;
 
   /**
    * Gets the mutual fund type. One of "OPENEND", "CLOSEEND", or "OTHER". This is an optional field
@@ -39,9 +40,8 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @return the mutual fund type
    */
-  @Element( name = "MFTYPE", order = 20)
-  public String getType() {
-    return mfType;
+  public getType(): string {
+    return this.mfType;
   }
 
   /**
@@ -50,7 +50,7 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @param mfType the mutual fund type
    */
-  public void setType(String mfType) {
+  public setType(mfType: string): void {
     this.mfType = mfType;
   }
 
@@ -59,8 +59,8 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @return the mutual fund type or null if it's not one of the well-known types
    */
-  public MutualFundType getTypeEnum() {
-    return MutualFundType.fromOfx(getType());
+  public getTypeEnum(): MutualFundType {
+    return MutualFundType_fromOfx(this.getType());
   }
 
   /**
@@ -68,9 +68,8 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @return the yield as a rate
    */
-  @Element( name = "YIELD", order = 30)
-  public Double getYield() {
-    return yield;
+  public getYield(): number {
+    return this.yield;
   }
 
   /**
@@ -78,8 +77,8 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @param yield the yield as a rate
    */
-  public void setYield(Double yield) {
-    this.yield = yield;
+  public setYield(yield_: number): void {
+    this.yield = yield_;
   }
 
   /**
@@ -87,9 +86,8 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @return the as-of date for the yield
    */
-  @Element( name = "DTYIELDASOF", order = 40)
-  public Date getDateYieldAsOf() {
-    return dateYieldAsOf;
+  public getDateYieldAsOf(): Date {
+    return this.dateYieldAsOf;
   }
 
   /**
@@ -97,9 +95,16 @@ public class MutualFundSecurityInfo extends BaseSecurityInfo {
    *
    * @param dateYieldAsOf the as-of date for the yield
    */
-  public void setDateYieldAsOf(Date dateYieldAsOf) {
+  public setDateYieldAsOf(dateYieldAsOf: Date): void {
     this.dateYieldAsOf = dateYieldAsOf;
   }
 
   // TODO(jonp) -- MFASSERTCLASS and FIMFASSERTCLASS child aggregates
+}
+
+Aggregate_add( MutualFundSecurityInfo, "MFINFO" );
+Element_add(MutualFundSecurityInfo, { name: "MFTYPE", order: 20, type: String, read: MutualFundSecurityInfo.prototype.getType, write: MutualFundSecurityInfo.prototype.setType });
+Element_add(MutualFundSecurityInfo, { name: "YIELD", order: 30, type: Number, read: MutualFundSecurityInfo.prototype.getYield, write: MutualFundSecurityInfo.prototype.setYield });
+Element_add(MutualFundSecurityInfo, { name: "DTYIELDASOF", order: 40, type: Date, read: MutualFundSecurityInfo.prototype.getDateYieldAsOf, write: MutualFundSecurityInfo.prototype.setDateYieldAsOf });
+
 }

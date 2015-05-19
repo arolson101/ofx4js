@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.accounts;
+module ofx4js.domain.data.investment.accounts {
 
-import java.util.HashMap;
-import java.util.Map;
+//import java.util.HashMap;
+//import java.util.Map;
 
 /**
  * @author Jon Perlow
  * @see "OFX Spec, Section 13.6.2.1"
  */
-public enum UnitedStatesAccountType {
+export enum UnitedStatesAccountType {
 
   /** A 401(k) retirement account */
   R401K,
@@ -56,26 +56,29 @@ public enum UnitedStatesAccountType {
   TRUST,
 
   /** Custodial account */
-  UGMA;
+  UGMA
+}
 
-  static Map<String, UnitedStatesAccountType> ofxMapping =
-      new HashMap<String, UnitedStatesAccountType>();
-  static {
-    ofxMapping.put("401K", R401K);
-    ofxMapping.put("403B", R403B);
-    ofxMapping.put("IRA", IRA);
-    ofxMapping.put("KEOUGH", KEOUGH);
-    ofxMapping.put("OTHER", OTHER);
-    ofxMapping.put("SARSEP", SARSEP);
-    ofxMapping.put("SIMPLE", SIMPLE);
-    ofxMapping.put("NORMAL", NORMAL);
-    ofxMapping.put("TDA", TDA);
-    ofxMapping.put("TRUST", TRUST);
-    ofxMapping.put("UGMA", UGMA);
-  }
+interface OfxMappingType {
+  [key: string]: UnitedStatesAccountType;
+}
 
-  public static UnitedStatesAccountType fromOfx(String ofxVal) {
-    return ofxVal == null ? null : ofxMapping.get(ofxVal);
-  }
+var ofxMapping: OfxMappingType = {
+  "401K": UnitedStatesAccountType.R401K,
+  "403B": UnitedStatesAccountType.R403B,
+  "IRA": UnitedStatesAccountType.IRA,
+  "KEOUGH": UnitedStatesAccountType.KEOUGH,
+  "OTHER": UnitedStatesAccountType.OTHER,
+  "SARSEP": UnitedStatesAccountType.SARSEP,
+  "SIMPLE": UnitedStatesAccountType.SIMPLE,
+  "NORMAL": UnitedStatesAccountType.NORMAL,
+  "TDA": UnitedStatesAccountType.TDA,
+  "TRUST": UnitedStatesAccountType.TRUST,
+  "UGMA": UnitedStatesAccountType.UGMA,
+};
+
+export function UnitedStatesAccountType_fromOfx(ofxVal: string): UnitedStatesAccountType {
+  return ofxVal == null ? null : ofxMapping[ofxVal];
+}
 
 }

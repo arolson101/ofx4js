@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of investment transaction.
@@ -22,7 +22,7 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum TransactionType {
+export enum TransactionType {
 
   BUY_DEBT,
   BUY_MUTUAL_FUND,
@@ -44,4 +44,6 @@ public enum TransactionType {
   SELL_STOCK,
   SPLIT,
   TRANSFER
+}
+
 }

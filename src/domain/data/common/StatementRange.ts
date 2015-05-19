@@ -13,32 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate( "INCTRAN" )
-public class StatementRange {
+export class StatementRange {
 
-  private Date start;
-  private Date end;
-  private Boolean includeTransactions = Boolean.TRUE;
+  private start: Date;
+  private end: Date;
+  private includeTransactions: boolean;
+
+  constructor() {
+    this.includeTransactions = true;
+  }
 
   /**
    * The start of the statement range.
    *
    * @return The start of the statement range.
    */
-  @Element ( name = "DTSTART", order = 0)
-  public Date getStart() {
-    return start;
+  public getStart(): Date {
+    return this.start;
   }
 
   /**
@@ -46,7 +48,7 @@ public class StatementRange {
    *
    * @param start The start of the statement range.
    */
-  public void setStart(Date start) {
+  public setStart(start: Date): void {
     this.start = start;
   }
 
@@ -55,9 +57,8 @@ public class StatementRange {
    *
    * @return The end of the statement range.
    */
-  @Element( name = "DTEND", order = 10 )
-  public Date getEnd() {
-    return end;
+  public getEnd(): Date {
+    return this.end;
   }
 
   /**
@@ -65,7 +66,7 @@ public class StatementRange {
    *
    * @param end The end of the statement range.
    */
-  public void setEnd(Date end) {
+  public setEnd(end: Date): void {
     this.end = end;
   }
 
@@ -74,9 +75,8 @@ public class StatementRange {
    *
    * @return Whether to include transactions.
    */
-  @Element( name = "INCLUDE", required = true, order = 20 )
-  public Boolean getIncludeTransactions() {
-    return includeTransactions;
+  public getIncludeTransactions(): boolean {
+    return this.includeTransactions;
   }
 
   /**
@@ -84,7 +84,14 @@ public class StatementRange {
    *
    * @param includeTransactions Whether to include transactions.
    */
-  public void setIncludeTransactions(Boolean includeTransactions) {
+  public setIncludeTransactions(includeTransactions: boolean): void {
     this.includeTransactions = includeTransactions;
   }
+}
+
+Aggregate_add( StatementRange, "INCTRAN" );
+Element_add(StatementRange, { name: "DTSTART", order: 0, type: Date, read: StatementRange.prototype.getStart, write: StatementRange.prototype.setStart });
+Element_add(StatementRange, { name: "DTEND", order: 10, type: Date, read: StatementRange.prototype.getEnd, write: StatementRange.prototype.setEnd });
+Element_add(StatementRange, { name: "INCLUDE", required: true, order: 20, type: Boolean, read: StatementRange.prototype.getIncludeTransactions, write: StatementRange.prototype.setIncludeTransactions });
+
 }

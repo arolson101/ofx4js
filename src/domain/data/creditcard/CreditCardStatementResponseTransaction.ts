@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='CreditCardStatementResponse'/>
 
-package net.sf.ofx4j.domain.data.creditcard;
+module ofx4js.domain.data.creditcard {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "CCSTMTTRNRS")
-public class CreditCardStatementResponseTransaction extends TransactionWrappedResponseMessage<CreditCardStatementResponse> {
+export class CreditCardStatementResponseTransaction extends TransactionWrappedResponseMessage<CreditCardStatementResponse> {
 
-  private CreditCardStatementResponse message;
+  private message: CreditCardStatementResponse;
 
   /**
    * The message.
    *
    * @return The message.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public CreditCardStatementResponse getMessage() {
-    return message;
+  public getMessage(): CreditCardStatementResponse {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class CreditCardStatementResponseTransaction extends TransactionWrappedRe
    *
    * @param message The message.
    */
-  public void setMessage(CreditCardStatementResponse message) {
+  public setMessage(message: CreditCardStatementResponse): void {
     this.message = message;
   }
 
   // Inherited.
-  public CreditCardStatementResponse getWrappedMessage() {
-    return getMessage();
+  public getWrappedMessage(): CreditCardStatementResponse {
+    return this.getMessage();
   }
+}
+
+Aggregate_add( CreditCardStatementResponseTransaction, "CCSTMTTRNRS" )
+ChildAggregate_add(CreditCardStatementResponseTransaction, { required: true, order: 30, type: CreditCardStatementResponse, read: CreditCardStatementResponseTransaction.prototype.getMessage, write: CreditCardStatementResponseTransaction.prototype.setMessage });
+
 }

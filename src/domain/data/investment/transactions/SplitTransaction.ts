@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='OriginalCurrency'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.investment.positions.Inv401KSource;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for a stock split.
@@ -29,21 +39,20 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SPLIT" )
-public class SplitTransaction extends BaseOtherInvestmentTransaction {
-  private SecurityId securityId;
-  private String subAccountSecurity;
-  private Double oldUnits;
-  private Double newUnits;
-  private Double numerator;
-  private Double denominator;
-  private String currencyCode;
-  private OriginalCurrency originalCurrencyInfo;
-  private Double cashForFractionalUnits;
-  private String subAccountFund;
-  private String inv401kSource;
+export class SplitTransaction extends BaseOtherInvestmentTransaction {
+  private securityId: SecurityId;
+  private subAccountSecurity: string;
+  private oldUnits: number;
+  private newUnits: number;
+  private numerator: number;
+  private denominator: number;
+  private currencyCode: string;
+  private originalCurrencyInfo: OriginalCurrency;
+  private cashForFractionalUnits: number;
+  private subAccountFund: string;
+  private inv401kSource: string;
 
-  public SplitTransaction() {
+  constructor() {
     super(TransactionType.SPLIT);
   }
 
@@ -54,9 +63,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the security id of the security for the expsense
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -66,7 +74,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param securityId the security id of the security for the expsense
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -77,9 +85,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTSEC", order = 30)
-  public String getSubAccountSecurity() {
-    return subAccountSecurity;
+  public getSubAccountSecurity(): string {
+    return this.subAccountSecurity;
   }
 
   /**
@@ -89,7 +96,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param subAccountSecurity the sub account type
    */
-  public void setSubAccountSecurity(String subAccountSecurity) {
+  public setSubAccountSecurity(subAccountSecurity: string): void {
     this.subAccountSecurity = subAccountSecurity;
   }
 
@@ -98,8 +105,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -108,9 +115,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the old number of units.
    */
-  @Element( name = "OLDUNITS", order = 40)
-  public Double getOldUnits() {
-    return oldUnits;
+  public getOldUnits(): number {
+    return this.oldUnits;
   }
 
   /**
@@ -119,7 +125,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param oldUnits the old number of units.
    */
-  public void setOldUnits(Double oldUnits) {
+  public setOldUnits(oldUnits: number): void {
     this.oldUnits = oldUnits;
   }
 
@@ -129,9 +135,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the new number of units.
    */
-  @Element( name = "NEWUNITS", order = 50)
-  public Double getNewUnits() {
-    return newUnits;
+  public getNewUnits(): number {
+    return this.newUnits;
   }
 
   /**
@@ -140,7 +145,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param newUnits the new number of units.
    */
-  public void setNewUnits(Double newUnits) {
+  public setNewUnits(newUnits: number): void {
     this.newUnits = newUnits;
   }
 
@@ -149,9 +154,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the numerator for the split ratio
    */
-  @Element( name = "NUMERATOR", order = 60)
-  public Double getNumerator() {
-    return numerator;
+  public getNumerator(): number {
+    return this.numerator;
   }
 
   /**
@@ -159,7 +163,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param numerator the numerator for the split ratio
    */
-  public void setNumerator(Double numerator) {
+  public setNumerator(numerator: number): void {
     this.numerator = numerator;
   }
 
@@ -168,9 +172,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the numerator for the split ratio
    */
-  @Element( name = "DENOMINATOR", order = 70)
-  public Double getDenominator() {
-    return denominator;
+  public getDenominator(): number {
+    return this.denominator;
   }
 
   /**
@@ -178,7 +181,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param denominator the numerator for the split ratio
    */
-  public void setDenominator(Double denominator) {
+  public setDenominator(denominator: number): void {
     this.denominator = denominator;
   }
 
@@ -189,9 +192,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the currency code for the transaction
    */
-  @Element( name = "CURRENCY", order = 80)
-  public String getCurrencyCode() {
-    return currencyCode;
+  public getCurrencyCode(): string {
+    return this.currencyCode;
   }
 
   /**
@@ -201,7 +203,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the currency code for the transaction
    */
-  public void setCurrencyCode(String currencyCode) {
+  public setCurrencyCode(currencyCode: string): void {
     this.currencyCode = currencyCode;
     this.originalCurrencyInfo = null;
   }
@@ -212,9 +214,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the original currency info for the transaction
    */
-  @Element( name = "ORIGCURRENCY", order = 90)
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return originalCurrencyInfo;
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.originalCurrencyInfo;
   }
 
   /**
@@ -223,7 +224,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the original currency info for the transaction
    */
-  public void setOriginalCurrencyInfo(OriginalCurrency originalCurrencyInfo) {
+  public setOriginalCurrencyInfo(originalCurrencyInfo: OriginalCurrency): void {
     this.originalCurrencyInfo = originalCurrencyInfo;
     this.currencyCode = null;
   }
@@ -233,9 +234,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the cash for fractional units
    */
-  @Element( name = "FRACCASH", order = 100)
-  public Double getCashForFractionalUnits() {
-    return cashForFractionalUnits;
+  public getCashForFractionalUnits(): number {
+    return this.cashForFractionalUnits;
   }
 
   /**
@@ -243,7 +243,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param cashForFractionalUnits the cash for fractional units
    */
-  public void setCashForFractionalUnits(Double cashForFractionalUnits) {
+  public setCashForFractionalUnits(cashForFractionalUnits: number): void {
     this.cashForFractionalUnits = cashForFractionalUnits;
   }
 
@@ -253,9 +253,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the sub account fund
    */
-  @Element( name = "SUBACCTFUND", order = 110)
-  public String getSubAccountFund() {
-    return subAccountFund;
+  public getSubAccountFund(): string {
+    return this.subAccountFund;
   }
 
   /**
@@ -264,7 +263,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param subAccountFund the sub account fund
    */
-  public void setSubAccountFund(String subAccountFund) {
+  public setSubAccountFund(subAccountFund: string): void {
     this.subAccountFund = subAccountFund;
   }
 
@@ -273,8 +272,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
 
   /**
@@ -285,9 +284,8 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the 401k source
    */
-  @Element( name = "INV401KSOURCE", order = 120)
-  public String get401kSource() {
-    return inv401kSource;
+  public get401kSource(): string {
+    return this.inv401kSource;
   }
 
   /**
@@ -298,7 +296,7 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @param inv401kSource the 401k source
    */
-  public void set401kSource(String inv401kSource) {
+  public set401kSource(inv401kSource: string): void {
     this.inv401kSource = inv401kSource;
   }
 
@@ -307,7 +305,22 @@ public class SplitTransaction extends BaseOtherInvestmentTransaction {
    *
    * @return the 401k source or null if its not one of the well-known types
    */
-  public Inv401KSource get401kSourceEnum() {
-    return Inv401KSource.fromOfx(get401kSource());
+  public get401kSourceEnum(): Inv401KSource {
+    return Inv401KSource_fromOfx(this.get401kSource());
   }
+}
+
+Aggregate_add( SplitTransaction, "SPLIT" );
+ChildAggregate_add(SplitTransaction, { required: true, order: 20, type: SecurityId, read: SplitTransaction.prototype.getSecurityId, write: SplitTransaction.prototype.setSecurityId });
+Element_add(SplitTransaction, { name: "SUBACCTSEC", order: 30, type: String, read: SplitTransaction.prototype.getSubAccountSecurity, write: SplitTransaction.prototype.setSubAccountSecurity });
+Element_add(SplitTransaction, { name: "OLDUNITS", order: 40, type: Number, read: SplitTransaction.prototype.getOldUnits, write: SplitTransaction.prototype.setOldUnits });
+Element_add(SplitTransaction, { name: "NEWUNITS", order: 50, type: Number, read: SplitTransaction.prototype.getNewUnits, write: SplitTransaction.prototype.setNewUnits });
+Element_add(SplitTransaction, { name: "NUMERATOR", order: 60, type: Number, read: SplitTransaction.prototype.getNumerator, write: SplitTransaction.prototype.setNumerator });
+Element_add(SplitTransaction, { name: "DENOMINATOR", order: 70, type: Number, read: SplitTransaction.prototype.getDenominator, write: SplitTransaction.prototype.setDenominator });
+Element_add(SplitTransaction, { name: "CURRENCY", order: 80, type: String, read: SplitTransaction.prototype.getCurrencyCode, write: SplitTransaction.prototype.setCurrencyCode });
+Element_add(SplitTransaction, { name: "ORIGCURRENCY", order: 90, type: OriginalCurrency, read: SplitTransaction.prototype.getOriginalCurrencyInfo, write: SplitTransaction.prototype.setOriginalCurrencyInfo });
+Element_add(SplitTransaction, { name: "FRACCASH", order: 100, type: Number, read: SplitTransaction.prototype.getCashForFractionalUnits, write: SplitTransaction.prototype.setCashForFractionalUnits });
+Element_add(SplitTransaction, { name: "SUBACCTFUND", order: 110, type: String, read: SplitTransaction.prototype.getSubAccountFund, write: SplitTransaction.prototype.setSubAccountFund });
+Element_add(SplitTransaction, { name: "INV401KSOURCE", order: 120, type: String, read: SplitTransaction.prototype.get401kSource, write: SplitTransaction.prototype.set401kSource });
+
 }

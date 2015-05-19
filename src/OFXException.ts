@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j;
+module ofx4js {
+
+
+export declare class Error {
+    public name: string;
+    public message: string;
+    public stack: string;
+    constructor(message?: string);
+}
+
 
 /**
  * Base exception class.
  *
  * @author Ryan Heaton
  */
-public class OFXException extends Exception {
+export class OFXException extends Error {
+  private innerError: Error; 
 
-  public OFXException() {
-  }
-
-  public OFXException(String message) {
+  constructor(message: string = null, e: Error = null) {
     super(message);
+    this.innerError = e;
   }
+}
 
-  public OFXException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public OFXException(Throwable cause) {
-    super(cause);
-  }
 }

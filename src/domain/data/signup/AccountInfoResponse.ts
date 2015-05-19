@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='AccountProfile'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.Date;
-import java.util.Collection;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("ACCTINFORS")
-public class AccountInfoResponse extends ResponseMessage {
+export class AccountInfoResponse extends ResponseMessage {
 
-  private Date lastUpdated = new Date(0); //default is never updated.
-  private Collection<AccountProfile> accounts;
+  private lastUpdated: Date;
+  private accounts: Array<AccountProfile>;
+  
+  constructor() {
+    super();
+    this.lastUpdated = new Date(0); //default is never updated.
+  }
 
-  public String getResponseMessageName() {
+  public getResponseMessageName(): string {
     return "account info";
   }
 
@@ -42,9 +48,8 @@ public class AccountInfoResponse extends ResponseMessage {
    *
    * @return When the account info was last updated.
    */
-  @Element ( name = "DTACCTUP", required = true, order = 0 )
-  public Date getLastUpdated() {
-    return lastUpdated;
+  public getLastUpdated(): Date {
+    return this.lastUpdated;
   }
 
   /**
@@ -52,7 +57,7 @@ public class AccountInfoResponse extends ResponseMessage {
    *
    * @param lastUpdated When the account info was last updated.
    */
-  public void setLastUpdated(Date lastUpdated) {
+  public setLastUpdated(lastUpdated: Date): void {
     this.lastUpdated = lastUpdated;
   }
 
@@ -61,9 +66,8 @@ public class AccountInfoResponse extends ResponseMessage {
    *
    * @return The accounts.
    */
-  @ChildAggregate ( order = 10 )
-  public Collection<AccountProfile> getAccounts() {
-    return accounts;
+  public getAccounts(): Array<AccountProfile> {
+    return this.accounts;
   }
 
   /**
@@ -71,7 +75,13 @@ public class AccountInfoResponse extends ResponseMessage {
    *
    * @param accounts The accounts.
    */
-  public void setAccounts(Collection<AccountProfile> accounts) {
+  public setAccounts(accounts: Array<AccountProfile>): void {
     this.accounts = accounts;
   }
+}
+
+Aggregate_add(AccountInfoResponse, "ACCTINFORS");
+Element_add(AccountInfoResponse, { name: "DTACCTUP", required: true, order: 0, type: Date, read: AccountInfoResponse.prototype.getLastUpdated, write: AccountInfoResponse.prototype.setLastUpdated });
+ChildAggregate_add(AccountInfoResponse, { order: 10, type: Array, collectionEntryType: AccountProfile, read: AccountInfoResponse.prototype.getAccounts, write: AccountInfoResponse.prototype.setAccounts });
+
 }

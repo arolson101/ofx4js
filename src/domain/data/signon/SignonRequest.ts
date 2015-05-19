@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../RequestMessage'/>
+///<reference path='FinancialInstitution'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.domain.data.RequestMessage;
-
-import java.util.Date;
-import java.util.Locale;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
 
 /**
  * Sign-on request
@@ -30,38 +32,43 @@ import java.util.Locale;
  * @author Ryan Heaton
  * @see "Section 2.5.1.2, OFX Spec."
  */
-@Aggregate ( "SONRQ" )
-public class SignonRequest extends RequestMessage {
+export class SignonRequest extends RequestMessage {
 
   /**
    * @see "Section 2.5.1"
    */
-  public static final String ANONYMOUS_USER = "anonymous00000000000000000000000";
+  public static ANONYMOUS_USER: string = "anonymous00000000000000000000000";
 
-  private Date timestamp;
-  private String userId;
-  private String password;
-  private String userKey;
-  private Boolean generateUserKey;
-  private String language = Locale.US.getISO3Language().toUpperCase();
-  private FinancialInstitution financialInstitution;
-  private String sessionId;
-  private String applicationId = "Money"; //many institutions just won't work with an unrecognized app id...
-  private String applicationVersion = "1600"; //many institutions just won't work with an unrecognized app id...
-  private String clientUID;
-  private String additionalCredentials1;
-  private String additionalCredentials2;
-  private String authToken;
-  private String accessKey;
+  private timestamp: Date;
+  private userId: string;
+  private password: string;
+  private userKey: string;
+  private generateUserKey: boolean;
+  private language: string;
+  private financialInstitution: FinancialInstitution;
+  private sessionId: string;
+  private applicationId: string;
+  private applicationVersion: string;
+  private clientUID: string;
+  private additionalCredentials1: string;
+  private additionalCredentials2: string;
+  private authToken: string;
+  private accessKey: string;
+  
+  constructor() {
+    super();
+    this.language = "ENG"; //Locale.US.getISO3Language().toUpperCase();
+    this.applicationId = "Money"; //many institutions just won't work with an unrecognized app id...
+    this.applicationVersion = "1600"; //many institutions just won't work with an unrecognized app id...
+  }
 
   /**
    * The date and time of the request.
    *
    * @return The date and time of the request.
    */
-  @Element ( name = "DTCLIENT", required = true, order = 0 )
-  public Date getTimestamp() {
-    return timestamp;
+  public getTimestamp(): Date {
+    return this.timestamp;
   }
 
   /**
@@ -69,7 +76,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param timestamp The date and time of the request.
    */
-  public void setTimestamp(Date timestamp) {
+  public setTimestamp(timestamp: Date): void {
     this.timestamp = timestamp;
   }
 
@@ -78,9 +85,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The user id.
    */
-  @Element ( name = "USERID", order = 10 )
-  public String getUserId() {
-    return userId;
+  public getUserId(): string {
+    return this.userId;
   }
 
   /**
@@ -88,7 +94,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param userId The user id.
    */
-  public void setUserId(String userId) {
+  public setUserId(userId: string): void {
     this.userId = userId;
   }
 
@@ -97,9 +103,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The password.
    */
-  @Element ( name = "USERPASS", order = 20 )
-  public String getPassword() {
-    return password;
+  public getPassword(): string {
+    return this.password;
   }
 
   /**
@@ -107,7 +112,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param password The password.
    */
-  public void setPassword(String password) {
+  public setPassword(password: string): void {
     this.password = password;
   }
 
@@ -116,9 +121,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The user key provided by the server so as not to require further username/password authentication.
    */
-  @Element ( name = "USERKEY", order = 30 )
-  public String getUserKey() {
-    return userKey;
+  public getUserKey(): string {
+    return this.userKey;
   }
 
   /**
@@ -126,7 +130,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param userKey The user key provided by the server so as not to require further username/password authentication.
    */
-  public void setUserKey(String userKey) {
+  public setUserKey(userKey: string): void {
     this.userKey = userKey;
   }
 
@@ -135,9 +139,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return Whether to request the server to generate a user key.
    */
-  @Element ( name = "GENUSERKEY", order = 40 )
-  public Boolean getGenerateUserKey() {
-    return generateUserKey;
+  public getGenerateUserKey(): boolean {
+    return this.generateUserKey;
   }
 
   /**
@@ -145,7 +148,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param generateUserKey Whether to request the server to generate a user key.
    */
-  public void setGenerateUserKey(Boolean generateUserKey) {
+  public setGenerateUserKey(generateUserKey: boolean): void {
     this.generateUserKey = generateUserKey;
   }
 
@@ -155,9 +158,8 @@ public class SignonRequest extends RequestMessage {
    * @return The three-letter langauge code.
    * @see java.util.Locale#getISO3Language()
    */
-  @Element ( name = "LANGUAGE", required = true, order = 50 )
-  public String getLanguage() {
-    return language;
+  public getLanguage(): string {
+    return this.language;
   }
 
   /**
@@ -165,7 +167,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param language The three-letter langauge code.
    */
-  public void setLanguage(String language) {
+  public setLanguage(language: string): void {
     this.language = language;
   }
 
@@ -174,9 +176,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The financial institution.
    */
-  @ChildAggregate ( order = 60 )
-  public FinancialInstitution getFinancialInstitution() {
-    return financialInstitution;
+  public getFinancialInstitution(): FinancialInstitution {
+    return this.financialInstitution;
   }
 
   /**
@@ -184,7 +185,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param financialInstitution The financial institution.
    */
-  public void setFinancialInstitution(FinancialInstitution financialInstitution) {
+  public setFinancialInstitution(financialInstitution: FinancialInstitution): void {
     this.financialInstitution = financialInstitution;
   }
 
@@ -193,9 +194,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The server-supplied session id.
    */
-  @Element ( name = "SESSCOOKIE", order = 70 )
-  public String getSessionId() {
-    return sessionId;
+  public getSessionId(): string {
+    return this.sessionId;
   }
 
   /**
@@ -203,7 +203,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param sessionId The server-supplied session id.
    */
-  public void setSessionId(String sessionId) {
+  public setSessionId(sessionId: string): void {
     this.sessionId = sessionId;
   }
 
@@ -212,9 +212,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The application id.
    */
-  @Element ( name = "APPID", required = true, order = 80 )
-  public String getApplicationId() {
-    return applicationId;
+  public getApplicationId(): string {
+    return this.applicationId;
   }
 
   /**
@@ -222,7 +221,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param applicationId The application id.
    */
-  public void setApplicationId(String applicationId) {
+  public setApplicationId(applicationId: string): void {
     this.applicationId = applicationId;
   }
 
@@ -231,9 +230,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The application version.
    */
-  @Element ( name = "APPVER", required = true, order = 90 )
-  public String getApplicationVersion() {
-    return applicationVersion;
+  public getApplicationVersion(): string {
+    return this.applicationVersion;
   }
 
   /**
@@ -241,7 +239,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param applicationVersion The application version.
    */
-  public void setApplicationVersion(String applicationVersion) {
+  public setApplicationVersion(applicationVersion: string): void {
     this.applicationVersion = applicationVersion;
   }
 
@@ -250,9 +248,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The client-supplied UID.
    */
-  @Element ( name = "CLIENTUID", order = 100 )
-  public String getClientUID() {
-    return clientUID;
+  public getClientUID(): string {
+    return this.clientUID;
   }
 
   /**
@@ -260,7 +257,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param clientUID The client-supplied UID.
    */
-  public void setClientUID(String clientUID) {
+  public setClientUID(clientUID: string): void {
     this.clientUID = clientUID;
   }
 
@@ -269,9 +266,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return Any additional credentials.
    */
-  @Element ( name = "USERCRED1", order = 110 )
-  public String getAdditionalCredentials1() {
-    return additionalCredentials1;
+  public getAdditionalCredentials1(): string {
+    return this.additionalCredentials1;
   }
 
   /**
@@ -279,7 +275,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param additionalCredentials1 Any additional credentials.
    */
-  public void setAdditionalCredentials1(String additionalCredentials1) {
+  public setAdditionalCredentials1(additionalCredentials1: string): void {
     this.additionalCredentials1 = additionalCredentials1;
   }
 
@@ -288,9 +284,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return Any additional credentials.
    */
-  @Element ( name = "USERCRED2", order = 120 )
-  public String getAdditionalCredentials2() {
-    return additionalCredentials2;
+  public getAdditionalCredentials2(): string {
+    return this.additionalCredentials2;
   }
 
   /**
@@ -298,7 +293,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param additionalCredentials2 Any additional credentials.
    */
-  public void setAdditionalCredentials2(String additionalCredentials2) {
+  public setAdditionalCredentials2(additionalCredentials2: string): void {
     this.additionalCredentials2 = additionalCredentials2;
   }
 
@@ -307,9 +302,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The authentication token.
    */
-  @Element ( name = "AUTHTOKEN", order = 130 )
-  public String getAuthToken() {
-    return authToken;
+  public getAuthToken(): string {
+    return this.authToken;
   }
 
   /**
@@ -317,7 +311,7 @@ public class SignonRequest extends RequestMessage {
    *
    * @param authToken The authentication token.
    */
-  public void setAuthToken(String authToken) {
+  public setAuthToken(authToken: string): void {
     this.authToken = authToken;
   }
 
@@ -326,9 +320,8 @@ public class SignonRequest extends RequestMessage {
    *
    * @return The access key.
    */
-  @Element ( name = "ACCESSKEY", order = 140 )
-  public String getAccessKey() {
-    return accessKey;
+  public getAccessKey(): string {
+    return this.accessKey;
   }
 
   /**
@@ -336,9 +329,28 @@ public class SignonRequest extends RequestMessage {
    *
    * @param accessKey The access key.
    */
-  public void setAccessKey(String accessKey) {
+  public setAccessKey(accessKey: string): void {
     this.accessKey = accessKey;
   }
 
   //todo: MFA challenge stuff.
+}
+
+Aggregate_add( SignonRequest, "SONRQ" );
+Element_add(SignonRequest, { name: "DTCLIENT", required: true, order: 0, type: Date, read: SignonRequest.prototype.getTimestamp, write: SignonRequest.prototype.setTimestamp });
+Element_add(SignonRequest, { name: "USERID", order: 10, type: String, read: SignonRequest.prototype.getUserId, write: SignonRequest.prototype.setUserId });
+Element_add(SignonRequest, { name: "USERPASS", order: 20, type: String, read: SignonRequest.prototype.getPassword, write: SignonRequest.prototype.setPassword });
+Element_add(SignonRequest, { name: "USERKEY", order: 30, type: String, read: SignonRequest.prototype.getUserKey, write: SignonRequest.prototype.setUserKey });
+Element_add(SignonRequest, { name: "GENUSERKEY", order: 40, type: Boolean, read: SignonRequest.prototype.getGenerateUserKey, write: SignonRequest.prototype.setGenerateUserKey });
+Element_add(SignonRequest, { name: "LANGUAGE", required: true, order: 50, type: String, read: SignonRequest.prototype.getLanguage, write: SignonRequest.prototype.setLanguage });
+ChildAggregate_add(SignonRequest, { order: 60, type: FinancialInstitution, read: SignonRequest.prototype.getFinancialInstitution, write: SignonRequest.prototype.setFinancialInstitution });
+Element_add(SignonRequest, { name: "SESSCOOKIE", order: 70, type: String, read: SignonRequest.prototype.getSessionId, write: SignonRequest.prototype.setSessionId });
+Element_add(SignonRequest, { name: "APPID", required: true, order: 80, type: String, read: SignonRequest.prototype.getApplicationId, write: SignonRequest.prototype.setApplicationId });
+Element_add(SignonRequest, { name: "APPVER", required: true, order: 90, type: String, read: SignonRequest.prototype.getApplicationVersion, write: SignonRequest.prototype.setApplicationVersion });
+Element_add(SignonRequest, { name: "CLIENTUID", order: 100, type: String, read: SignonRequest.prototype.getClientUID, write: SignonRequest.prototype.setClientUID });
+Element_add(SignonRequest, { name: "USERCRED1", order: 110, type: String, read: SignonRequest.prototype.getAdditionalCredentials1, write: SignonRequest.prototype.setAdditionalCredentials1 });
+Element_add(SignonRequest, { name: "USERCRED2", order: 120, type: String, read: SignonRequest.prototype.getAdditionalCredentials2, write: SignonRequest.prototype.setAdditionalCredentials2 });
+Element_add(SignonRequest, { name: "AUTHTOKEN", order: 130, type: String, read: SignonRequest.prototype.getAuthToken, write: SignonRequest.prototype.setAuthToken });
+Element_add(SignonRequest, { name: "ACCESSKEY", order: 140, type: String, read: SignonRequest.prototype.getAccessKey, write: SignonRequest.prototype.setAccessKey });
+
 }

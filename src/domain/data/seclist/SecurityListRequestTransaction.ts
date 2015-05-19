@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='SecurityListRequest'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Security list transaction request.
@@ -26,20 +30,18 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SECLISTTRNRQ" )
-public class SecurityListRequestTransaction
+export class SecurityListRequestTransaction
     extends TransactionWrappedRequestMessage<SecurityListRequest> {
 
-  private SecurityListRequest message;
+  private message: SecurityListRequest;
 
   /**
    * The message.
    *
    * @return The message.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public SecurityListRequest getMessage() {
-    return message;
+  public getMessage(): SecurityListRequest {
+    return this.message;
   }
 
   /**
@@ -48,12 +50,17 @@ public class SecurityListRequestTransaction
    * @param message The message.
    *
    */
-  public void setMessage(SecurityListRequest message) {
+  public setMessage(message: SecurityListRequest) {
     this.message = message;
   }
 
   // Inherited.
-  public void setWrappedMessage(SecurityListRequest message) {
-    setMessage(message);
+  public setWrappedMessage(message: SecurityListRequest): void {
+    this.setMessage(message);
   }
+}
+
+Aggregate_add( SecurityListRequestTransaction, "SECLISTTRNRQ" );
+ChildAggregate_add(SecurityListRequestTransaction, { required: true, order: 30, type: SecurityListRequest, read: SecurityListRequestTransaction.prototype.getMessage, write: SecurityListRequestTransaction.prototype.setMessage });
+
 }

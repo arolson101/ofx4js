@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.accounts;
+module ofx4js.domain.data.investment.accounts {
 
 /**
  * Type of investment account.
@@ -22,23 +22,26 @@ package net.sf.ofx4j.domain.data.investment.accounts;
  * @author Jon Perlow
  * @see "OFX Spec, Section 13.6.2"
  */
-public enum AccountType {
+export enum AccountType {
   INDIVIDUAL,
   JOINT,
   TRUST,
-  CORPORATE;
+  CORPORATE,
+}
 
-  public static AccountType fromOfx(String ofxVal) {
-    if ("INDIVIDUAL".equals(ofxVal)) {
-      return INDIVIDUAL;
-    } else if ("JOINT".equals(ofxVal)) {
-      return JOINT;
-    } else if ("CORPORATE".equals(ofxVal)) {
-      return CORPORATE;
-    } else if ("CORPORATE".equals(ofxVal)) {
-      return CORPORATE;
-    } else {
-      return null;
-    }
+
+export function AccountType_fromOfx(ofxVal: string): AccountType {
+  if ("INDIVIDUAL" === ofxVal) {
+    return AccountType.INDIVIDUAL;
+  } else if ("JOINT" === ofxVal) {
+    return AccountType.JOINT;
+  } else if ("CORPORATE" === ofxVal) {
+    return AccountType.CORPORATE;
+  } else if ("CORPORATE" === ofxVal) {
+    return AccountType.CORPORATE;
+  } else {
+    return null;
   }
+}
+
 }

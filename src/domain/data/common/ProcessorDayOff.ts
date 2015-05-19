@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * Day of week used in "PROCDAYSOFF" lists.
@@ -22,32 +22,34 @@ package net.sf.ofx4j.domain.data.common;
  * @author Scott Priddy
  * @see "OFX Spec, Section 13.6.2"
  */
-public enum ProcessorDayOff {
+export enum ProcessorDayOff {
   MONDAY,
   TUESDAY,
   WEDNESDAY,
   THURSDAY,
   FRIDAY,
   SATURDAY,
-  SUNDAY;
+  SUNDAY
+}
 
-  public static ProcessorDayOff fromOfx(String ofxVal) {
-    if ("MONDAY".equals(ofxVal)) {
-      return MONDAY;
-    } else if ("TUESDAY".equals(ofxVal)) {
-      return TUESDAY;
-    } else if ("WEDNESDAY".equals(ofxVal)) {
-      return WEDNESDAY;
-    } else if ("THURSDAY".equals(ofxVal)) {
-      return THURSDAY;
-    } else if ("FRIDAY".equals(ofxVal)) {
-      return FRIDAY;
-    } else if ("SATURDAY".equals(ofxVal)) {
-      return SATURDAY;
-    } else if ("SUNDAY".equals(ofxVal)) {
-      return SUNDAY;
-    } else {
-      return null;
-    }
+export function ProcessorDayOff_fromOfx(ofxVal: string): ProcessorDayOff {
+  if ("MONDAY" === ofxVal) {
+    return ProcessorDayOff.MONDAY;
+  } else if ("TUESDAY" === ofxVal) {
+    return ProcessorDayOff.TUESDAY;
+  } else if ("WEDNESDAY" === ofxVal) {
+    return ProcessorDayOff.WEDNESDAY;
+  } else if ("THURSDAY" === ofxVal) {
+    return ProcessorDayOff.THURSDAY;
+  } else if ("FRIDAY" === ofxVal) {
+    return ProcessorDayOff.FRIDAY;
+  } else if ("SATURDAY" === ofxVal) {
+    return ProcessorDayOff.SATURDAY;
+  } else if ("SUNDAY" === ofxVal) {
+    return ProcessorDayOff.SUNDAY;
+  } else {
+    return null;
   }
+}
+
 }

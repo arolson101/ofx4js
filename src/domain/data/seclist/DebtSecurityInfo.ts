@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='DebtType'/>
+///<reference path='DebtClass'/>
+///<reference path='CouponFrequency'/>
+///<reference path='CallType'/>
+///<reference path='AssetClass'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a debt security.
@@ -27,32 +33,30 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "DEBTINFO" )
-public class DebtSecurityInfo extends BaseSecurityInfo {
+export class DebtSecurityInfo extends BaseSecurityInfo {
 
-  private Double parValue;
-  private String debtType;
-  private String debtClass;
-  private Double couponRate;
-  private Date nextMaturityDate;
-  private String couponFrequency;
-  private Double callPrice;
-  private Double yieldToCall;
-  private Date nextCallDate;
-  private String callType;
-  private Double yieldToMaturity;
-  private Date debtMaturityDate;
-  private String assetClass;
-  private String fiAssetClass;
+  private parValue: number;
+  private debtType: string;
+  private debtClass: string;
+  private couponRate: number;
+  private nextMaturityDate: Date;
+  private couponFrequency: string;
+  private callPrice: number;
+  private yieldToCall: number;
+  private nextCallDate: Date;
+  private callType: string;
+  private yieldToMaturity: number;
+  private debtMaturityDate: Date;
+  private assetClass: string;
+  private fiAssetClass: string;
 
   /**
    * Gets the par value of the debt. This is a required field according to the OFX spec.
    *
    * @return the par value of the debt
    */
-  @Element( name = "PARVALUE", required=true, order = 20)
-  public Double getParValue() {
-    return parValue;
+  public getParValue(): number {
+    return this.parValue;
   }
 
   /**
@@ -60,7 +64,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param parValue the par value of the debt
    */
-  public void setParValue(Double parValue) {
+  public setParValue(parValue: number): void {
     this.parValue = parValue;
   }
 
@@ -70,9 +74,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the type of debt
    */
-  @Element( name = "DEBTTYPE", required=true, order = 30)
-  public String getDebtType() {
-    return debtType;
+  public getDebtType(): string {
+    return this.debtType;
   }
 
   /**
@@ -81,7 +84,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param debtType the type of debt
    */
-  public void setDebtType(String debtType) {
+  public setDebtType(debtType: string): void {
     this.debtType = debtType;
   }
 
@@ -90,8 +93,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the type of debt or null if it's not one of the well-known types
    */
-  public DebtType getDebtTypeEnum() {
-    return DebtType.fromOfx(getDebtType());
+  public getDebtTypeEnum(): DebtType {
+    return DebtType_fromOfx(this.getDebtType());
   }
 
   /**
@@ -100,9 +103,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the class of debt
    */
-  @Element( name = "DEBTCLASS", order = 40)
-  public String getDebtClass() {
-    return debtClass;
+  public getDebtClass(): string {
+    return this.debtClass;
   }
 
   /**
@@ -111,7 +113,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param debtClass the class of debt
    */
-  public void setDebtClass(String debtClass) {
+  public setDebtClass(debtClass: string): void {
     this.debtClass = debtClass;
   }
 
@@ -120,8 +122,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the class of debt or null if it's not one of the well-known types
    */
-  public DebtClass getDebtClassEnum() {
-    return DebtClass.fromOfx(debtClass);
+  public getDebtClassEnum(): DebtClass {
+    return DebtClass_fromOfx(this.debtClass);
   }
 
   /**
@@ -130,9 +132,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the coupon rate
    */
-  @Element( name = "COUPONRT", order = 50)
-  public Double getCouponRate() {
-    return couponRate;
+  public getCouponRate(): number {
+    return this.couponRate;
   }
 
   /**
@@ -141,7 +142,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param couponRate the coupon rate
    */
-  public void setCouponRate(Double couponRate) {
+  public setCouponRate(couponRate: number): void {
     this.couponRate = couponRate;
   }
 
@@ -151,9 +152,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the maturity date for the next coupon
    */
-  @Element( name = "DTCOUPON", order = 60)
-  public Date getNextMaturityDate() {
-    return nextMaturityDate;
+  public getNextMaturityDate(): Date {
+    return this.nextMaturityDate;
   }
 
   /**
@@ -162,7 +162,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param nextMaturityDate the maturity date for the next coupon.
    */
-  public void setNextMaturityDate(Date nextMaturityDate) {
+  public setNextMaturityDate(nextMaturityDate: Date): void {
     this.nextMaturityDate = nextMaturityDate;
   }
 
@@ -172,9 +172,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the coupon frequency
    */
-  @Element( name = "COUPONFREQ", order = 70)
-  public String getCouponFrequency() {
-    return couponFrequency;
+  public getCouponFrequency(): string {
+    return this.couponFrequency;
   }
 
   /**
@@ -183,7 +182,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param couponFrequency the coupon frequency
    */
-  public void setCouponFrequency(String couponFrequency) {
+  public setCouponFrequency(couponFrequency: string): void {
     this.couponFrequency = couponFrequency;
   }
 
@@ -192,8 +191,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the coupon frequency or null if it's not one of the well-known types
    */
-  public CouponFrequency getCouponFrequencyEnum() {
-    return CouponFrequency.fromOfx(getCouponFrequency());
+  public getCouponFrequencyEnum(): CouponFrequency {
+    return CouponFrequency_fromOfx(this.getCouponFrequency());
   }
 
   /**
@@ -201,9 +200,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the bond price
    */
-  @Element( name = "CALLPRICE", order = 80)
-  public Double getCallPrice() {
-    return callPrice;
+  public getCallPrice(): number {
+    return this.callPrice;
   }
 
   /**
@@ -211,7 +209,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param callPrice the bond price
    */
-  public void setCallPrice(Double callPrice) {
+  public setCallPrice(callPrice: number): void {
     this.callPrice = callPrice;
   }
 
@@ -220,9 +218,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the yield to call rate
    */
-  @Element( name = "YIELDTOCALL", order = 90)
-  public Double getYieldToCall() {
-    return yieldToCall;
+  public getYieldToCall(): number {
+    return this.yieldToCall;
   }
 
   /**
@@ -230,7 +227,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param yieldToCall the yield to call rate
    */
-  public void setYieldToCall(Double yieldToCall) {
+  public setYieldToCall(yieldToCall: number): void {
     this.yieldToCall = yieldToCall;
   }
 
@@ -239,9 +236,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the next call date.
    */
-  @Element( name = "DTCALL", order = 100)
-  public Date getNextCallDate() {
-    return nextCallDate;
+  public getNextCallDate(): Date {
+    return this.nextCallDate;
   }
 
   /**
@@ -249,7 +245,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param nextCallDate the next call date.
    */
-  public void setNextCallDate(Date nextCallDate) {
+  public setNextCallDate(nextCallDate: Date): void {
     this.nextCallDate = nextCallDate;
   }
 
@@ -258,9 +254,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the type of call
    */
-  @Element( name = "CALLTYPE", order = 110)
-  public String getCallType() {
-    return callType;
+  public getCallType(): string {
+    return this.callType;
   }
 
   /**
@@ -268,7 +263,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param callType the type of call
    */
-  public void setCallType(String callType) {
+  public setCallType(callType: string): void {
     this.callType = callType;
   }
 
@@ -277,8 +272,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the type of call or null if it's not one of the well-known types
    */
-  public CallType getCallTypeEnum() {
-    return CallType.fromOfx(getCallType());
+  public getCallTypeEnum(): CallType {
+    return CallType_fromOfx(this.getCallType());
   }
 
   /**
@@ -286,9 +281,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the yield to call rate
    */
-  @Element( name = "YIELDTOMAT", order = 120)
-  public Double getYieldToMaturity() {
-    return yieldToMaturity;
+  public getYieldToMaturity(): number {
+    return this.yieldToMaturity;
   }
 
   /**
@@ -296,7 +290,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param yieldToMaturity the yield to call rate
    */
-  public void setYieldToMaturity(Double yieldToMaturity) {
+  public setYieldToMaturity(yieldToMaturity: number): void {
     this.yieldToMaturity = yieldToMaturity;
   }
 
@@ -305,9 +299,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the date when the debt matures
    */
-  @Element( name = "DTMAT", order = 130)
-  public Date getDebtMaturityDate() {
-    return debtMaturityDate;
+  public getDebtMaturityDate(): Date {
+    return this.debtMaturityDate;
   }
 
   /**
@@ -315,7 +308,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param debtMaturityDate the date when the debt matures
    */
-  public void setDebtMaturityDate(Date debtMaturityDate) {
+  public setDebtMaturityDate(debtMaturityDate: Date): void {
     this.debtMaturityDate = debtMaturityDate;
   }
 
@@ -324,9 +317,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class of the debt
    */
-  @Element( name = "ASSETCLASS", order = 140)
-  public String getAssetClass() {
-    return assetClass;
+  public getAssetClass(): string {
+    return this.assetClass;
   }
 
   /**
@@ -334,7 +326,7 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param assetClass the asset class of the debt
    */
-  public void setAssetClass(String assetClass) {
+  public setAssetClass(assetClass: string): void {
     this.assetClass = assetClass;
   }
 
@@ -343,8 +335,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class or null if it's not one of the well-known types
    */
-  public AssetClass getAssetClassEnum() {
-    return AssetClass.fromOfx(getAssetClass());
+  public getAssetClassEnum(): AssetClass {
+    return AssetClass_fromOfx(this.getAssetClass());
   }
 
   /**
@@ -353,9 +345,8 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @return the FI-defined asset class of the debt
    */
-  @Element( name = "FIASSETCLASS", order = 150)
-  public String getFiAssetClass() {
-    return fiAssetClass;
+  public getFiAssetClass(): string {
+    return this.fiAssetClass;
   }
 
   /**
@@ -364,7 +355,25 @@ public class DebtSecurityInfo extends BaseSecurityInfo {
    *
    * @param fiAssetClass the FI-defined asset class of the debt
    */
-  public void setFiAssetClass(String fiAssetClass) {
+  public setFiAssetClass(fiAssetClass: string): void {
     this.fiAssetClass = fiAssetClass;
   }
+}
+
+Aggregate_add( DebtSecurityInfo, "DEBTINFO" );
+Element_add(DebtSecurityInfo, { name: "PARVALUE", required:true, order: 20, type: Number, read: DebtSecurityInfo.prototype.getParValue, write: DebtSecurityInfo.prototype.setParValue });
+Element_add(DebtSecurityInfo, { name: "DEBTTYPE", required:true, order: 30, type: String, read: DebtSecurityInfo.prototype.getDebtType, write: DebtSecurityInfo.prototype.setDebtType });
+Element_add(DebtSecurityInfo, { name: "DEBTCLASS", order: 40, type: String, read: DebtSecurityInfo.prototype.getDebtClass, write: DebtSecurityInfo.prototype.setDebtClass });
+Element_add(DebtSecurityInfo, { name: "COUPONRT", order: 50, type: Number, read: DebtSecurityInfo.prototype.getCouponRate, write: DebtSecurityInfo.prototype.setCouponRate });
+Element_add(DebtSecurityInfo, { name: "DTCOUPON", order: 60, type: Date, read: DebtSecurityInfo.prototype.getNextMaturityDate, write: DebtSecurityInfo.prototype.setNextMaturityDate });
+Element_add(DebtSecurityInfo, { name: "COUPONFREQ", order: 70, type: String, read: DebtSecurityInfo.prototype.getCouponFrequency, write: DebtSecurityInfo.prototype.setCouponFrequency });
+Element_add(DebtSecurityInfo, { name: "CALLPRICE", order: 80, type: Number, read: DebtSecurityInfo.prototype.getCallPrice, write: DebtSecurityInfo.prototype.setCallPrice });
+Element_add(DebtSecurityInfo, { name: "YIELDTOCALL", order: 90, type: Number, read: DebtSecurityInfo.prototype.getYieldToCall, write: DebtSecurityInfo.prototype.setYieldToCall });
+Element_add(DebtSecurityInfo, { name: "DTCALL", order: 100, type: Date, read: DebtSecurityInfo.prototype.getNextCallDate, write: DebtSecurityInfo.prototype.setNextCallDate });
+Element_add(DebtSecurityInfo, { name: "CALLTYPE", order: 110, type: String, read: DebtSecurityInfo.prototype.getCallType, write: DebtSecurityInfo.prototype.setCallType });
+Element_add(DebtSecurityInfo, { name: "YIELDTOMAT", order: 120, type: Number, read: DebtSecurityInfo.prototype.getYieldToMaturity, write: DebtSecurityInfo.prototype.setYieldToMaturity });
+Element_add(DebtSecurityInfo, { name: "DTMAT", order: 130, type: Date, read: DebtSecurityInfo.prototype.getDebtMaturityDate, write: DebtSecurityInfo.prototype.setDebtMaturityDate });
+Element_add(DebtSecurityInfo, { name: "ASSETCLASS", order: 140, type: String, read: DebtSecurityInfo.prototype.getAssetClass, write: DebtSecurityInfo.prototype.setAssetClass });
+Element_add(DebtSecurityInfo, { name: "FIASSETCLASS", order: 150, type: String, read: DebtSecurityInfo.prototype.getFiAssetClass, write: DebtSecurityInfo.prototype.setFiAssetClass });
+
 }

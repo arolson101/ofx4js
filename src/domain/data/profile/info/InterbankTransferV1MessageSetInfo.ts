@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../profile/info/common/TransferProfile'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.profile.VersionSpecificMessageSetInfo;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.profile.info.common.TransferProfile;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import TransferProfile = ofx4js.domain.data.profile.info.common.TransferProfile;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Interbank Funds Transfer Message Set Profile
@@ -29,61 +33,64 @@ import net.sf.ofx4j.meta.Element;
  * @author Ryan Heaton
  * @see "Section 11.13.4 OFX Spec"
  */
-@Aggregate ( "INTERXFERMSGSETV1" )
-public class InterbankTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+export class InterbankTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
 
-  private TransferProfile transferProfile;
-  private Boolean supportsBillPay;
-  private Integer cancelWindow;
-  private Double domesticInterbankTransferFee;
-  private Double internationalInterbankTransferFee;
+  private transferProfile: TransferProfile;
+  private supportsBillPay: boolean;
+  private cancelWindow: number;
+  private domesticInterbankTransferFee: number;
+  private internationalInterbankTransferFee: number;
 
-  public MessageSetType getMessageSetType() {
+  public getMessageSetType(): MessageSetType {
     return MessageSetType.interbank_transfer;
   }
 
-  @ChildAggregate( name = "XFERPROF", required = true, order = 10 )
-  public TransferProfile getTransferProfile() {
-    return transferProfile;
+  public getTransferProfile(): TransferProfile {
+    return this.transferProfile;
   }
 
-  public void setTransferProfile(TransferProfile transferProfile) {
+  public setTransferProfile(transferProfile: TransferProfile): void {
     this.transferProfile = transferProfile;
   }
 
-  @Element( name = "CANBILLPAY", required = true, order = 20 )
-  public Boolean getSupportsBillPay() {
-    return supportsBillPay;
+  public getSupportsBillPay(): boolean {
+    return this.supportsBillPay;
   }
 
-  public void setSupportsBillPay(Boolean supportsBillPay) {
+  public setSupportsBillPay(supportsBillPay: boolean): void {
     this.supportsBillPay = supportsBillPay;
   }
 
-  @Element( name = "CANCELWND", required = true, order = 30 )
-  public Integer getCancelWindow() {
-    return cancelWindow;
+  public getCancelWindow(): number {
+    return this.cancelWindow;
   }
 
-  public void setCancelWindow(Integer cancelWindow) {
+  public setCancelWindow(cancelWindow: number): void {
     this.cancelWindow = cancelWindow;
   }
 
-  @Element( name = "DOMXFERFEE", required = true, order = 40 )
-  public Double getDomesticInterbankTransferFee() {
-    return domesticInterbankTransferFee;
+  public getDomesticInterbankTransferFee(): number {
+    return this.domesticInterbankTransferFee;
   }
 
-  public void setDomesticInterbankTransferFee(Double domesticInterbankTransferFee) {
+  public setDomesticInterbankTransferFee(domesticInterbankTransferFee: number): void {
     this.domesticInterbankTransferFee = domesticInterbankTransferFee;
   }
 
-  @Element( name = "INTLXFERFEE", required = true, order = 50 )
-  public Double getInternationalInterbankTransferFee() {
-    return internationalInterbankTransferFee;
+  public getInternationalInterbankTransferFee(): number {
+    return this.internationalInterbankTransferFee;
   }
 
-  public void setInternationalInterbankTransferFee(Double internationalInterbankTransferFee) {
+  public setInternationalInterbankTransferFee(internationalInterbankTransferFee: number): void {
     this.internationalInterbankTransferFee = internationalInterbankTransferFee;
   }
+}
+
+Aggregate_add( InterbankTransferV1MessageSetInfo, "INTERXFERMSGSETV1" );
+ChildAggregate_add(InterbankTransferV1MessageSetInfo, { name: "XFERPROF", required: true, order: 10, type: TransferProfile, read: InterbankTransferV1MessageSetInfo.prototype.getTransferProfile, write: InterbankTransferV1MessageSetInfo.prototype.setTransferProfile });
+Element_add(InterbankTransferV1MessageSetInfo, { name: "CANBILLPAY", required: true, order: 20, type: Boolean, read: InterbankTransferV1MessageSetInfo.prototype.getSupportsBillPay, write: InterbankTransferV1MessageSetInfo.prototype.setSupportsBillPay });
+Element_add(InterbankTransferV1MessageSetInfo, { name: "CANCELWND", required: true, order: 30, type: Number, read: InterbankTransferV1MessageSetInfo.prototype.getCancelWindow, write: InterbankTransferV1MessageSetInfo.prototype.setCancelWindow });
+Element_add(InterbankTransferV1MessageSetInfo, { name: "DOMXFERFEE", required: true, order: 40, type: Number, read: InterbankTransferV1MessageSetInfo.prototype.getDomesticInterbankTransferFee, write: InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee });
+Element_add(InterbankTransferV1MessageSetInfo, { name: "INTLXFERFEE", required: true, order: 50, type: Number, read: InterbankTransferV1MessageSetInfo.prototype.getInternationalInterbankTransferFee, write: InterbankTransferV1MessageSetInfo.prototype.setInternationalInterbankTransferFee });
+
 }

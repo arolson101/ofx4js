@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../OFXException'/>
+///<reference path='../domain/data/investment/accounts/InvestmentAccountDetails'/>
+///<reference path='../domain/data/investment/statements/InvestmentStatementResponse'/>
+///<reference path='../domain/data/seclist/SecurityList'/>
+///<reference path='../domain/data/seclist/SecurityListResponse'/>
+///<reference path='../domain/data/seclist/SecurityRequest'/>
+///<reference path='FinancialInstitutionAccount'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.OFXException;
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountDetails;
-import net.sf.ofx4j.domain.data.investment.statements.InvestmentStatementResponse;
-import net.sf.ofx4j.domain.data.seclist.SecurityList;
-import net.sf.ofx4j.domain.data.seclist.SecurityListResponse;
-import net.sf.ofx4j.domain.data.seclist.SecurityRequest;
-
-import java.util.Date;
-import java.util.List;
+import OFXException = ofx4js.OFXException;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import InvestmentStatementResponse = ofx4js.domain.data.investment.statements.InvestmentStatementResponse;
+import SecurityList = ofx4js.domain.data.seclist.SecurityList;
+import SecurityListResponse = ofx4js.domain.data.seclist.SecurityListResponse;
+import SecurityRequest = ofx4js.domain.data.seclist.SecurityRequest;
 
 /**
  * @author Jon Perlow
  */
-public interface InvestmentAccount extends FinancialInstitutionAccount {
+export interface InvestmentAccount extends FinancialInstitutionAccount {
 
   /**
    * Read an account statement.
@@ -40,7 +44,7 @@ public interface InvestmentAccount extends FinancialInstitutionAccount {
    * @return The account statement.
    */
   // Overriden for type covariance
-  InvestmentStatementResponse readStatement(Date start, Date end) throws OFXException;
+  readStatement(start: Date, end: Date) /*throws OFXException*/: Promise<InvestmentStatementResponse>;
 
   /**
    * Reads a list of securities from the brokerage
@@ -49,12 +53,14 @@ public interface InvestmentAccount extends FinancialInstitutionAccount {
    * @return The security response containing the security infos
    * @throws OFXException if there's an error talking to the brokerage
    */
-  SecurityList readSecurityList(List<SecurityRequest> securities) throws OFXException;
+  readSecurityList(securities: Array<SecurityRequest>) /*throws OFXException*/: Promise<SecurityList>;
 
   /**
    * The details of the account.
    *
    * @return The details of the account.
    */
-  InvestmentAccountDetails getDetails();
+  getDetails(): InvestmentAccountDetails;
+}
+
 }

@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='BankStatementResponse'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "STMTTRNRS")
-public class BankStatementResponseTransaction extends TransactionWrappedResponseMessage<BankStatementResponse> {
+export class BankStatementResponseTransaction extends TransactionWrappedResponseMessage<BankStatementResponse> {
 
-  private BankStatementResponse message;
+  private message: BankStatementResponse;
 
   /**
    * The message.
    *
    * @return The message.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public BankStatementResponse getMessage() {
-    return message;
+  public getMessage(): BankStatementResponse {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class BankStatementResponseTransaction extends TransactionWrappedResponse
    *
    * @param message The message.
    */
-  public void setMessage(BankStatementResponse message) {
+  public setMessage(message: BankStatementResponse): void {
     this.message = message;
   }
 
   // Inherited.
-  public BankStatementResponse getWrappedMessage() {
-    return getMessage();
+  public getWrappedMessage(): BankStatementResponse {
+    return this.getMessage();
   }
+}
+
+Aggregate_add( BankStatementResponseTransaction, "STMTTRNRS" );
+ChildAggregate_add(BankStatementResponseTransaction, { required: true, order: 30, type: BankStatementResponse, read: BankStatementResponseTransaction.prototype.getMessage, write: BankStatementResponseTransaction.prototype.setMessage });
+
 }

@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXException'/>
 
-package net.sf.ofx4j;
+module ofx4js {
 
 /**
  * @author Ryan Heaton
  */
-public class OFXRuntimeException extends RuntimeException {
+export class OFXRuntimeException extends OFXException {
 
-  public OFXRuntimeException() {
-  }
-
-  public OFXRuntimeException(String message) {
+  constructor(message: string = null) {
     super(message);
   }
+}
 
-  public OFXRuntimeException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public OFXRuntimeException(Throwable cause) {
-    super(cause);
-  }
 }

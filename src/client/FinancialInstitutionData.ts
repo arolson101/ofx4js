@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../project.d.ts'/>
 
-package net.sf.ofx4j.client;
-
-import java.net.URL;
+module ofx4js.client {
 
 /**
  * Interface for core FI data.  This is the base set of information
@@ -24,47 +23,49 @@ import java.net.URL;
  *
  * @author Ryan Heaton
  */
-public interface FinancialInstitutionData {
+export interface FinancialInstitutionData {
 
   /**
    * A unique id for this FI.
    *
    * @return A unique id for this FI.
    */
-  String getId();
+  getId(): string;
 
   /**
    * The id of the FI.
    *
    * @return The id of the FI.
    */
-  String getFinancialInstitutionId();
+  getFinancialInstitutionId(): string;
 
   /**
    * The name of the FI.
    *
    * @return The name of the FI.
    */
-  String getName();
+  getName(): string;
 
   /**
    * The OFX organization name.
    *
    * @return The OFX organization name.
    */
-  String getOrganization();
+  getOrganization(): string;
 
   /**
    * The URL to the OFX server for this institution.
    *
    * @return The URL to the OFX server for this institution.
    */
-  URL getOFXURL();
+  getOFXURL(): string;
 
   /**
    * The broker id.
    *
    * @return The broker id.
    */
-  String getBrokerId();
+  getBrokerId(): string;
+}
+
 }

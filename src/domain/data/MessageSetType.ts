@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
 /**
  * The message set type, used to define message set order in the envelope.
@@ -22,7 +22,7 @@ package net.sf.ofx4j.domain.data;
  * @author Ryan Heaton
  * @see "Section 2.4.5.2, OFX spec"
  */
-public enum MessageSetType {
+export enum MessageSetType {
 
   signon,
 
@@ -47,5 +47,7 @@ public enum MessageSetType {
   profile,
 
   tax1099
+
+}
 
 }

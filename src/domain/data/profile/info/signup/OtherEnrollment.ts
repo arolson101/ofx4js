@@ -13,33 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.profile.info.signup;
+module ofx4js.domain.data.profile.info.signup {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
  * @author Scott Priddy
  * @see "Section 8.8 OFX Spec"
  */
+export class OtherEnrollment {
 
-@Aggregate( "OTHERENROLL" )
-public class OtherEnrollment {
-
-  private String message;
+  private message: string;
 
   /**
    * Message to consumer about what to do next (for example, a phone number),
    * @return String
    */
-  @Element( name = "MESSAGE", required = true, order = 0)
-  public String getMessage() {
-    return message;
+  public getMessage(): string {
+    return this.message;
   }
 
-  public void setMessage(String message) {
+  public setMessage(message: string): void {
     this.message = message;
   }
+}
+
+Aggregate_add( OtherEnrollment, "OTHERENROLL" );
+Element_add(OtherEnrollment, { name: "MESSAGE", required: true, order: 0, type: String, read: OtherEnrollment.prototype.getMessage, write: OtherEnrollment.prototype.setMessage });
+
 }

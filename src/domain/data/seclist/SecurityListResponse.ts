@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../ResponseMessage'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Security list response. This is an empty aggregate. The actual security information is included
@@ -29,9 +30,12 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SECLISTRS" )
-public class SecurityListResponse extends ResponseMessage {
-  public String getResponseMessageName() {
+export class SecurityListResponse extends ResponseMessage {
+  public getResponseMessageName(): string {
     return "security list";
   }
+}
+
+Aggregate_add( SecurityListResponse, "SECLISTRS" );
+
 }

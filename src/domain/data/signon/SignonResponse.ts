@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../common/Status'/>
+///<reference path='../common/StatusHolder'/>
+///<reference path='FinancialInstitution'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.common.Status;
-import net.sf.ofx4j.domain.data.common.StatusHolder;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
-import java.util.Locale;
+import Status = ofx4js.domain.data.common.Status;
+import StatusHolder = ofx4js.domain.data.common.StatusHolder;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * The signon response message.
@@ -32,26 +34,30 @@ import java.util.Locale;
  * @author Ryan Heaton
  * @see "Section 2.5.1.2, OFX Spec."
  */
-@Aggregate ( "SONRS" )
-public class SignonResponse extends ResponseMessage implements StatusHolder {
+export class SignonResponse extends ResponseMessage implements StatusHolder {
 
-  private Status status;
-  private Date timestamp;
-  private String userKey;
-  private Date userKeyExpiration;
-  private String language = Locale.US.getISO3Language();
-  private Date profileLastUpdated;
-  private Date accountLastUpdated;
-  private FinancialInstitution financialInstitution;
-  private String sessionId;
-  private String accessKey;
+  private status: Status;
+  private timestamp: Date;
+  private userKey: string;
+  private userKeyExpiration: Date;
+  private language: string;
+  private profileLastUpdated: Date;
+  private accountLastUpdated: Date;
+  private financialInstitution: FinancialInstitution;
+  private sessionId: string;
+  private accessKey: string;
+  
+  constructor() {
+    super();
+    this.language = "ENG"; //Locale.US.getISO3Language();
+  }
 
-  public String getResponseMessageName() {
+  public getResponseMessageName(): string {
     return "signon";
   }
 
-  public String getStatusHolderName() {
-    return getResponseMessageName();
+  public getStatusHolderName(): string {
+    return this.getResponseMessageName();
   }
 
   /**
@@ -59,9 +65,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The signon response status.
    */
-  @ChildAggregate ( required = true, order = 0 )
-  public Status getStatus() {
-    return status;
+  public getStatus(): Status {
+    return this.status;
   }
 
   /**
@@ -69,7 +74,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param status The signon response status.
    */
-  public void setStatus(Status status) {
+  public setStatus(status: Status): void {
     this.status = status;
   }
 
@@ -78,9 +83,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The timestamp of this response.
    */
-  @Element ( name = "DTSERVER", required = true, order = 10 )
-  public Date getTimestamp() {
-    return timestamp;
+  public getTimestamp(): Date {
+    return this.timestamp;
   }
 
   /**
@@ -88,7 +92,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param timestamp The timestamp of this response.
    */
-  public void setTimestamp(Date timestamp) {
+  public setTimestamp(timestamp: Date): void {
     this.timestamp = timestamp;
   }
 
@@ -97,9 +101,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The userkey that can be used instead of the username/password.
    */
-  @Element ( name = "USERKEY", order = 20 )
-  public String getUserKey() {
-    return userKey;
+  public getUserKey(): string {
+    return this.userKey;
   }
 
   /**
@@ -107,7 +110,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param userKey The userkey that can be used instead of the username/password.
    */
-  public void setUserKey(String userKey) {
+  public setUserKey(userKey: string): void {
     this.userKey = userKey;
   }
 
@@ -116,9 +119,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The date/time of the expiration of the user key.
    */
-  @Element ( name = "TSKEYEXPIRE", order = 30 )
-  public Date getUserKeyExpiration() {
-    return userKeyExpiration;
+  public getUserKeyExpiration(): Date {
+    return this.userKeyExpiration;
   }
 
   /**
@@ -126,7 +128,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param userKeyExpiration The date/time of the expiration of the user key.
    */
-  public void setUserKeyExpiration(Date userKeyExpiration) {
+  public setUserKeyExpiration(userKeyExpiration: Date): void {
     this.userKeyExpiration = userKeyExpiration;
   }
 
@@ -136,9 +138,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    * @return The three-letter langauge code.
    * @see java.util.Locale#getISO3Language()
    */
-  @Element ( name = "LANGUAGE", required = true, order = 40 )
-  public String getLanguage() {
-    return language;
+  public getLanguage(): string {
+    return this.language;
   }
 
   /**
@@ -146,7 +147,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param language The three-letter langauge code.
    */
-  public void setLanguage(String language) {
+  public setLanguage(language: string): void {
     this.language = language;
   }
 
@@ -155,9 +156,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The date/time that the FI profile was last updated.
    */
-  @Element ( name = "DTPROFUP", order = 50 )
-  public Date getProfileLastUpdated() {
-    return profileLastUpdated;
+  public getProfileLastUpdated(): Date {
+    return this.profileLastUpdated;
   }
 
   /**
@@ -165,7 +165,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param profileLastUpdated The date/time that the FI profile was last updated.
    */
-  public void setProfileLastUpdated(Date profileLastUpdated) {
+  public setProfileLastUpdated(profileLastUpdated: Date): void {
     this.profileLastUpdated = profileLastUpdated;
   }
 
@@ -174,9 +174,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The date/time that the user's account information was updated.
    */
-  @Element ( name = "DTACCTUP", order = 60 )
-  public Date getAccountLastUpdated() {
-    return accountLastUpdated;
+  public getAccountLastUpdated(): Date {
+    return this.accountLastUpdated;
   }
 
   /**
@@ -184,7 +183,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param accountLastUpdated The date/time that the user's account information was updated.
    */
-  public void setAccountLastUpdated(Date accountLastUpdated) {
+  public setAccountLastUpdated(accountLastUpdated: Date): void {
     this.accountLastUpdated = accountLastUpdated;
   }
 
@@ -193,9 +192,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The financial instutution identity information.
    */
-  @ChildAggregate ( order = 70 )
-  public FinancialInstitution getFinancialInstitution() {
-    return financialInstitution;
+  public getFinancialInstitution(): FinancialInstitution {
+    return this.financialInstitution;
   }
 
   /**
@@ -203,7 +201,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param financialInstitution The financial instutution identity information.
    */
-  public void setFinancialInstitution(FinancialInstitution financialInstitution) {
+  public setFinancialInstitution(financialInstitution: FinancialInstitution): void {
     this.financialInstitution = financialInstitution;
   }
 
@@ -212,9 +210,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The session id for the client.
    */
-  @Element ( name = "SESSCOOKIE", order = 80 )
-  public String getSessionId() {
-    return sessionId;
+  public getSessionId(): string {
+    return this.sessionId;
   }
 
   /**
@@ -222,7 +219,7 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param sessionId The session id for the client.
    */
-  public void setSessionId(String sessionId) {
+  public setSessionId(sessionId: string): void {
     this.sessionId = sessionId;
   }
 
@@ -231,9 +228,8 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The access key that the client should return in the next sign-on requuest.
    */
-  @Element ( name = "ACCESSKEY", order = 90 )
-  public String getAccessKey() {
-    return accessKey;
+  public getAccessKey(): string {
+    return this.accessKey;
   }
 
   /**
@@ -241,7 +237,21 @@ public class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param accessKey The access key that the client should return in the next sign-on requuest.
    */
-  public void setAccessKey(String accessKey) {
+  public setAccessKey(accessKey: string): void {
     this.accessKey = accessKey;
   }
+}
+
+Aggregate_add( SignonResponse, "SONRS" );
+ChildAggregate_add(SignonResponse, { required: true, order: 0, type: Status, read: SignonResponse.prototype.getStatus, write: SignonResponse.prototype.setStatus });
+Element_add(SignonResponse, { name: "DTSERVER", required: true, order: 10, type: Date, read: SignonResponse.prototype.getTimestamp, write: SignonResponse.prototype.setTimestamp });
+Element_add(SignonResponse, { name: "USERKEY", order: 20, type: String, read: SignonResponse.prototype.getUserKey, write: SignonResponse.prototype.setUserKey });
+Element_add(SignonResponse, { name: "TSKEYEXPIRE", order: 30, type: Date, read: SignonResponse.prototype.getUserKeyExpiration, write: SignonResponse.prototype.setUserKeyExpiration });
+Element_add(SignonResponse, { name: "LANGUAGE", required: true, order: 40, type: String, read: SignonResponse.prototype.getLanguage, write: SignonResponse.prototype.setLanguage });
+Element_add(SignonResponse, { name: "DTPROFUP", order: 50, type: Date, read: SignonResponse.prototype.getProfileLastUpdated, write: SignonResponse.prototype.setProfileLastUpdated });
+Element_add(SignonResponse, { name: "DTACCTUP", order: 60, type: Date, read: SignonResponse.prototype.getAccountLastUpdated, write: SignonResponse.prototype.setAccountLastUpdated });
+ChildAggregate_add(SignonResponse, { order: 70, type: FinancialInstitution, read: SignonResponse.prototype.getFinancialInstitution, write: SignonResponse.prototype.setFinancialInstitution });
+Element_add(SignonResponse, { name: "SESSCOOKIE", order: 80, type: String, read: SignonResponse.prototype.getSessionId, write: SignonResponse.prototype.setSessionId });
+Element_add(SignonResponse, { name: "ACCESSKEY", order: 90, type: String, read: SignonResponse.prototype.getAccessKey, write: SignonResponse.prototype.setAccessKey });
+
 }

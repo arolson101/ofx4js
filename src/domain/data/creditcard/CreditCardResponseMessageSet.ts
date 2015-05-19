@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='CreditCardStatementResponseTransaction'/>
 
-package net.sf.ofx4j.domain.data.creditcard;
+module ofx4js.domain.data.creditcard {
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "CREDITCARDMSGSRSV1" )
-public class CreditCardResponseMessageSet extends ResponseMessageSet {
+export class CreditCardResponseMessageSet extends ResponseMessageSet {
 
-  private List<CreditCardStatementResponseTransaction> statementResponses;
+  private statementResponses: Array<CreditCardStatementResponseTransaction>;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.creditcard;
   }
 
@@ -47,9 +48,8 @@ public class CreditCardResponseMessageSet extends ResponseMessageSet {
    *
    * @return The statement response list.
    */
-  @ChildAggregate ( order = 0 )
-  public List<CreditCardStatementResponseTransaction> getStatementResponses() {
-    return statementResponses;
+  public getStatementResponses(): Array<CreditCardStatementResponseTransaction> {
+    return this.statementResponses;
   }
 
 
@@ -58,7 +58,7 @@ public class CreditCardResponseMessageSet extends ResponseMessageSet {
    *
    * @param statementResponses The statement response list.
    */
-  public void setStatementResponses(List<CreditCardStatementResponseTransaction> statementResponses) {
+  public setStatementResponses(statementResponses: Array<CreditCardStatementResponseTransaction>): void {
     this.statementResponses = statementResponses;
   }
 
@@ -69,8 +69,8 @@ public class CreditCardResponseMessageSet extends ResponseMessageSet {
    * @return the first bank statement response.
    * @deprecated Use getStatementResponses() because sometimes there are multiple responses
    */
-  public CreditCardStatementResponseTransaction getStatementResponse() {
-    return statementResponses == null || statementResponses.isEmpty() ? null : statementResponses.get(0);
+  public getStatementResponse(): CreditCardStatementResponseTransaction {
+    return this.statementResponses == null || this.statementResponses.length == 0 ? null : this.statementResponses[0];
   }
 
   /**
@@ -78,13 +78,18 @@ public class CreditCardResponseMessageSet extends ResponseMessageSet {
    *
    * @param statementResponse The statement response.
    */
-  public void setStatementResponse(CreditCardStatementResponseTransaction statementResponse) {
-    this.statementResponses = Collections.singletonList(statementResponse);
+  public setStatementResponse(statementResponse: CreditCardStatementResponseTransaction): void {
+    this.statementResponses = [statementResponse];
   }
 
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    return new ArrayList<ResponseMessage>(statementResponses);
+  public getResponseMessages(): Array<ResponseMessage> {
+    return this.statementResponses;
   }
+}
+
+Aggregate_add( CreditCardResponseMessageSet, "CREDITCARDMSGSRSV1" );
+ChildAggregate_add(CreditCardResponseMessageSet, { order: 0, type: Array, collectionEntryType: CreditCardStatementResponseTransaction, read: CreditCardResponseMessageSet.prototype.getStatementResponses, write: CreditCardResponseMessageSet.prototype.setStatementResponses });
+
 }

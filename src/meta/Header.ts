@@ -13,25 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='PropertyDescriptor'/>
 
-package net.sf.ofx4j.meta;
+module ofx4js.meta {
 
-import java.lang.annotation.*;
+import AggregateIntrospector = ofx4js.io.AggregateIntrospector;
+
+export interface HeaderParams<T> extends PropertyDescriptorParams<T> {
+  name: string;
+}
+
 
 /**
  * An OFX element, applied to a javabean property.
  *
  * @author Ryan Heaton
  */
-@Target ( ElementType.METHOD )
-@Retention ( RetentionPolicy.RUNTIME)
-public @interface Header {
+export class Header extends PropertyDescriptor {
+  private _name: string;
+  
+  constructor(params: HeaderParams<any>) {
+    super(params);
+    this._name = params.name;
+  }
 
   /**
    * The name of the element.
    *
    * @return The name of the element.
    */
-  String name();
+  public name(): string {
+    return this._name;
+  }
+}
 
 }

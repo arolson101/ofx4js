@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * Type of option.
@@ -22,17 +22,20 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum OptionType {
+export enum OptionType {
   PUT,
-  CALL;
+  CALL
+}
 
-  public static OptionType fromOfx(String ofxVal) {
-    if ("PUT".equals(ofxVal)) {
-      return PUT;
-    } else if ("CALL".equals(ofxVal)) {
-      return CALL;
-    } else {
-      return null;
-    }
+
+export function OptionType_fromOfx(ofxVal: string): OptionType {
+  if ("PUT" === ofxVal) {
+    return OptionType.PUT;
+  } else if ("CALL" === ofxVal) {
+    return OptionType.CALL;
+  } else {
+    return null;
   }
+}
+
 }

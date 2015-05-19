@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='StockType'/>
+///<reference path='AssetClass'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a stock security.
@@ -27,14 +30,13 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "STOCKINFO" )
-public class StockSecurityInfo extends BaseSecurityInfo {
+export class StockSecurityInfo extends BaseSecurityInfo {
 
-  private String stockType;
-  private Double yield;
-  private Date dateYieldAsOf;
-  private String assetClass;
-  private String fiAssetClass;
+  private stockType: string;
+  private yield: number;
+  private dateYieldAsOf: Date;
+  private assetClass: string;
+  private fiAssetClass: string;
 
   /**
    * Gets the type of stock. One of "COMMON", "PREFERRED", "CONVERTIBLE", or "OTHER". This is an
@@ -42,9 +44,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the type of stock
    */
-  @Element( name = "STOCKTYPE", order = 20)
-  public String getType() {
-    return stockType;
+  public getType(): string {
+    return this.stockType;
   }
 
   /**
@@ -53,7 +54,7 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @param stockType the type of stock
    */
-  public void setType(String stockType) {
+  public setType(stockType: string): void {
     this.stockType = stockType;
   }
 
@@ -62,8 +63,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the type of stock or null if it's not one of the well-known types
    */
-  public StockType getTypeEnum() {
-    return StockType.fromOfx(getType());
+  public getTypeEnum(): StockType {
+    return StockType_fromOfx(this.getType());
   }
 
   /**
@@ -72,9 +73,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the dividend yield
    */
-  @Element( name = "YIELD", order = 30)
-  public Double getYield() {
-    return yield;
+  public getYield(): number {
+    return this.yield;
   }
 
   /**
@@ -83,8 +83,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @param yield the dividend yield
    */
-  public void setYield(Double yield) {
-    this.yield = yield;
+  public setYield(yield_: number): void {
+    this.yield = yield_;
   }
 
   /**
@@ -92,9 +92,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the as-of date for the yield
    */
-  @Element( name = "DTYIELDASOF", order = 40)
-  public Date getDateYieldAsOf() {
-    return dateYieldAsOf;
+  public getDateYieldAsOf(): Date {
+    return this.dateYieldAsOf;
   }
 
   /**
@@ -102,7 +101,7 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @param dateYieldAsOf the as-of date for the yield
    */
-  public void setDateYieldAsOf(Date dateYieldAsOf) {
+  public setDateYieldAsOf(dateYieldAsOf: Date): void {
     this.dateYieldAsOf = dateYieldAsOf;
   }
 
@@ -111,9 +110,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class of the stock
    */
-  @Element( name = "ASSETCLASS", order = 50)
-  public String getAssetClass() {
-    return assetClass;
+  public getAssetClass(): string {
+    return this.assetClass;
   }
 
   /**
@@ -121,7 +119,7 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @param assetClass the asset class of the stock
    */
-  public void setAssetClass(String assetClass) {
+  public setAssetClass(assetClass: string): void {
     this.assetClass = assetClass;
   }
 
@@ -130,8 +128,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class or null if it's not one of the well-known types
    */
-  public AssetClass getAssetClassEnum() {
-    return AssetClass.fromOfx(getAssetClass());
+  public getAssetClassEnum(): AssetClass {
+    return AssetClass_fromOfx(this.getAssetClass());
   }
 
   /**
@@ -140,9 +138,8 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @return the FI-defined asset class of the stock
    */
-  @Element( name = "FIASSETCLASS", order = 60)
-  public String getFiAssetClass() {
-    return fiAssetClass;
+  public getFiAssetClass(): string {
+    return this.fiAssetClass;
   }
 
   /**
@@ -151,7 +148,16 @@ public class StockSecurityInfo extends BaseSecurityInfo {
    *
    * @param fiAssetClass the FI-defined asset class of the stock
    */
-  public void setFiAssetClass(String fiAssetClass) {
+  public setFiAssetClass(fiAssetClass: string): void {
     this.fiAssetClass = fiAssetClass;
   }
+}
+
+Aggregate_add( StockSecurityInfo, "STOCKINFO" );
+Element_add(StockSecurityInfo, { name: "STOCKTYPE", order: 20, type: String, read: StockSecurityInfo.prototype.getType, write: StockSecurityInfo.prototype.setType });
+Element_add(StockSecurityInfo, { name: "YIELD", order: 30, type: Number, read: StockSecurityInfo.prototype.getYield, write: StockSecurityInfo.prototype.setYield });
+Element_add(StockSecurityInfo, { name: "DTYIELDASOF", order: 40, type: Date, read: StockSecurityInfo.prototype.getDateYieldAsOf, write: StockSecurityInfo.prototype.setDateYieldAsOf });
+Element_add(StockSecurityInfo, { name: "ASSETCLASS", order: 50, type: String, read: StockSecurityInfo.prototype.getAssetClass, write: StockSecurityInfo.prototype.setAssetClass });
+Element_add(StockSecurityInfo, { name: "FIASSETCLASS", order: 60, type: String, read: StockSecurityInfo.prototype.getFiAssetClass, write: StockSecurityInfo.prototype.setFiAssetClass });
+
 }

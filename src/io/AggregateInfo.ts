@@ -13,77 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../project.d.ts'/>
+///<reference path='../collections/SortedSet'/>
+///<reference path='../meta/Aggregate'/>
+///<reference path='../meta/ChildAggregate'/>
+///<reference path='../meta/Element'/>
+///<reference path='../meta/Header'/>
+///<reference path='../meta/PropertyDescriptor'/>
+///<reference path='AggregateInfo'/>
+///<reference path='AggregateAttribute'/>
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.meta.Header;
+import SortedSet = ofx4js.collections.SortedSet;
+import Aggregate = ofx4js.meta.Aggregate;
+import ChildAggregate = ofx4js.meta.ChildAggregate;
+import Element = ofx4js.meta.Element;
+import Header = ofx4js.meta.Header;
+import isAssignableFrom = ofx4js.meta.isAssignableFrom;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+
+export interface HeaderMap {
+  [key: string]: Header;
+}
+
+export interface HeaderValues {
+  [key: string]: Object;
+}
 
 /**
  * Holder for meta information about an aggregate class.
  *
  * @author Ryan Heaton
  */
-public class AggregateInfo {
+export class AggregateInfo {
 
-  private final String name;
-  private final SortedSet<AggregateAttribute> attributes;
-  private final Map<String, PropertyDescriptor> headers;
+  private name: string;
+  private attributes: SortedSet<AggregateAttribute>;
+  private headers: HeaderMap;
+  private owner: any;
 
-  AggregateInfo(Class<?> clazz) {
-    Aggregate aggregateInfo = clazz.getAnnotation(Aggregate.class);
-    if (aggregateInfo == null) {
-      throw new IllegalArgumentException(clazz.getName() + " isn't an aggregate.");
-    }
-
-    this.name = aggregateInfo.value();
-    SortedSet<AggregateAttribute> attributes = new TreeSet<AggregateAttribute>();
-    Map<String, PropertyDescriptor> headers = new TreeMap<String, PropertyDescriptor>();
-    PropertyDescriptor[] pds;
-    try {
-      pds = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-    }
-    catch (IntrospectionException e) {
-      throw new IllegalStateException(e);
-    }
-
-    for (PropertyDescriptor pd : pds) {
-      if (pd.getReadMethod() != null && pd.getWriteMethod() != null) {
-        ChildAggregate childAggregateInfo = pd.getReadMethod().getAnnotation(ChildAggregate.class);
-        Element elementInfo = pd.getReadMethod().getAnnotation(Element.class);
-        if (childAggregateInfo != null && elementInfo != null) {
-          throw new IllegalStateException(String.format("Illegal annotations for property '%s' on aggregate %s: contains both a @ChildAggregate and @Element annotation.", pd.getName(), clazz.getName()));
-        }
-        else if (childAggregateInfo != null) {
-          AggregateAttribute attribute = new AggregateAttribute(pd, childAggregateInfo);
-          if (!attributes.add(attribute)) {
-            throw new IllegalStateException(String.format("Unable to add child aggregate property '%s' to meta information for aggregate %s.  Order duplicates another aggregate property?", pd.getName(), clazz.getName()));
-          }
-        }
-        else if (elementInfo != null) {
-          AggregateAttribute attribute = new AggregateAttribute(pd, elementInfo);
-          if (!attributes.add(attribute)) {
-            throw new IllegalStateException(String.format("Unable to add element property '%s' to meta information for aggregate %s.  Order duplicates another aggregate property?", pd.getName(), clazz.getName()));
-          }
-        }
-
-        if (pd.getReadMethod().isAnnotationPresent(Header.class)) {
-          headers.put(pd.getReadMethod().getAnnotation(Header.class).name(), pd);
-        }
+  constructor(name: string, owner: any, parentInfo?: AggregateInfo) {
+    this.name = name;
+    this.owner = owner;
+    this.headers = {};
+    this.attributes = new SortedSet<AggregateAttribute>(AggregateAttribute.contentCompare);
+    
+    if(parentInfo) {
+      for(var header in parentInfo.headers) {
+        this.headers[header] = parentInfo.headers[header];
+      }
+      var parentAttributes: Array<AggregateAttribute> = parentInfo.attributes.values();
+      for(var i in parentAttributes) {
+        var attribute: AggregateAttribute = parentAttributes[i];
+        this.attributes.insert(attribute);
       }
     }
-
-    this.headers = Collections.unmodifiableMap(headers);
-    this.attributes = Collections.unmodifiableSortedSet(attributes);
   }
 
   /**
@@ -91,8 +76,16 @@ public class AggregateInfo {
    *
    * @return The name of the aggregate.
    */
-  public String getName() {
-    return name;
+  public getName(): string {
+    return this.name;
+  }
+  
+  public setName(name: string): void {
+    this.name = name;
+  }
+  
+  public getOwner(): any {
+    return this.owner;
   }
 
   /**
@@ -100,24 +93,8 @@ public class AggregateInfo {
    *
    * @return The attributes.
    */
-  public SortedSet<AggregateAttribute> getAttributes() {
-    return attributes;
-  }
-
-  /**
-   * Get the attribute by the specified name.
-   *
-   * @param name The name of the attribute.
-   * @param orderHint The order at which the attribute should come after in case there are more than one candidates.
-   * @return The attribute by the specified name,
-   * or if there are more than one by that name,
-   * the first one after the specified order,
-   * or if there are none then the first collection that
-   * comes after the order hint, or the latest if there
-   * are none that come after the order hint, or null.
-   */
-  public AggregateAttribute getAttribute(String name, int orderHint) {
-    return getAttribute(name, orderHint, null);
+  public getAttributes(): SortedSet<AggregateAttribute> {
+    return this.attributes;
   }
 
   /**
@@ -133,19 +110,20 @@ public class AggregateInfo {
    * comes after the order hint, or the latest if there
    * are none that come after the order hint, or null.
    */
-  public AggregateAttribute getAttribute(String name, int orderHint, Class assignableTo) {
-    List<AggregateAttribute> candidates = new ArrayList<AggregateAttribute>();
-    AggregateAttribute collectionBucket = null;
-    for (AggregateAttribute attribute : attributes) {
-      if (name.equals(attribute.getName())) {
-        candidates.add(attribute);
+  public getAttribute(name: string, orderHint: number, assignableTo: any = null): AggregateAttribute {
+    var candidates: Array<AggregateAttribute> = new Array<AggregateAttribute>();
+    var collectionBucket: AggregateAttribute = null;
+    for (var i in this.attributes.values()) {
+      var attribute: AggregateAttribute = this.attributes.values()[i];
+      if (name === attribute.getName()) {
+        candidates.push(attribute);
       }
-      else if (attribute.isCollection()) {
+      else if (attribute.isArray()) {
         if (assignableTo != null) {
           // Verify it's the right generic type.
-          Class entryType = attribute.getCollectionEntryType();
-          if (entryType != null && !entryType.isAssignableFrom(assignableTo)) {
-            // Collection is of wrong type.
+          var entryType: any = attribute.getArrayEntryType();
+          if (entryType != null && !isAssignableFrom(entryType, assignableTo)) {
+            // Array is of wrong type.
             continue;
           }
         }
@@ -156,12 +134,13 @@ public class AggregateInfo {
       }
     }
 
-    if (!candidates.isEmpty()) {
-      if (candidates.size() == 1) {
-        return candidates.get(0);
+    if (candidates.length != 0) {
+      if (candidates.length == 1) {
+        return candidates[0];
       }
       else {
-        for (AggregateAttribute candidate : candidates) {
+        for (var candidate_ in candidates) {
+          var candidate: AggregateAttribute = candidate_;
           if (candidate.getOrder() >= orderHint) {
             return candidate;
           }
@@ -177,8 +156,8 @@ public class AggregateInfo {
    *
    * @return Whether this aggregate has headers.
    */
-  public boolean hasHeaders() {
-    return !this.headers.isEmpty();
+  public hasHeaders(): boolean {
+    return this.headers != {};
   }
 
   /**
@@ -187,21 +166,12 @@ public class AggregateInfo {
    * @param instance The aggregate instance.
    * @return The headers.
    */
-  public Map<String, Object> getHeaders(Object instance) {
-    Map<String, Object> headers = new TreeMap<String, Object>();
-    for (PropertyDescriptor header : this.headers.values()) {
-      Object headerValue;
-      try {
-        headerValue = header.getReadMethod().invoke(instance);
-      }
-      catch (RuntimeException e) {
-        throw e;
-      }
-      catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-
-      headers.put(header.getReadMethod().getAnnotation(Header.class).name(), headerValue);
+  public getHeaders(instance: Object): HeaderValues {
+    var headers: HeaderValues = {};
+    for (var headerKey in this.headers) {
+      var header: Header = this.headers[headerKey];
+      var headerValue: Object = header.getReadMethod().call(instance);
+      headers[header.name()] = headerValue;
     }
     return headers;
   }
@@ -212,8 +182,8 @@ public class AggregateInfo {
    * @param name The header name.
    * @return The header type, or null if no header by the specified name exists.
    */
-  public Class getHeaderType(String name) {
-    return this.headers.containsKey(name) ? this.headers.get(name).getReadMethod().getReturnType() : null;
+  public getHeaderType(name: string): any {
+    return (name in this.headers) ? this.headers[name].getPropertyType() : null;
   }
 
   /**
@@ -223,17 +193,27 @@ public class AggregateInfo {
    * @param name     The name of the header.
    * @param value    the value of the header.
    */
-  public void setHeader(Object instance, String name, Object value) {
-    if (this.headers.containsKey(name)) {
-      try {
-        this.headers.get(name).getWriteMethod().invoke(instance, value);
-      }
-      catch (RuntimeException e) {
-        throw e;
-      }
-      catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
+  public setHeader(instance: Object, name: string, value: Object): void {
+    if (name in this.headers) {
+      this.headers[name].getWriteMethod().call(instance, value);
     }
   }
+  
+  
+  public addChildAggregate(childAggregate: ChildAggregate): void {
+    var attribute = new AggregateAttribute(childAggregate);
+    this.attributes.insert(attribute);
+  }
+
+  public addElement(element: Element): void {
+    var attribute = new AggregateAttribute(element);
+    this.attributes.insert(attribute);
+  }
+
+  public addHeader(header: Header): void {
+    console.assert(<boolean><any>header.name());
+    this.headers[header.name()] = header;
+  }
+}
+
 }

@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../project.d.ts'/>
+///<reference path='../../collections/SortedSet'/>
+///<reference path='../../meta/Aggregate_add'/>
+///<reference path='../../meta/ChildAggregate_add'/>
+///<reference path='../../meta/Header_add'/>
+///<reference path='ApplicationSecurity'/>
+///<reference path='RequestMessageSet'/>
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Header;
+import SortedSet = ofx4js.collections.SortedSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Header_add = ofx4js.meta.Header_add;
 
-import java.util.SortedSet;
-import java.util.UUID;
+var UUID: UUID = require("uuid");
+
+// import java.util.SortedSet;
+// import java.util.UUID;
 
 /**
  * Envelope for enclosing an OFX request.
@@ -29,22 +39,18 @@ import java.util.UUID;
  * @author Ryan Heaton
  * @see "Section 2.4.3, OFX Spec"
  */
-@Aggregate ( "OFX" )
-public class RequestEnvelope {
+export class RequestEnvelope {
 
   //headers
-  private ApplicationSecurity security = ApplicationSecurity.NONE;
-  private String UID;
-  private String lastProcessedUID;
+  private security: ApplicationSecurity;
+  private UID: string;
+  private lastProcessedUID: string;
 
   //content
-  private SortedSet<RequestMessageSet> messageSets;
+  private messageSets: SortedSet<RequestMessageSet>;
 
-  public RequestEnvelope() {
-    this.UID = UUID.randomUUID().toString();
-  }
-
-  public RequestEnvelope(String UID) {
+  constructor(UID: string = UUID.v1()) {
+    this.security = ApplicationSecurity.NONE;
     this.UID = UID;
   }
 
@@ -54,9 +60,8 @@ public class RequestEnvelope {
    * @return The security of this envelope.
    * @see "Section 2.2, OFX spec"
    */
-  @Header ( name = "SECURITY" )
-  public ApplicationSecurity getSecurity() {
-    return security;
+  public getSecurity(): ApplicationSecurity {
+    return this.security;
   }
 
   /**
@@ -65,7 +70,7 @@ public class RequestEnvelope {
    * @param security The security of this envelope.
    * @see "Section 2.2, OFX spec"
    */
-  public void setSecurity(ApplicationSecurity security) {
+  public setSecurity(security: ApplicationSecurity): void {
     this.security = security;
   }
 
@@ -75,9 +80,8 @@ public class RequestEnvelope {
    * @return The UID for the envelope.
    * @see "Section 2.2, OFX spec"
    */
-  @Header ( name = "NEWFILEUID" )
-  public String getUID() {
-    return UID;
+  public getUID(): string {
+    return this.UID;
   }
 
   /**
@@ -86,7 +90,7 @@ public class RequestEnvelope {
    * @param UID The UID for the envelope.
    * @see "Section 2.2, OFX spec"
    */
-  public void setUID(String UID) {
+  public setUID(UID: string): void {
     this.UID = UID;
   }
 
@@ -96,9 +100,8 @@ public class RequestEnvelope {
    * @return The UID of the last-processed request/response (used for file-based error recovery).
    * @see "Section 2.2, OFX spec"
    */
-  @Header ( name = "OLDFILEUID" )
-  public String getLastProcessedUID() {
-    return lastProcessedUID;
+  public getLastProcessedUID(): string {
+    return this.lastProcessedUID;
   }
 
   /**
@@ -107,7 +110,7 @@ public class RequestEnvelope {
    * @param lastProcessedUID The UID of the last-processed request/response (used for file-based error recovery).
    * @see "Section 2.2, OFX spec"
    */
-  public void setLastProcessedUID(String lastProcessedUID) {
+  public setLastProcessedUID(lastProcessedUID: string): void {
     this.lastProcessedUID = lastProcessedUID;
   }
 
@@ -117,9 +120,8 @@ public class RequestEnvelope {
    * @return The message sets that make up the content of this request.
    * @see "Section 2.4.5, OFX Spec"
    */
-  @ChildAggregate ( order = 1 )
-  public SortedSet<RequestMessageSet> getMessageSets() {
-    return messageSets;
+  public getMessageSets(): SortedSet<RequestMessageSet> {
+    return this.messageSets;
   }
 
   /**
@@ -128,7 +130,15 @@ public class RequestEnvelope {
    * @param messageSets The message sets that make up the content of this request.
    * @see "Section 2.4.5, OFX Spec"
    */
-  public void setMessageSets(SortedSet<RequestMessageSet> messageSets) {
+  public setMessageSets(messageSets: SortedSet<RequestMessageSet>): void {
     this.messageSets = messageSets;
   }
+}
+
+Aggregate_add( RequestEnvelope, "OFX" );
+Header_add(RequestEnvelope, { name: "SECURITY", type: ApplicationSecurity, read: RequestEnvelope.prototype.getSecurity, write: RequestEnvelope.prototype.setSecurity });
+Header_add(RequestEnvelope, { name: "NEWFILEUID", type: String, read: RequestEnvelope.prototype.getUID, write: RequestEnvelope.prototype.setUID });
+Header_add(RequestEnvelope, { name: "OLDFILEUID", type: String, read: RequestEnvelope.prototype.getLastProcessedUID, write: RequestEnvelope.prototype.setLastProcessedUID });
+ChildAggregate_add(RequestEnvelope, { order: 1, type: SortedSet, collectionEntryType: RequestMessageSet, read: RequestEnvelope.prototype.getMessageSets, write: RequestEnvelope.prototype.setMessageSets });
+
 }

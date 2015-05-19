@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.profile.VersionSpecificMessageSetInfo;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @see "Section 13.7.1.1, OFX Spec"
@@ -27,81 +30,84 @@ import net.sf.ofx4j.meta.Element;
  * @author Jon Perlow
  * @author Ryan Heaton
  */
-@Aggregate ( "INVSTMTMSGSETV1" )
-public class InvestmentV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+export class InvestmentV1MessageSetInfo extends VersionSpecificMessageSetInfo {
 
-  private Boolean supportsStatementsDownload;
-  private Boolean supportsOpenOrdersDownload;
-  private Boolean supportsPositionsDownload;
-  private Boolean supportsBalanceDownload;
-  private Boolean supportsEmail;
-  private Boolean supports401kInformation;
-  private Boolean supportsClosingStatements;
+  private supportsStatementsDownload: boolean;
+  private supportsOpenOrdersDownload: boolean;
+  private supportsPositionsDownload: boolean;
+  private supportsBalanceDownload: boolean;
+  private supportsEmail: boolean;
+  private supports401kInformation: boolean;
+  private supportsClosingStatements: boolean;
 
-  public MessageSetType getMessageSetType() {
+  public getMessageSetType(): MessageSetType {
     return MessageSetType.investment;
   }
 
-  @Element( name = "TRANDNLD", required=true, order = 10)
-  public Boolean getSupportsStatementsDownload() {
-    return supportsStatementsDownload;
+  public getSupportsStatementsDownload(): boolean {
+    return this.supportsStatementsDownload;
   }
 
-  public void setSupportsStatementsDownload(Boolean supportsStatementsDownload) {
+  public setSupportsStatementsDownload(supportsStatementsDownload: boolean): void {
     this.supportsStatementsDownload = supportsStatementsDownload;
   }
 
-  @Element( name = "OODNLD", required=true, order = 20)
-  public Boolean getSupportsOpenOrdersDownload() {
-    return supportsOpenOrdersDownload;
+  public getSupportsOpenOrdersDownload(): boolean {
+    return this.supportsOpenOrdersDownload;
   }
 
-  public void setSupportsOpenOrdersDownload(Boolean supportsOpenOrdersDownload) {
+  public setSupportsOpenOrdersDownload(supportsOpenOrdersDownload: boolean): void {
     this.supportsOpenOrdersDownload = supportsOpenOrdersDownload;
   }
 
-  @Element( name = "POSDNLD", required=true, order = 30)
-  public Boolean getSupportsPositionsDownload() {
-    return supportsPositionsDownload;
+  public getSupportsPositionsDownload(): boolean {
+    return this.supportsPositionsDownload;
   }
 
-  public void setSupportsPositionsDownload(Boolean supportsPositionsDownload) {
+  public setSupportsPositionsDownload(supportsPositionsDownload: boolean): void {
     this.supportsPositionsDownload = supportsPositionsDownload;
   }
 
-  @Element( name = "BALDNLD", required=true, order = 40)
-  public Boolean getSupportsBalanceDownload() {
-    return supportsBalanceDownload;
+  public getSupportsBalanceDownload(): boolean {
+    return this.supportsBalanceDownload;
   }
 
-  public void setSupportsBalanceDownload(Boolean supportsBalanceDownload) {
+  public setSupportsBalanceDownload(supportsBalanceDownload: boolean): void {
     this.supportsBalanceDownload = supportsBalanceDownload;
   }
 
-  @Element( name = "CANEMAIL", required=true, order = 50)
-  public Boolean getSupportsEmail() {
-    return supportsEmail;
+  public getSupportsEmail(): boolean {
+    return this.supportsEmail;
   }
 
-  public void setSupportsEmail(Boolean supportsEmail) {
+  public setSupportsEmail(supportsEmail: boolean): void {
     this.supportsEmail = supportsEmail;
   }
 
-  @Element( name = "INV401KDNLD", order = 60)
-  public Boolean getSupports401kInformation() {
-    return supports401kInformation;
+  public getSupports401kInformation(): boolean {
+    return this.supports401kInformation;
   }
 
-  public void setSupports401kInformation(Boolean supports401kInformation) {
+  public setSupports401kInformation(supports401kInformation: boolean): void {
     this.supports401kInformation = supports401kInformation;
   }
 
-  @Element( name = "CLOSINGAVAIL", order = 70)
-  public Boolean getSupportsClosingStatements() {
-    return supportsClosingStatements;
+  public getSupportsClosingStatements(): boolean {
+    return this.supportsClosingStatements;
   }
 
-  public void setSupportsClosingStatements(Boolean supportsClosingStatements) {
+  public setSupportsClosingStatements(supportsClosingStatements: boolean): void {
     this.supportsClosingStatements = supportsClosingStatements;
   }
+}
+
+Aggregate_add( InvestmentV1MessageSetInfo, "INVSTMTMSGSETV1" );
+Element_add(InvestmentV1MessageSetInfo, { name: "TRANDNLD", required:true, order: 10, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsStatementsDownload, write: InvestmentV1MessageSetInfo.prototype.setSupportsStatementsDownload });
+Element_add(InvestmentV1MessageSetInfo, { name: "OODNLD", required:true, order: 20, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsOpenOrdersDownload, write: InvestmentV1MessageSetInfo.prototype.setSupportsOpenOrdersDownload });
+Element_add(InvestmentV1MessageSetInfo, { name: "POSDNLD", required:true, order: 30, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsPositionsDownload, write: InvestmentV1MessageSetInfo.prototype.setSupportsPositionsDownload });
+Element_add(InvestmentV1MessageSetInfo, { name: "BALDNLD", required:true, order: 40, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsBalanceDownload, write: InvestmentV1MessageSetInfo.prototype.setSupportsBalanceDownload });
+Element_add(InvestmentV1MessageSetInfo, { name: "CANEMAIL", required:true, order: 50, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsEmail, write: InvestmentV1MessageSetInfo.prototype.setSupportsEmail });
+Element_add(InvestmentV1MessageSetInfo, { name: "INV401KDNLD", order: 60, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupports401kInformation, write: InvestmentV1MessageSetInfo.prototype.setSupports401kInformation });
+Element_add(InvestmentV1MessageSetInfo, { name: "CLOSINGAVAIL", order: 70, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsClosingStatements, write: InvestmentV1MessageSetInfo.prototype.setSupportsClosingStatements });
+
 }

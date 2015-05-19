@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+///<reference path='SellType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for selling stock.
@@ -26,12 +31,11 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SELLSTOCK" )
-public class SellStockTransaction extends BaseSellInvestmentTransaction {
+export class SellStockTransaction extends BaseSellInvestmentTransaction {
 
-  private String sellType;
+  private sellType: string;
 
-  public SellStockTransaction() {
+  constructor() {
     super(TransactionType.SELL_STOCK);
   }
 
@@ -42,9 +46,8 @@ public class SellStockTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the sell type
    */
-  @Element( name = "SELLTYPE", required = true, order = 20)
-  public String getSellType() {
-    return sellType;
+  public getSellType(): string {
+    return this.sellType;
   }
 
   /**
@@ -54,7 +57,7 @@ public class SellStockTransaction extends BaseSellInvestmentTransaction {
    *
    * @param sellType the sell type
    */
-  public void setSellType(String sellType) {
+  public setSellType(sellType: string): void {
     this.sellType = sellType;
   }
 
@@ -63,7 +66,12 @@ public class SellStockTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the type of sale or null if it's not known
    */
-  public SellType getSellTypeEnum() {
-    return SellType.fromOfx(sellType);
+  public getSellTypeEnum(): SellType {
+    return SellType_fromOfx(this.sellType);
   }
+}
+
+Aggregate_add( SellStockTransaction, "SELLSTOCK" );
+Element_add(SellStockTransaction, { name: "SELLTYPE", required: true, order: 20, type: String, read: SellStockTransaction.prototype.getSellType, write: SellStockTransaction.prototype.setSellType });
+
 }

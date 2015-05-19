@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate
-public class BalanceInfo {
+export class BalanceInfo {
 
-  private double amount;
-  private Date asOfDate;
+  private amount: number;
+  private asOfDate: Date;
 
   /**
    * The amount.
    *
    * @return The amount.
    */
-  @Element ( name = "BALAMT", required = true, order = 0)
-  public double getAmount() {
-    return amount;
+  public getAmount(): number {
+    return this.amount;
   }
 
   /**
@@ -45,7 +43,7 @@ public class BalanceInfo {
    *
    * @param amount The amount.
    */
-  public void setAmount(double amount) {
+  public setAmount(amount: number): void {
     this.amount = amount;
   }
 
@@ -54,9 +52,8 @@ public class BalanceInfo {
    *
    * @return The as-of date.
    */
-  @Element ( name = "DTASOF", required = true, order = 10)
-  public Date getAsOfDate() {
-    return asOfDate;
+  public getAsOfDate(): Date {
+    return this.asOfDate;
   }
 
   /**
@@ -64,7 +61,13 @@ public class BalanceInfo {
    *
    * @param asOfDate The as-of date.
    */
-  public void setAsOfDate(Date asOfDate) {
+  public setAsOfDate(asOfDate: Date): void {
     this.asOfDate = asOfDate;
   }
+}
+
+Aggregate_add( BalanceInfo );
+Element_add(BalanceInfo, { name: "BALAMT", required: true, order: 0, type: Number, read: BalanceInfo.prototype.getAmount, write: BalanceInfo.prototype.setAmount });
+Element_add(BalanceInfo, { name: "DTASOF", required: true, order: 10, type: Date, read: BalanceInfo.prototype.getAsOfDate, write: BalanceInfo.prototype.setAsOfDate });
+
 }

@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/StatementRequest'/>
+///<reference path='../../investment/accounts/InvestmentAccountDetails'/>
+///<reference path='IncludePosition'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.domain.data.common.StatementRequest;
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountDetails;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Aggregate for the investment statement download request.
@@ -28,22 +34,26 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate("INVSTMTRQ")
-public class InvestmentStatementRequest extends StatementRequest {
+export class InvestmentStatementRequest extends StatementRequest {
 
-  private InvestmentAccountDetails account;
-  private Boolean includeOpenOrders = Boolean.FALSE;
-  private IncludePosition includePosition;
-  private Boolean includeBalance = Boolean.TRUE;
+  private account: InvestmentAccountDetails;
+  private includeOpenOrders: boolean;
+  private includePosition: IncludePosition;
+  private includeBalance: boolean;
+  
+  constructor() {
+    super();
+    this.includeOpenOrders = false;
+    this.includeBalance = true;
+  }
 
   /**
    * The account details.
    *
    * @return The account details.
    */
-  @ChildAggregate( name = "INVACCTFROM", required = true, order = 0 )
-  public InvestmentAccountDetails getAccount() {
-    return account;
+  public getAccount(): InvestmentAccountDetails {
+    return this.account;
   }
 
   /**
@@ -51,7 +61,7 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @param account The account details.
    */
-  public void setAccount(InvestmentAccountDetails account) {
+  public setAccount(account: InvestmentAccountDetails): void {
     this.account = account;
   }
 
@@ -62,9 +72,8 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @return whether to include open orders
    */
-  @Element( name = "INCOO", order = 20)
-  public Boolean getIncludeOpenOrders() {
-    return includeOpenOrders;
+  public getIncludeOpenOrders(): boolean {
+    return this.includeOpenOrders;
   }
 
   /**
@@ -74,7 +83,7 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @param includeOpenOrders whether to include open orders
    */
-  public void setIncludeOpenOrders(Boolean includeOpenOrders) {
+  public setIncludeOpenOrders(includeOpenOrders: boolean): void {
     this.includeOpenOrders = includeOpenOrders;
   }
 
@@ -83,9 +92,8 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @return the include position child aggregate
    */
-  @ChildAggregate ( name = "INCPOS", required = true, order = 30 )
-  public IncludePosition getIncludePosition() {
-    return includePosition;
+  public getIncludePosition(): IncludePosition {
+    return this.includePosition;
   }
 
   /**
@@ -93,7 +101,7 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @param includePosition the include position child aggregate
    */
-  public void setIncludePosition(IncludePosition includePosition) {
+  public setIncludePosition(includePosition: IncludePosition): void {
     this.includePosition = includePosition;
   }
 
@@ -103,9 +111,8 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @return whether to include balance info in the response
    */
-  @Element( name = "INCBAL", required = true, order = 40)
-  public Boolean getIncludeBalance() {
-    return includeBalance;
+  public getIncludeBalance(): boolean {
+    return this.includeBalance;
   }
 
   /**
@@ -114,7 +121,15 @@ public class InvestmentStatementRequest extends StatementRequest {
    *
    * @param includeBalance whether to include balance info in the response
    */
-  public void setIncludeBalance(Boolean includeBalance) {
+  public setIncludeBalance(includeBalance: boolean): void {
     this.includeBalance = includeBalance;
   }
+}
+
+Aggregate_add(InvestmentStatementRequest, "INVSTMTRQ");
+ChildAggregate_add(InvestmentStatementRequest, { name: "INVACCTFROM", required: true, order: 0, type: InvestmentAccountDetails, read: InvestmentStatementRequest.prototype.getAccount, write: InvestmentStatementRequest.prototype.setAccount });
+Element_add(InvestmentStatementRequest, { name: "INCOO", order: 20, type: Boolean, read: InvestmentStatementRequest.prototype.getIncludeOpenOrders, write: InvestmentStatementRequest.prototype.setIncludeOpenOrders });
+ChildAggregate_add(InvestmentStatementRequest, { name: "INCPOS", required: true, order: 30, type: IncludePosition, read: InvestmentStatementRequest.prototype.getIncludePosition, write: InvestmentStatementRequest.prototype.setIncludePosition });
+Element_add(InvestmentStatementRequest, { name: "INCBAL", required: true, order: 40, type: Boolean, read: InvestmentStatementRequest.prototype.getIncludeBalance, write: InvestmentStatementRequest.prototype.setIncludeBalance });
+
 }

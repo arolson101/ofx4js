@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
 /**
  * A message applicable to a response message set.
  *
  * @author Ryan Heaton
  */
-public abstract class ResponseMessage {
+export /*abstract*/ class ResponseMessage {
 
   /**
    * The name of the response message.
    *
    * @return The name of the response message.
    */
-  public abstract String getResponseMessageName();
+  public /*abstract*/ getResponseMessageName(): string { throw new Error("abstract"); }
+
+}
 
 }

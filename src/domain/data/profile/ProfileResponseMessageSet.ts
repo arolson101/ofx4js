@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='ProfileResponseTransaction'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  * @see "Section 7 OFX Spec"
  */
-@Aggregate ("PROFMSGSRSV1")
-public class ProfileResponseMessageSet extends ResponseMessageSet {
+export class ProfileResponseMessageSet extends ResponseMessageSet {
 
-  private ProfileResponseTransaction profileResponse;
+  private profileResponse: ProfileResponseTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.profile;
   }
 
@@ -43,9 +44,8 @@ public class ProfileResponseMessageSet extends ResponseMessageSet {
    *
    * @return The profile response.
    */
-  @ChildAggregate ( required = true, order = 0 )
-  public ProfileResponseTransaction getProfileResponse() {
-    return profileResponse;
+  public getProfileResponse(): ProfileResponseTransaction {
+    return this.profileResponse;
   }
 
   /**
@@ -53,18 +53,23 @@ public class ProfileResponseMessageSet extends ResponseMessageSet {
    *
    * @param profileResponse The profile response.
    */
-  public void setProfileResponse(ProfileResponseTransaction profileResponse) {
+  public setProfileResponse(profileResponse: ProfileResponseTransaction): void {
     this.profileResponse = profileResponse;
   }
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    ArrayList<ResponseMessage> messages = new ArrayList<ResponseMessage>();
+  public getResponseMessages(): Array<ResponseMessage> {
+    var messages: Array<ResponseMessage> = new Array<ResponseMessage>();
 
-    if (getProfileResponse() != null) {
-      messages.add(getProfileResponse());
+    if (this.getProfileResponse() != null) {
+      messages.push(this.getProfileResponse());
     }
 
     return messages;
   }
+}
+
+Aggregate_add(ProfileResponseMessageSet, "PROFMSGSRSV1");
+ChildAggregate_add(ProfileResponseMessageSet, { required: true, order: 0, type: ProfileResponseTransaction, read: ProfileResponseMessageSet.prototype.getProfileResponse, write: ProfileResponseMessageSet.prototype.setProfileResponse });
+
 }

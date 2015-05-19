@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * The type of mutual fund.
@@ -22,20 +22,22 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum MutualFundType {
+export enum MutualFundType {
   OPEN_END,
   CLOSE_END,
-  OTHER;
+  OTHER
+}
 
-  public static MutualFundType fromOfx(String ofxVal) {
-    if ("OPENEND".equals(ofxVal)) {
-      return OPEN_END;
-    } else if ("CLOSEEND".equals(ofxVal)) {
-      return CLOSE_END;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function MutualFundType_fromOfx(ofxVal: string): MutualFundType {
+  if ("OPENEND" === ofxVal) {
+    return MutualFundType.OPEN_END;
+  } else if ("CLOSEEND" === ofxVal) {
+    return MutualFundType.CLOSE_END;
+  } else if ("OTHER" === ofxVal) {
+    return MutualFundType.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

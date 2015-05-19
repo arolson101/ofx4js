@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='SignonInfo'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * List of signon information.
@@ -27,19 +28,17 @@ import java.util.List;
  * @author Ryan Heaton
  * @see "Section 7.2.2, OFX Spec"
  */
-@Aggregate ( "SIGNONINFOLIST" )
-public class SignonInfoList {
+export class SignonInfoList {
 
-  private List<SignonInfo> infoList;
+  private infoList: Array<SignonInfo>;
 
   /**
    * List of sign-on information.
    *
    * @return List of sign-on information.
    */
-  @ChildAggregate ( order = 0 )
-  public List<SignonInfo> getInfoList() {
-    return infoList;
+  public getInfoList(): Array<SignonInfo> {
+    return this.infoList;
   }
 
   /**
@@ -47,7 +46,12 @@ public class SignonInfoList {
    *
    * @param infoList List of sign-on information.
    */
-  public void setInfoList(List<SignonInfo> infoList) {
+  public setInfoList(infoList: Array<SignonInfo>): void {
     this.infoList = infoList;
   }
+}
+
+Aggregate_add( SignonInfoList, "SIGNONINFOLIST" );
+ChildAggregate_add(SignonInfoList, { order: 0, type: Array, collectionEntryType: SignonInfo, read: SignonInfoList.prototype.getInfoList, write: SignonInfoList.prototype.setInfoList });
+
 }

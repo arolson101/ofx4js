@@ -13,40 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='StatusCode'/>
+///<reference path='Status'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * Holder for an unknown status code.
  *
  * @author Ryan Heaton
  */
-public class UnknownStatusCode implements StatusCode {
+export class UnknownStatusCode extends StatusCode {
 
-  private final int code;
-  private final String message;
-  private final Status.Severity defaultSeverity;
+  private code: number;
+  private message: string;
+  private defaultSeverity: /*Status.*/Severity;
 
-  public UnknownStatusCode(int code, String message, Status.Severity defaultSeverity) {
+  constructor(code: number, message: string, defaultSeverity: /*Status.*/Severity) {
+    super();
     this.code = code;
     this.message = message;
     this.defaultSeverity = defaultSeverity;
   }
 
-  public int getCode() {
-    return code;
+  public getCode(): number {
+    return this.code;
   }
 
-  public String getMessage() {
-    return message;
+  public getMessage(): string {
+    return this.message;
   }
 
-  public Status.Severity getDefaultSeverity() {
-    return defaultSeverity;
+  public getDefaultSeverity(): /*Status.*/Severity {
+    return this.defaultSeverity;
   }
 
-  @Override
-  public String toString() {
-    return String.valueOf(code);
+  //@Override
+  public toString(): string {
+    return this.code.toString();
   }
+}
+
 }

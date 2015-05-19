@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BasePosition'/>
+///<reference path='ShortOptionSecurity'/>
 
-package net.sf.ofx4j.domain.data.investment.positions;
+module ofx4js.domain.data.investment.positions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Represents an options position.
@@ -25,18 +29,16 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "POSOPT" )
-public class OptionsPosition extends BasePosition {
-  private String secured;
+export class OptionsPosition extends BasePosition {
+  private secured: string;
 
   /**
    * Gets how the options position is secured (for short positions).
    *
    * @return how the options position is secured
    */
-  @Element( name = "SECURED", order = 20)
-  public String getSecured() {
-    return secured;
+  public getSecured(): string {
+    return this.secured;
   }
 
   /**
@@ -44,7 +46,7 @@ public class OptionsPosition extends BasePosition {
    *
    * @param secured how the options position is secured
    */
-  public void setSecured(String secured) {
+  public setSecured(secured: string): void {
     this.secured = secured;
   }
 
@@ -53,7 +55,12 @@ public class OptionsPosition extends BasePosition {
    *
    * @return how the option position is secured or null if it's not a well-known type
    */
-  ShortOptionSecurity getSecuredEnum() {
-    return ShortOptionSecurity.fromOfx(getSecured());
+  getSecuredEnum(): ShortOptionSecurity {
+    return ShortOptionSecurity_fromOfx(this.getSecured());
   }
+}
+
+Aggregate_add( OptionsPosition, "POSOPT" );
+Element_add(OptionsPosition, { name: "SECURED", order: 20, type: String, read: OptionsPosition.prototype.getSecured, write: OptionsPosition.prototype.setSecured });
+
 }

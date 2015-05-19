@@ -13,27 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../profile/AbstractMessageSetInfo'/>
+///<reference path='SignupV1MessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.profile.AbstractMessageSetInfo;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "SIGNUPMSGSET" )
-public class SignupMessageSetInfo extends AbstractMessageSetInfo {
+export class SignupMessageSetInfo extends AbstractMessageSetInfo {
 
-  private SignupV1MessageSetInfo version1Info;
+  private version1Info: SignupV1MessageSetInfo;
 
-  @ChildAggregate ( order = 0 )
-  public SignupV1MessageSetInfo getVersion1Info() {
-    return version1Info;
+  public getVersion1Info(): SignupV1MessageSetInfo {
+    return this.version1Info;
   }
 
-  public void setVersion1Info(SignupV1MessageSetInfo version1Info) {
+  public setVersion1Info(version1Info: SignupV1MessageSetInfo): void {
     this.version1Info = version1Info;
   }
+}
+
+Aggregate_add( SignupMessageSetInfo, "SIGNUPMSGSET" );
+ChildAggregate_add(SignupMessageSetInfo, { order: 0, type: SignupV1MessageSetInfo, read: SignupMessageSetInfo.prototype.getVersion1Info, write: SignupMessageSetInfo.prototype.setVersion1Info });
+
 }

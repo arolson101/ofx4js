@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../domain/data/common/BalanceInfo'/>
+///<reference path='../domain/data/common/TransactionList'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.domain.data.common.BalanceInfo;
-import net.sf.ofx4j.domain.data.common.TransactionList;
+import BalanceInfo = ofx4js.domain.data.common.BalanceInfo;
+import TransactionList = ofx4js.domain.data.common.TransactionList;
 
 /**
  * @author Ryan Heaton
  */
-public interface AccountStatement {
+export interface AccountStatement {
 
   /**
    * The currency code.
@@ -30,27 +32,29 @@ public interface AccountStatement {
    * @return The currency code.
    * @see java.util.Currency#getCurrencyCode()
    */
-  String getCurrencyCode();
+  getCurrencyCode(): string;
 
   /**
    * The transaction list.
    *
    * @return The transaction list.
    */
-  TransactionList getTransactionList();
+  getTransactionList(): TransactionList;
 
   /**
    * The ledger balance.
    *
    * @return The ledger balance.
    */
-  BalanceInfo getLedgerBalance();
+  getLedgerBalance(): BalanceInfo;
 
   /**
    * The available balance.
    *
    * @return The available balance.
    */
-  BalanceInfo getAvailableBalance();
+  getAvailableBalance(): BalanceInfo;
+
+}
 
 }

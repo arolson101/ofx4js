@@ -13,65 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='PayerAddress'/>
+///<reference path='RecAddress'/>
 
-import net.sf.ofx4j.domain.data.tax1099.PayerAddress;
-import net.sf.ofx4j.domain.data.tax1099.RecAddress;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.tax1099 {
 
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-
-
-@Aggregate ( "TAX1099R_V100")
-public class Tax1099R  {
-
-  
-	private String srvrtId;
-	private String taxYear;
-	private String grossDist;
+export class Tax1099R  {
+	private srvrtId: string;
+	private taxYear: string;
+	private grossDist: string;
 	
-	private String taxAmt;
-	private String taxAmtNd;
-	private String capGain;
-	private String fedTaxWh;
-	private String empContins;
-	private String netUnapEmp;
-	private String distCode;
-	private String iraSepSimp;
-	private String annCtrctDist;
-	private String totEmpCount;
+	private taxAmt: string;
+	private taxAmtNd: string;
+	private capGain: string;
+	private fedTaxWh: string;
+	private empContins: string;
+	private netUnapEmp: string;
+	private distCode: string;
+	private iraSepSimp: string;
+	private annCtrctDist: string;
+	private totEmpCount: string;
 		
-	private PayerAddress payerAddress;
-	private String payerId;
-	private RecAddress recAddress;
-	private String recId;
-	private String recAcct;
+	private payerAddress: PayerAddress;
+	private payerId: string;
+	private recAddress: RecAddress;
+	private recId: string;
+	private recAcct: string;
 	
 	 
-	  @Element ( name = "SRVRTID",required = true , order = 0 )
-	  public String getSrvrtId() {
-	    return srvrtId;
+	  public getSrvrtId(): string {
+	    return this.srvrtId;
 	  }
 
 	  
-	  public void setSrvrtId(String srvrtId) {
+      public setSrvrtId(srvrtId: string): void {
 	    this.srvrtId = srvrtId;
 	  }
 
 	 
-	  @Element ( name = "TAXYEAR", required = true, order = 1 )
-	  public String getTaxYear() {
-	    return taxYear;
+      public getTaxYear(): string {
+	    return this.taxYear;
 	  }
 
 	 
-	  public void setTaxYear(String taxYear) {
+	  public setTaxYear(taxYear: string): void {
 	    this.taxYear = taxYear;
 	  }
 
@@ -79,16 +76,15 @@ public class Tax1099R  {
 	  /**
 		 * @return the grossDist
 		 */
-	  @Element ( name = "GROSSDIST", required = true, order = 2 )
-		public String getGrossDist() {
-			return grossDist;
+		public getGrossDist(): string {
+			return this.grossDist;
 		}
 
 
 		/**
 		 * @param grossDist the grossDist to set
 		 */
-		public void setGrossDist(String grossDist) {
+		public setGrossDist(grossDist: string): void {
 			this.grossDist = grossDist;
 		}
 
@@ -96,16 +92,15 @@ public class Tax1099R  {
 		/**
 		 * @return the taxAmt
 		 */
-		@Element ( name = "TAXAMT", required = false, order = 3 )
-		public String getTaxAmt() {
-			return taxAmt;
+		public getTaxAmt(): string {
+			return this.taxAmt;
 		}
 
 
 		/**
 		 * @param taxAmt the taxAmt to set
 		 */
-		public void setTaxAmt(String taxAmt) {
+		public setTaxAmt(taxAmt: string): void {
 			this.taxAmt = taxAmt;
 		}
 
@@ -113,16 +108,15 @@ public class Tax1099R  {
 		/**
 		 * @return the taxAmtNd
 		 */
-		@Element ( name = "TAXAMTND", required = false, order = 4 )
-		public String getTaxAmtNd() {
-			return taxAmtNd;
+		public getTaxAmtNd(): string {
+			return this.taxAmtNd;
 		}
 
 
 		/**
 		 * @param taxAmtNd the taxAmtNd to set
 		 */
-		public void setTaxAmtNd(String taxAmtNd) {
+		public setTaxAmtNd(taxAmtNd: string): void {
 			this.taxAmtNd = taxAmtNd;
 		}
 
@@ -130,16 +124,15 @@ public class Tax1099R  {
 		/**
 		 * @return the capGain
 		 */
-		@Element ( name = "CAPGAIN", required = false, order = 5 )
-		public String getCapGain() {
-			return capGain;
+		public getCapGain(): string {
+			return this.capGain;
 		}
 
 
 		/**
 		 * @param capGain the capGain to set
 		 */
-		public void setCapGain(String capGain) {
+		public setCapGain(capGain: string): void {
 			this.capGain = capGain;
 		}
 
@@ -149,32 +142,30 @@ public class Tax1099R  {
 	/**
 	 * @return the fedTaxWh
 	 */
-	@Element ( name = "FEDTAXWH", required = false, order = 6 )
-	public String getFedTaxWh() {
-		return fedTaxWh;
+	public getFedTaxWh(): string {
+		return this.fedTaxWh;
 	}
 
 
 	/**
 	 * @param fedTaxWh the fedTaxWh to set
 	 */
-	public void setFedTaxWh(String fedTaxWh) {
+	public setFedTaxWh(fedTaxWh: string): void {
 		this.fedTaxWh = fedTaxWh;
 	}
 	
 	/**
 	 * @return the empContins
 	 */
-	@Element ( name = "EMPCONTINS", required = false, order = 7 )
-	public String getEmpContins() {
-		return empContins;
+	public getEmpContins(): string {
+		return this.empContins;
 	}
 
 
 	/**
 	 * @param empContins the empContins to set
 	 */
-	public void setEmpContins(String empContins) {
+	public setEmpContins(empContins: string): void {
 		this.empContins = empContins;
 	}
 
@@ -182,16 +173,15 @@ public class Tax1099R  {
 	/**
 	 * @return the netUnapEmp
 	 */
-	@Element ( name = "NETUNAPEMP", required = false, order = 8 )
-	public String getNetUnapEmp() {
-		return netUnapEmp;
+	public getNetUnapEmp(): string {
+		return this.netUnapEmp;
 	}
 
 
 	/**
 	 * @param netUnapEmp the netUnapEmp to set
 	 */
-	public void setNetUnapEmp(String netUnapEmp) {
+	public setNetUnapEmp(netUnapEmp: string): void {
 		this.netUnapEmp = netUnapEmp;
 	}
 
@@ -199,16 +189,15 @@ public class Tax1099R  {
 	/**
 	 * @return the distCode
 	 */
-	@Element ( name = "DISTCODE", required = true, order = 9 )
-	public String getDistCode() {
-		return distCode;
+	public getDistCode(): string {
+		return this.distCode;
 	}
 
 
 	/**
 	 * @param distCode the distCode to set
 	 */
-	public void setDistCode(String distCode) {
+	public setDistCode(distCode: string): void {
 		this.distCode = distCode;
 	}
 
@@ -216,16 +205,15 @@ public class Tax1099R  {
 	/**
 	 * @return the iraSepSimp
 	 */
-	@Element ( name = "IRASEPSIMP", required = true, order = 10 )
-	public String getIraSepSimp() {
-		return iraSepSimp;
+	public getIraSepSimp(): string {
+		return this.iraSepSimp;
 	}
 
 
 	/**
 	 * @param iraSepSimp the iraSepSimp to set
 	 */
-	public void setIraSepSimp(String iraSepSimp) {
+	public setIraSepSimp(iraSepSimp: string): void {
 		this.iraSepSimp = iraSepSimp;
 	}
 
@@ -233,16 +221,15 @@ public class Tax1099R  {
 	/**
 	 * @return the annCtrctDist
 	 */
-	@Element ( name = "ANNCTRCTDIST", required = false, order = 11 )
-	public String getAnnCtrctDist() {
-		return annCtrctDist;
+	public getAnnCtrctDist(): string {
+		return this.annCtrctDist;
 	}
 
 
 	/**
 	 * @param annCtrctDist the annCtrctDist to set
 	 */
-	public void setAnnCtrctDist(String annCtrctDist) {
+	public setAnnCtrctDist(annCtrctDist: string): void {
 		this.annCtrctDist = annCtrctDist;
 	}
 
@@ -250,16 +237,15 @@ public class Tax1099R  {
 	/**
 	 * @return the totEmpCount
 	 */
-	@Element ( name = "TOTEMPCONT", required = false, order = 12 )
-	public String getTotEmpCount() {
-		return totEmpCount;
+	public getTotEmpCount(): string {
+		return this.totEmpCount;
 	}
 
 
 	/**
 	 * @param totEmpCount the totEmpCount to set
 	 */
-	public void setTotEmpCount(String totEmpCount) {
+	public setTotEmpCount(totEmpCount: string): void {
 		this.totEmpCount = totEmpCount;
 	}
 
@@ -267,32 +253,30 @@ public class Tax1099R  {
 	/**
 	 * @return the payerAddress
 	 */
-	@ChildAggregate(required=true, order = 13)
-	public PayerAddress getPayerAddress() {
-		return payerAddress;
+	public getPayerAddress(): PayerAddress {
+		return this.payerAddress;
 	}
 
 
 	/**
 	 * @param payerAddress the payerAddress to set
 	 */
-	public void setPayerAddress(PayerAddress payerAddress) {
+	public setPayerAddress(payerAddress: PayerAddress): void {
 		this.payerAddress = payerAddress;
 	}
 	
 	/**
 	 * @return the payerId
 	 */
-	@Element ( name = "PAYERID", required = true, order = 14 )
-	public String getPayerId() {
-		return payerId;
+	public getPayerId(): string {
+		return this.payerId;
 	}
 
 
 	/**
 	 * @param payerId the payerId to set
 	 */
-	public void setPayerId(String payerId) {
+	public setPayerId(payerId: string): void {
 		this.payerId = payerId;
 	}
 	
@@ -300,32 +284,30 @@ public class Tax1099R  {
 	/**
 	 * @return the recAddress
 	 */
-	@ChildAggregate(required=true, order = 15)
-	public RecAddress getRecAddress() {
-		return recAddress;
+	public getRecAddress(): RecAddress {
+		return this.recAddress;
 	}
 
 
 	/**
 	 * @param recAddress the recAddress to set
 	 */
-	public void setRecAddress(RecAddress recAddress) {
+	public setRecAddress(recAddress: RecAddress): void {
 		this.recAddress = recAddress;
 	}
 
 	/**
 	 * @return the recId
 	 */
-	@Element ( name = "RECID", required = true, order = 16 )
-	public String getRecId() {
-		return recId;
+	public getRecId(): string {
+		return this.recId;
 	}
 
 
 	/**
 	 * @param recId the recId to set
 	 */
-	public void setRecId(String recId) {
+	public setRecId(recId: string): void {
 		this.recId = recId;
 	}
 
@@ -333,16 +315,37 @@ public class Tax1099R  {
 	/**
 	 * @return the recAcct
 	 */
-	@Element ( name = "RECACCT", required = true, order = 17 )
-	public String getRecAcct() {
-		return recAcct;
+	public getRecAcct(): string {
+		return this.recAcct;
 	}
 
 
 	/**
 	 * @param recAcct the recAcct to set
 	 */
-	public void setRecAcct(String recAcct) {
+	public setRecAcct(recAcct: string): void {
 		this.recAcct = recAcct;
 	}
+}
+
+Aggregate_add(Tax1099R, "TAX1099R_V100");
+Element_add(Tax1099R, { name: "SRVRTID",required: true , order: 0, type: String, read: Tax1099R.prototype.getSrvrtId, write: Tax1099R.prototype.setSrvrtId });
+Element_add(Tax1099R, { name: "TAXYEAR", required: true, order: 1, type: String, read: Tax1099R.prototype.getTaxYear, write: Tax1099R.prototype.setTaxYear });
+Element_add(Tax1099R, { name: "GROSSDIST", required: true, order: 2, type: String, read: Tax1099R.prototype.getGrossDist, write: Tax1099R.prototype.setGrossDist });
+Element_add(Tax1099R, { name: "TAXAMT", required: false, order: 3, type: String, read: Tax1099R.prototype.getTaxAmt, write: Tax1099R.prototype.setTaxAmt });
+Element_add(Tax1099R, { name: "TAXAMTND", required: false, order: 4, type: String, read: Tax1099R.prototype.getTaxAmtNd, write: Tax1099R.prototype.setTaxAmtNd });
+Element_add(Tax1099R, { name: "CAPGAIN", required: false, order: 5, type: String, read: Tax1099R.prototype.getCapGain, write: Tax1099R.prototype.setCapGain });
+Element_add(Tax1099R, { name: "FEDTAXWH", required: false, order: 6, type: String, read: Tax1099R.prototype.getFedTaxWh, write: Tax1099R.prototype.setFedTaxWh });
+Element_add(Tax1099R, { name: "EMPCONTINS", required: false, order: 7, type: String, read: Tax1099R.prototype.getEmpContins, write: Tax1099R.prototype.setEmpContins });
+Element_add(Tax1099R, { name: "NETUNAPEMP", required: false, order: 8, type: String, read: Tax1099R.prototype.getNetUnapEmp, write: Tax1099R.prototype.setNetUnapEmp });
+Element_add(Tax1099R, { name: "DISTCODE", required: true, order: 9, type: String, read: Tax1099R.prototype.getDistCode, write: Tax1099R.prototype.setDistCode });
+Element_add(Tax1099R, { name: "IRASEPSIMP", required: true, order: 10, type: String, read: Tax1099R.prototype.getIraSepSimp, write: Tax1099R.prototype.setIraSepSimp });
+Element_add(Tax1099R, { name: "ANNCTRCTDIST", required: false, order: 11, type: String, read: Tax1099R.prototype.getAnnCtrctDist, write: Tax1099R.prototype.setAnnCtrctDist });
+Element_add(Tax1099R, { name: "TOTEMPCONT", required: false, order: 12, type: String, read: Tax1099R.prototype.getTotEmpCount, write: Tax1099R.prototype.setTotEmpCount });
+ChildAggregate_add(Tax1099R, { required:true, order: 13, type: PayerAddress, read: Tax1099R.prototype.getPayerAddress, write: Tax1099R.prototype.setPayerAddress });
+Element_add(Tax1099R, { name: "PAYERID", required: true, order: 14, type: String, read: Tax1099R.prototype.getPayerId, write: Tax1099R.prototype.setPayerId });
+ChildAggregate_add(Tax1099R, { required:true, order: 15, type: RecAddress, read: Tax1099R.prototype.getRecAddress, write: Tax1099R.prototype.setRecAddress });
+Element_add(Tax1099R, { name: "RECID", required: true, order: 16, type: String, read: Tax1099R.prototype.getRecId, write: Tax1099R.prototype.setRecId });
+Element_add(Tax1099R, { name: "RECACCT", required: true, order: 17, type: String, read: Tax1099R.prototype.getRecAcct, write: Tax1099R.prototype.setRecAcct });
+
 }

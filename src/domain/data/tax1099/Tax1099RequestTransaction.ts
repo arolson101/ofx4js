@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='Tax1099Request'/>
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+module ofx4js.domain.data.tax1099 {
+
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
-@Aggregate ("TAX1099TRNRQ")
-public class Tax1099RequestTransaction extends TransactionWrappedRequestMessage<Tax1099Request> {
+export class Tax1099RequestTransaction extends TransactionWrappedRequestMessage<Tax1099Request> {
 
-  private Tax1099Request tax1099Request;
+  private tax1099Request: Tax1099Request;
 
   /**
    * The tax1099Request.
    *
    * @return The tax1099Request.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public Tax1099Request getTax1099Request() {
-    return tax1099Request;
+  public getTax1099Request(): Tax1099Request {
+    return this.tax1099Request;
   }
 
   /**
@@ -44,12 +47,17 @@ public class Tax1099RequestTransaction extends TransactionWrappedRequestMessage<
    * @param tax1099Request The message.
    *
    */
-  public void setTax1099Request(Tax1099Request tax1099Request) {
+  public setTax1099Request(tax1099Request: Tax1099Request): void {
     this.tax1099Request = tax1099Request;
   }
 
   // Inherited.
-  public void setWrappedMessage(Tax1099Request tax1099Request) {
-	  setTax1099Request(tax1099Request);
+  public setWrappedMessage(tax1099Request: Tax1099Request): void {
+	  this.setTax1099Request(tax1099Request);
   }
+}
+
+Aggregate_add(Tax1099RequestTransaction, "TAX1099TRNRQ");
+ChildAggregate_add(Tax1099RequestTransaction, { required: true, order: 30, type: Tax1099Request, read: Tax1099RequestTransaction.prototype.getTax1099Request, write: Tax1099RequestTransaction.prototype.setTax1099Request });
+
 }

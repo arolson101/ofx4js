@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Aggregate for a list of securities.
@@ -27,16 +28,19 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SECLIST" )
-public class SecurityList {
-  private List<BaseSecurityInfo> securityInfos;
+export class SecurityList {
+  private securityInfos: Array<BaseSecurityInfo>;
 
-  @ChildAggregate( order = 10 )
-  public List<BaseSecurityInfo> getSecurityInfos() {
-    return securityInfos;
+  public getSecurityInfos(): Array<BaseSecurityInfo> {
+    return this.securityInfos;
   }
 
-  public void setSecurityInfos(List<BaseSecurityInfo> securityInfos) {
+  public setSecurityInfos(securityInfos: Array<BaseSecurityInfo>): void {
     this.securityInfos = securityInfos;
   }
+}
+
+Aggregate_add( SecurityList, "SECLIST" );
+ChildAggregate_add(SecurityList, { order: 10, type: Array, collectionEntryType: BaseSecurityInfo, read: SecurityList.prototype.getSecurityInfos, write: SecurityList.prototype.setSecurityInfos });
+
 }

@@ -13,102 +13,106 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='ProcDet'/>
 
-import java.util.List;
+module ofx4js.domain.data.tax1099 {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
+export class ExtDBInfo {
 
-
-@Aggregate ( "EXTDBINFO_V100")
-public class ExtDBInfo {
-
-	private List<ProcDet> procDet;
-	private String teInterest;
-	private String pabInterest;
-	private String teIntDividend;
-	private String pabDividend;
+	private procDet: Array<ProcDet>;
+	private teInterest: string;
+	private pabInterest: string;
+	private teIntDividend: string;
+	private pabDividend: string;
 	
 	/**
 	 * @return the procDet
 	 */
-	@ChildAggregate(required=false, order = 0)
-	public List<ProcDet> getProcDet() {
-		return procDet;
+	public getProcDet(): Array<ProcDet> {
+		return this.procDet;
 	}
 
 	/**
 	 * @param procDet the procDet to set
 	 */
-	public void setProcDet(List<ProcDet> procDet) {
+    public setProcDet(procDet: Array<ProcDet>): void {
 		this.procDet = procDet;
 	}
 
 	/**
 	 * @return the teInterest
 	 */
-	@Element ( name = "TEINTEREST",required = false , order = 1 )
-	public String getTeInterest() {
-		return teInterest;
+	public getTeInterest(): string {
+		return this.teInterest;
 	}
 
 	/**
 	 * @param teInterest the teInterest to set
 	 */
-	public void setTeInterest(String teInterest) {
+	public setTeInterest(teInterest: string): void {
 		this.teInterest = teInterest;
 	}
 
 	/**
 	 * @return the pabInterest
 	 */
-	@Element ( name = "PABINTEREST",required = false , order = 2 )
-	public String getPabInterest() {
-		return pabInterest;
+	public getPabInterest(): string {
+		return this.pabInterest;
 	}
 
 	/**
 	 * @param pabInterest the pabInterest to set
 	 */
-	public void setPabInterest(String pabInterest) {
+	public setPabInterest(pabInterest: string): void {
 		this.pabInterest = pabInterest;
 	}
 
 	/**
 	 * @return the teIntDividend
 	 */
-	@Element ( name = "TEINTDIVIDEND",required = false , order = 3 )
-	public String getTeIntDividend() {
-		return teIntDividend;
+	public getTeIntDividend(): string {
+		return this.teIntDividend;
 	}
 
 	/**
 	 * @param teIntDividend the teIntDividend to set
 	 */
-	public void setTeIntDividend(String teIntDividend) {
+	public setTeIntDividend(teIntDividend: string): void {
 		this.teIntDividend = teIntDividend;
 	}
 
 	/**
 	 * @return the pabDividend
 	 */
-	@Element ( name = "PABDIVIDEND",required = false , order = 4 )
-	public String getPabDividend() {
-		return pabDividend;
+	public getPabDividend(): string {
+		return this.pabDividend;
 	}
 
 	/**
 	 * @param pabDividend the pabDividend to set
 	 */
-	public void setPabDividend(String pabDividend) {
+	public setPabDividend(pabDividend: string): void {
 		this.pabDividend = pabDividend;
 	}	
+}
+
+Aggregate_add( ExtDBInfo, "EXTDBINFO_V100");
+ChildAggregate_add(ExtDBInfo, { required:false, order: 0, type: Array, collectionEntryType: ProcDet, read: ExtDBInfo.prototype.getProcDet, write: ExtDBInfo.prototype.setProcDet });
+Element_add(ExtDBInfo, { name: "TEINTEREST",required: false , order: 1, type: String, read: ExtDBInfo.prototype.getTeInterest, write: ExtDBInfo.prototype.setTeInterest });
+Element_add(ExtDBInfo, { name: "PABINTEREST",required: false , order: 2, type: String, read: ExtDBInfo.prototype.getPabInterest, write: ExtDBInfo.prototype.setPabInterest });
+Element_add(ExtDBInfo, { name: "TEINTDIVIDEND",required: false , order: 3, type: String, read: ExtDBInfo.prototype.getTeIntDividend, write: ExtDBInfo.prototype.setTeIntDividend });
+Element_add(ExtDBInfo, { name: "PABDIVIDEND",required: false , order: 4, type: String, read: ExtDBInfo.prototype.getPabDividend, write: ExtDBInfo.prototype.setPabDividend });
+
 }

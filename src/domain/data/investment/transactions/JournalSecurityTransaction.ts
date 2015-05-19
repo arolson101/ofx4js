@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -29,16 +37,15 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "JRNLSEC" )
-public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
+export class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private SecurityId securityId;
-  private String subAccountFrom;
-  private String subAccountTo;
-  private Double total;
+  private securityId: SecurityId;
+  private subAccountFrom: string;
+  private subAccountTo: string;
+  private total: number;
 
-  public JournalSecurityTransaction() {
+  constructor() {
     super(TransactionType.JOURNAL_SECURITY);
   }
 
@@ -49,9 +56,8 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the security id of the security that was bought
    */
-  @ChildAggregate( required = true, order = 20 )
-  public SecurityId getSecurityId() {
-    return securityId;
+  public getSecurityId(): SecurityId {
+    return this.securityId;
   }
 
   /**
@@ -61,7 +67,7 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @param securityId the security id of the security that was bought
    */
-  public void setSecurityId(SecurityId securityId) {
+  public setSecurityId(securityId: SecurityId): void {
     this.securityId = securityId;
   }
 
@@ -71,9 +77,8 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account type
    */
-  @Element( name = "SUBACCTFROM", order = 30)
-  public String getFromSubAccountFund() {
-    return subAccountFrom;
+  public getFromSubAccountFund(): string {
+    return this.subAccountFrom;
   }
 
   /**
@@ -82,7 +87,7 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAccountFrom the sub account type
    */
-  public void setFromSubAccountFund(String subAccountFrom) {
+  public setFromSubAccountFund(subAccountFrom: string): void {
     this.subAccountFrom = subAccountFrom;
   }
 
@@ -91,8 +96,8 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getFromSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getFromSubAccountFund());
+  public getFromSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getFromSubAccountFund());
   }
 
   /**
@@ -101,9 +106,8 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the sub account fund
    */
-  @Element( name = "SUBACCTTO", order = 40)
-  public String getToSubAccountFund() {
-    return subAccountTo;
+  public getToSubAccountFund(): string {
+    return this.subAccountTo;
   }
 
   /**
@@ -112,7 +116,7 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @param subAccountTo the sub account fund
    */
-  public void setToSubAccountFund(String subAccountTo) {
+  public setToSubAccountFund(subAccountTo: string): void {
     this.subAccountTo = subAccountTo;
   }
 
@@ -121,8 +125,8 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the type of null if it wasn't one of the well known types.
    */
-  public SubAccountType getToSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getToSubAccountFund());
+  public getToSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getToSubAccountFund());
   }
 
   /**
@@ -131,9 +135,8 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @return the total
    */
-  @Element( name = "TOTAL", order = 50)
-  public Double getTotal() {
-    return total;
+  public getTotal(): number {
+    return this.total;
   }
 
   /**
@@ -142,7 +145,15 @@ public class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
    *
    * @param total the total
    */
-  public void setTotal(Double total) {
+  public setTotal(total: number): void {
     this.total = total;
   }
+}
+
+Aggregate_add( JournalSecurityTransaction, "JRNLSEC" );
+ChildAggregate_add(JournalSecurityTransaction, { required: true, order: 20, type: SecurityId, read: JournalSecurityTransaction.prototype.getSecurityId, write: JournalSecurityTransaction.prototype.setSecurityId });
+Element_add(JournalSecurityTransaction, { name: "SUBACCTFROM", order: 30, type: String, read: JournalSecurityTransaction.prototype.getFromSubAccountFund, write: JournalSecurityTransaction.prototype.setFromSubAccountFund });
+Element_add(JournalSecurityTransaction, { name: "SUBACCTTO", order: 40, type: String, read: JournalSecurityTransaction.prototype.getToSubAccountFund, write: JournalSecurityTransaction.prototype.setToSubAccountFund });
+Element_add(JournalSecurityTransaction, { name: "TOTAL", order: 50, type: Number, read: JournalSecurityTransaction.prototype.getTotal, write: JournalSecurityTransaction.prototype.setTotal });
+
 }

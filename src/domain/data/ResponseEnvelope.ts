@@ -13,16 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../project.d.ts'/>
+///<reference path='../../collections/SortedSet'/>
+///<reference path='../../meta/Aggregate_add'/>
+///<reference path='../../meta/ChildAggregate_add'/>
+///<reference path='../../meta/Header_add'/>
+///<reference path='signon/SignonResponseMessageSet'/>
+///<reference path='signon/SignonResponse'/>
+///<reference path='ApplicationSecurity'/>
+///<reference path='ApplicationSecurity'/>
+///<reference path='MessageSetType'/>
+///<reference path='ResponseMessageSet'/>
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Header;
-import net.sf.ofx4j.domain.data.signon.SignonResponseMessageSet;
-import net.sf.ofx4j.domain.data.signon.SignonResponse;
+import SortedSet = ofx4js.collections.SortedSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Header_add = ofx4js.meta.Header_add;
+import SignonResponseMessageSet = ofx4js.domain.data.signon.SignonResponseMessageSet;
+import SignonResponse = ofx4js.domain.data.signon.SignonResponse;
 
-import java.util.SortedSet;
+//import java.util.SortedSet;
 
 /**
  * Envelope for enclosing an OFX response.
@@ -30,15 +42,14 @@ import java.util.SortedSet;
  * @author Ryan Heaton
  * @see "Section 2.4.3, OFX Spec"
  */
-@Aggregate ( "OFX" )
-public class ResponseEnvelope {
+export class ResponseEnvelope {
 
   //headers
-  private ApplicationSecurity security;
-  private String UID;
+  private security: ApplicationSecurity;
+  private UID: string;
 
   //content
-  private SortedSet<ResponseMessageSet> messageSets;
+  private messageSets: SortedSet<ResponseMessageSet>;
 
   /**
    * The security of this envelope.
@@ -46,9 +57,8 @@ public class ResponseEnvelope {
    * @return The security of this envelope.
    * @see "Section 2.2, OFX spec"
    */
-  @Header ( name = "SECURITY" )
-  public ApplicationSecurity getSecurity() {
-    return security;
+  public getSecurity(): ApplicationSecurity {
+    return this.security;
   }
 
   /**
@@ -57,7 +67,7 @@ public class ResponseEnvelope {
    * @param security The security of this envelope.
    * @see "Section 2.2, OFX spec"
    */
-  public void setSecurity(ApplicationSecurity security) {
+  public setSecurity(security: ApplicationSecurity): void {
     this.security = security;
   }
 
@@ -67,9 +77,8 @@ public class ResponseEnvelope {
    * @return The UID for the envelope.
    * @see "Section 2.2, OFX spec"
    */
-  @Header ( name = "NEWFILEUID" )
-  public String getUID() {
-    return UID;
+  public getUID(): string {
+    return this.UID;
   }
 
   /**
@@ -78,7 +87,7 @@ public class ResponseEnvelope {
    * @param UID The UID for the envelope.
    * @see "Section 2.2, OFX spec"
    */
-  public void setUID(String UID) {
+  public setUID(UID: string): void {
     this.UID = UID;
   }
 
@@ -88,9 +97,8 @@ public class ResponseEnvelope {
    * @return The message sets that make up the content of this response.
    * @see "Section 2.4.5, OFX Spec"
    */
-  @ChildAggregate ( order = 1 )
-  public SortedSet<ResponseMessageSet> getMessageSets() {
-    return messageSets;
+  public getMessageSets(): SortedSet<ResponseMessageSet> {
+    return this.messageSets;
   }
 
   /**
@@ -99,7 +107,7 @@ public class ResponseEnvelope {
    * @param messageSets The message sets that make up the content of this response.
    * @see "Section 2.4.5, OFX Spec"
    */
-  public void setMessageSets(SortedSet<ResponseMessageSet> messageSets) {
+  public setMessageSets(messageSets: SortedSet<ResponseMessageSet>): void {
     this.messageSets = messageSets;
   }
 
@@ -108,12 +116,12 @@ public class ResponseEnvelope {
    *
    * @return The signon response, or null if none found.
    */
-  public SignonResponse getSignonResponse() {
-    MessageSetType type = MessageSetType.signon;
-    ResponseMessageSet message = getMessageSet(type);
+  public getSignonResponse(): SignonResponse {
+    var type: MessageSetType = MessageSetType.signon;
+    var message: ResponseMessageSet = this.getMessageSet(type);
 
     if (message != null) {
-      return ((SignonResponseMessageSet) message).getSignonResponse();
+      return (<SignonResponseMessageSet> message).getSignonResponse();
     }
     else {
       return null;
@@ -126,10 +134,11 @@ public class ResponseEnvelope {
    * @param type The type.
    * @return The message set, or null.
    */
-  public ResponseMessageSet getMessageSet(MessageSetType type) {
-    ResponseMessageSet message = null;
+  public getMessageSet(type: MessageSetType): ResponseMessageSet {
+    var message: ResponseMessageSet = null;
     if (this.messageSets != null) {
-      for (ResponseMessageSet messageSet : this.messageSets) {
+      for (var i in this.messageSets.values()) {
+        var messageSet: ResponseMessageSet = this.messageSets.values()[i];
         if (messageSet.getType() == type) {
           message = messageSet;
           break;
@@ -138,5 +147,11 @@ public class ResponseEnvelope {
     }
     return message;
   }
+}
+
+Aggregate_add( ResponseEnvelope, "OFX" );
+Header_add(ResponseEnvelope, { name: "SECURITY", type: ApplicationSecurity, read: ResponseEnvelope.prototype.getSecurity, write: ResponseEnvelope.prototype.setSecurity });
+Header_add(ResponseEnvelope, { name: "NEWFILEUID", type: String, read: ResponseEnvelope.prototype.getUID, write: ResponseEnvelope.prototype.setUID });
+ChildAggregate_add(ResponseEnvelope, { order: 1, type: SortedSet, collectionEntryType: ResponseMessageSet, read: ResponseEnvelope.prototype.getMessageSets, write: ResponseEnvelope.prototype.setMessageSets });
 
 }

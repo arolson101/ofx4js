@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BasePosition'/>
 
-package net.sf.ofx4j.domain.data.investment.positions;
+module ofx4js.domain.data.investment.positions {
 
-import net.sf.ofx4j.domain.data.investment.positions.BasePosition;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Aggregate for a list of invesment positions.
@@ -28,18 +28,16 @@ import java.util.List;
  *
  * @author Jon Perlow
  */
-@Aggregate("INVPOSLIST")
-public class InvestmentPositionList {
-  private List<BasePosition> positions;
+export class InvestmentPositionList {
+  private positions: Array<BasePosition>;
 
   /**
    * Gets the list of positions
    *
    * @return the list of positions
    */
-  @ChildAggregate( order = 10 )
-  public List<BasePosition> getPositions() {
-    return positions;
+  public getPositions(): Array<BasePosition> {
+    return this.positions;
   }
 
   /**
@@ -47,7 +45,12 @@ public class InvestmentPositionList {
    *
    * @param positions the list of positions
    */
-  public void setPositions(List<BasePosition> positions) {
+  public setPositions(positions: Array<BasePosition>): void {
     this.positions = positions;
   }
+}
+
+Aggregate_add( InvestmentPositionList, "INVPOSLIST" );
+ChildAggregate_add(InvestmentPositionList, { order: 10, type: Array, collectionEntryType: BasePosition, read: InvestmentPositionList.prototype.getPositions, write: InvestmentPositionList.prototype.setPositions });
+
 }

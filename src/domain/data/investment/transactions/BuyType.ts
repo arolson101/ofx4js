@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of purchase for stocks and mutual funds.
@@ -22,17 +22,19 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum BuyType {
+export enum BuyType {
   BUY,
-  BUY_TO_COVER;
+  BUY_TO_COVER
+}
 
-  public static BuyType fromOfx(String ofxVal) {
-    if ("BUY".equals(ofxVal)) {
-      return BUY;
-    } else if ("BUYTOCOVER".equals(ofxVal)) {
-      return BUY_TO_COVER;
-    } else {
-      return null;
-    }
+export function BuyType_fromOfx(ofxVal: string): BuyType {
+  if ("BUY" === ofxVal) {
+    return BuyType.BUY;
+  } else if ("BUYTOCOVER" === ofxVal) {
+    return BuyType.BUY_TO_COVER;
+  } else {
+    return null;
   }
+}
+
 }

@@ -13,36 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXConnectionException'/>
 
-package net.sf.ofx4j.client.net;
+module ofx4js.client.net {
 
 /**
  * @author Ryan Heaton
  */
-public class OFXServerException extends OFXConnectionException {
+export class OFXServerException extends OFXConnectionException {
 
-  private final int httpCode;
+  private httpCode: number;
 
-  public OFXServerException(int httpCode) {
-    this.httpCode = httpCode;
-  }
-
-  public OFXServerException(String message, int httpCode) {
+  constructor(message: string, httpCode: number) {
     super(message);
     this.httpCode = httpCode;
   }
 
-  public OFXServerException(String message, Throwable cause, int httpCode) {
-    super(message, cause);
-    this.httpCode = httpCode;
+  public getHttpCode(): number {
+    return this.httpCode;
   }
+}
 
-  public OFXServerException(Throwable cause, int httpCode) {
-    super(cause);
-    this.httpCode = httpCode;
-  }
-
-  public int getHttpCode() {
-    return httpCode;
-  }
 }

@@ -13,36 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../common/AccountDetails'/>
+///<reference path='../common/AccountInfo'/>
+///<reference path='../common/AccountStatus'/>
+///<reference path='BankAccountDetails'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.domain.data.common.AccountStatus;
-import net.sf.ofx4j.domain.data.common.AccountInfo;
-import net.sf.ofx4j.domain.data.common.AccountDetails;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import AccountStatus = ofx4js.domain.data.common.AccountStatus;
+import AccountInfo = ofx4js.domain.data.common.AccountInfo;
+import AccountDetails = ofx4js.domain.data.common.AccountDetails;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "BANKACCTINFO" )
-public class BankAccountInfo implements AccountInfo {
+export class BankAccountInfo implements AccountInfo {
 
-  private BankAccountDetails bankAccount;
-  private Boolean supportsTransactionDetailOperations;
-  private Boolean supportsTransferToOtherAccountOperations;
-  private Boolean supportsTransferFromOtherAccountOperations;
-  private AccountStatus status;
+  private bankAccount: BankAccountDetails;
+  private supportsTransactionDetailOperations: boolean;
+  private supportsTransferToOtherAccountOperations: boolean;
+  private supportsTransferFromOtherAccountOperations: boolean;
+  private status: AccountStatus;
 
   /**
    * The bank account this information is referencing.
    *
    * @return The bank account this information is referencing.
    */
-  @ChildAggregate ( name = "BANKACCTFROM", required = true, order = 0 )
-  public BankAccountDetails getBankAccount() {
-    return bankAccount;
+  public getBankAccount(): BankAccountDetails {
+    return this.bankAccount;
   }
 
   /**
@@ -50,13 +55,13 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @param bankAccount The bank account this information is referencing.
    */
-  public void setBankAccount(BankAccountDetails bankAccount) {
+  public setBankAccount(bankAccount: BankAccountDetails): void {
     this.bankAccount = bankAccount;
   }
 
   // Inherited.
-  public AccountDetails getAccountDetails() {
-    return getBankAccount();
+  public getAccountDetails(): AccountDetails {
+    return this.getBankAccount();
   }
 
   /**
@@ -64,9 +69,8 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @return Whether this account supports download of transaction details.
    */
-  @Element ( name = "SUPTXDL", required = true, order = 10 )
-  public Boolean getSupportsTransactionDetailOperations() {
-    return supportsTransactionDetailOperations;
+  public getSupportsTransactionDetailOperations(): boolean {
+    return this.supportsTransactionDetailOperations;
   }
 
   /**
@@ -74,7 +78,7 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @param supportsTransactionDetailOperations Whether this account supports download of transaction details.
    */
-  public void setSupportsTransactionDetailOperations(Boolean supportsTransactionDetailOperations) {
+  public setSupportsTransactionDetailOperations(supportsTransactionDetailOperations: boolean): void {
     this.supportsTransactionDetailOperations = supportsTransactionDetailOperations;
   }
 
@@ -83,9 +87,8 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @return Whether this account supports transfer operations to other accounts.
    */
-  @Element ( name = "XFERSRC", required = true, order = 20 )
-  public Boolean getSupportsTransferToOtherAccountOperations() {
-    return supportsTransferToOtherAccountOperations;
+  public getSupportsTransferToOtherAccountOperations(): boolean {
+    return this.supportsTransferToOtherAccountOperations;
   }
 
   /**
@@ -93,7 +96,7 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @param supportsTransferToOtherAccountOperations Whether this account supports transfer operations to other accounts.
    */
-  public void setSupportsTransferToOtherAccountOperations(Boolean supportsTransferToOtherAccountOperations) {
+  public setSupportsTransferToOtherAccountOperations(supportsTransferToOtherAccountOperations: boolean): void {
     this.supportsTransferToOtherAccountOperations = supportsTransferToOtherAccountOperations;
   }
 
@@ -102,9 +105,8 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @return Whether this account supports transfer operations from other accounts.
    */
-  @Element ( name = "XFERDEST", required = true, order = 30 )
-  public Boolean getSupportsTransferFromOtherAccountOperations() {
-    return supportsTransferFromOtherAccountOperations;
+  public getSupportsTransferFromOtherAccountOperations(): boolean {
+    return this.supportsTransferFromOtherAccountOperations;
   }
 
   /**
@@ -112,7 +114,7 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @param supportsTransferFromOtherAccountOperations Whether this account supports transfer operations from other accounts.
    */
-  public void setSupportsTransferFromOtherAccountOperations(Boolean supportsTransferFromOtherAccountOperations) {
+  public setSupportsTransferFromOtherAccountOperations(supportsTransferFromOtherAccountOperations: boolean): void {
     this.supportsTransferFromOtherAccountOperations = supportsTransferFromOtherAccountOperations;
   }
 
@@ -121,9 +123,8 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @return The account status.
    */
-  @Element ( name = "SVCSTATUS", required = true, order = 40 )
-  public AccountStatus getStatus() {
-    return status;
+  public getStatus(): AccountStatus {
+    return this.status;
   }
 
   /**
@@ -131,7 +132,16 @@ public class BankAccountInfo implements AccountInfo {
    *
    * @param status The account status.
    */
-  public void setStatus(AccountStatus status) {
+  public setStatus(status: AccountStatus): void {
     this.status = status;
   }
+}
+
+Aggregate_add( BankAccountInfo, "BANKACCTINFO" );
+ChildAggregate_add(BankAccountInfo, { name: "BANKACCTFROM", required: true, order: 0, type: BankAccountDetails, read: BankAccountInfo.prototype.getBankAccount, write: BankAccountInfo.prototype.setBankAccount });
+Element_add(BankAccountInfo, { name: "SUPTXDL", required: true, order: 10, type: Boolean, read: BankAccountInfo.prototype.getSupportsTransactionDetailOperations, write: BankAccountInfo.prototype.setSupportsTransactionDetailOperations });
+Element_add(BankAccountInfo, { name: "XFERSRC", required: true, order: 20, type: Boolean, read: BankAccountInfo.prototype.getSupportsTransferToOtherAccountOperations, write: BankAccountInfo.prototype.setSupportsTransferToOtherAccountOperations });
+Element_add(BankAccountInfo, { name: "XFERDEST", required: true, order: 30, type: Boolean, read: BankAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations, write: BankAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations });
+Element_add(BankAccountInfo, { name: "SVCSTATUS", required: true, order: 40, type: AccountStatus, read: BankAccountInfo.prototype.getStatus, write: BankAccountInfo.prototype.setStatus });
+
 }

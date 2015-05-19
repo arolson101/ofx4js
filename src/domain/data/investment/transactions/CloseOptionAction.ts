@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of action for closing a stock option.
@@ -22,20 +22,22 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum CloseOptionAction {
+export enum CloseOptionAction {
   EXERCISE,
   ASSIGN,
-  EXPIRE;
+  EXPIRE
+}
 
-  public static CloseOptionAction fromOfx(String ofxVal) {
-    if ("EXERCISE".equals(ofxVal)) {
-      return EXERCISE;
-    } else if ("ASSIGN".equals(ofxVal)) {
-      return ASSIGN;
-    } else if ("EXPIRE".equals(ofxVal)) {
-      return EXPIRE;
-    } else {
-      return null;
-    }
+export function CloseOptionAction_fromOfx(ofxVal: string): CloseOptionAction {
+  if ("EXERCISE" === ofxVal) {
+    return CloseOptionAction.EXERCISE;
+  } else if ("ASSIGN" === ofxVal) {
+    return CloseOptionAction.ASSIGN;
+  } else if ("EXPIRE" === ofxVal) {
+    return CloseOptionAction.EXPIRE;
+  } else {
+    return null;
   }
+}
+
 }

@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../domain/data/banking/BankAccountDetails'/>
+///<reference path='FinancialInstitutionAccount'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.domain.data.banking.BankAccountDetails;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
 
 /**
  * @author Ryan Heaton
  */
-public interface BankAccount extends FinancialInstitutionAccount {
+export interface BankAccount extends FinancialInstitutionAccount {
 
   /**
    * The details of the account.
    *
    * @return The details of the account.
    */
-  BankAccountDetails getDetails();
+  getDetails(): BankAccountDetails;
+}
+
 }

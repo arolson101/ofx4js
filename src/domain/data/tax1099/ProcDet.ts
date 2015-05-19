@@ -13,147 +13,148 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.tax1099;
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+module ofx4js.domain.data.tax1099 {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Aparna Gawali
  * aparna.gawali@sungard.com
  */
+export class ProcDet {
 
-
-@Aggregate ( "PROCDET_V100")
-public class ProcDet {
-
-	private String dtAqd;
-	private String dtSale;
-	private String secName;
-	private String costBasis;
-	private String saleSpr;
-	private String longShort;
-	private String wasDisAllowed;
-	private String noncoveredSec;
-	private String basisNotshown;
+	private dtAqd: string;
+	private dtSale: string;
+	private secName: string;
+	private costBasis: string;
+	private saleSpr: string;
+	private longShort: string;
+	private wasDisAllowed: string;
+	private noncoveredSec: string;
+	private basisNotshown: string;
 	/**
 	 * @return the dtAqd
 	 */
-	@Element ( name = "DTAQD", required = false, order = 0 )
-	public String getDtAqd() {
-		return dtAqd;
+	public getDtAqd(): string {
+		return this.dtAqd;
 	}
 	/**
 	 * @param dtAqd the dtAqd to set
 	 */
-	public void setDtAqd(String dtAqd) {
+	public setDtAqd(dtAqd: string): void {
 		this.dtAqd = dtAqd;
 	}
 	/**
 	 * @return the dtSale
 	 */
-	@Element ( name = "DTSALE", required = false, order = 2 )
-	public String getDtSale() {
-		return dtSale;
+	public getDtSale(): string {
+		return this.dtSale;
 	}
 	/**
 	 * @param dtSale the dtSale to set
 	 */
-	public void setDtSale(String dtSale) {
+	public setDtSale(dtSale: string): void {
 		this.dtSale = dtSale;
 	}
 	/**
 	 * @return the secName
 	 */
-	@Element ( name = "SECNAME", required = false, order = 3 )
-	public String getSecName() {
-		return secName;
+	public getSecName(): string {
+		return this.secName;
 	}
 	/**
 	 * @param secName the secName to set
 	 */
-	public void setSecName(String secName) {
+	public setSecName(secName: string): void {
 		this.secName = secName;
 	}
 	/**
 	 * @return the costBasis
 	 */
-	@Element ( name = "COSTBASIS", required = false, order = 4 )
-	public String getCostBasis() {
-		return costBasis;
+	public getCostBasis(): string {
+		return this.costBasis;
 	}
 	/**
 	 * @param costBasis the costBasis to set
 	 */
-	public void setCostBasis(String costBasis) {
+	public setCostBasis(costBasis: string): void {
 		this.costBasis = costBasis;
 	}
 	/**
 	 * @return the saleSpr
 	 */
-	@Element ( name = "SALESPR", required = false, order = 5 )
-	public String getSaleSpr() {
-		return saleSpr;
+	public getSaleSpr(): string {
+		return this.saleSpr;
 	}
 	/**
 	 * @param saleSpr the saleSpr to set
 	 */
-	public void setSaleSpr(String saleSpr) {
+	public setSaleSpr(saleSpr: string): void {
 		this.saleSpr = saleSpr;
 	}
 	/**
 	 * @return the longShort
 	 */
-	@Element ( name = "LONGSHORT", required = false, order = 6 )
-	public String getLongShort() {
-		return longShort;
+	public getLongShort(): string {
+		return this.longShort;
 	}
 	/**
 	 * @param longShort the longShort to set
 	 */
-	public void setLongShort(String longShort) {
+	public setLongShort(longShort: string): void {
 		this.longShort = longShort;
 	}
 	/**
 	 * @return the wasDisAllowed
 	 */
-	@Element ( name = "WASHSALELOSSDISALLOWED", required = false, order = 7 )
-	public String getWasDisAllowed() {
-		return wasDisAllowed;
+	public getWasDisAllowed(): string {
+		return this.wasDisAllowed;
 	}
 	/**
 	 * @param wasDisAllowed the wasDisAllowed to set
 	 */
-	public void setWasDisAllowed(String wasDisAllowed) {
+	public setWasDisAllowed(wasDisAllowed: string): void {
 		this.wasDisAllowed = wasDisAllowed;
 	}
 	/**
 	 * @return the noncoveredSec
 	 */
-	@Element ( name = "NONCOVEREDSECURITY", required = false, order = 8 )
-	public String getNoncoveredSec() {
-		return noncoveredSec;
+	public getNoncoveredSec(): string {
+		return this.noncoveredSec;
 	}
 	/**
 	 * @param noncoveredSec the noncoveredSec to set
 	 */
-	public void setNoncoveredSec(String noncoveredSec) {
+	public setNoncoveredSec(noncoveredSec: string): void {
 		this.noncoveredSec = noncoveredSec;
 	}
 	/**
 	 * @return the basisNotshown
 	 */
-	@Element ( name = "BASISNOTSHOWN", required = false, order = 9 )
-	public String getBasisNotshown() {
-		return basisNotshown;
+	public getBasisNotshown(): string {
+		return this.basisNotshown;
 	}
 	/**
 	 * @param basisNotshown the basisNotshown to set
 	 */
-	public void setBasisNotshown(String basisNotshown) {
+	public setBasisNotshown(basisNotshown: string): void {
 		this.basisNotshown = basisNotshown;
 	}
-	
-	
-	
+}
+
+Aggregate_add( ProcDet, "PROCDET_V100");
+Element_add(ProcDet, { name: "DTAQD", required: false, order: 0, type: String, read: ProcDet.prototype.getDtAqd, write: ProcDet.prototype.setDtAqd });
+Element_add(ProcDet, { name: "DTSALE", required: false, order: 2, type: String, read: ProcDet.prototype.getDtSale, write: ProcDet.prototype.setDtSale });
+Element_add(ProcDet, { name: "SECNAME", required: false, order: 3, type: String, read: ProcDet.prototype.getSecName, write: ProcDet.prototype.setSecName });
+Element_add(ProcDet, { name: "COSTBASIS", required: false, order: 4, type: String, read: ProcDet.prototype.getCostBasis, write: ProcDet.prototype.setCostBasis });
+Element_add(ProcDet, { name: "SALESPR", required: false, order: 5, type: String, read: ProcDet.prototype.getSaleSpr, write: ProcDet.prototype.setSaleSpr });
+Element_add(ProcDet, { name: "LONGSHORT", required: false, order: 6, type: String, read: ProcDet.prototype.getLongShort, write: ProcDet.prototype.setLongShort });
+Element_add(ProcDet, { name: "WASHSALELOSSDISALLOWED", required: false, order: 7, type: String, read: ProcDet.prototype.getWasDisAllowed, write: ProcDet.prototype.setWasDisAllowed });
+Element_add(ProcDet, { name: "NONCOVEREDSECURITY", required: false, order: 8, type: String, read: ProcDet.prototype.getNoncoveredSec, write: ProcDet.prototype.setNoncoveredSec });
+Element_add(ProcDet, { name: "BASISNOTSHOWN", required: false, order: 9, type: String, read: ProcDet.prototype.getBasisNotshown, write: ProcDet.prototype.setBasisNotshown });
+
 }

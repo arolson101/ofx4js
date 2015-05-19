@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseBuyInvestmentTransaction'/>
+///<reference path='BuyType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for buying mutual funds.
@@ -25,13 +29,12 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "BUYMF" )
-public class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
+export class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
 
-  private String buyType;
-  private String relatedTransactionId;
+  private buyType: string;
+  private relatedTransactionId: string;
 
-  public BuyMutualFundTransaction() {
+  constructor() {
     super(TransactionType.BUY_MUTUAL_FUND);
   }
 
@@ -43,9 +46,8 @@ public class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the buy type
    */
-  @Element( name = "BUYTYPE", required = true, order = 20)
-  public String getBuyType() {
-    return buyType;
+  public getBuyType(): string {
+    return this.buyType;
   }
 
   /**
@@ -55,7 +57,7 @@ public class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
    *
    * @param buyType the buy type
    */
-  public void setBuyType(String buyType) {
+  public setBuyType(buyType: string): void {
     this.buyType = buyType;
   }
 
@@ -64,8 +66,8 @@ public class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the type of purchase or null if it's not known
    */
-  public BuyType getBuyTypeEnum() {
-    return BuyType.fromOfx(buyType);
+  public getBuyTypeEnum(): BuyType {
+    return BuyType_fromOfx(this.buyType);
   }
 
   /**
@@ -75,9 +77,8 @@ public class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the related transaction id
    */
-  @Element( name = "RELFITID", order = 30)
-  public String getRelatedTransactionId() {
-    return relatedTransactionId;
+  public getRelatedTransactionId(): string {
+    return this.relatedTransactionId;
   }
 
   /**
@@ -87,7 +88,13 @@ public class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
    *
    * @param relatedTransactionId the related transaction id
    */
-  public void setRelatedTransactionId(String relatedTransactionId) {
+  public setRelatedTransactionId(relatedTransactionId: string): void {
     this.relatedTransactionId = relatedTransactionId;
   }
+}
+
+Aggregate_add( BuyMutualFundTransaction, "BUYMF" );
+Element_add(BuyMutualFundTransaction, { name: "BUYTYPE", required: true, order: 20, type: String, read: BuyMutualFundTransaction.prototype.getBuyType, write: BuyMutualFundTransaction.prototype.setBuyType });
+Element_add(BuyMutualFundTransaction, { name: "RELFITID", order: 30, type: String, read: BuyMutualFundTransaction.prototype.getRelatedTransactionId, write: BuyMutualFundTransaction.prototype.setRelatedTransactionId });
+
 }

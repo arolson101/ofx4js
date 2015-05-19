@@ -13,53 +13,107 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../collections/SortedSet'/>
+///<reference path='../../OFXException'/>
+///<reference path='../../OFXStatusException'/>
+///<reference path='../../client/NoOFXResponseException'/>
+///<reference path='../../UnsupportedOFXSecurityTypeException'/>
+///<reference path='../../OFXTransactionException'/>
+///<reference path='../context/OFXApplicationContextHolder'/>
+///<reference path='../../domain/data/signon/SignonRequest'/>
+///<reference path='../../domain/data/signon/SignonRequestMessageSet'/>
+///<reference path='../../domain/data/signup/SignupRequestMessageSet'/>
+///<reference path='../../domain/data/signup/SignupResponseMessageSet'/>
+///<reference path='../../domain/data/common/StatusHolder'/>
+///<reference path='../../domain/data/profile/ProfileRequestMessageSet'/>
+///<reference path='../../domain/data/profile/ProfileRequestTransaction'/>
+///<reference path='../../domain/data/profile/ProfileResponse'/>
+///<reference path='../../domain/data/profile/ProfileResponseMessageSet'/>
+///<reference path='../../domain/data/profile/ProfileResponseTransaction'/>
+///<reference path='../../domain/data/signup/AccountProfile'/>
+///<reference path='../../domain/data/signup/AccountInfoRequest'/>
+///<reference path='../../domain/data/signup/AccountInfoResponse'/>
+///<reference path='../../domain/data/ApplicationSecurity'/>
+///<reference path='../../domain/data/RequestEnvelope'/>
+///<reference path='../../domain/data/RequestMessageSet'/>
+///<reference path='../../domain/data/ResponseMessageSet'/>
+///<reference path='../net/OFXConnection'/>
+///<reference path='../net/OFXConnectionException'/>
+///<reference path='../BankAccount'/>
+///<reference path='../FinancialInstitution'/>
+///<reference path='BankingAccountImpl'/>
+///<reference path='InvestmentAccountImpl'/>
 
-package net.sf.ofx4j.client.impl;
+module ofx4js.client.impl {
 
-import net.sf.ofx4j.OFXException;
-import net.sf.ofx4j.OFXStatusException;
-import net.sf.ofx4j.UnsupportedOFXSecurityTypeException;
-import net.sf.ofx4j.OFXTransactionException;
-import net.sf.ofx4j.client.*;
-import net.sf.ofx4j.client.context.OFXApplicationContextHolder;
-import net.sf.ofx4j.domain.data.*;
-import net.sf.ofx4j.client.InvestmentAccount;
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountDetails;
-import net.sf.ofx4j.domain.data.signup.*;
-import net.sf.ofx4j.domain.data.creditcard.CreditCardAccountDetails;
-import net.sf.ofx4j.domain.data.banking.BankAccountDetails;
-import net.sf.ofx4j.domain.data.common.Status;
-import net.sf.ofx4j.domain.data.common.StatusHolder;
-import net.sf.ofx4j.domain.data.profile.*;
-import net.sf.ofx4j.domain.data.signon.SignonRequest;
-import net.sf.ofx4j.domain.data.signon.SignonRequestMessageSet;
-import net.sf.ofx4j.domain.data.signon.SignonResponse;
-import net.sf.ofx4j.domain.data.signon.SignonResponseMessageSet;
-import net.sf.ofx4j.client.net.OFXConnection;
-import net.sf.ofx4j.client.net.OFXConnectionException;
+import SortedSet = ofx4js.collections.SortedSet;
+import OFXException = ofx4js.OFXException;
+import OFXStatusException = ofx4js.OFXStatusException;
+import UnsupportedOFXSecurityTypeException = ofx4js.UnsupportedOFXSecurityTypeException;
+import OFXTransactionException = ofx4js.OFXTransactionException;
+import NoOFXResponseException = ofx4js.client.NoOFXResponseException;
+//import client.* = ofx4js.client.*;
+import OFXApplicationContextHolder = ofx4js.client.context.OFXApplicationContextHolder;
+//import data.* = ofx4js.domain.data.*;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import AccountProfile = ofx4js.domain.data.signup.AccountProfile;
+import AccountInfoRequest = ofx4js.domain.data.signup.AccountInfoRequest;
+import AccountInfoRequestTransaction = ofx4js.domain.data.signup.AccountInfoRequestTransaction;
+import AccountInfoResponse = ofx4js.domain.data.signup.AccountInfoResponse;
+import AccountInfoResponseTransaction = ofx4js.domain.data.signup.AccountInfoResponseTransaction;
+import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
+import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+import ProfileRequest = ofx4js.domain.data.profile.ProfileRequest;
+import ProfileRequestMessageSet = ofx4js.domain.data.profile.ProfileRequestMessageSet;
+import ProfileRequestTransaction = ofx4js.domain.data.profile.ProfileRequestTransaction;
+import ProfileResponse = ofx4js.domain.data.profile.ProfileResponse;
+import ProfileResponseMessageSet = ofx4js.domain.data.profile.ProfileResponseMessageSet;
+import ProfileResponseTransaction = ofx4js.domain.data.profile.ProfileResponseTransaction;
+import InvestmentAccount = ofx4js.client.InvestmentAccount;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+//import signup.* = ofx4js.domain.data.signup.*;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+import Status = ofx4js.domain.data.common.Status;
+import KnownCode = ofx4js.domain.data.common.KnownCode;
+import StatusHolder = ofx4js.domain.data.common.StatusHolder;
+import instanceof_StatusHolder = ofx4js.domain.data.common.instanceof_StatusHolder;
+import SignonRequest = ofx4js.domain.data.signon.SignonRequest;
+//import profile.* = ofx4js.domain.data.signon.SignonRequest;
+import SignonRequestMessageSet = ofx4js.domain.data.signon.SignonRequestMessageSet;
+import SignonResponse = ofx4js.domain.data.signon.SignonResponse;
+import SignonResponseMessageSet = ofx4js.domain.data.signon.SignonResponseMessageSet;
+import SignupRequestMessageSet = ofx4js.domain.data.signup.SignupRequestMessageSet;
+import SignupResponseMessageSet = ofx4js.domain.data.signup.SignupResponseMessageSet;
+import OFXConnection = ofx4js.client.net.OFXConnection;
+import OFXConnectionException = ofx4js.client.net.OFXConnectionException;
+import BankAccount = ofx4js.client.BankAccount;
 
-import java.net.URL;
-import java.util.Date;
-import java.util.TreeSet;
-import java.util.Set;
-import java.util.Collection;
+//import java.net.URL;
 
 /**
  * Base implementation for the financial institution.
  *
  * @author Ryan Heaton
  */
-public class FinancialInstitutionImpl implements FinancialInstitution {
+export class FinancialInstitutionImpl implements FinancialInstitution {
 
-  private final OFXConnection connection;
-  private final FinancialInstitutionData data;
+  private connection: OFXConnection;
+  private data: FinancialInstitutionData;
 
-  public FinancialInstitutionImpl(FinancialInstitutionData data, OFXConnection connection) {
+  constructor(data: FinancialInstitutionData, connection: OFXConnection) {
     if (data == null) {
-      throw new IllegalArgumentException("Data cannot be null");
+      throw new Error("Data cannot be null");
     }
     if (connection == null) {
-      throw new IllegalArgumentException("An OFX connection must be supplied");
+      throw new Error("An OFX connection must be supplied");
     }
 
     this.data = data;
@@ -67,39 +121,45 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
   }
 
   // Inherited.
-  public FinancialInstitutionProfile readProfile() throws OFXException {
-    RequestEnvelope request = createAuthenticatedRequest(SignonRequest.ANONYMOUS_USER, SignonRequest.ANONYMOUS_USER);
-    ProfileRequestMessageSet profileRequest = new ProfileRequestMessageSet();
-    profileRequest.setProfileRequest(createProfileTransaction());
-    request.getMessageSets().add(profileRequest);
-    ResponseEnvelope response = sendRequest(request, getData().getOFXURL());
-    doGeneralValidationChecks(request, response);
-    return getProfile(response);
+  public readProfile() /*throws OFXException*/: Promise<FinancialInstitutionProfile> {
+    var request: RequestEnvelope = this.createAuthenticatedRequest(SignonRequest.ANONYMOUS_USER, SignonRequest.ANONYMOUS_USER);
+    var profileRequest: ProfileRequestMessageSet = new ProfileRequestMessageSet();
+    profileRequest.setProfileRequest(this.createProfileTransaction());
+    request.getMessageSets().insert(profileRequest);
+    var self = this;
+    return self.sendRequest(request, this.getData().getOFXURL())
+    .then(function(response: ResponseEnvelope): FinancialInstitutionProfile {
+      self.doGeneralValidationChecks(request, response);
+      return self.getProfile(response);
+    });
   }
 
   // Inherited.
-  public Collection<AccountProfile> readAccountProfiles(String username, String password) throws OFXException {
-    RequestEnvelope request = createAuthenticatedRequest(username, password);
-    SignupRequestMessageSet signupRequest = new SignupRequestMessageSet();
-    signupRequest.setAccountInfoRequest(createAccountInfoTransaction());
-    request.getMessageSets().add(signupRequest);
-    ResponseEnvelope response = sendRequest(request, getData().getOFXURL());
-    doGeneralValidationChecks(request, response);
-    return getAccountProfiles(response);
+  public readAccountProfiles(username: string, password: string) /*throws OFXException*/: Promise<Array<AccountProfile>> {
+    var request: RequestEnvelope = this.createAuthenticatedRequest(username, password);
+    var signupRequest: SignupRequestMessageSet = new SignupRequestMessageSet();
+    signupRequest.setAccountInfoRequest(this.createAccountInfoTransaction());
+    request.getMessageSets().insert(signupRequest);
+    var self = this;
+    return this.sendRequest(request, this.getData().getOFXURL())
+    .then(function(response: ResponseEnvelope): Array<AccountProfile> {
+      self.doGeneralValidationChecks(request, response);
+      return self.getAccountProfiles(response);
+    });
   }
 
   // Inherited.
-  public BankAccount loadBankAccount(BankAccountDetails details, String username, String password) {
+  public loadBankAccount(details: BankAccountDetails, username: string, password: string): BankAccount {
     return new BankingAccountImpl(details, username, password, this);
   }
 
   // Inherited.
-  public CreditCardAccount loadCreditCardAccount(CreditCardAccountDetails details, String username, String password) {
+  public loadCreditCardAccount(details: CreditCardAccountDetails, username: string, password: string): CreditCardAccount {
     return new CreditCardAccountImpl(details, username, password, this);
   }
 
   // Inherited
-  public InvestmentAccount loadInvestmentAccount(InvestmentAccountDetails details, String username, String password) {
+  public loadInvestmentAccount(details: InvestmentAccountDetails, username: string, password: string): InvestmentAccount {
     return new InvestmentAccountImpl(details, username, password, this);
   }
 
@@ -110,25 +170,25 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    * @param password The password.
    * @return The request envelope.
    */
-  protected RequestEnvelope createAuthenticatedRequest(String username, String password) {
-    RequestEnvelope request = new RequestEnvelope();
-    TreeSet<RequestMessageSet> messageSets = new TreeSet<RequestMessageSet>();
-    SignonRequestMessageSet signonRequest = new SignonRequestMessageSet();
-    signonRequest.setSignonRequest(createSignonRequest(username, password));
-    messageSets.add(signonRequest);
+  public createAuthenticatedRequest(username: string, password: string): RequestEnvelope {
+    var request: RequestEnvelope = new RequestEnvelope();
+    var messageSets: SortedSet<RequestMessageSet> = new SortedSet<RequestMessageSet>(RequestMessageSet.contentCompare);
+    var signonRequest: SignonRequestMessageSet = new SignonRequestMessageSet();
+    signonRequest.setSignonRequest(this.createSignonRequest(username, password));
+    messageSets.insert(signonRequest);
     request.setMessageSets(messageSets);
     return request;
   }
 
-  /**
-   * Send a request.
-   *
-   * @param request The request.
-   * @return The request.
-   */
-  protected ResponseEnvelope sendRequest(RequestEnvelope request) throws OFXConnectionException {
-    return getConnection().sendRequest(request, getData().getOFXURL());
-  }
+//  /**
+//   * Send a request.
+//   *
+//   * @param request The request.
+//   * @return The request.
+//   */
+//  protected sendRequest(request: RequestEnvelope) /*throws OFXConnectionException*/: ResponseEnvelope {
+//    return this.getConnection().sendRequest(request, getData().getOFXURL());
+//  }
 
   /**
    * Send a request to a specific URL.
@@ -137,8 +197,8 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    * @param url The url.
    * @return The request.
    */
-  protected ResponseEnvelope sendRequest(RequestEnvelope request, URL url) throws OFXConnectionException {
-    return getConnection().sendRequest(request, url);
+  public sendRequest(request: RequestEnvelope, url: string = this.getData().getOFXURL()) /*throws OFXConnectionException*/: Promise<ResponseEnvelope> {
+    return this.getConnection().sendRequest(request, url);
   }
 
   /**
@@ -147,19 +207,19 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    * @param response The response envelope.
    * @return The profile.
    */
-  protected FinancialInstitutionProfile getProfile(ResponseEnvelope response) throws OFXException {
+  protected getProfile(response: ResponseEnvelope) /*throws OFXException*/: FinancialInstitutionProfile {
 
-    ProfileResponseMessageSet profileSet = (ProfileResponseMessageSet) response.getMessageSet(MessageSetType.profile);
+    var profileSet: ProfileResponseMessageSet = <ProfileResponseMessageSet> response.getMessageSet(MessageSetType.profile);
     if (profileSet == null) {
       throw new OFXException("No profile response set.");
     }
 
-    ProfileResponseTransaction transactionResponse = profileSet.getProfileResponse();
+    var transactionResponse: ProfileResponseTransaction = profileSet.getProfileResponse();
     if (transactionResponse == null) {
       throw new OFXException("No profile transaction wrapper.");
     }
 
-    ProfileResponse message = transactionResponse.getMessage();
+    var message: ProfileResponse = transactionResponse.getMessage();
     if (message == null) {
       throw new OFXException("No profile message.");
     }
@@ -173,53 +233,58 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    * @param response Their response.
    * @throws OFXException Upon invalid response.
    */
-  protected void doGeneralValidationChecks(RequestEnvelope request, ResponseEnvelope response) throws OFXException {
+  public doGeneralValidationChecks(request: RequestEnvelope, response: ResponseEnvelope) /*throws OFXException*/: void {
     if (response.getSecurity() != ApplicationSecurity.NONE) {
-      throw new UnsupportedOFXSecurityTypeException(String.format("Unable to participate in %s security.", response.getSecurity()));
+      throw new UnsupportedOFXSecurityTypeException("Unable to participate in " + response.getSecurity() + " security.");
     }
 
-    if (!request.getUID().equals(response.getUID())) {
-      throw new OFXException(String.format("Invalid transaction ID '%s' in response.  Expected: %s", response.getUID(), request));
+    if (request.getUID() !== response.getUID()) {
+      throw new OFXException("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + request);
     }
 
-    for (RequestMessageSet requestSet : request.getMessageSets()) {
-      ResponseMessageSet responseSet = response.getMessageSet(requestSet.getType());
+    for (var requestSet_ in request.getMessageSets()) {
+      var requestSet: RequestMessageSet = requestSet_;
+      var responseSet: ResponseMessageSet = response.getMessageSet(requestSet.getType());
       if (responseSet == null) {
         throw new NoOFXResponseException("No response for the " + requestSet.getType() + " request.");
       }
 
       if (responseSet.getType() == MessageSetType.signon) {
-        SignonResponse signonResponse = ((SignonResponseMessageSet) responseSet).getSignonResponse();
+        var signonResponse: SignonResponse = (<SignonResponseMessageSet> responseSet).getSignonResponse();
 
         if (signonResponse == null) {
           throw new NoOFXResponseException("No signon response.");
         }
       }
 
-      Set<String> transactionIds = new TreeSet<String>();
-      for (RequestMessage requestMessage : requestSet.getRequestMessages()) {
+      var transactionIds: StringSet = {};
+      for (var requestMessage_ in requestSet.getRequestMessages()) {
+        var requestMessage: RequestMessage = requestMessage_;
         if (requestMessage instanceof TransactionWrappedRequestMessage) {
-          transactionIds.add(((TransactionWrappedRequestMessage) requestMessage).getUID());
+          transactionIds[(<TransactionWrappedRequestMessage<RequestMessage>> requestMessage).getUID()] = true;
         }
       }
 
-      for (ResponseMessage responseMessage : responseSet.getResponseMessages()) {
-        if (responseMessage instanceof StatusHolder) {
-          validateStatus((StatusHolder) responseMessage);
+      for (var responseMessage_ in responseSet.getResponseMessages()) {
+        var responseMessage: ResponseMessage = responseMessage_;
+        if (instanceof_StatusHolder(responseMessage)) {
+          this.validateStatus(<StatusHolder><any>responseMessage);
         }
 
         if (responseMessage instanceof TransactionWrappedResponseMessage) {
-          String uid = ((TransactionWrappedResponseMessage) responseMessage).getUID();
+          var uid: string = (<TransactionWrappedResponseMessage<ResponseMessage>> responseMessage).getUID();
           if (uid == null) {
             throw new OFXTransactionException("Invalid response transaction: no UID.");
           }
-          else if (!transactionIds.remove(uid)) {
+          else if (!(uid in transactionIds)) {
             throw new OFXTransactionException("Response to an unknown transaction: " + uid + ".");
+          } else {
+            delete transactionIds[uid];
           }
         }
       }
 
-      if (!transactionIds.isEmpty()) {
+      if (transactionIds != {}) {
         throw new OFXTransactionException("No response to the following transactions: " + transactionIds);
       }
     }
@@ -230,14 +295,14 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @param statusHolder The status holder.
    */
-  protected void validateStatus(StatusHolder statusHolder) throws OFXException {
-    Status status = statusHolder.getStatus();
+  protected validateStatus(statusHolder: StatusHolder) /*throws OFXException*/: void {
+    var status: Status = statusHolder.getStatus();
     if (status == null) {
       throw new OFXException("Invalid OFX response: no status returned in the " + statusHolder.getStatusHolderName() + " response.");
     }
 
-    if (!Status.KnownCode.SUCCESS.equals(status.getCode())) {
-      String message = status.getMessage();
+    if (KnownCode.SUCCESS != status.getCode()) {
+      var message: string = status.getMessage();
       if (message == null) {
         message = "No response status code.";
 
@@ -255,9 +320,9 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @return The transaction message.
    */
-  protected ProfileRequestTransaction createProfileTransaction() {
-    ProfileRequestTransaction profileTx = new ProfileRequestTransaction();
-    profileTx.setMessage(createProfileRequest());
+  protected createProfileTransaction(): ProfileRequestTransaction {
+    var profileTx: ProfileRequestTransaction = new ProfileRequestTransaction();
+    profileTx.setMessage(this.createProfileRequest());
     return profileTx;
   }
 
@@ -266,8 +331,8 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @return The profile request.
    */
-  protected ProfileRequest createProfileRequest() {
-    ProfileRequest profileRequest = new ProfileRequest();
+  protected createProfileRequest(): ProfileRequest {
+    var profileRequest: ProfileRequest = new ProfileRequest();
     profileRequest.setProfileLastUpdated(new Date(0));
     return profileRequest;
   }
@@ -279,12 +344,12 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    * @param password The password.
    * @return The signon request.
    */
-  protected SignonRequest createSignonRequest(String username, String password) {
-    SignonRequest signonRequest = new SignonRequest();
+  protected createSignonRequest(username: string, password: string): SignonRequest {
+    var signonRequest: SignonRequest = new SignonRequest();
     signonRequest.setTimestamp(new Date());
-    net.sf.ofx4j.domain.data.signon.FinancialInstitution fi = new net.sf.ofx4j.domain.data.signon.FinancialInstitution();
-    fi.setId(getData().getFinancialInstitutionId());
-    fi.setOrganization(getData().getOrganization());
+    var fi: ofx4js.domain.data.signon.FinancialInstitution = new ofx4js.domain.data.signon.FinancialInstitution();
+    fi.setId(this.getData().getFinancialInstitutionId());
+    fi.setOrganization(this.getData().getOrganization());
     signonRequest.setFinancialInstitution(fi);
     signonRequest.setUserId(username);
     signonRequest.setPassword(password);
@@ -298,9 +363,9 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @return The transaction.
    */
-  protected AccountInfoRequestTransaction createAccountInfoTransaction() {
-    AccountInfoRequestTransaction transaction = new AccountInfoRequestTransaction();
-    transaction.setMessage(createAccountInfoRequest());
+  protected createAccountInfoTransaction(): AccountInfoRequestTransaction {
+    var transaction: AccountInfoRequestTransaction = new AccountInfoRequestTransaction();
+    transaction.setMessage(this.createAccountInfoRequest());
     return transaction;
   }
 
@@ -309,7 +374,7 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @return The account info request.
    */
-  protected AccountInfoRequest createAccountInfoRequest() {
+  protected createAccountInfoRequest(): AccountInfoRequest {
     return new AccountInfoRequest();
   }
 
@@ -319,18 +384,18 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    * @param response The response envelope.
    * @return The account profiles.
    */
-  protected Collection<AccountProfile> getAccountProfiles(ResponseEnvelope response) throws OFXException {
-    SignupResponseMessageSet messageSet = (SignupResponseMessageSet) response.getMessageSet(MessageSetType.signup);
+  protected getAccountProfiles(response: ResponseEnvelope) /*throws OFXException*/: Array<AccountProfile> {
+    var messageSet: SignupResponseMessageSet = <SignupResponseMessageSet> response.getMessageSet(MessageSetType.signup);
     if (messageSet == null) {
       throw new OFXException("No signup response message set.");
     }
 
-    AccountInfoResponseTransaction transaction = messageSet.getAccountInfoResponse();
+    var transaction: AccountInfoResponseTransaction = messageSet.getAccountInfoResponse();
     if (transaction == null) {
       throw new OFXException("No account info transaction in the signup response.");
     }
 
-    AccountInfoResponse infoResponse = transaction.getMessage();
+    var infoResponse: AccountInfoResponse = transaction.getMessage();
     if (infoResponse == null) {
       throw new OFXException("No account info response in the transaction.");
     }
@@ -343,8 +408,8 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @return The connection used by this implementation.
    */
-  public OFXConnection getConnection() {
-    return connection;
+  public getConnection(): OFXConnection {
+    return this.connection;
   }
 
   /**
@@ -352,7 +417,9 @@ public class FinancialInstitutionImpl implements FinancialInstitution {
    *
    * @return The financial institution data.
    */
-  public FinancialInstitutionData getData() {
-    return data;
+  public getData(): FinancialInstitutionData {
+    return this.data;
   }
+}
+
 }

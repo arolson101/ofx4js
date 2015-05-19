@@ -13,75 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../domain/data/MessageSetProfile'/>
+///<reference path='../domain/data/MessageSetType'/>
+///<reference path='../domain/data/SignonProfile'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.domain.data.MessageSetProfile;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.SignonProfile;
-
-import java.util.Date;
+import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import SignonProfile = ofx4js.domain.data.SignonProfile;
 
 /**
  * @author Ryan Heaton
  */
-public interface FinancialInstitutionProfile {
+export interface FinancialInstitutionProfile {
 
   /**
    * When this profile was last updated.
    *
    * @return When this profile was last updated.
    */
-  Date getLastUpdated();
+  getLastUpdated(): Date;
 
   /**
    * The name of the financial institution.
    *
    * @return The name of the financial institution.
    */
-  String getFinancialInstitutionName();
+  getFinancialInstitutionName(): string;
 
   /**
    * The address of the financial institution.
    *
    * @return The address of the financial institution.
    */
-  String getAddress1();
+  getAddress1(): string;
 
   /**
    * The address of the financial institution.
    *
    * @return The address of the financial institution.
    */
-  String getAddress2();
+  getAddress2(): string;
 
   /**
    * The address of the financial institution.
    *
    * @return The address of the financial institution.
    */
-  String getAddress3();
+  getAddress3(): string;
 
   /**
    * The city of the financial institution.
    *
    * @return The city of the financial institution.
    */
-  String getCity();
+  getCity(): string;
 
   /**
    * The state of this financial institution.
    *
    * @return The state of this financial institution.
    */
-  String getState();
+  getState(): string;
 
   /**
    * The postal code of this financial institution.
    *
    * @return The postal code of this financial institution.
    */
-  String getZip();
+  getZip(): string;
 
   /**
    * The country code for this financial institution.
@@ -89,42 +90,42 @@ public interface FinancialInstitutionProfile {
    * @return The country code for this financial institution.
    * @see java.util.Locale#getISO3Country()
    */
-  String getCountry();
+  getCountry(): string;
 
   /**
    * The phone number to customer service.
    *
    * @return The phone number to customer service.
    */
-  String getCustomerServicePhone();
+  getCustomerServicePhone(): string;
 
   /**
    * The phone number to tech support.
    *
    * @return The phone number to tech support.
    */
-  String getTechnicalSupportPhone();
+  getTechnicalSupportPhone(): string;
 
   /**
    * The fax number.
    *
    * @return The fax number.
    */
-  String getFax();
+  getFax(): string;
 
   /**
    * URL for the financial institution.
    *
    * @return URL for the financial institution.
    */
-  String getSiteURL();
+  getSiteURL(): string;
 
   /**
    * The email for this FI
    *
    * @return The email for this FI
    */
-  String getEmail();
+  getEmail(): string;
 
   /**
    * Get the message set profile for the specified message set.
@@ -133,7 +134,7 @@ public interface FinancialInstitutionProfile {
    * @return The message set profile information, or null if the FI doesn't support any message sets of the specified type.
    * @throws IllegalStateException If multiple versions of the specified message set exist.
    */
-  MessageSetProfile getMessageSetProfile(MessageSetType type);
+  getMessageSetProfile(type: MessageSetType): MessageSetProfile;
 
   /**
    * Get the message set profile for the specified message set and the specified version.
@@ -142,7 +143,7 @@ public interface FinancialInstitutionProfile {
    * @param version The version for which to retrieve the profile.
    * @return The message set profile information, or null if the FI doesn't support the specified message set of the specified version.
    */
-  MessageSetProfile getMessageSetProfile(MessageSetType type, String version);
+  getMessageSetProfile(type: MessageSetType, version: string): MessageSetProfile;
 
   /**
    * Get the signon profile for the specified message set.
@@ -150,5 +151,7 @@ public interface FinancialInstitutionProfile {
    * @param messageSet The message set.
    * @return The signon profile, or null if none was found.
    */
-  SignonProfile getSignonProfile(MessageSetProfile messageSet);
+  getSignonProfile(messageSet: MessageSetProfile): SignonProfile;
+}
+
 }

@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='SecurityList'/>
+///<reference path='SecurityListResponseTransaction'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Jon Perlow
  */
-@Aggregate( "SECLISTMSGSRSV1" )
-public class SecurityListResponseMessageSet extends ResponseMessageSet {
+export class SecurityListResponseMessageSet extends ResponseMessageSet {
 
-  private SecurityListResponseTransaction securityListResponse;
-  private SecurityList securityList;
+  private securityListResponse: SecurityListResponseTransaction;
+  private securityList: SecurityList;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.investment_security;
   }
 
@@ -46,9 +48,8 @@ public class SecurityListResponseMessageSet extends ResponseMessageSet {
    *
    * @return The security list response list.
    */
-  @ChildAggregate( order = 0 )
-  public SecurityListResponseTransaction getSecurityListResponse() {
-    return securityListResponse;
+  public getSecurityListResponse(): SecurityListResponseTransaction {
+    return this.securityListResponse;
   }
 
   /**
@@ -56,23 +57,28 @@ public class SecurityListResponseMessageSet extends ResponseMessageSet {
    *
    * @param securityListResponse The security list response.
    */
-  public void setSecurityListResponse(SecurityListResponseTransaction securityListResponse) {
+  public setSecurityListResponse(securityListResponse: SecurityListResponseTransaction) {
     this.securityListResponse = securityListResponse;
   }
 
-  @ChildAggregate( order = 10 )
-  public SecurityList getSecurityList() {
-    return securityList;
+  public getSecurityList(): SecurityList {
+    return this.securityList;
   }
 
-  public void setSecurityList(SecurityList securityList) {
+  public setSecurityList(securityList: SecurityList): void {
     this.securityList = securityList;
   }
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    ArrayList<ResponseMessage> ret = new ArrayList<ResponseMessage>();
-    ret.add(securityListResponse);
+  public getResponseMessages(): Array<ResponseMessage> {
+    var ret: Array<ResponseMessage> = new Array<ResponseMessage>();
+    ret.push(this.securityListResponse);
     return ret;
   }
+}
+
+Aggregate_add( SecurityListResponseMessageSet, "SECLISTMSGSRSV1" );
+ChildAggregate_add(SecurityListResponseMessageSet, { order: 0, type: SecurityListResponseTransaction, read: SecurityListResponseMessageSet.prototype.getSecurityListResponse, write: SecurityListResponseMessageSet.prototype.setSecurityListResponse });
+ChildAggregate_add(SecurityListResponseMessageSet, { order: 10, type: SecurityList, read: SecurityListResponseMessageSet.prototype.getSecurityList, write: SecurityListResponseMessageSet.prototype.setSecurityList });
+
 }

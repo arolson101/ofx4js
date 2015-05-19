@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='PasswordChangeResponseTransaction'/>
+///<reference path='SignonResponse'/>
 
-package net.sf.ofx4j.domain.data.signon;
+module ofx4js.domain.data.signon {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessageSet;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
-
-import java.util.List;
-import java.util.ArrayList;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * The sign-on response message set.
@@ -31,13 +35,12 @@ import java.util.ArrayList;
  * @author Ryan Heaton
  * @see "Section 2.5, OFX Spec."
  */
-@Aggregate ("SIGNONMSGSRSV1")
-public class SignonResponseMessageSet extends ResponseMessageSet {
+export class SignonResponseMessageSet extends ResponseMessageSet {
 
-  private SignonResponse signonResponse;
-  private PasswordChangeResponseTransaction passwordChangeResponse;
+  private signonResponse: SignonResponse;
+  private passwordChangeResponse: PasswordChangeResponseTransaction;
 
-  public MessageSetType getType() {
+  public getType(): MessageSetType {
     return MessageSetType.signon;
   }
 
@@ -46,9 +49,8 @@ public class SignonResponseMessageSet extends ResponseMessageSet {
    *
    * @return The message for this message set.
    */
-  @ChildAggregate ( order = 0 )
-  public SignonResponse getSignonResponse() {
-    return signonResponse;
+  public getSignonResponse(): SignonResponse {
+    return this.signonResponse;
   }
 
   /**
@@ -56,7 +58,7 @@ public class SignonResponseMessageSet extends ResponseMessageSet {
    *
    * @param signonResponse The message for this message set.
    */
-  public void setSignonResponse(SignonResponse signonResponse) {
+  public setSignonResponse(signonResponse: SignonResponse): void {
     this.signonResponse = signonResponse;
   }
 
@@ -65,9 +67,8 @@ public class SignonResponseMessageSet extends ResponseMessageSet {
    *
    * @return The password change response.
    */
-  @ChildAggregate ( order = 10 )
-  public PasswordChangeResponseTransaction getPasswordChangeResponse() {
-    return passwordChangeResponse;
+  public getPasswordChangeResponse(): PasswordChangeResponseTransaction {
+    return this.passwordChangeResponse;
   }
 
   /**
@@ -75,20 +76,26 @@ public class SignonResponseMessageSet extends ResponseMessageSet {
    *
    * @param passwordChangeResponse The password change response.
    */
-  public void setPasswordChangeResponse(PasswordChangeResponseTransaction passwordChangeResponse) {
+  public setPasswordChangeResponse(passwordChangeResponse: PasswordChangeResponseTransaction): void {
     this.passwordChangeResponse = passwordChangeResponse;
   }
 
   //todo: challenge request/response
 
   // Inherited.
-  public List<ResponseMessage> getResponseMessages() {
-    ArrayList<ResponseMessage> messages = new ArrayList<ResponseMessage>();
+  public getResponseMessages(): Array<ResponseMessage> {
+    var messages: Array<ResponseMessage> = new Array<ResponseMessage>();
 
-    if (getSignonResponse() != null) {
-      messages.add(getSignonResponse());
+    if (this.getSignonResponse() != null) {
+      messages.push(this.getSignonResponse());
     }
 
     return messages;
   }
+}
+
+Aggregate_add(SignonResponseMessageSet, "SIGNONMSGSRSV1");
+ChildAggregate_add(SignonResponseMessageSet, { order: 0, type: SignonResponse, read: SignonResponseMessageSet.prototype.getSignonResponse, write: SignonResponseMessageSet.prototype.setSignonResponse });
+ChildAggregate_add(SignonResponseMessageSet, { order: 10, type: PasswordChangeResponseTransaction, read: SignonResponseMessageSet.prototype.getPasswordChangeResponse, write: SignonResponseMessageSet.prototype.setPasswordChangeResponse });
+
 }

@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.profile.VersionSpecificMessageSetInfo;
-import net.sf.ofx4j.meta.Aggregate;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Jon Perlow
  */
-@Aggregate( "SIGNONMSGSETV1" )
-public class SignOnV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+export class SignOnV1MessageSetInfo extends VersionSpecificMessageSetInfo {
   
-  public MessageSetType getMessageSetType() {
+  public getMessageSetType(): MessageSetType {
     return MessageSetType.signon;
   }
+}
+
+Aggregate_add( SignOnV1MessageSetInfo, "SIGNONMSGSETV1" );
+
 }

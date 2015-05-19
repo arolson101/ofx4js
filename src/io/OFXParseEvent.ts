@@ -14,35 +14,36 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.io;
+module ofx4js.io {
+
+export enum OFXParseEventType {
+
+  CHARACTERS,
+
+  ELEMENT
+}
 
 /**
  * An event during OFX parsing.
  *
  * @author Ryan Heaton
  */
-public class OFXParseEvent {
+export class OFXParseEvent {
+  private eventType: OFXParseEventType;
+  private eventValue: string;
 
-  public static enum Type {
-
-    CHARACTERS,
-
-    ELEMENT
-  }
-
-  private final Type eventType;
-  private final String eventValue;
-
-  public OFXParseEvent(Type eventType, String eventValue) {
+  constructor(eventType: OFXParseEventType, eventValue: string) {
     this.eventType = eventType;
     this.eventValue = eventValue;
   }
 
-  public Type getEventType() {
-    return eventType;
+  public getEventType(): OFXParseEventType {
+    return this.eventType;
   }
 
-  public String getEventValue() {
-    return eventValue;
+  public getEventValue(): string {
+    return this.eventValue;
   }
+}
+
 }

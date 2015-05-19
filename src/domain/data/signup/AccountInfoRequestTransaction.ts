@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='AccountInfoRequest'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedRequestMessage;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Aggregate;
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "ACCTINFOTRNRQ" )
-public class AccountInfoRequestTransaction extends TransactionWrappedRequestMessage<AccountInfoRequest> {
+export class AccountInfoRequestTransaction extends TransactionWrappedRequestMessage<AccountInfoRequest> {
 
-  private AccountInfoRequest message;
+  private message: AccountInfoRequest;
 
   /**
    * The wrapped message.
    *
    * @return The wrapped message.
    */
-  @ChildAggregate ( required = true, order = 30 )
-  public AccountInfoRequest getMessage() {
-    return message;
+  public getMessage(): AccountInfoRequest {
+    return this.message;
   }
 
   /**
@@ -43,12 +45,17 @@ public class AccountInfoRequestTransaction extends TransactionWrappedRequestMess
    *
    * @param message The wrapped message.
    */
-  public void setMessage(AccountInfoRequest message) {
+  public setMessage(message: AccountInfoRequest): void {
     this.message = message;
   }
 
   // Inherited.
-  public void setWrappedMessage(AccountInfoRequest message) {
-    setMessage(message);
+  public setWrappedMessage(message: AccountInfoRequest): void {
+    this.setMessage(message);
   }
+}
+
+Aggregate_add( AccountInfoRequestTransaction, "ACCTINFOTRNRQ" );
+ChildAggregate_add(AccountInfoRequestTransaction, { required: true, order: 30, type: AccountInfoRequest, read: AccountInfoRequestTransaction.prototype.getMessage, write: AccountInfoRequestTransaction.prototype.setMessage });
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * Call type for debt.
@@ -22,23 +22,25 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum CallType {
+export enum CallType {
   CALL,
   PUT,
   PREFUND,
-  MATURITY;
+  MATURITY
+}
 
-  public static CallType fromOfx(String ofxVal) {
-    if ("CALL".equals(ofxVal)) {
-      return CALL;
-    } else if ("PUT".equals(ofxVal)) {
-      return PUT;
-    } else if ("PREFUND".equals(ofxVal)) {
-      return PREFUND;
-    } else if ("MATURITY".equals(ofxVal)) {
-      return MATURITY;
-    } else {
-      return null;
-    }
+export function CallType_fromOfx(ofxVal: string): CallType {
+  if ("CALL" === ofxVal) {
+    return CallType.CALL;
+  } else if ("PUT" === ofxVal) {
+    return CallType.PUT;
+  } else if ("PREFUND" === ofxVal) {
+    return CallType.PREFUND;
+  } else if ("MATURITY" === ofxVal) {
+    return CallType.MATURITY;
+  } else {
+    return null;
   }
+}
+
 }

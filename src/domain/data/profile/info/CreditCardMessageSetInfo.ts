@@ -13,27 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../profile/AbstractMessageSetInfo'/>
+///<reference path='CreditCardV1MessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.profile.AbstractMessageSetInfo;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "CREDITCARDMSGSET" )
-public class CreditCardMessageSetInfo extends AbstractMessageSetInfo {
+export class CreditCardMessageSetInfo extends AbstractMessageSetInfo {
 
-  private CreditCardV1MessageSetInfo version1Info;
+  private version1Info: CreditCardV1MessageSetInfo;
 
-  @ChildAggregate ( order = 0 )
-  public CreditCardV1MessageSetInfo getVersion1Info() {
-    return version1Info;
+  public getVersion1Info(): CreditCardV1MessageSetInfo {
+    return this.version1Info;
   }
 
-  public void setVersion1Info(CreditCardV1MessageSetInfo version1Info) {
+  public setVersion1Info(version1Info: CreditCardV1MessageSetInfo): void {
     this.version1Info = version1Info;
   }
+}
+
+Aggregate_add( CreditCardMessageSetInfo, "CREDITCARDMSGSET" );
+ChildAggregate_add(CreditCardMessageSetInfo, { order: 0, type: CreditCardV1MessageSetInfo, read: CreditCardMessageSetInfo.prototype.getVersion1Info, write: CreditCardMessageSetInfo.prototype.setVersion1Info });
+
 }

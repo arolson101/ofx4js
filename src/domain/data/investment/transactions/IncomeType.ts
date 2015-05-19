@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of income.
@@ -22,26 +22,28 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum IncomeType {
+export enum IncomeType {
   LONG_TERM_CAP_GAINS,
   SHORT_TERM_CAP_GAINS,
   DIVIDEND,
   INTEREST,
-  MISC;
+  MISC
+}
 
-  public static IncomeType fromOfx(String ofxVal) {
-    if ("CGLONG".equals(ofxVal)) {
-      return LONG_TERM_CAP_GAINS;
-    } else if ("CGSHORT".equals(ofxVal)) {
-      return SHORT_TERM_CAP_GAINS;
-    } else if ("DIV".equals(ofxVal)) {
-      return DIVIDEND;
-    } else if ("INTEREST".equals(ofxVal)) {
-      return INTEREST;
-    } else if ("MISC".equals(ofxVal)) {
-      return MISC;
-    } else {
-      return null;
-    }
+export function IncomeType_fromOfx(ofxVal: string): IncomeType {
+  if ("CGLONG" === ofxVal) {
+    return IncomeType.LONG_TERM_CAP_GAINS;
+  } else if ("CGSHORT" === ofxVal) {
+    return IncomeType.SHORT_TERM_CAP_GAINS;
+  } else if ("DIV" === ofxVal) {
+    return IncomeType.DIVIDEND;
+  } else if ("INTEREST" === ofxVal) {
+    return IncomeType.INTEREST;
+  } else if ("MISC" === ofxVal) {
+    return IncomeType.MISC;
+  } else {
+    return null;
   }
+}
+
 }

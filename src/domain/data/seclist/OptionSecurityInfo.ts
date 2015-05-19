@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='OptionType'/>
+///<reference path='AssetClass'/>
 
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about an option security.
@@ -27,16 +30,15 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate( "OPTINFO" )
-public class OptionSecurityInfo extends BaseSecurityInfo {
+export class OptionSecurityInfo extends BaseSecurityInfo {
 
-  private String optionType;
-  private Double strikePrice;
-  private Date expirationDate;
-  private Integer sharesPerContact;
-  private SecurityId underlyingSecurity;
-  private String assetClass;
-  private String fiAssetClass;
+  private optionType: string;
+  private strikePrice: number;
+  private expirationDate: Date;
+  private sharesPerContact: number;
+  private underlyingSecurity: SecurityId;
+  private assetClass: string;
+  private fiAssetClass: string;
 
   /**
    * Gets the type of option. One of "PUT" or "CALL". This is a required field according to the
@@ -44,9 +46,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the option type
    */
-  @Element( name = "OPTTYPE", order = 20)
-  public String getOptionType() {
-    return optionType;
+  public getOptionType(): string {
+    return this.optionType;
   }
 
   /**
@@ -55,7 +56,7 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param optionType the option type
    */
-  public void setOptionType(String optionType) {
+  public setOptionType(optionType: string): void {
     this.optionType = optionType;
   }
 
@@ -64,8 +65,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the option type or null if it's not one of the well-known types
    */
-  public OptionType getOptionTypeEnum() {
-    return OptionType.fromOfx(getOptionType());
+  public getOptionTypeEnum(): OptionType {
+    return OptionType_fromOfx(this.getOptionType());
   }
 
   /**
@@ -73,9 +74,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the option strike price
    */
-  @Element( name = "STRIKEPRICE", order = 30)
-  public Double getStrikePrice() {
-    return strikePrice;
+  public getStrikePrice(): number {
+    return this.strikePrice;
   }
 
   /**
@@ -83,7 +83,7 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param strikePrice the option strike price
    */
-  public void setStrikePrice(Double strikePrice) {
+  public setStrikePrice(strikePrice: number): void {
     this.strikePrice = strikePrice;
   }
 
@@ -92,9 +92,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the expiration date of the option
    */
-  @Element( name = "DTEXPIRE", order = 40)
-  public Date getExpirationDate() {
-    return expirationDate;
+  public getExpirationDate(): Date {
+    return this.expirationDate;
   }
 
   /**
@@ -102,7 +101,7 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param expirationDate the expiration date of the option
    */
-  public void setExpirationDate(Date expirationDate) {
+  public setExpirationDate(expirationDate: Date): void {
     this.expirationDate = expirationDate;
   }
 
@@ -112,9 +111,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the number of shares per option contact
    */
-  @Element( name = "SHPERCTRCT", order = 50)
-  public Integer getSharesPerContact() {
-    return sharesPerContact;
+  public getSharesPerContact(): number {
+    return this.sharesPerContact;
   }
 
   /**
@@ -123,7 +121,7 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param sharesPerContact the number of shares per option contact
    */
-  public void setSharesPerContact(Integer sharesPerContact) {
+  public setSharesPerContact(sharesPerContact: number): void {
     this.sharesPerContact = sharesPerContact;
   }
 
@@ -133,9 +131,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the security id of the underlying security
    */
-  @Element( name = "SECID", order = 60)
-  public SecurityId getUnderlyingSecurity() {
-    return underlyingSecurity;
+  public getUnderlyingSecurity(): SecurityId {
+    return this.underlyingSecurity;
   }
 
   /**
@@ -144,7 +141,7 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param underlyingSecurity the security id of the underlying security
    */
-  public void setUnderlyingSecurity(SecurityId underlyingSecurity) {
+  public setUnderlyingSecurity(underlyingSecurity: SecurityId): void {
     this.underlyingSecurity = underlyingSecurity;
   }
 
@@ -153,9 +150,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class of the option
    */
-  @Element( name = "ASSETCLASS", order = 70)
-  public String getAssetClass() {
-    return assetClass;
+  public getAssetClass(): string {
+    return this.assetClass;
   }
 
   /**
@@ -163,7 +159,7 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param assetClass the asset class of the option
    */
-  public void setAssetClass(String assetClass) {
+  public setAssetClass(assetClass: string): void {
     this.assetClass = assetClass;
   }
 
@@ -172,8 +168,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the asset class or null if it's not one of the well-known types
    */
-  public AssetClass getAssetClassEnum() {
-    return AssetClass.fromOfx(getAssetClass());
+  public getAssetClassEnum(): AssetClass {
+    return AssetClass_fromOfx(this.getAssetClass());
   }
 
   /**
@@ -182,9 +178,8 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @return the FI-defined asset class of the option
    */
-  @Element( name = "FIASSETCLASS", order = 80)
-  public String getFiAssetClass() {
-    return fiAssetClass;
+  public getFiAssetClass(): string {
+    return this.fiAssetClass;
   }
 
   /**
@@ -193,7 +188,18 @@ public class OptionSecurityInfo extends BaseSecurityInfo {
    *
    * @param fiAssetClass the FI-defined asset class of the option
    */
-  public void setFiAssetClass(String fiAssetClass) {
+  public setFiAssetClass(fiAssetClass: string): void {
     this.fiAssetClass = fiAssetClass;
   }
+}
+
+Aggregate_add( OptionSecurityInfo, "OPTINFO" );
+Element_add(OptionSecurityInfo, { name: "OPTTYPE", order: 20, type: String, read: OptionSecurityInfo.prototype.getOptionType, write: OptionSecurityInfo.prototype.setOptionType });
+Element_add(OptionSecurityInfo, { name: "STRIKEPRICE", order: 30, type: Number, read: OptionSecurityInfo.prototype.getStrikePrice, write: OptionSecurityInfo.prototype.setStrikePrice });
+Element_add(OptionSecurityInfo, { name: "DTEXPIRE", order: 40, type: Date, read: OptionSecurityInfo.prototype.getExpirationDate, write: OptionSecurityInfo.prototype.setExpirationDate });
+Element_add(OptionSecurityInfo, { name: "SHPERCTRCT", order: 50, type: Number, read: OptionSecurityInfo.prototype.getSharesPerContact, write: OptionSecurityInfo.prototype.setSharesPerContact });
+Element_add(OptionSecurityInfo, { name: "SECID", order: 60, type: SecurityId, read: OptionSecurityInfo.prototype.getUnderlyingSecurity, write: OptionSecurityInfo.prototype.setUnderlyingSecurity });
+Element_add(OptionSecurityInfo, { name: "ASSETCLASS", order: 70, type: String, read: OptionSecurityInfo.prototype.getAssetClass, write: OptionSecurityInfo.prototype.setAssetClass });
+Element_add(OptionSecurityInfo, { name: "FIASSETCLASS", order: 80, type: String, read: OptionSecurityInfo.prototype.getFiAssetClass, write: OptionSecurityInfo.prototype.setFiAssetClass });
+
 }

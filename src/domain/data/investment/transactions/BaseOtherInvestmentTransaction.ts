@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BaseInvestmentTransaction'/>
+///<reference path='InvestmentTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.ChildAggregate;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for investment transactions that aren't buys or sales..
@@ -27,11 +30,11 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-public class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
+export class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
 
-  private InvestmentTransaction investmentTransaction;
+  private investmentTransaction: InvestmentTransaction;
 
-  BaseOtherInvestmentTransaction(TransactionType transactionType) {
+  constructor(transactionType: TransactionType) {
     super(transactionType);
   }
 
@@ -41,9 +44,8 @@ public class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
    * @return the {@link InvestmentTransaction} aggregate
    */
   // @Override
-  @ChildAggregate( order = 10 )
-  public InvestmentTransaction getInvestmentTransaction() {
-    return investmentTransaction;
+  public getInvestmentTransaction(): InvestmentTransaction {
+    return this.investmentTransaction;
   }
 
   /**
@@ -51,7 +53,10 @@ public class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
    *
    * @param investmentTransaction the {@link InvestmentTransaction} aggregate
    */
-  public void setInvestmentTransaction(InvestmentTransaction investmentTransaction) {
+  public setInvestmentTransaction(investmentTransaction: InvestmentTransaction): void {
     this.investmentTransaction = investmentTransaction;
   }
+}
+
+ChildAggregate_add(BaseOtherInvestmentTransaction, { order: 10, type: InvestmentTransaction, read: BaseOtherInvestmentTransaction.prototype.getInvestmentTransaction, write: BaseOtherInvestmentTransaction.prototype.setInvestmentTransaction });
 }

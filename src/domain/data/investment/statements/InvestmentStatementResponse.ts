@@ -13,20 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/StatementResponse'/>
+///<reference path='../../investment/accounts/InvestmentAccountDetails'/>
+///<reference path='../../investment/positions/InvestmentPositionList'/>
+///<reference path='../../seclist/SecurityList'/>
+///<reference path='../../seclist/SecurityListResponse'/>
+///<reference path='../../investment/transactions/InvestmentTransactionList'/>
+///<reference path='InvestmentBalance'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.domain.data.common.StatementResponse;
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountDetails;
-import net.sf.ofx4j.domain.data.investment.positions.InvestmentPositionList;
-import net.sf.ofx4j.domain.data.seclist.SecurityList;
-import net.sf.ofx4j.domain.data.seclist.SecurityListResponse;
-import net.sf.ofx4j.domain.data.investment.transactions.InvestmentTransactionList;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import InvestmentPositionList = ofx4js.domain.data.investment.positions.InvestmentPositionList;
+import SecurityList = ofx4js.domain.data.seclist.SecurityList;
+import SecurityListResponse = ofx4js.domain.data.seclist.SecurityListResponse;
+import InvestmentTransactionList = ofx4js.domain.data.investment.transactions.InvestmentTransactionList;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Aggregate for the investment statement download response.
@@ -34,28 +42,27 @@ import java.util.Date;
  *
  * @author Jon Perlow
  */
-@Aggregate("INVSTMTRS")
-public class InvestmentStatementResponse extends StatementResponse {
+export class InvestmentStatementResponse extends StatementResponse {
 
-  private Date dateOfStatement;
-  private InvestmentAccountDetails account;
-  private InvestmentTransactionList transactionList;
-  private InvestmentPositionList positionList;
-  private InvestmentBalance accountBalance;
+  private dateOfStatement: Date;
+  private account: InvestmentAccountDetails;
+  private investmentTransactionList: InvestmentTransactionList;
+  private positionList: InvestmentPositionList;
+  private accountBalance: InvestmentBalance;
 
   // This is not actually technically part of the INVSTMTRS, but according to Section 13.8.4,
   // OFX spec, this aggregate can appear in a statement response as part of the SECLISTMSGSRQV1
   // message set even when it wasn't requested. We include it here to make it accessible as part of
   // the AccountStatement
-  private SecurityList securityList;
+  private securityList: SecurityList;
 
   /**
    * Gets the name of the response message.
    *
    * @return the name of the response message
    */
-  @Override
-  public String getResponseMessageName() {
+  //@Override
+  public getResponseMessageName(): string {
     return "investment statement";
   }
 
@@ -65,9 +72,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @return the date and time for the statement download
    */
-  @Element( name = "DTASOF", required = true, order = 60)
-  public Date getDateOfStatement() {
-    return dateOfStatement;
+  public getDateOfStatement(): Date {
+    return this.dateOfStatement;
   }
 
   /**
@@ -76,7 +82,7 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @param dateOfStatement the date and time for the statement download
    */
-  public void setDateOfStatement(Date dateOfStatement) {
+  public setDateOfStatement(dateOfStatement: Date): void {
     this.dateOfStatement = dateOfStatement;
   }
 
@@ -85,9 +91,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @return the account for the statement
    */
-  @ChildAggregate( name ="INVACCTFROM", required = true, order = 10)
-  public InvestmentAccountDetails getAccount() {
-    return account;
+  public getAccount(): InvestmentAccountDetails {
+    return this.account;
   }
 
   /**
@@ -95,7 +100,7 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @param account the account for the statement
    */
-  public void setAccount(InvestmentAccountDetails account) {
+  public setAccount(account: InvestmentAccountDetails): void {
     this.account = account;
   }
 
@@ -104,9 +109,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @return the transaction list aggregate
    */
-  @ChildAggregate ( order = 70 )
-  public InvestmentTransactionList getInvestmentTransactionList() {
-    return transactionList;
+  public getInvestmentTransactionList(): InvestmentTransactionList {
+    return this.investmentTransactionList;
   }
 
   /**
@@ -114,8 +118,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @param transactionList the transaction list aggregate
    */
-  public void setInvestmentTransactionList(InvestmentTransactionList transactionList) {
-    this.transactionList = transactionList;
+  public setInvestmentTransactionList(transactionList: InvestmentTransactionList): void {
+    this.investmentTransactionList = transactionList;
   }
 
   /**
@@ -123,9 +127,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @return the position list aggregate
    */
-  @ChildAggregate ( order = 80 )
-  public InvestmentPositionList getPositionList() {
-    return positionList;
+  public getPositionList(): InvestmentPositionList {
+    return this.positionList;
   }
 
   /**
@@ -133,7 +136,7 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @param positionList the position list aggregate
    */
-  public void setPositionList(InvestmentPositionList positionList) {
+  public setPositionList(positionList: InvestmentPositionList): void {
     this.positionList = positionList;
   }
 
@@ -142,9 +145,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @return the account balance
    */
-  @ChildAggregate ( order = 90 )
-  public InvestmentBalance getAccountBalance() {
-    return accountBalance;
+  public getAccountBalance(): InvestmentBalance {
+    return this.accountBalance;
   }
 
   /**
@@ -152,7 +154,7 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @param accountBalance the account balance
    */
-  public void setAccountBalance(InvestmentBalance accountBalance) {
+  public setAccountBalance(accountBalance: InvestmentBalance): void {
     this.accountBalance = accountBalance;
   }
 
@@ -165,8 +167,8 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @return the security list aggregate
    */
-  public SecurityList getSecurityList() {
-    return securityList;
+  public getSecurityList(): SecurityList {
+    return this.securityList;
   }
 
   /**
@@ -178,7 +180,16 @@ public class InvestmentStatementResponse extends StatementResponse {
    *
    * @param securityList the security list aggregate
    */
-  public void setSecurityList(SecurityList securityList) {
+  public setSecurityList(securityList: SecurityList): void {
     this.securityList = securityList;
   }
+}
+
+Aggregate_add(InvestmentStatementResponse, "INVSTMTRS");
+Element_add(InvestmentStatementResponse, { name: "DTASOF", required: true, order: 60, type: Date, read: InvestmentStatementResponse.prototype.getDateOfStatement, write: InvestmentStatementResponse.prototype.setDateOfStatement });
+ChildAggregate_add(InvestmentStatementResponse, { name:"INVACCTFROM", required: true, order: 10, type: InvestmentAccountDetails, read: InvestmentStatementResponse.prototype.getAccount, write: InvestmentStatementResponse.prototype.setAccount });
+ChildAggregate_add(InvestmentStatementResponse, { order: 70, type: InvestmentTransactionList, read: InvestmentStatementResponse.prototype.getInvestmentTransactionList, write: InvestmentStatementResponse.prototype.setInvestmentTransactionList });
+ChildAggregate_add(InvestmentStatementResponse, { order: 80, type: InvestmentPositionList, read: InvestmentStatementResponse.prototype.getPositionList, write: InvestmentStatementResponse.prototype.setPositionList });
+ChildAggregate_add(InvestmentStatementResponse, { order: 90, type: InvestmentBalance, read: InvestmentStatementResponse.prototype.getAccountBalance, write: InvestmentStatementResponse.prototype.setAccountBalance });
+
 }

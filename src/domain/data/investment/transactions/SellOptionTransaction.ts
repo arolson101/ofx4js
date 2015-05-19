@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.investment.transactions;
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/positions/ShortOptionSecurity'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+///<reference path='OptionSellType'/>
+///<reference path='RelatedOptionType'/>
 
-import net.sf.ofx4j.domain.data.investment.positions.ShortOptionSecurity;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+module ofx4js.domain.data.investment.transactions {
+
+import ShortOptionSecurity = ofx4js.domain.data.investment.positions.ShortOptionSecurity;
+import ShortOptionSecurity_fromOfx = ofx4js.domain.data.investment.positions.ShortOptionSecurity_fromOfx;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for selling options.
@@ -26,16 +35,15 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "SELLOPT" )
-public class SellOptionTransaction extends BaseSellInvestmentTransaction {
+export class SellOptionTransaction extends BaseSellInvestmentTransaction {
 
-  private String optionSellType;
-  private Integer sharesPerContact;
-  private String relatedTransactionId;
-  private String relatedType;
-  private String secured;
+  private optionSellType: string;
+  private sharesPerContact: number;
+  private relatedTransactionId: string;
+  private relatedType: string;
+  private secured: string;
 
-  public SellOptionTransaction() {
+  constructor() {
     super(TransactionType.SELL_OPTION);
   }
 
@@ -46,9 +54,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the option sell type
    */
-  @Element( name = "OPTSELLTYPE", required = true, order = 20)
-  public String getOptionSellType() {
-    return optionSellType;
+  public getOptionSellType(): string {
+    return this.optionSellType;
   }
 
   /**
@@ -58,7 +65,7 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @param optionSellType the option sell type
    */
-  public void setOptionSellType(String optionSellType) {
+  public setOptionSellType(optionSellType: string): void {
     this.optionSellType = optionSellType;
   }
 
@@ -67,8 +74,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the type of sale or null if it's not known.
    */
-  public OptionSellType getOptionSellTypeEnum() {
-    return OptionSellType.fromOfx(optionSellType);
+  public getOptionSellTypeEnum(): OptionSellType {
+    return OptionSellType_fromOfx(this.optionSellType);
   }
 
   /**
@@ -77,9 +84,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the number of shares per contact
    */
-  @Element( name = "SHPERCTRCT", required = true, order = 30)
-  public Integer getSharesPerContact() {
-    return sharesPerContact;
+  public getSharesPerContact(): number {
+    return this.sharesPerContact;
   }
 
   /**
@@ -88,7 +94,7 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @param sharesPerContact the number of shares per contact
    */
-  public void setSharesPerContact(Integer sharesPerContact) {
+  public setSharesPerContact(sharesPerContact: number): void {
     this.sharesPerContact = sharesPerContact;
   }
 
@@ -99,9 +105,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return The related transaction id
    */
-  @Element( name = "RELFITID", order = 40)
-  public String getRelatedTransactionId() {
-    return relatedTransactionId;
+  public getRelatedTransactionId(): string {
+    return this.relatedTransactionId;
   }
 
   /**
@@ -111,7 +116,7 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @param relatedTransactionId The related transaction id
    */
-  public void setRelatedTransactionId(String relatedTransactionId) {
+  public setRelatedTransactionId(relatedTransactionId: string): void {
     this.relatedTransactionId = relatedTransactionId;
   }
 
@@ -122,9 +127,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return The related tansaction type
    */
-  @Element( name = "RELTYPE", order = 50)
-  public String getRelatedType() {
-    return relatedType;
+  public getRelatedType(): string {
+    return this.relatedType;
   }
 
   /**
@@ -134,7 +138,7 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @param relatedType The related tansaction type
    */
-  public void setRelatedType(String relatedType) {
+  public setRelatedType(relatedType: string): void {
     this.relatedType = relatedType;
   }
 
@@ -143,8 +147,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the related tansaction type or null if it's not well known
    */
-  public RelatedOptionType getRelatedTypeEnum() {
-    return RelatedOptionType.fromOfx(getRelatedType());
+  public getRelatedTypeEnum(): RelatedOptionType {
+    return RelatedOptionType_fromOfx(this.getRelatedType());
   }
 
   /**
@@ -154,9 +158,8 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return how the option sale is secured
    */
-  @Element( name = "SECURED", order = 60)
-  public String getSecured() {
-    return secured;
+  public getSecured(): string {
+    return this.secured;
   }
 
   /**
@@ -166,7 +169,7 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @param secured how the option sale is secured
    */
-  public void setSecured(String secured) {
+  public setSecured(secured: string): void {
     this.secured = secured;
   }
 
@@ -175,7 +178,16 @@ public class SellOptionTransaction extends BaseSellInvestmentTransaction {
    *
    * @return the type indicating how the option is secured or null if it's not well known.
    */
-  public ShortOptionSecurity getSecuredEnum() {
-    return  ShortOptionSecurity.fromOfx(getSecured());
+  public getSecuredEnum(): ShortOptionSecurity {
+    return ShortOptionSecurity_fromOfx(this.getSecured());
   }
+}
+
+Aggregate_add( SellOptionTransaction, "SELLOPT" );
+Element_add(SellOptionTransaction, { name: "OPTSELLTYPE", required: true, order: 20, type: String, read: SellOptionTransaction.prototype.getOptionSellType, write: SellOptionTransaction.prototype.setOptionSellType });
+Element_add(SellOptionTransaction, { name: "SHPERCTRCT", required: true, order: 30, type: Number, read: SellOptionTransaction.prototype.getSharesPerContact, write: SellOptionTransaction.prototype.setSharesPerContact });
+Element_add(SellOptionTransaction, { name: "RELFITID", order: 40, type: String, read: SellOptionTransaction.prototype.getRelatedTransactionId, write: SellOptionTransaction.prototype.setRelatedTransactionId });
+Element_add(SellOptionTransaction, { name: "RELTYPE", order: 50, type: String, read: SellOptionTransaction.prototype.getRelatedType, write: SellOptionTransaction.prototype.setRelatedType });
+Element_add(SellOptionTransaction, { name: "SECURED", order: 60, type: String, read: SellOptionTransaction.prototype.getSecured, write: SellOptionTransaction.prototype.setSecured });
+
 }

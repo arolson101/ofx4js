@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ApplicationSecurity'/>
+///<reference path='SynchronizationCapability'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.ApplicationSecurity;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.net.URL;
-import java.util.Locale;
+import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Core information about a specific version of a specific message set.
@@ -29,28 +30,31 @@ import java.util.Locale;
  * @author Ryan Heaton
  * @see "Section 7.2.1, OFX Spec"
  */
-@Aggregate ( "MSGSETCORE" )
-public class CoreMessageSetInfo {
+export class CoreMessageSetInfo {
 
-  private String version = "1";
-  private String serviceProviderName;
-  private String url;
-  private ApplicationSecurity security;
-  private Boolean sslRequired;
-  private String realm;
-  private String language = Locale.US.getISO3Language();
-  private SynchronizationCapability syncCapability;
-  private Boolean fileBasedErrorRecoverySupport;
-  private Integer timeout;
+  private version: string;
+  private serviceProviderName: string;
+  private url: string;
+  private security: ApplicationSecurity;
+  private sslRequired: boolean;
+  private realm: string;
+  private language: string;
+  private syncCapability: SynchronizationCapability;
+  private fileBasedErrorRecoverySupport: boolean;
+  private timeout: number;
+  
+  constructor() {
+    this.version = "1";
+    this.language = "ENG"; //Locale.US.getISO3Language();
+  }
 
   /**
    * Version of the message set.
    *
    * @return The version of the message set.
    */
-  @Element ( name = "VER", required = true, order = 0 )
-  public String getVersion() {
-    return version;
+  public getVersion(): string {
+    return this.version;
   }
 
   /**
@@ -58,7 +62,7 @@ public class CoreMessageSetInfo {
    *
    * @param version The version of the message set.
    */
-  public void setVersion(String version) {
+  public setVersion(version: string): void {
     this.version = version;
   }
 
@@ -67,9 +71,8 @@ public class CoreMessageSetInfo {
    *
    * @return The name of the service provider (sometimes the message set processing is outsourced).
    */
-  @Element ( name = "SPNAME", order = 10 )
-  public String getServiceProviderName() {
-    return serviceProviderName;
+  public getServiceProviderName(): string {
+    return this.serviceProviderName;
   }
 
   /**
@@ -77,7 +80,7 @@ public class CoreMessageSetInfo {
    *
    * @param serviceProviderName The name of the service provider (sometimes the message set processing is outsourced).
    */
-  public void setServiceProviderName(String serviceProviderName) {
+  public setServiceProviderName(serviceProviderName: string): void {
     this.serviceProviderName = serviceProviderName;
   }
 
@@ -86,9 +89,8 @@ public class CoreMessageSetInfo {
    *
    * @return The URL at which the message set is processed.
    */
-  @Element ( name = "URL", required = true, order = 20 )
-  public String getUrl() {
-    return url;
+  public getUrl(): string {
+    return this.url;
   }
 
   /**
@@ -96,7 +98,7 @@ public class CoreMessageSetInfo {
    *
    * @param url The URL at which the message set is processed.
    */
-  public void setUrl(String url) {
+  public setUrl(url: string): void {
     this.url = url;
   }
 
@@ -105,9 +107,8 @@ public class CoreMessageSetInfo {
    *
    * @return The application-level security required for this message set.
    */
-  @Element ( name = "OFXSEC", required = true, order = 30 )
-  public ApplicationSecurity getSecurity() {
-    return security;
+  public getSecurity(): ApplicationSecurity {
+    return this.security;
   }
 
   /**
@@ -115,7 +116,7 @@ public class CoreMessageSetInfo {
    *
    * @param security The application-level security required for this message set.
    */
-  public void setSecurity(ApplicationSecurity security) {
+  public setSecurity(security: ApplicationSecurity): void {
     this.security = security;
   }
 
@@ -124,9 +125,8 @@ public class CoreMessageSetInfo {
    *
    * @return Whether transport-level security is required for this message set.
    */
-  @Element ( name = "TRANSPSEC", required = true, order = 40 )
-  public Boolean getSslRequired() {
-    return sslRequired;
+  public getSslRequired(): boolean {
+    return this.sslRequired;
   }
 
   /**
@@ -134,7 +134,7 @@ public class CoreMessageSetInfo {
    *
    * @param sslRequired Whether transport-level security is required for this message set.
    */
-  public void setSslRequired(Boolean sslRequired) {
+  public setSslRequired(sslRequired: boolean): void {
     this.sslRequired = sslRequired;
   }
 
@@ -143,9 +143,8 @@ public class CoreMessageSetInfo {
    *
    * @return The sign-on realm.
    */
-  @Element ( name = "SIGNONREALM", required = true, order = 50 )
-  public String getRealm() {
-    return realm;
+  public getRealm(): string {
+    return this.realm;
   }
 
   /**
@@ -153,7 +152,7 @@ public class CoreMessageSetInfo {
    *
    * @param realm The sign-on realm.
    */
-  public void setRealm(String realm) {
+  public setRealm(realm: string): void {
     this.realm = realm;
   }
 
@@ -163,9 +162,8 @@ public class CoreMessageSetInfo {
    * @return The language.
    * @see java.util.Locale#getISO3Language()
    */
-  @Element ( name = "LANGUAGE", required = true, order = 60 )
-  public String getLanguage() {
-    return language;
+  public getLanguage(): string {
+    return this.language;
   }
 
   /**
@@ -173,7 +171,7 @@ public class CoreMessageSetInfo {
    *
    * @param language The language.
    */
-  public void setLanguage(String language) {
+  public setLanguage(language: string): void {
     this.language = language;
   }
 
@@ -182,9 +180,8 @@ public class CoreMessageSetInfo {
    *
    * @return The synchronization capability for this message set.
    */
-  @Element ( name = "SYNCMODE", required = true, order = 70 )
-  public SynchronizationCapability getSyncCapability() {
-    return syncCapability;
+  public getSyncCapability(): SynchronizationCapability {
+    return this.syncCapability;
   }
 
   /**
@@ -192,7 +189,7 @@ public class CoreMessageSetInfo {
    *
    * @param syncCapability The synchronization capability for this message set.
    */
-  public void setSyncCapability(SynchronizationCapability syncCapability) {
+  public setSyncCapability(syncCapability: SynchronizationCapability): void {
     this.syncCapability = syncCapability;
   }
 
@@ -201,9 +198,8 @@ public class CoreMessageSetInfo {
    *
    * @return Whether there exists support for resposne-file based error recovery.
    */
-  @Element ( name = "RESPFILEER", required = true, order = 80 )
-  public Boolean getFileBasedErrorRecoverySupport() {
-    return fileBasedErrorRecoverySupport;
+  public getFileBasedErrorRecoverySupport(): boolean {
+    return this.fileBasedErrorRecoverySupport;
   }
 
   /**
@@ -211,7 +207,7 @@ public class CoreMessageSetInfo {
    *
    * @param fileBasedErrorRecoverySupport Whether there exists support for resposne-file based error recovery.
    */
-  public void setFileBasedErrorRecoverySupport(Boolean fileBasedErrorRecoverySupport) {
+  public setFileBasedErrorRecoverySupport(fileBasedErrorRecoverySupport: boolean): void {
     this.fileBasedErrorRecoverySupport = fileBasedErrorRecoverySupport;
   }
 
@@ -221,9 +217,8 @@ public class CoreMessageSetInfo {
    *
    * @return the "INTU.TIMEOUT" property
    */
-  @Element ( name = "INTU.TIMEOUT", order = 90 )
-  public Integer getIntuTimeout() {
-    return timeout;
+  public getIntuTimeout(): number {
+    return this.timeout;
   }
 
   /**
@@ -232,9 +227,21 @@ public class CoreMessageSetInfo {
    *
    * @param timeout the "INTU.TIMEOUT" property
    */
-  public void setIntuTimeout(Integer timeout) {
+  public setIntuTimeout(timeout: number): void {
     this.timeout = timeout;
   }
+}
 
+Aggregate_add( CoreMessageSetInfo, "MSGSETCORE" );
+Element_add(CoreMessageSetInfo, { name: "VER", required: true, order: 0, type: String, read: CoreMessageSetInfo.prototype.getVersion, write: CoreMessageSetInfo.prototype.setVersion });
+Element_add(CoreMessageSetInfo, { name: "SPNAME", order: 10, type: String, read: CoreMessageSetInfo.prototype.getServiceProviderName, write: CoreMessageSetInfo.prototype.setServiceProviderName });
+Element_add(CoreMessageSetInfo, { name: "URL", required: true, order: 20, type: String, read: CoreMessageSetInfo.prototype.getUrl, write: CoreMessageSetInfo.prototype.setUrl });
+Element_add(CoreMessageSetInfo, { name: "OFXSEC", required: true, order: 30, type: ApplicationSecurity, read: CoreMessageSetInfo.prototype.getSecurity, write: CoreMessageSetInfo.prototype.setSecurity });
+Element_add(CoreMessageSetInfo, { name: "TRANSPSEC", required: true, order: 40, type: Boolean, read: CoreMessageSetInfo.prototype.getSslRequired, write: CoreMessageSetInfo.prototype.setSslRequired });
+Element_add(CoreMessageSetInfo, { name: "SIGNONREALM", required: true, order: 50, type: String, read: CoreMessageSetInfo.prototype.getRealm, write: CoreMessageSetInfo.prototype.setRealm });
+Element_add(CoreMessageSetInfo, { name: "LANGUAGE", required: true, order: 60, type: String, read: CoreMessageSetInfo.prototype.getLanguage, write: CoreMessageSetInfo.prototype.setLanguage });
+Element_add(CoreMessageSetInfo, { name: "SYNCMODE", required: true, order: 70, type: SynchronizationCapability, read: CoreMessageSetInfo.prototype.getSyncCapability, write: CoreMessageSetInfo.prototype.setSyncCapability });
+Element_add(CoreMessageSetInfo, { name: "RESPFILEER", required: true, order: 80, type: Boolean, read: CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport, write: CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport });
+Element_add(CoreMessageSetInfo, { name: "INTU.TIMEOUT", order: 90, type: Number, read: CoreMessageSetInfo.prototype.getIntuTimeout, write: CoreMessageSetInfo.prototype.setIntuTimeout });
 
 }

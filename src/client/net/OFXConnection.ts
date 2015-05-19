@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../domain/data/RequestEnvelope'/>
+///<reference path='../../domain/data/ResponseEnvelope'/>
 
-package net.sf.ofx4j.client.net;
+module ofx4js.client.net {
 
-import net.sf.ofx4j.domain.data.RequestEnvelope;
-import net.sf.ofx4j.domain.data.ResponseEnvelope;
+import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
 
-import java.net.URL;
+//import java.net.URL;
 
 /**
  * Connection to an OFX interface.
  *
  * @author Ryan Heaton
  */
-public interface OFXConnection {
+export interface OFXConnection {
 
   /**
    * Send a request.
@@ -35,6 +37,8 @@ public interface OFXConnection {
    * @param url The URL to which to send the request.
    * @return The response.
    */
-  ResponseEnvelope sendRequest(RequestEnvelope request, URL url) throws OFXConnectionException;
+  sendRequest(request: RequestEnvelope, url: string) /*throws OFXConnectionException*/: Promise<ResponseEnvelope>;
+
+}
 
 }

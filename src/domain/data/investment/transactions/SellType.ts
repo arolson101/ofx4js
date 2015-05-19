@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of sale for stocks and mutual funds.
  *
  * @author Jon Perlow
  */
-public enum SellType {
+export enum SellType {
   SELL,
-  SELL_SHORT;
+  SELL_SHORT
+}
 
-  public static SellType fromOfx(String ofxVal) {
-    if ("SELL".equals(ofxVal)) {
-      return SELL;
-    } else if ("SELLSHORT".equals(ofxVal)) {
-      return SELL_SHORT;
-    } else {
-      return null;
-    }
+export function SellType_fromOfx(ofxVal: string): SellType {
+  if ("SELL" === ofxVal) {
+    return SellType.SELL;
+  } else if ("SELLSHORT" === ofxVal) {
+    return SellType.SELL_SHORT;
+  } else {
+    return null;
   }
+}
+
 }

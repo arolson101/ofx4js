@@ -13,131 +13,134 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='profile/CharacterType'/>
 
-package net.sf.ofx4j.domain.data;
+module ofx4js.domain.data {
 
-import net.sf.ofx4j.domain.data.profile.CharacterType;
+import CharacterType = ofx4js.domain.data.profile.CharacterType;
 
 /**
  * @author Ryan Heaton
  */
-public interface SignonProfile {
+export interface SignonProfile {
   /**
    * The name of the sign-on realm.
    *
    * @return The name of the sign-on realm.
    */
-  String getRealm();
+  getRealm(): string;
 
   /**
    * The minimum number of password characters.
    *
    * @return The minimum number of password characters.
    */
-  Integer getMinPasswordCharacters();
+  getMinPasswordCharacters(): number;
 
   /**
    * The maximum number of password characters.
    *
    * @return The maximum number of password characters.
    */
-  Integer getMaxPasswordCharacters();
+  getMaxPasswordCharacters(): number;
 
   /**
    * The type of password characters supported.
    *
    * @return The type of password characters supported.
    */
-  CharacterType getPasswordCharacterType();
+  getPasswordCharacterType(): CharacterType;
 
   /**
    * Whether the password is case-sensitive.
    *
    * @return Whether the password is case-sensitive.
    */
-  Boolean getPasswordCaseSensitive();
+  getPasswordCaseSensitive(): boolean;
 
   /**
    * Whether special characters are allowed in the password.
    *
    * @return Whether special characters are allowed in the password.
    */
-  Boolean getPasswordSpecialCharsAllowed();
+  getPasswordSpecialCharsAllowed(): boolean;
 
   /**
    * Whether spaces are allowed in the password.
    *
    * @return Whether spaces are allowed in the password.
    */
-  Boolean getPasswordSpacesAllowed();
+  getPasswordSpacesAllowed(): boolean;
 
   /**
    * Whether the server can process a password change request for this realm.
    *
    * @return Whether the server can process a password change request for this realm.
    */
-  Boolean getChangePasswordSupported();
+  getChangePasswordSupported(): boolean;
 
   /**
    * Whether the server requires the user to change their password as part of their first signon.
    *
    * @return Whether the server requires the user to change their password as part of their first signon.
    */
-  Boolean getChangePasswordFirstRequired();
+  getChangePasswordFirstRequired(): boolean;
 
   /**
    * Label for a set of additional credentials that the user must supply.
    *
    * @return Label for a set of additional credentials that the user must supply.
    */
-  String getAdditionalCredientialsLabel1();
+  getAdditionalCredientialsLabel1(): string;
 
   /**
    * Label for a set of additional credentials that the user must supply.
    *
    * @return Label for a set of additional credentials that the user must supply.
    */
-  String getAdditionalCredientialsLabel2();
+  getAdditionalCredientialsLabel2(): string;
 
   /**
    * Whether a client UID is required for teh sign-on.
    *
    * @return Whether a client UID is required for teh sign-on.
    */
-  Boolean getClientUIDRequired();
+  getClientUIDRequired(): boolean;
 
   /**
    * Whether an auth token is required for the sign-on.
    *
    * @return Whether an auth token is required for the sign-on.
    */
-  Boolean getAuthTokenRequiredForFirstSignon();
+  getAuthTokenRequiredForFirstSignon(): boolean;
 
   /**
    * The label of the auth token.
    *
    * @return The label of the auth token.
    */
-  String getAuthTokenLabel();
+  getAuthTokenLabel(): string;
 
   /**
    * The URL for the auth token information.
    *
    * @return The URL for the auth token information.
    */
-  String getAuthTokenInfoURL();
+  getAuthTokenInfoURL(): string;
 
   /**
    * Whether MFA is supported.
    *
    * @return Whether MFA is supported.
    */
-  Boolean getMfaSupported();
+  getMfaSupported(): boolean;
 
   /**
    * Whether an MFA challenge request is required for the first sign-on into this realm.
    *
    * @return Whether an MFA challenge request is required for the first sign-on into this realm.
    */
-  Boolean getMfaChallengeRequiredForFirstSignon();
+  getMfaChallengeRequiredForFirstSignon(): boolean;
+}
+
 }

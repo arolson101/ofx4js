@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.seclist;
+module ofx4js.domain.data.seclist {
 
 /**
  * Asset class for debt.
@@ -21,7 +21,7 @@ package net.sf.ofx4j.domain.data.seclist;
  *
  * @author Jon Perlow
  */
-public enum AssetClass {
+export enum AssetClass {
   /**
    * Government or corporate bonds issued in the United States.
    */
@@ -56,25 +56,27 @@ public enum AssetClass {
   /**
    * Investments which do not fit into any of the other types.
    */
-  OTHER;
+  OTHER
+}
 
-  public static AssetClass fromOfx(String ofxVal) {
-    if ("DOMESTICBOND".equals(ofxVal)) {
-      return DOMESTIC_BOND;
-    } else if ("INTLBOND".equals(ofxVal)) {
-      return INTL_BOND;
-    } else if ("LARGESTOCK".equals(ofxVal)) {
-      return LARGE_STOCK;
-    } else if ("SMALLSTOCK".equals(ofxVal)) {
-      return SMALL_STOCK;
-    } else if ("INTLSTOCK".equals(ofxVal)) {
-      return INTL_STOCK;
-    } else if ("MONEYMARKET".equals(ofxVal)) {
-      return MONEY_MARKET;
-    } else if ("OTHER".equals(ofxVal)) {
-      return OTHER;
-    } else {
-      return null;
-    }
+export function AssetClass_fromOfx(ofxVal: string): AssetClass {
+  if ("DOMESTICBOND" === ofxVal) {
+    return AssetClass.DOMESTIC_BOND;
+  } else if ("INTLBOND" === ofxVal) {
+    return AssetClass.INTL_BOND;
+  } else if ("LARGESTOCK" === ofxVal) {
+    return AssetClass.LARGE_STOCK;
+  } else if ("SMALLSTOCK" === ofxVal) {
+    return AssetClass.SMALL_STOCK;
+  } else if ("INTLSTOCK" === ofxVal) {
+    return AssetClass.INTL_STOCK;
+  } else if ("MONEYMARKET" === ofxVal) {
+    return AssetClass.MONEY_MARKET;
+  } else if ("OTHER" === ofxVal) {
+    return AssetClass.OTHER;
+  } else {
+    return null;
   }
+}
+
 }

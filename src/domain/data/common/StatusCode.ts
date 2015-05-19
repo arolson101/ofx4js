@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='Status'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * @author Ryan Heaton
  */
-public interface StatusCode {
+export /*abstract*/ class StatusCode {
 
-  int getCode();
+  getCode(): number { throw new Error("abstract"); }
 
-  String getMessage();
+  getMessage(): string { throw new Error("abstract"); }
 
-  Status.Severity getDefaultSeverity();
+  getDefaultSeverity(): /*Status.*/Severity { throw new Error("abstract"); }
+}
+
+
 }

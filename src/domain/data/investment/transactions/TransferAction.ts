@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of transfer.
@@ -22,17 +22,19 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum TransferAction {
+export enum TransferAction {
   IN,
-  OUT;
+  OUT
+}
 
-  public static TransferAction fromOfx(String ofxVal) {
-    if ("IN".equals(ofxVal)) {
-      return IN;
-    } else if ("OUT".equals(ofxVal)) {
-      return OUT;
-    } else {
-      return null;
-    }
+export function TransferAction_fromOfx(ofxVal: string): TransferAction {
+  if ("IN" === ofxVal) {
+    return TransferAction.IN;
+  } else if ("OUT" === ofxVal) {
+    return TransferAction.OUT;
+  } else {
+    return null;
   }
+}
+
 }

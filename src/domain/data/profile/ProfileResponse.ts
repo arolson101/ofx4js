@@ -13,54 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../MessageSetProfile'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessage'/>
+///<reference path='../SignonProfile'/>
+///<reference path='../../../client/FinancialInstitutionProfile'/>
+///<reference path='MessageSetInfoList'/>
+///<reference path='SignonInfoList'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.domain.data.MessageSetProfile;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.domain.data.ResponseMessage;
-import net.sf.ofx4j.domain.data.SignonProfile;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.client.FinancialInstitutionProfile;
+import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import SignonProfile = ofx4js.domain.data.SignonProfile;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import FinancialInstitutionProfile = ofx4js.client.FinancialInstitutionProfile;
 
-import java.net.URL;
-import java.util.Date;
-import java.util.Collection;
-import java.util.ArrayList;
+//import java.net.URL;
 
 /**
  * @author Ryan Heaton
  * @see "Section 7.2 OFX Spec"
  */
-@Aggregate ( "PROFRS" )
-public class ProfileResponse extends ResponseMessage implements FinancialInstitutionProfile {
+export class ProfileResponse extends ResponseMessage implements FinancialInstitutionProfile {
 
-  private MessageSetInfoList messageSetList;
-  private SignonInfoList signonInfoList;
-  private Date timestamp;
-  private String financialInstitutionName;
-  private String address1;
-  private String address2;
-  private String address3;
-  private String city;
-  private String state;
-  private String zip;
-  private String country;
-  private String customerServicePhone;
-  private String technicalSupportPhone;
-  private String fax;
-  private String siteURL;
-  private String email;
+  private messageSetList: MessageSetInfoList;
+  private signonInfoList: SignonInfoList;
+  private timestamp: Date;
+  private financialInstitutionName: string;
+  private address1: string;
+  private address2: string;
+  private address3: string;
+  private city: string;
+  private state: string;
+  private zip: string;
+  private country: string;
+  private customerServicePhone: string;
+  private technicalSupportPhone: string;
+  private fax: string;
+  private siteURL: string;
+  private email: string;
 
   /**
    * List of message set information.
    * @return List of message set information.
    */
-  @ChildAggregate ( order = 0 )
-  public MessageSetInfoList getMessageSetList() {
-    return messageSetList;
+  public getMessageSetList(): MessageSetInfoList {
+    return this.messageSetList;
   }
 
   /**
@@ -68,7 +73,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param messageSetList List of message set information.
    */
-  public void setMessageSetList(MessageSetInfoList messageSetList) {
+  public setMessageSetList(messageSetList: MessageSetInfoList): void {
     this.messageSetList = messageSetList;
   }
 
@@ -77,9 +82,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return List of signon information.
    */
-  @ChildAggregate ( order = 10 )
-  public SignonInfoList getSignonInfoList() {
-    return signonInfoList;
+  public getSignonInfoList(): SignonInfoList {
+    return this.signonInfoList;
   }
 
   /**
@@ -87,18 +91,18 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param signonInfoList List of signon information.
    */
-  public void setSignonInfoList(SignonInfoList signonInfoList) {
+  public setSignonInfoList(signonInfoList: SignonInfoList): void {
     this.signonInfoList = signonInfoList;
   }
 
   // Inherited.
-  public String getResponseMessageName() {
+  public getResponseMessageName(): string {
     return "profile";
   }
 
   // Inherited.
-  public Date getLastUpdated() {
-    return getTimestamp();
+  public getLastUpdated(): Date {
+    return this.getTimestamp();
   }
 
   /**
@@ -106,9 +110,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The timestamp of this profile update.
    */
-  @Element ( name = "DTPROFUP", order = 20 )
-  public Date getTimestamp() {
-    return timestamp;
+  public getTimestamp(): Date {
+    return this.timestamp;
   }
 
   /**
@@ -116,7 +119,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param timestamp The timestamp of this profile update.
    */
-  public void setTimestamp(Date timestamp) {
+  public setTimestamp(timestamp: Date): void {
     this.timestamp = timestamp;
   }
 
@@ -125,9 +128,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The name of the financial institution.
    */
-  @Element ( name = "FINAME", order = 30 )
-  public String getFinancialInstitutionName() {
-    return financialInstitutionName;
+  public getFinancialInstitutionName(): string {
+    return this.financialInstitutionName;
   }
 
   /**
@@ -135,7 +137,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param financialInstitutionName The name of the financial institution.
    */
-  public void setFinancialInstitutionName(String financialInstitutionName) {
+  public setFinancialInstitutionName(financialInstitutionName: string): void {
     this.financialInstitutionName = financialInstitutionName;
   }
 
@@ -144,9 +146,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The address of the financial institution.
    */
-  @Element ( name = "ADDR1", required = true, order = 40 )
-  public String getAddress1() {
-    return address1;
+  public getAddress1(): string {
+    return this.address1;
   }
 
   /**
@@ -154,7 +155,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param address1 The address of the financial institution.
    */
-  public void setAddress1(String address1) {
+  public setAddress1(address1: string): void {
     this.address1 = address1;
   }
 
@@ -163,9 +164,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The address of the financial institution.
    */
-  @Element ( name = "ADDR2", order = 50 )
-  public String getAddress2() {
-    return address2;
+  public getAddress2(): string {
+    return this.address2;
   }
 
   /**
@@ -173,7 +173,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param address2 The address of the financial institution.
    */
-  public void setAddress2(String address2) {
+  public setAddress2(address2: string): void {
     this.address2 = address2;
   }
 
@@ -182,9 +182,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The address of the financial institution.
    */
-  @Element ( name = "ADDR3", order = 60 )
-  public String getAddress3() {
-    return address3;
+  public getAddress3(): string {
+    return this.address3;
   }
 
   /**
@@ -192,7 +191,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param address3 The address of the financial institution.
    */
-  public void setAddress3(String address3) {
+  public setAddress3(address3: string): void {
     this.address3 = address3;
   }
 
@@ -201,9 +200,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The city of the financial institution.
    */
-  @Element ( name = "CITY", required = true, order = 70 )
-  public String getCity() {
-    return city;
+  public getCity(): string {
+    return this.city;
   }
 
   /**
@@ -211,7 +209,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param city The city of the financial institution.
    */
-  public void setCity(String city) {
+  public setCity(city: string): void {
     this.city = city;
   }
 
@@ -220,9 +218,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The state of this financial institution.
    */
-  @Element ( name = "STATE", required = true, order = 80 )
-  public String getState() {
-    return state;
+  public getState(): string {
+    return this.state;
   }
 
   /**
@@ -230,7 +227,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param state The state of this financial institution.
    */
-  public void setState(String state) {
+  public setState(state: string): void {
     this.state = state;
   }
 
@@ -239,9 +236,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The postal code of this financial institution.
    */
-  @Element ( name = "POSTALCODE", required = true, order = 90 )
-  public String getZip() {
-    return zip;
+  public getZip(): string {
+    return this.zip;
   }
 
   /**
@@ -249,7 +245,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param zip The postal code of this financial institution.
    */
-  public void setZip(String zip) {
+  public setZip(zip: string): void {
     this.zip = zip;
   }
 
@@ -259,9 +255,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    * @return The country code for this financial institution.
    * @see java.util.Locale#getISO3Country()
    */
-  @Element ( name = "COUNTRY", required = true, order = 100 )
-  public String getCountry() {
-    return country;
+  public getCountry(): string {
+    return this.country;
   }
 
   /**
@@ -269,7 +264,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param country The country code for this financial institution.
    */
-  public void setCountry(String country) {
+  public setCountry(country: string): void {
     this.country = country;
   }
 
@@ -278,9 +273,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The phone number to customer service.
    */
-  @Element ( name = "CSPHONE", order = 110 )
-  public String getCustomerServicePhone() {
-    return customerServicePhone;
+  public getCustomerServicePhone(): string {
+    return this.customerServicePhone;
   }
 
   /**
@@ -288,7 +282,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param customerServicePhone The phone number to customer service.
    */
-  public void setCustomerServicePhone(String customerServicePhone) {
+  public setCustomerServicePhone(customerServicePhone: string): void {
     this.customerServicePhone = customerServicePhone;
   }
 
@@ -297,9 +291,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The phone number to tech support.
    */
-  @Element ( name = "TSPHONE", order = 120 )
-  public String getTechnicalSupportPhone() {
-    return technicalSupportPhone;
+  public getTechnicalSupportPhone(): string {
+    return this.technicalSupportPhone;
   }
 
   /**
@@ -307,7 +300,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param technicalSupportPhone The phone number to tech support.
    */
-  public void setTechnicalSupportPhone(String technicalSupportPhone) {
+  public setTechnicalSupportPhone(technicalSupportPhone: string): void {
     this.technicalSupportPhone = technicalSupportPhone;
   }
 
@@ -316,9 +309,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The fax number.
    */
-  @Element ( name = "FAXPHONE", order = 130 )
-  public String getFax() {
-    return fax;
+  public getFax(): string {
+    return this.fax;
   }
 
   /**
@@ -326,7 +318,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param fax The fax number.
    */
-  public void setFax(String fax) {
+  public setFax(fax: string): void {
     this.fax = fax;
   }
 
@@ -335,9 +327,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return URL for the financial institution.
    */
-  @Element ( name = "URL", order = 140 )
-  public String getSiteURL() {
-    return siteURL;
+  public getSiteURL(): string {
+    return this.siteURL;
   }
 
   /**
@@ -345,7 +336,7 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param siteURL URL for the financial institution.
    */
-  public void setSiteURL(String siteURL) {
+  public setSiteURL(siteURL: string): void {
     this.siteURL = siteURL;
   }
 
@@ -354,9 +345,8 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @return The email for this FI
    */
-  @Element ( name = "EMAIL", order = 150 )
-  public String getEmail() {
-    return email;
+  public getEmail(): string {
+    return this.email;
   }
 
   /**
@@ -364,37 +354,45 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
    *
    * @param email The email for this FI
    */
-  public void setEmail(String email) {
+  public setEmail(email: string): void {
     this.email = email;
   }
 
-  public MessageSetProfile getMessageSetProfile(MessageSetType type) {
-    Collection<MessageSetProfile> profiles = getProfiles(type);
-    if (profiles.size() > 1) {
-      throw new IllegalStateException("More than one profile of type " + type);
+  public getMessageSetProfile(type: MessageSetType, version: string = null): MessageSetProfile {
+    return (version === null) ?
+      this.getMessageSetProfile_noversion(type) :
+      this.getMessageSetProfile_version(type, version);
+  }
+
+  public getMessageSetProfile_noversion(type: MessageSetType): MessageSetProfile {
+    var profiles: Array<MessageSetProfile> = this.getProfiles(type);
+    if (profiles.length > 1) {
+      throw new Error("More than one profile of type " + type);
     }
-    else if (profiles.isEmpty()) {
+    else if (profiles.length == 0) {
       return null;
     }
     else {
-      return profiles.iterator().next();
+      return profiles[0];
     }
   }
-
+  
   /**
    * Get all the profiles of the specified type.
    *
    * @param type The type.
    * @return The profiles.
    */
-  protected Collection<MessageSetProfile> getProfiles(MessageSetType type) {
-    Collection<MessageSetProfile> profiles = new ArrayList<MessageSetProfile>();
-    if (getMessageSetList() != null && getMessageSetList().getInformationList() != null) {
-      for (AbstractMessageSetInfo info : getMessageSetList().getInformationList()) {
+  protected getProfiles(type: MessageSetType): Array<MessageSetProfile> {
+    var profiles: Array<MessageSetProfile> = new Array<MessageSetProfile>();
+    if (this.getMessageSetList() != null && this.getMessageSetList().getInformationList() != null) {
+      for (var info_ in this.getMessageSetList().getInformationList()) {
+        var info: AbstractMessageSetInfo = info_;
         if (info.getVersionSpecificInformationList() != null) {
-          for (VersionSpecificMessageSetInfo versionSpecificInfo : info.getVersionSpecificInformationList()) {
+          for (var versionSpecificInfo_ in info.getVersionSpecificInformationList()) {
+            var versionSpecificInfo: VersionSpecificMessageSetInfo = versionSpecificInfo_;
             if (versionSpecificInfo.getMessageSetType() == type) {
-              profiles.add(versionSpecificInfo);
+              profiles.push(versionSpecificInfo);
             }
           }
         }
@@ -403,34 +401,56 @@ public class ProfileResponse extends ResponseMessage implements FinancialInstitu
     return profiles;
   }
 
-  public MessageSetProfile getMessageSetProfile(MessageSetType type, String version) {
-    for (MessageSetProfile profile : getProfiles(type)) {
+  public getMessageSetProfile_version(type: MessageSetType, version: string): MessageSetProfile {
+    for (var profile_ in this.getProfiles(type)) {
+      var profile: MessageSetProfile = profile_;
       if (version == null) {
         if (profile.getVersion() == null) {
           return profile;
         }
       }
-      else if (version.equals(profile.getVersion())) {
+      else if (version === profile.getVersion()) {
         return profile;
       }
     }
     
     return null;
-  }
+  }  
 
-  public SignonProfile getSignonProfile(MessageSetProfile messageSet) {
-    if (getSignonInfoList() != null && getSignonInfoList().getInfoList() != null) {
-      for (SignonInfo signonInfo : getSignonInfoList().getInfoList()) {
+  public getSignonProfile(messageSet: MessageSetProfile): SignonProfile {
+    if (this.getSignonInfoList() != null && this.getSignonInfoList().getInfoList() != null) {
+      for (var signonInfo_ in this.getSignonInfoList().getInfoList()) {
+        var signonInfo: SignonInfo = signonInfo_;
         if (messageSet.getRealm() == null) {
           if (signonInfo.getRealm() == null) {
             return signonInfo;
           }
         }
-        else if (messageSet.getRealm().equals(signonInfo.getRealm())) {
+        else if (messageSet.getRealm() === signonInfo.getRealm()) {
           return signonInfo;
         }
       }
     }
     return null;
   }
+}
+
+Aggregate_add( ProfileResponse, "PROFRS" );
+ChildAggregate_add(ProfileResponse, { order: 0, type: MessageSetInfoList, read: ProfileResponse.prototype.getMessageSetList, write: ProfileResponse.prototype.setMessageSetList });
+ChildAggregate_add(ProfileResponse, { order: 10, type: SignonInfoList, read: ProfileResponse.prototype.getSignonInfoList, write: ProfileResponse.prototype.setSignonInfoList });
+Element_add(ProfileResponse, { name: "DTPROFUP", order: 20, type: Date, read: ProfileResponse.prototype.getTimestamp, write: ProfileResponse.prototype.setTimestamp });
+Element_add(ProfileResponse, { name: "FINAME", order: 30, type: String, read: ProfileResponse.prototype.getFinancialInstitutionName, write: ProfileResponse.prototype.setFinancialInstitutionName });
+Element_add(ProfileResponse, { name: "ADDR1", required: true, order: 40, type: String, read: ProfileResponse.prototype.getAddress1, write: ProfileResponse.prototype.setAddress1 });
+Element_add(ProfileResponse, { name: "ADDR2", order: 50, type: String, read: ProfileResponse.prototype.getAddress2, write: ProfileResponse.prototype.setAddress2 });
+Element_add(ProfileResponse, { name: "ADDR3", order: 60, type: String, read: ProfileResponse.prototype.getAddress3, write: ProfileResponse.prototype.setAddress3 });
+Element_add(ProfileResponse, { name: "CITY", required: true, order: 70, type: String, read: ProfileResponse.prototype.getCity, write: ProfileResponse.prototype.setCity });
+Element_add(ProfileResponse, { name: "STATE", required: true, order: 80, type: String, read: ProfileResponse.prototype.getState, write: ProfileResponse.prototype.setState });
+Element_add(ProfileResponse, { name: "POSTALCODE", required: true, order: 90, type: String, read: ProfileResponse.prototype.getZip, write: ProfileResponse.prototype.setZip });
+Element_add(ProfileResponse, { name: "COUNTRY", required: true, order: 100, type: String, read: ProfileResponse.prototype.getCountry, write: ProfileResponse.prototype.setCountry });
+Element_add(ProfileResponse, { name: "CSPHONE", order: 110, type: String, read: ProfileResponse.prototype.getCustomerServicePhone, write: ProfileResponse.prototype.setCustomerServicePhone });
+Element_add(ProfileResponse, { name: "TSPHONE", order: 120, type: String, read: ProfileResponse.prototype.getTechnicalSupportPhone, write: ProfileResponse.prototype.setTechnicalSupportPhone });
+Element_add(ProfileResponse, { name: "FAXPHONE", order: 130, type: String, read: ProfileResponse.prototype.getFax, write: ProfileResponse.prototype.setFax });
+Element_add(ProfileResponse, { name: "URL", order: 140, type: String, read: ProfileResponse.prototype.getSiteURL, write: ProfileResponse.prototype.setSiteURL });
+Element_add(ProfileResponse, { name: "EMAIL", order: 150, type: String, read: ProfileResponse.prototype.getEmail, write: ProfileResponse.prototype.setEmail });
+
 }

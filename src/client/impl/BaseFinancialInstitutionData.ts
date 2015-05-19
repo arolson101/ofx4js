@@ -13,79 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../client/FinancialInstitutionData'/>
 
-package net.sf.ofx4j.client.impl;
+module ofx4js.client.impl {
 
-import net.sf.ofx4j.client.FinancialInstitutionData;
+import FinancialInstitutionData = ofx4js.client.FinancialInstitutionData;
 
-import java.net.URL;
+//import java.net.URL;
 
 /**
  * Base bean for FI data.
  *
  * @author Ryan Heaton
  */
-public class BaseFinancialInstitutionData implements FinancialInstitutionData {
+export class BaseFinancialInstitutionData implements FinancialInstitutionData {
 
-  private String id;
-  private String fid;
-  private String name;
-  private String organization;
-  private URL ofxUrl;
-  private String brokerId;
+  private id: string;
+  private fid: string;
+  private name: string;
+  private organization: string;
+  private ofxUrl: string;
+  private brokerId: string;
 
-  public BaseFinancialInstitutionData() {
-  }
-
-  public BaseFinancialInstitutionData(String id) {
+  public constructor(id?: string) {
     this.id = id;
   }
 
-  public String getId() {
-    return id;
+  public getId(): string {
+    return this.id;
   }
 
-  public void setId(String id) {
+  public setId(id: string): void {
     this.id = id;
   }
 
-  public String getFinancialInstitutionId() {
-    return fid;
+  public getFinancialInstitutionId(): string {
+    return this.fid;
   }
 
-  public void setFinancialInstitutionId(String id) {
+  public setFinancialInstitutionId(id: string): void {
     this.fid = id;
   }
 
-  public String getName() {
+  public getName(): string {
     return name;
   }
 
-  public void setName(String name) {
+  public setName(name: string): void {
     this.name = name;
   }
 
-  public String getOrganization() {
-    return organization;
+  public getOrganization(): string {
+    return this.organization;
   }
 
-  public void setOrganization(String organization) {
+  public setOrganization(organization: string): void {
     this.organization = organization;
   }
 
-  public URL getOFXURL() {
-    return ofxUrl;
+  public getOFXURL(): string {
+    return this.ofxUrl;
   }
 
-  public void setOFXURL(URL OFXURL) {
+  public setOFXURL(OFXURL: string): void {
     this.ofxUrl = OFXURL;
   }
 
-  public String getBrokerId() {
-    return brokerId;
+  public getBrokerId(): string {
+    return this.brokerId;
   }
 
-  public void setBrokerId(String brokerId) {
+  public setBrokerId(brokerId: string): void {
     this.brokerId = brokerId;
   }
+}
+
 }

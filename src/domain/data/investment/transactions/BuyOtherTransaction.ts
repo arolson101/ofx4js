@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='BaseBuyInvestmentTransaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * Transaction for buying other types of securities.
@@ -24,10 +26,13 @@ import net.sf.ofx4j.meta.Aggregate;
  *
  * @author Jon Perlow
  */
-@Aggregate( "BUYOTHER" )
-public class BuyOtherTransaction extends BaseBuyInvestmentTransaction {
+export class BuyOtherTransaction extends BaseBuyInvestmentTransaction {
 
-  public BuyOtherTransaction() {
+  constructor() {
     super(TransactionType.BUY_OTHER);
   }
+}
+
+Aggregate_add( BuyOtherTransaction, "BUYOTHER" );
+
 }

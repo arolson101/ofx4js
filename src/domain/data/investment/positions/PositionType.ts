@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.positions;
+module ofx4js.domain.data.investment.positions {
 
 /**
  * Type of position.
@@ -22,18 +22,19 @@ package net.sf.ofx4j.domain.data.investment.positions;
  *
  * @author Jon Perlow
  */
-public enum PositionType {
+export enum PositionType {
   LONG,
-  SHORT;
+  SHORT
+}
 
-  public static PositionType fromOfx(String ofxVal) {
-    if ("LONG".equals(ofxVal)) {
-      return LONG;
-    } else if ("SHORT".equals(ofxVal)) {
-      return SHORT;
-    } else {
-      return null;
-    }
+export function PositionType_fromOfx(ofxVal: string): PositionType {
+  if ("LONG" === ofxVal) {
+    return PositionType.LONG;
+  } else if ("SHORT" === ofxVal) {
+    return PositionType.SHORT;
+  } else {
+    return null;
   }
 }
 
+}

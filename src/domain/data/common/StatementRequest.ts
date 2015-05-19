@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../RequestMessage'/>
+///<reference path='StatementRange'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "STMTRQ" )
-public class StatementRequest extends RequestMessage {
+export class StatementRequest extends RequestMessage {
 
-  private StatementRange statementRange;
+  private statementRange: StatementRange;
 
   /**
    * The statement range.
    *
    * @return The statement range.
    */
-  @ChildAggregate ( name = "INCTRAN", required = false, order = 10 )
-  public StatementRange getStatementRange() {
-    return statementRange;
+  public getStatementRange(): StatementRange {
+    return this.statementRange;
   }
 
   /**
@@ -43,7 +45,12 @@ public class StatementRequest extends RequestMessage {
    *
    * @param statementRange The statement range.
    */
-  public void setStatementRange(StatementRange statementRange) {
+  public setStatementRange(statementRange: StatementRange): void {
     this.statementRange = statementRange;
   }
+}
+
+Aggregate_add( StatementRequest, "STMTRQ" );
+ChildAggregate_add(StatementRequest, { name: "INCTRAN", required: false, order: 10, type: StatementRange, read: StatementRequest.prototype.getStatementRange, write: StatementRequest.prototype.setStatementRange });
+
 }

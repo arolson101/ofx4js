@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ofx4j.domain.data.investment.positions;
+
+module ofx4js.domain.data.investment.positions {
 
 /**
  * How a short option is secured.
@@ -21,17 +22,19 @@ package net.sf.ofx4j.domain.data.investment.positions;
  *
  * @author Jon Perlow
  */
-public enum ShortOptionSecurity {
+export enum ShortOptionSecurity {
   NAKED,
-  COVERED;
+  COVERED
+}
 
-  public static ShortOptionSecurity fromOfx(String ofxVal) {
-    if ("NAKED".equals(ofxVal)) {
-      return NAKED;
-    } else if ("COVERED".equals(ofxVal)) {
-      return COVERED;
-    } else {
-      return null;
-    }
+export function ShortOptionSecurity_fromOfx(ofxVal: string): ShortOptionSecurity {
+  if ("NAKED" === ofxVal) {
+    return ShortOptionSecurity.NAKED;
+  } else if ("COVERED" === ofxVal) {
+    return ShortOptionSecurity.COVERED;
+  } else {
+    return null;
   }
+}
+
 }

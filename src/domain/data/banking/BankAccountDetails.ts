@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../common/AccountDetails'/>
+///<reference path='AccountType'/>
 
-package net.sf.ofx4j.domain.data.banking;
+module ofx4js.domain.data.banking {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.domain.data.common.AccountDetails;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import AccountDetails = ofx4js.domain.data.common.AccountDetails;
 
 /**
  * Base bank account details.
@@ -26,23 +30,21 @@ import net.sf.ofx4j.domain.data.common.AccountDetails;
  * @author Ryan Heaton
  * @see "OFX Spec, Section 11.3.1"
  */
-@Aggregate
-public class BankAccountDetails implements AccountDetails {
+export class BankAccountDetails implements AccountDetails {
 
-  private String bankId;
-  private String branchId;
-  private String accountNumber;
-  private AccountType accountType;
-  private String accountKey;
+  private bankId: string;
+  private branchId: string;
+  private accountNumber: string;
+  private accountType: AccountType;
+  private accountKey: string;
 
   /**
    * The routing and transit number.
    *
    * @return The routing and transit number.
    */
-  @Element ( name = "BANKID", required = true, order = 0 )
-  public String getBankId() {
-    return bankId;
+  public getBankId(): string {
+    return this.bankId;
   }
 
   /**
@@ -50,7 +52,7 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @param bankId The routing and transit number.
    */
-  public void setBankId(String bankId) {
+  public setBankId(bankId: string): void {
     this.bankId = bankId;
   }
 
@@ -59,8 +61,8 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @return The routing and transit number.
    */
-  public String getRoutingNumber() {
-    return getBankId();
+  public getRoutingNumber(): string {
+    return this.getBankId();
   }
 
   /**
@@ -68,8 +70,8 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @param routingNumber The routing and transit number.
    */
-  public void setRoutingNumber(String routingNumber) {
-    setBankId(routingNumber);
+  public setRoutingNumber(routingNumber: string): void {
+    this.setBankId(routingNumber);
   }
 
   /**
@@ -77,9 +79,8 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @return The branch id.
    */
-  @Element ( name = "BRANCHID", order = 10 )
-  public String getBranchId() {
-    return branchId;
+  public getBranchId(): string {
+    return this.branchId;
   }
 
   /**
@@ -87,7 +88,7 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @param branchId The branch id.
    */
-  public void setBranchId(String branchId) {
+  public setBranchId(branchId: string): void {
     this.branchId = branchId;
   }
 
@@ -96,9 +97,8 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @return The account number.
    */
-  @Element ( name = "ACCTID", required = true, order = 20)
-  public String getAccountNumber() {
-    return accountNumber;
+  public getAccountNumber(): string {
+    return this.accountNumber;
   }
 
   /**
@@ -106,7 +106,7 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @param accountNumber The account number.
    */
-  public void setAccountNumber(String accountNumber) {
+  public setAccountNumber(accountNumber: string): void {
     this.accountNumber = accountNumber;
   }
 
@@ -115,9 +115,8 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @return The account type.
    */
-  @Element ( name = "ACCTTYPE", required = true, order = 30)
-  public AccountType getAccountType() {
-    return accountType;
+  public getAccountType(): AccountType {
+    return this.accountType;
   }
 
   /**
@@ -125,7 +124,7 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @param accountType The account type.
    */
-  public void setAccountType(AccountType accountType) {
+  public setAccountType(accountType: AccountType): void {
     this.accountType = accountType;
   }
 
@@ -134,9 +133,8 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @return The account key.
    */
-  @Element( name = "ACCTKEY", order = 40 )
-  public String getAccountKey() {
-    return accountKey;
+  public getAccountKey(): string {
+    return this.accountKey;
   }
 
   /**
@@ -144,7 +142,16 @@ public class BankAccountDetails implements AccountDetails {
    *
    * @param accountKey The account key.
    */
-  public void setAccountKey(String accountKey) {
+  public setAccountKey(accountKey: string): void {
     this.accountKey = accountKey;
   }
+}
+
+Aggregate_add( BankAccountDetails );
+Element_add(BankAccountDetails, { name: "BANKID", required: true, order: 0, type: String, read: BankAccountDetails.prototype.getBankId, write: BankAccountDetails.prototype.setBankId });
+Element_add(BankAccountDetails, { name: "BRANCHID", order: 10, type: String, read: BankAccountDetails.prototype.getBranchId, write: BankAccountDetails.prototype.setBranchId });
+Element_add(BankAccountDetails, { name: "ACCTID", required: true, order: 20, type: String, read: BankAccountDetails.prototype.getAccountNumber, write: BankAccountDetails.prototype.setAccountNumber });
+Element_add(BankAccountDetails, { name: "ACCTTYPE", required: true, order: 30, type: AccountType, read: BankAccountDetails.prototype.getAccountType, write: BankAccountDetails.prototype.setAccountType });
+Element_add(BankAccountDetails, { name: "ACCTKEY", order: 40, type: String, read: BankAccountDetails.prototype.getAccountKey, write: BankAccountDetails.prototype.setAccountKey });
+  
 }

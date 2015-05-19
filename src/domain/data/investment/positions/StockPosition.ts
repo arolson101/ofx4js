@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BasePosition'/>
 
-package net.sf.ofx4j.domain.data.investment.positions;
+module ofx4js.domain.data.investment.positions {
 
-import net.sf.ofx4j.domain.data.investment.positions.BasePosition;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Represents a stock position.
@@ -26,20 +28,18 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "POSSTOCK" )
-public class StockPosition extends BasePosition {
-  private Double unitsStreet;
-  private Double unitsUser;
-  private Boolean reinvestDividends;
+export class StockPosition extends BasePosition {
+  private unitsStreet: number;
+  private unitsUser: number;
+  private reinvestDividends: boolean;
 
   /**
    * Gets the number of units in the financial insititution's street name.
    *
    * @return the number of units in the financial insititution's street name.
    */
-  @Element( name = "UNITSSTREET", order = 20)
-  public Double getUnitsStreet() {
-    return unitsStreet;
+  public getUnitsStreet(): number {
+    return this.unitsStreet;
   }
 
   /**
@@ -47,7 +47,7 @@ public class StockPosition extends BasePosition {
    *
    * @param unitsStreet the number of units in the financial insititution's street name.
    */
-  public void setUnitsStreet(Double unitsStreet) {
+  public setUnitsStreet(unitsStreet: number): void {
     this.unitsStreet = unitsStreet;
   }
 
@@ -56,9 +56,8 @@ public class StockPosition extends BasePosition {
    *
    * @return the number of units in the user's name.
    */
-  @Element( name = "UNITSUSER", order = 30)
-  public Double getUnitsUser() {
-    return unitsUser;
+  public getUnitsUser(): number {
+    return this.unitsUser;
   }
 
   /**
@@ -66,7 +65,7 @@ public class StockPosition extends BasePosition {
    *
    * @param unitsUser the number of units in the user's name.
    */
-  public void setUnitsUser(Double unitsUser) {
+  public setUnitsUser(unitsUser: number): void {
     this.unitsUser = unitsUser;
   }
 
@@ -75,9 +74,8 @@ public class StockPosition extends BasePosition {
    *
    * @return whether dividends are automatically reinvested
    */
-  @Element( name = "REINVDIV", order = 40)
-  public Boolean getReinvestDividends() {
-    return reinvestDividends;
+  public getReinvestDividends(): boolean {
+    return this.reinvestDividends;
   }
 
   /**
@@ -85,7 +83,14 @@ public class StockPosition extends BasePosition {
    *
    * @param reinvestDividends whether dividends are automatically reinvested
    */
-  public void setReinvestDividends(Boolean reinvestDividends) {
+  public setReinvestDividends(reinvestDividends: boolean): void {
     this.reinvestDividends = reinvestDividends;
   }
+}
+
+Aggregate_add( StockPosition, "POSSTOCK" );
+Element_add(StockPosition, { name: "UNITSSTREET", order: 20, type: Number, read: StockPosition.prototype.getUnitsStreet, write: StockPosition.prototype.setUnitsStreet });
+Element_add(StockPosition, { name: "UNITSUSER", order: 30, type: Number, read: StockPosition.prototype.getUnitsUser, write: StockPosition.prototype.setUnitsUser });
+Element_add(StockPosition, { name: "REINVDIV", order: 40, type: Boolean, read: StockPosition.prototype.getReinvestDividends, write: StockPosition.prototype.setReinvestDividends });
+
 }

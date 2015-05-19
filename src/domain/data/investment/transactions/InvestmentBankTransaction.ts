@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../common/Transaction'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.common.Transaction;
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
-import net.sf.ofx4j.meta.Element;
+import Transaction = ofx4js.domain.data.common.Transaction;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
@@ -28,26 +34,24 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "INVBANKTRAN" )
-public class InvestmentBankTransaction {
+export class InvestmentBankTransaction {
 
-  private Transaction transaction;
-  private String subAccountFund;
+  private transaction: Transaction;
+  private subAccountFund: string;
 
   /**
    * Gets the wrapped transaction aggregate.
    * @return the wrapped transaction
    */
-  @ChildAggregate( order = 10 )
-  public Transaction getTransaction() {
-    return transaction;
+  public getTransaction(): Transaction {
+    return this.transaction;
   }
 
   /**
    * Sets the wrapped transaction aggregate.
    * @param transaction the wrapped transaction
    */
-  public void setTransaction(Transaction transaction) {
+  public setTransaction(transaction: Transaction): void {
     this.transaction = transaction;
   }
 
@@ -57,9 +61,8 @@ public class InvestmentBankTransaction {
    *
    * @return the sub account fund for the transaction
    */
-  @Element( name = "SUBACCTFUND", required = true, order = 20)
-  public String getSubAccountFund() {
-    return subAccountFund;
+  public getSubAccountFund(): string {
+    return this.subAccountFund;
   }
 
   /**
@@ -68,7 +71,7 @@ public class InvestmentBankTransaction {
    *
    * @param subAccountFund the sub account fund for the transaction
    */
-  public void setSubAccountFund(String subAccountFund) {
+  public setSubAccountFund(subAccountFund: string): void {
     this.subAccountFund = subAccountFund;
   }
 
@@ -77,7 +80,13 @@ public class InvestmentBankTransaction {
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
+}
+
+Aggregate_add( InvestmentBankTransaction, "INVBANKTRAN" );
+ChildAggregate_add(InvestmentBankTransaction, { order: 10, type: Transaction, read: InvestmentBankTransaction.prototype.getTransaction, write: InvestmentBankTransaction.prototype.setTransaction });
+Element_add(InvestmentBankTransaction, { name: "SUBACCTFUND", required: true, order: 20, type: String, read: InvestmentBankTransaction.prototype.getSubAccountFund, write: InvestmentBankTransaction.prototype.setSubAccountFund });
+
 }

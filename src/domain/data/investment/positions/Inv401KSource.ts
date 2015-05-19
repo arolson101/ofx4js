@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.positions;
-
-import java.util.HashMap;
-import java.util.Map;
+module ofx4js.domain.data.investment.positions {
 
 /**
  * Types of 401(k) sources.
@@ -25,27 +22,32 @@ import java.util.Map;
  *
  * @author Jon Perlow
  */
-public enum Inv401KSource {
+export enum Inv401KSource {
   PRETAX,
   AFTER_TAX,
   MATCH,
   PROFIT_SHARING,
   ROLLOVER,
   OTHER_VEST,
-  OTHER_NONVEST;
+  OTHER_NONVEST
+}
 
-  static Map<String, Inv401KSource> ofxMapping = new HashMap<String, Inv401KSource>();
-  static {
-    ofxMapping.put("PRETAX", PRETAX);
-    ofxMapping.put("AFTERTAX", AFTER_TAX);
-    ofxMapping.put("MATCH", MATCH);
-    ofxMapping.put("PROFITSHARING", PROFIT_SHARING);
-    ofxMapping.put("ROLLOVER", ROLLOVER);
-    ofxMapping.put("OTHERVEST", OTHER_VEST);
-    ofxMapping.put("OTHERNONVEST", OTHER_NONVEST);
-  }
+interface MappingType {
+  [key: string]: Inv401KSource;
+}
 
-  public static Inv401KSource fromOfx(String ofxVal) {
-    return ofxVal == null ? null : ofxMapping.get(ofxVal);
-  }
+var ofxMapping: MappingType = {
+  "PRETAX": Inv401KSource.PRETAX,
+  "AFTERTAX": Inv401KSource.AFTER_TAX,
+  "MATCH": Inv401KSource.MATCH,
+  "PROFITSHARING": Inv401KSource.PROFIT_SHARING,
+  "ROLLOVER": Inv401KSource.ROLLOVER,
+  "OTHERVEST": Inv401KSource.OTHER_VEST,
+  "OTHERNONVEST": Inv401KSource.OTHER_NONVEST,
+};
+
+export function Inv401KSource_fromOfx(ofxVal: string): Inv401KSource {
+  return ofxVal == null ? null : ofxMapping[ofxVal];
+}
+
 }

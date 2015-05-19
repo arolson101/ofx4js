@@ -13,34 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='Transaction'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-import net.sf.ofx4j.meta.ChildAggregate;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
-import java.util.Date;
-import java.util.List;
+//import java.util.Date;
+//import java.util.List;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ( "BANKTRANLIST" )
-public class TransactionList {
+export class TransactionList {
 
-  private Date start;
-  private Date end;
-  private List<Transaction> transactions;
+  private start: Date;
+  private end: Date;
+  private transactions: Array<Transaction>;
 
   /**
    * The start date.
    *
    * @return The start date.
    */
-  @Element ( name = "DTSTART", required = true, order = 0)
-  public Date getStart() {
-    return start;
+  public getStart(): Date {
+    return this.start;
   }
 
   /**
@@ -48,7 +50,7 @@ public class TransactionList {
    *
    * @param start The start date.
    */
-  public void setStart(Date start) {
+  public setStart(start: Date): void {
     this.start = start;
   }
 
@@ -57,9 +59,8 @@ public class TransactionList {
    *
    * @return The end date.
    */
-  @Element( name = "DTEND", required = true, order = 10 )
-  public Date getEnd() {
-    return end;
+  public getEnd(): Date {
+    return this.end;
   }
 
   /**
@@ -67,7 +68,7 @@ public class TransactionList {
    *
    * @param end The end date.
    */
-  public void setEnd(Date end) {
+  public setEnd(end: Date): void {
     this.end = end;
   }
 
@@ -76,9 +77,8 @@ public class TransactionList {
    *
    * @return The transaction list.
    */
-  @ChildAggregate ( order = 20 )
-  public List<Transaction> getTransactions() {
-    return transactions;
+  public getTransactions(): Array<Transaction> {
+    return this.transactions;
   }
 
   /**
@@ -86,7 +86,14 @@ public class TransactionList {
    *
    * @param transactions The transaction list.
    */
-  public void setTransactions(List<Transaction> transactions) {
+  public setTransactions(transactions: Array<Transaction>): void {
     this.transactions = transactions;
   }
+}
+
+Aggregate_add( TransactionList, "BANKTRANLIST" );
+Element_add(TransactionList, { name: "DTSTART", required: true, order: 0, type: Date, read: TransactionList.prototype.getStart, write: TransactionList.prototype.setStart });
+Element_add(TransactionList, { name: "DTEND", required: true, order: 10, type: Date, read: TransactionList.prototype.getEnd, write: TransactionList.prototype.setEnd });
+ChildAggregate_add(TransactionList, { order: 20, type: Array, collectionEntryType: Transaction, read: TransactionList.prototype.getTransactions, write: TransactionList.prototype.setTransactions });
+
 }

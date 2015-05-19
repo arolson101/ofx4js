@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseBuyInvestmentTransaction'/>
+///<reference path='OptionBuyType'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for buying options.
@@ -25,13 +29,12 @@ import net.sf.ofx4j.meta.Element;
  *
  * @author Jon Perlow
  */
-@Aggregate( "BUYOPT" )
-public class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
+export class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
 
-  private String optionBuyType;
-  private Integer sharesPerContact;
+  private optionBuyType: string;
+  private sharesPerContact: number;
 
-  public BuyOptionTransaction() {
+  constructor() {
     super(TransactionType.BUY_OPTION);
   }
 
@@ -42,9 +45,8 @@ public class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the option buy type
    */
-  @Element( name = "OPTBUYTYPE", required = true, order = 20)
-  public String getOptionBuyType() {
-    return optionBuyType;
+  public getOptionBuyType(): string {
+    return this.optionBuyType;
   }
 
   /**
@@ -54,7 +56,7 @@ public class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
    *
    * @param optionBuyType the option buy type
    */
-  public void setOptionBuyType(String optionBuyType) {
+  public setOptionBuyType(optionBuyType: string): void {
     this.optionBuyType = optionBuyType;
   }
 
@@ -63,8 +65,8 @@ public class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the type of purchase or null if it's not known
    */
-  public OptionBuyType getOptionBuyTypeEnum() {
-    return OptionBuyType.fromOfx(optionBuyType);
+  public getOptionBuyTypeEnum(): OptionBuyType {
+    return OptionBuyType_fromOfx(this.optionBuyType);
   }
 
   /**
@@ -73,9 +75,8 @@ public class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
    *
    * @return the number of shares per contact
    */
-  @Element( name = "SHPERCTRCT", required = true, order = 30)
-  public Integer getSharesPerContract() {
-    return sharesPerContact;
+  public getSharesPerContract(): number {
+    return this.sharesPerContact;
   }
 
   /**
@@ -84,7 +85,13 @@ public class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
    *
    * @param sharesPerContact the number of shares per contact
    */
-  public void setSharesPerContract(Integer sharesPerContact) {
+  public setSharesPerContract(sharesPerContact: number): void {
     this.sharesPerContact = sharesPerContact;
   }
+}
+
+Aggregate_add( BuyOptionTransaction, "BUYOPT" );
+Element_add(BuyOptionTransaction, { name: "OPTBUYTYPE", required: true, order: 20, type: String, read: BuyOptionTransaction.prototype.getOptionBuyType, write: BuyOptionTransaction.prototype.setOptionBuyType });
+Element_add(BuyOptionTransaction, { name: "SHPERCTRCT", required: true, order: 30, type: Number, read: BuyOptionTransaction.prototype.getSharesPerContract, write: BuyOptionTransaction.prototype.setSharesPerContract });
+
 }

@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../TransactionWrappedResponseMessage'/>
+///<reference path='InvestmentStatementResponse'/>
 
-package net.sf.ofx4j.domain.data.investment.statements;
+module ofx4js.domain.data.investment.statements {
 
-import net.sf.ofx4j.domain.data.TransactionWrappedResponseMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.ChildAggregate;
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Investment statement transaction response.
@@ -26,20 +30,18 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-@Aggregate ( "INVSTMTTRNRS")
-public class InvestmentStatementResponseTransaction
+export class InvestmentStatementResponseTransaction
     extends TransactionWrappedResponseMessage<InvestmentStatementResponse> {
 
-  private InvestmentStatementResponse message;
+  private message: InvestmentStatementResponse;
 
   /**
    * Gets the the statement response message.
    *
    * @return the statement response message.
    */
-  @ChildAggregate( required = true, order = 30 )
-  public InvestmentStatementResponse getMessage() {
-    return message;
+  public getMessage(): InvestmentStatementResponse {
+    return this.message;
   }
 
   /**
@@ -47,12 +49,17 @@ public class InvestmentStatementResponseTransaction
    *
    * @param message the statement response message.
    */
-  public void setMessage(InvestmentStatementResponse message) {
+  public setMessage(message: InvestmentStatementResponse): void {
     this.message = message;
   }
 
   // Inherited.
-  public InvestmentStatementResponse getWrappedMessage() {
-    return getMessage();
+  public getWrappedMessage(): InvestmentStatementResponse {
+    return this.getMessage();
   }
+}
+
+Aggregate_add( InvestmentStatementResponseTransaction, "INVSTMTTRNRS" );
+ChildAggregate_add(InvestmentStatementResponseTransaction, { required: true, order: 30, type: InvestmentStatementResponse, read: InvestmentStatementResponseTransaction.prototype.getMessage, write: InvestmentStatementResponseTransaction.prototype.setMessage });
+
 }

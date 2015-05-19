@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='BasePosition'/>
 
-package net.sf.ofx4j.domain.data.investment.positions;
+module ofx4js.domain.data.investment.positions {
 
-import net.sf.ofx4j.meta.Aggregate;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * Represents a debt position.
@@ -24,6 +26,9 @@ import net.sf.ofx4j.meta.Aggregate;
  *
  * @author Jon Perlow
  */
-@Aggregate( "POSDEBT" )
-public class DebtPosition extends BasePosition {
+export class DebtPosition extends BasePosition {
+}
+
+Aggregate_add( DebtPosition, "POSDEBT" )
+
 }

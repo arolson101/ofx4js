@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+///<reference path='EmailV1MessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile.info;
+module ofx4js.domain.data.profile.info {
 
-import net.sf.ofx4j.domain.data.profile.VersionSpecificMessageSetInfo;
-import net.sf.ofx4j.domain.data.MessageSetType;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Email Message Set Profile Information
@@ -27,13 +31,12 @@ import net.sf.ofx4j.meta.Element;
  * @author Ryan Heaton
  * @see "Section 9.4.2 OFX Spec"
  */
-@Aggregate ( "EMAILMSGSETV1" )
-public class EmailV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+export class EmailV1MessageSetInfo extends VersionSpecificMessageSetInfo {
 
-  private Boolean supportsMail;
-  private Boolean supportsMimeType;
+  private supportsMail: boolean;
+  private supportsMimeType: boolean;
 
-  public MessageSetType getMessageSetType() {
+  public getMessageSetType(): MessageSetType {
     return MessageSetType.email;
   }
 
@@ -42,12 +45,11 @@ public class EmailV1MessageSetInfo extends VersionSpecificMessageSetInfo {
    * N if server supports only the <MAILSYNCRQ> request.
    * @return Boolean
    */
-  @Element( name = "MAILSUP", required = true, order = 10)
-  public Boolean getSupportsMail() {
-    return supportsMail;
+  public getSupportsMail(): boolean {
+    return this.supportsMail;
   }
 
-  public void setSupportsMail(Boolean supportsMail) {
+  public setSupportsMail(supportsMail: boolean): void {
     this.supportsMail = supportsMail;
   }
 
@@ -55,13 +57,18 @@ public class EmailV1MessageSetInfo extends VersionSpecificMessageSetInfo {
    * Y if server supports get MIME message
    * @return Boolean
    */
-  @Element( name = "GETMIMESUP", required = true, order = 20)
-  public Boolean getSupportsMimeType() {
-    return supportsMimeType;
+  public getSupportsMimeType(): boolean {
+    return this.supportsMimeType;
   }
 
-  public void setSupportsMimeType(Boolean supportsMimeType) {
+  public setSupportsMimeType(supportsMimeType: boolean): void {
     this.supportsMimeType = supportsMimeType;
   }
+
+}
+
+Aggregate_add( EmailV1MessageSetInfo, "EMAILMSGSETV1" );
+Element_add(EmailV1MessageSetInfo, { name: "MAILSUP", required: true, order: 10, type: Boolean, read: EmailV1MessageSetInfo.prototype.getSupportsMail, write: EmailV1MessageSetInfo.prototype.setSupportsMail });
+Element_add(EmailV1MessageSetInfo, { name: "GETMIMESUP", required: true, order: 20, type: Boolean, read: EmailV1MessageSetInfo.prototype.getSupportsMimeType, write: EmailV1MessageSetInfo.prototype.setSupportsMimeType });
 
 }

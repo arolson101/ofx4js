@@ -13,31 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../RequestMessage'/>
 
-package net.sf.ofx4j.domain.data.signup;
+module ofx4js.domain.data.signup {
 
-import net.sf.ofx4j.domain.data.RequestMessage;
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Date;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  */
-@Aggregate ("ACCTINFORQ")
-public class AccountInfoRequest extends RequestMessage {
+export class AccountInfoRequest extends RequestMessage {
 
-  private Date lastUpdated = new Date(0); //default is never updated.
+  private lastUpdated: Date;
+  
+  constructor() {
+    super();
+    this.lastUpdated = new Date(0); //default is never updated.
+  }
 
   /**
    * When the account info was last updated.
    *
    * @return When the account info was last updated.
    */
-  @Element( name = "DTACCTUP", required = true, order = 0 )
-  public Date getLastUpdated() {
-    return lastUpdated;
+  public getLastUpdated(): Date {
+    return this.lastUpdated;
   }
 
   /**
@@ -45,7 +49,12 @@ public class AccountInfoRequest extends RequestMessage {
    *
    * @param lastUpdated When the account info was last updated.
    */
-  public void setLastUpdated(Date lastUpdated) {
+  public setLastUpdated(lastUpdated: Date): void {
     this.lastUpdated = lastUpdated;
   }
+}
+
+Aggregate_add(AccountInfoRequest, "ACCTINFORQ");
+Element_add(AccountInfoRequest, { name: "DTACCTUP", required: true, order: 0, type: Date, read: AccountInfoRequest.prototype.getLastUpdated, write: AccountInfoRequest.prototype.setLastUpdated });
+
 }

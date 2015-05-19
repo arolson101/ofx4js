@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='VersionSpecificMessageSetInfo'/>
 
-package net.sf.ofx4j.domain.data.profile;
+module ofx4js.domain.data.profile {
 
-import net.sf.ofx4j.meta.ChildAggregate;
-
-import java.util.List;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Information about a message set.
@@ -26,18 +26,17 @@ import java.util.List;
  * @author Ryan Heaton
  * @see "Section 7.2.1, OFX Spec"
  */
-public abstract class AbstractMessageSetInfo {
+export /*abstract*/ class AbstractMessageSetInfo {
 
-  private List<VersionSpecificMessageSetInfo> versionSpecificInformationList;
+  private versionSpecificInformationList: Array<VersionSpecificMessageSetInfo>;
 
   /**
    * List of information about a message set for each version supported.
    *
    * @return List of information about a message set for each version supported.
    */
-  @ChildAggregate ( order = 0 )
-  protected List<VersionSpecificMessageSetInfo> getVersionSpecificInformationList() {
-    return versionSpecificInformationList;
+  public getVersionSpecificInformationList(): Array<VersionSpecificMessageSetInfo> {
+    return this.versionSpecificInformationList;
   }
 
   /**
@@ -45,7 +44,10 @@ public abstract class AbstractMessageSetInfo {
    *
    * @param versionSpecificInformationList List of information about a message set for each version supported.
    */
-  public void setVersionSpecificInformationList(List<VersionSpecificMessageSetInfo> versionSpecificInformationList) {
+  public setVersionSpecificInformationList(versionSpecificInformationList: Array<VersionSpecificMessageSetInfo>): void {
     this.versionSpecificInformationList = versionSpecificInformationList;
   }
+}
+
+ChildAggregate_add(AbstractMessageSetInfo, { order: 0, type: Array, collectionEntryType: VersionSpecificMessageSetInfo, read: AbstractMessageSetInfo.prototype.getVersionSpecificInformationList, write: AbstractMessageSetInfo.prototype.setVersionSpecificInformationList });
 }

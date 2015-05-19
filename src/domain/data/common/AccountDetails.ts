@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * Common details about an account.
  *
  * @author Ryan Heaton
  */
-public interface AccountDetails {
+export interface AccountDetails {
 
   /**
    * The account number.
    *
    * @return The account number.
    */
-  String getAccountNumber();
+  getAccountNumber(): string;
 
   /**
    * The account key.
    *
    * @return The account key.
    */
-  String getAccountKey();
+  getAccountKey(): string;
+
+}
 
 }

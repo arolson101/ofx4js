@@ -13,28 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../OFXException'/>
+///<reference path='../domain/data/banking/BankAccountDetails'/>
+///<reference path='../domain/data/creditcard/CreditCardAccountDetails'/>
+///<reference path='../domain/data/investment/accounts/InvestmentAccountDetails'/>
+///<reference path='../domain/data/signup/AccountProfile'/>
+///<reference path='BankAccount'/>
+///<reference path='CreditCardAccount'/>
+///<reference path='FinancialInstitutionData'/>
+///<reference path='FinancialInstitutionProfile'/>
 
-package net.sf.ofx4j.client;
+module ofx4js.client {
 
-import net.sf.ofx4j.OFXException;
-import net.sf.ofx4j.domain.data.banking.BankAccountDetails;
-import net.sf.ofx4j.domain.data.creditcard.CreditCardAccountDetails;
-import net.sf.ofx4j.domain.data.investment.accounts.InvestmentAccountDetails;
-import net.sf.ofx4j.domain.data.signup.AccountProfile;
-
-import java.util.Collection;
+import OFXException = ofx4js.OFXException;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import AccountProfile = ofx4js.domain.data.signup.AccountProfile;
 
 /**
  * @author Ryan Heaton
  */
-public interface FinancialInstitution {
+export interface FinancialInstitution {
 
   /**
    * The financial institution data defining this FI.
    *
    * @return The financial institution data.
    */
-  FinancialInstitutionData getData();
+  getData(): FinancialInstitutionData;
 
   /**
    * Read the specified financial institution profile. Implies a network call.
@@ -42,7 +49,7 @@ public interface FinancialInstitution {
    * @return The profile.
    * @throws OFXException if something goes awry.
    */
-  FinancialInstitutionProfile readProfile() throws OFXException;
+  readProfile() /*throws OFXException*/ : Promise<FinancialInstitutionProfile>;
 
   /**
    * Read the account profiles of the specified user.
@@ -51,7 +58,7 @@ public interface FinancialInstitution {
    * @param password The password.
    * @return The profiles.
    */
-  Collection<AccountProfile> readAccountProfiles(String username, String password) throws OFXException;
+  readAccountProfiles(username: string, password: string) /*throws OFXException*/: Promise<Array<AccountProfile>>;
 
   /**
    * Load a bank account.
@@ -61,7 +68,7 @@ public interface FinancialInstitution {
    * @param password The password.
    * @return The bank account.
    */
-  BankAccount loadBankAccount(BankAccountDetails details, String username, String password);
+  loadBankAccount(details: BankAccountDetails, username: string, password: string): BankAccount;
 
   /**
    * Load a credit card account.
@@ -71,7 +78,7 @@ public interface FinancialInstitution {
    * @param password The password.
    * @return The credit card account.
    */
-  CreditCardAccount loadCreditCardAccount(CreditCardAccountDetails details, String username, String password);
+  loadCreditCardAccount(details: CreditCardAccountDetails, username: string, password: string): CreditCardAccount;
 
 
   /**
@@ -82,5 +89,7 @@ public interface FinancialInstitution {
    * @param password The password.
    * @return The investment account.
    */
-  InvestmentAccount loadInvestmentAccount(InvestmentAccountDetails details, String username, String password);
+  loadInvestmentAccount(details: InvestmentAccountDetails, username: string, password: string): InvestmentAccount;
+}
+
 }

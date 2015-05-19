@@ -13,39 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='OFXHandler'/>
+///<reference path='StringReader'/>
 
-package net.sf.ofx4j.io;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+module ofx4js.io {
 
 /**
  * Basic interface for reading an OFX document.
  *
  * @author Ryan Heaton
  */
-public interface OFXReader {
+export interface OFXReader {
 
   /**
    * Set the handler for this OFX reader.
    *
    * @param handler The handler.
    */
-  void setContentHandler(OFXHandler handler);
+  setContentHandler(handler: OFXHandler): void;
 
   /**
-   * Parse a stream.
+   * Parse a stream or reader.
    *
-   * @param stream The stream to parse.
+   * @param stream The stream or reader to parse.
    */
-  void parse(InputStream stream) throws IOException, OFXParseException;
+  parse(stream: StringReader): void;
+}
 
-  /**
-   * Parse a reader.
-   *
-   * @param reader The reader to parse.
-   */
-  void parse(Reader reader) throws IOException, OFXParseException;
-  
 }

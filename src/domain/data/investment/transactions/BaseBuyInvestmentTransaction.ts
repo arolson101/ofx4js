@@ -13,12 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
+///<reference path='BuyInvestmentTransaction'/>
+///<reference path='TransactionType'/>
+///<reference path='InvestmentTransaction'/>
+///<reference path='OriginalCurrency'/>
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
-import net.sf.ofx4j.domain.data.investment.accounts.SubAccountType;
-import net.sf.ofx4j.domain.data.seclist.SecurityId;
-import net.sf.ofx4j.meta.ChildAggregate;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for all investment transactions for buying securities.
@@ -29,12 +39,12 @@ import net.sf.ofx4j.meta.ChildAggregate;
  *
  * @author Jon Perlow
  */
-public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransaction
+export /*abstract*/ class BaseBuyInvestmentTransaction extends BaseInvestmentTransaction
     implements TransactionWithSecurity {
 
-  private BuyInvestmentTransaction buyInvestment;
+  private buyInvestment: BuyInvestmentTransaction;
 
-  BaseBuyInvestmentTransaction(TransactionType transactionType) {
+  constructor(transactionType: TransactionType) {
     super(transactionType);
   }
 
@@ -43,9 +53,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the buy investment transaction child aggregate
    */
-  @ChildAggregate( order = 10 )
-  public BuyInvestmentTransaction getBuyInvestment() {
-    return buyInvestment;
+  public getBuyInvestment(): BuyInvestmentTransaction {
+    return this.buyInvestment;
   }
 
   /**
@@ -53,7 +62,7 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @param buyInvestment the buy investment transaction child aggregate
    */
-  public void setBuyInvestment(BuyInvestmentTransaction buyInvestment) {
+  public setBuyInvestment(buyInvestment: BuyInvestmentTransaction): void {
     this.buyInvestment = buyInvestment;
   }
 
@@ -63,8 +72,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    * @return the investment transaction aggregate
    */
   // @Overridden
-  public InvestmentTransaction getInvestmentTransaction() {
-    return getBuyInvestment().getInvestmentTransaction();
+  public getInvestmentTransaction(): InvestmentTransaction {
+    return this.getBuyInvestment().getInvestmentTransaction();
   }
 
   /**
@@ -74,8 +83,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the security id of the security that was bought
    */
-  public SecurityId getSecurityId() {
-    return getBuyInvestment().getSecurityId();
+  public getSecurityId(): SecurityId {
+    return this.getBuyInvestment().getSecurityId();
   }
 
   /**
@@ -87,8 +96,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the number of units purchased.
    */
-  public Double getUnits() {
-    return getBuyInvestment().getUnits();
+  public getUnits(): number {
+    return this.getBuyInvestment().getUnits();
   }
 
   /**
@@ -99,8 +108,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the per unit price
    */
-  public Double getUnitPrice() {
-    return getBuyInvestment().getUnitPrice();
+  public getUnitPrice(): number {
+    return this.getBuyInvestment().getUnitPrice();
   }
 
   /**
@@ -110,8 +119,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the per unit markeup price
    */
-  public Double getMarkup() {
-    return getBuyInvestment().getMarkup();
+  public getMarkup(): number {
+    return this.getBuyInvestment().getMarkup();
   }
 
   /**
@@ -121,8 +130,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the transaction commision
    */
-  public Double getCommission() {
-    return getBuyInvestment().getCommission();
+  public getCommission(): number {
+    return this.getBuyInvestment().getCommission();
   }
 
   /**
@@ -131,8 +140,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the transaction taxes
    */
-  public Double getTaxes() {
-    return getBuyInvestment().getTaxes();
+  public getTaxes(): number {
+    return this.getBuyInvestment().getTaxes();
   }
 
   /**
@@ -141,8 +150,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the transaction fees
    */
-  public Double getFees() {
-    return getBuyInvestment().getFees();
+  public getFees(): number {
+    return this.getBuyInvestment().getFees();
   }
 
   /**
@@ -151,8 +160,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the load
    */
-  public Double getLoad() {
-    return getBuyInvestment().getLoad();
+  public getLoad(): number {
+    return this.getBuyInvestment().getLoad();
   }
 
   /**
@@ -163,8 +172,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the total
    */
-  public Double getTotal() {
-    return getBuyInvestment().getTotal();
+  public getTotal(): number {
+    return this.getBuyInvestment().getTotal();
   }
 
   /**
@@ -174,8 +183,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the currency code for the transaction
    */
-  public String getCurrencyCode() {
-    return getBuyInvestment().getCurrencyCode();
+  public getCurrencyCode(): string {
+    return this.getBuyInvestment().getCurrencyCode();
   }
 
   /**
@@ -184,8 +193,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the original currency info for the transaction
    */
-  public OriginalCurrency getOriginalCurrencyInfo() {
-    return getBuyInvestment().getOriginalCurrencyInfo();
+  public getOriginalCurrencyInfo(): OriginalCurrency {
+    return this.getBuyInvestment().getOriginalCurrencyInfo();
   }
 
   /**
@@ -194,8 +203,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the sub account type
    */
-  public String getSubAccountSecurity() {
-    return getBuyInvestment().getSubAccountSecurity();
+  public getSubAccountSecurity(): string {
+    return this.getBuyInvestment().getSubAccountSecurity();
   }
 
   /**
@@ -203,8 +212,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the type of null if it wasn't one of the well known types
    */
-  public SubAccountType getSubAccountSecurityEnum() {
-    return SubAccountType.fromOfx(getSubAccountSecurity());
+  public getSubAccountSecurityEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountSecurity());
   }
 
   /**
@@ -213,8 +222,8 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the sub account fund
    */
-  public String getSubAccountFund() {
-    return getBuyInvestment().getSubAccountFund();
+  public getSubAccountFund(): string {
+    return this.getBuyInvestment().getSubAccountFund();
   }
 
   /**
@@ -222,7 +231,10 @@ public abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
    *
    * @return the type or null if it wasn't one of the well known types.
    */
-  public SubAccountType getSubAccountFundEnum() {
-    return SubAccountType.fromOfx(getSubAccountFund());
+  public getSubAccountFundEnum(): SubAccountType {
+    return SubAccountType_fromOfx(this.getSubAccountFund());
   }
+}
+
+ChildAggregate_add(BaseBuyInvestmentTransaction, { order: 10, type: BuyInvestmentTransaction, read: BaseBuyInvestmentTransaction.prototype.getBuyInvestment, write: BaseBuyInvestmentTransaction.prototype.setBuyInvestment });
 }

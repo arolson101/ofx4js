@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.investment.transactions;
+module ofx4js.domain.data.investment.transactions {
 
 /**
  * Type of purchase for options.
@@ -22,17 +22,19 @@ package net.sf.ofx4j.domain.data.investment.transactions;
  *
  * @author Jon Perlow
  */
-public enum OptionBuyType {
+export enum OptionBuyType {
   BUY_TO_OPEN,
-  BUY_TO_CLOSE;
+  BUY_TO_CLOSE
+}
 
-  public static OptionBuyType fromOfx(String ofxVal) {
-    if ("BUYTOOPEN".equals(ofxVal)) {
-      return BUY_TO_OPEN;
-    } else if ("BUYTOCLOSE".equals(ofxVal)) {
-      return BUY_TO_CLOSE;
-    } else {
-      return null;
-    }
+export function OptionBuyType_fromOfx(ofxVal: string): OptionBuyType {
+  if ("BUYTOOPEN" === ofxVal) {
+    return OptionBuyType.BUY_TO_OPEN;
+  } else if ("BUYTOCLOSE" === ofxVal) {
+    return OptionBuyType.BUY_TO_CLOSE;
+  } else {
+    return null;
   }
+}
+
 }

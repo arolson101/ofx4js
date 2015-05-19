@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
-import net.sf.ofx4j.meta.Aggregate;
-import net.sf.ofx4j.meta.Element;
-
-import java.util.Locale;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
  * @see "Section 5.2, OFX Spec"
  */
-@Aggregate ( "CURRENCY" )
-public class Currency {
+export class Currency {
 
-  private String code = java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
-  private Float exchangeRate;
+  private code: string;
+  private exchangeRate: number;
+
+  constructor() {
+    this.code = "USD"; //java.util.Currency.getInstance(Locale.US).getCurrencyCode().toUpperCase();
+  }
 
   /**
    * The currency code.
@@ -37,9 +40,8 @@ public class Currency {
    * @return The currency code.
    * @see java.util.Currency#getCurrencyCode()
    */
-  @Element ( name = "CURSYM", required = true, order = 0 )
-  public String getCode() {
-    return code;
+  public getCode(): string {
+    return this.code;
   }
 
   /**
@@ -47,7 +49,7 @@ public class Currency {
    *
    * @param code The currency code
    */
-  public void setCode(String code) {
+  public setCode(code: string): void {
     this.code = code;
   }
 
@@ -56,9 +58,8 @@ public class Currency {
    *
    * @return The exchange rate.
    */
-  @Element ( name = "CURRATE", required = true, order = 10 )
-  public Float getExchangeRate() {
-    return exchangeRate;
+  public getExchangeRate(): number {
+    return this.exchangeRate;
   }
 
   /**
@@ -66,7 +67,13 @@ public class Currency {
    *
    * @param exchangeRate The exchange rate.
    */
-  public void setExchangeRate(Float exchangeRate) {
+  public setExchangeRate(exchangeRate: number): void {
     this.exchangeRate = exchangeRate;
   }
+}
+
+Aggregate_add( Currency, "CURRENCY" );
+Element_add(Currency, { name: "CURSYM", required: true, order: 0, type: String, read: Currency.prototype.getCode, write: Currency.prototype.setCode });
+Element_add(Currency, { name: "CURRATE", required: true, order: 10, type: Number, read: Currency.prototype.getExchangeRate, write: Currency.prototype.setExchangeRate });
+
 }

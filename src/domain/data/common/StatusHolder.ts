@@ -13,27 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+///<reference path='Status'/>
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * A status holder (usually applied to a response).
  *
  * @author Ryan Heaton
  */
-public interface StatusHolder {
+export interface StatusHolder {
 
   /**
    * The name of this status holder (for error reporting).
    *
    * @return The name of this status holder (for error reporting).
    */
-  String getStatusHolderName();
+  getStatusHolderName(): string;
 
   /**
    * Get the status.
    *
    * @return The status.
    */
-  Status getStatus();
+  getStatus(): Status;
+}
+
+
+export function instanceof_StatusHolder(obj: any) : boolean {
+   return (obj instanceof Object
+       && (typeof obj.getStatusHolderName === 'function') 
+       && (typeof obj.getStatus === 'function'));
+}
+
 }

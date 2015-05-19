@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package net.sf.ofx4j.domain.data.common;
+module ofx4js.domain.data.common {
 
 /**
  * @author Ryan Heaton
  */
-public enum TransferStatusEvent {
+export enum TransferStatusEvent {
 
   WILLPROCESSON,
 
@@ -30,4 +30,6 @@ public enum TransferStatusEvent {
   CANCELEDON,
 
   FAILEDON
+}
+
 }
