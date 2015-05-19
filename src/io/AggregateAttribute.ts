@@ -16,10 +16,12 @@
 ///<reference path='../meta/ChildAggregate'/>
 ///<reference path='../meta/Element'/>
 ///<reference path='../meta/PropertyDescriptor'/>
+///<reference path='../collections/SortedSet'/>
 ///<reference path='AggregateInfo'/>
 
 module ofx4js.io {
 
+import SortedSet = ofx4js.collections.SortedSet;
 import ReadMethod = ofx4js.meta.ReadMethod;
 import WriteMethod = ofx4js.meta.WriteMethod;
 import ChildAggregate = ofx4js.meta.ChildAggregate;
@@ -137,7 +139,12 @@ export class AggregateAttribute {
     if(this.collection) {
       var collection: Array<Object> = this.get(instance);
       if (collection == null) {
-        collection = new this.attributeType();
+        if(this.attributeType === SortedSet) {
+          console.assert("contentCompare" in this.collectionEntryType);
+          collection = <any>new SortedSet((<any>this.collectionEntryType).contentCompare);
+        } else {
+          collection = new this.attributeType();
+        }
       }
       collection.push(value);
       value = collection;

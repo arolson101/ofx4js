@@ -63,6 +63,10 @@ export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMes
     return getType().compareTo(o.getType());
   }
 */
+  
+  public static contentCompare(left: ResponseMessageSet, right: ResponseMessageSet): number {
+    return left.getType() - right.getType();
+  }
 }
 
 }

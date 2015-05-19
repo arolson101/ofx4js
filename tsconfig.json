@@ -8,7 +8,7 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "out": "lib/ofx4js.js",
+        "out": "./lib/ofx4js.js",
         "declaration": true,
         "sourceMap": true
     },

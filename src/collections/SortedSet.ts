@@ -18,6 +18,7 @@ export class SortedSet<T> {
 	
 	values(): Array<T> {
 		if(!this.isSorted) {
+            console.assert(!!this.compareFcn);
 			this.valueArray.sort(this.compareFcn);
 			this.isSorted = true;
 		}
