@@ -5,6 +5,8 @@ tmp/
 logs/
 log/
 results/
+.svn/
+ofx4j-code/
 
 *.seed
 *.log
