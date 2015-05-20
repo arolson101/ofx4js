@@ -1,7 +1,4 @@
 
-module ofx4js.log {
-
-	
 export class Log {
 	private infoEnabled: boolean;
 	private debugEnabled: boolean;
@@ -60,4 +57,3 @@ export class LogFactory {
 	}
 }
 
-}

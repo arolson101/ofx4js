@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../meta/Aggregate_add'/>
-///<reference path='../../meta/ChildAggregate_add'/>
-///<reference path='../../meta/Element_add'/>
-///<reference path='../../io/AggregateInfo'/>
-///<reference path='common/Status'/>
-///<reference path='common/StatusHolder'/>
-
-module ofx4js.domain.data {
-
-import Status = ofx4js.domain.data.common.Status;
-import StatusHolder = ofx4js.domain.data.common.StatusHolder;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import AggregateInfo = ofx4js.io.AggregateInfo;
+import {Status} from "common/Status";
+import {StatusHolder} from "common/StatusHolder";
+import {ChildAggregate_add} from "../../meta/ChildAggregate_add";
+import {Element_add} from "../../meta/Element_add";
+import {Aggregate_add} from "../../meta/Aggregate_Add";
+import {AggregateInfo} from "../../io/AggregateInfo";
+import {ResponseMessage} from "ResponseMessage";
 
 /**
  * A response message wrapped in a transaction.
@@ -128,4 +120,4 @@ Element_add(TransactionWrappedResponseMessage, { name: "TRNUID", required: true,
 Element_add(TransactionWrappedResponseMessage, { name: "CLTCOOKIE", order: 20, type: String, read: TransactionWrappedResponseMessage.prototype.getClientCookie, write: TransactionWrappedResponseMessage.prototype.setClientCookie });
 ChildAggregate_add(TransactionWrappedResponseMessage, { required: true, order: 10, type: Status, read: TransactionWrappedResponseMessage.prototype.getStatus, write: TransactionWrappedResponseMessage.prototype.setStatus });
 
-}
+

@@ -13,26 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../../collections/SortedSet'/>
-///<reference path='../../meta/Aggregate_add'/>
-///<reference path='../../meta/ChildAggregate_add'/>
-///<reference path='../../meta/Header_add'/>
-///<reference path='signon/SignonResponseMessageSet'/>
-///<reference path='signon/SignonResponse'/>
-///<reference path='ApplicationSecurity'/>
-///<reference path='ApplicationSecurity'/>
-///<reference path='MessageSetType'/>
-///<reference path='ResponseMessageSet'/>
-
-module ofx4js.domain.data {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Header_add = ofx4js.meta.Header_add;
-import SignonResponseMessageSet = ofx4js.domain.data.signon.SignonResponseMessageSet;
-import SignonResponse = ofx4js.domain.data.signon.SignonResponse;
+import {ApplicationSecurity} from "ApplicationSecurity";
+import {MessageSetType} from "MessageSetType";
+import {ResponseMessageSet} from "ResponseMessageSet";
+import {SortedSet} from "../../collections/SortedSet";
+import {Aggregate_add} from "../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../meta/ChildAggregate_add";
+import {Header_add} from "../../meta/Header_add";
+import {SignonResponseMessageSet} from "signon/SignonResponseMessageSet";
+import {SignonResponse} from "signon/SignonResponse";
 
 //import java.util.SortedSet;
 
@@ -154,4 +143,4 @@ Header_add(ResponseEnvelope, { name: "SECURITY", type: ApplicationSecurity, read
 Header_add(ResponseEnvelope, { name: "NEWFILEUID", type: String, read: ResponseEnvelope.prototype.getUID, write: ResponseEnvelope.prototype.setUID });
 ChildAggregate_add(ResponseEnvelope, { order: 1, type: SortedSet, collectionEntryType: ResponseMessageSet, read: ResponseEnvelope.prototype.getMessageSets, write: ResponseEnvelope.prototype.setMessageSets });
 
-}
+

@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../ResponseMessageSet'/>
-///<reference path='ProfileResponseTransaction'/>
-
-module ofx4js.domain.data.profile {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
+import {ProfileResponseTransaction} from "ProfileResponseTransaction";
+import {MessageSetType} from "../MessageSetType";
+import {ResponseMessageSet} from "../ResponseMessageSet";
+import {ResponseMessage} from "../ResponseMessage";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
 
 /**
  * @author Ryan Heaton
@@ -72,4 +65,4 @@ export class ProfileResponseMessageSet extends ResponseMessageSet {
 Aggregate_add(ProfileResponseMessageSet, "PROFMSGSRSV1");
 ChildAggregate_add(ProfileResponseMessageSet, { required: true, order: 0, type: ProfileResponseTransaction, read: ProfileResponseMessageSet.prototype.getProfileResponse, write: ProfileResponseMessageSet.prototype.setProfileResponse });
 
-}
+

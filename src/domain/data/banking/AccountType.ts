@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.banking {
-
 /**
  * @author Ryan Heaton
  *
@@ -33,4 +31,4 @@ export enum AccountType {
 
 }
 
-}
+

@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='Currency'/>
-
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {Currency} from "Currency";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../meta/Element_add";
 
 export enum BalanceRecordType {
 
@@ -164,4 +158,4 @@ Element_add(BalanceRecord, { name: "VALUE", required: true, order: 30, type: Str
 Element_add(BalanceRecord, { name: "DTASOF", order: 40, type: Date, read: BalanceRecord.prototype.getTimestamp, write: BalanceRecord.prototype.setTimestamp });
 ChildAggregate_add(BalanceRecord, { order: 50, type: Currency, read: BalanceRecord.prototype.getCurrency, write: BalanceRecord.prototype.setCurrency });
 
-}
+

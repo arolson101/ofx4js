@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module ofx4js.domain.data.seclist {
-
 /**
  * Asset class for debt.
  * @see "Section 13.8.5.7, OFX Spec"
@@ -79,4 +77,3 @@ export function AssetClass_fromOfx(ofxVal: string): AssetClass {
   }
 }
 
-}

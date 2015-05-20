@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BaseBuyInvestmentTransaction'/>
-///<reference path='BuyType'/>
-
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {BaseBuyInvestmentTransaction} from "BaseBuyInvestmentTransaction";
+import {BuyType, BuyType_fromOfx} from "BuyType";
+import {TransactionType} from "TransactionType";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Transaction for buying mutual funds.
@@ -97,4 +93,4 @@ Aggregate_add( BuyMutualFundTransaction, "BUYMF" );
 Element_add(BuyMutualFundTransaction, { name: "BUYTYPE", required: true, order: 20, type: String, read: BuyMutualFundTransaction.prototype.getBuyType, write: BuyMutualFundTransaction.prototype.setBuyType });
 Element_add(BuyMutualFundTransaction, { name: "RELFITID", order: 30, type: String, read: BuyMutualFundTransaction.prototype.getRelatedTransactionId, write: BuyMutualFundTransaction.prototype.setRelatedTransactionId });
 
-}
+

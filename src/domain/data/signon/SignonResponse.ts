@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../common/Status'/>
-///<reference path='../common/StatusHolder'/>
-///<reference path='FinancialInstitution'/>
-
-module ofx4js.domain.data.signon {
-
-import Status = ofx4js.domain.data.common.Status;
-import StatusHolder = ofx4js.domain.data.common.StatusHolder;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {FinancialInstitution} from "FinancialInstitution";
+import {Status} from "../common/Status";
+import {StatusHolder} from "../common/StatusHolder";
+import {ResponseMessage} from "../ResponseMessage";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../meta/Element_add";
 
 /**
  * The signon response message.
@@ -254,4 +247,4 @@ ChildAggregate_add(SignonResponse, { order: 70, type: FinancialInstitution, read
 Element_add(SignonResponse, { name: "SESSCOOKIE", order: 80, type: String, read: SignonResponse.prototype.getSessionId, write: SignonResponse.prototype.setSessionId });
 Element_add(SignonResponse, { name: "ACCESSKEY", order: 90, type: String, read: SignonResponse.prototype.getAccessKey, write: SignonResponse.prototype.setAccessKey });
 
-}
+

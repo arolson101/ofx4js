@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../common/AccountDetails'/>
-///<reference path='AccountType'/>
-
-module ofx4js.domain.data.banking {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import AccountDetails = ofx4js.domain.data.common.AccountDetails;
+import {AccountType} from "AccountType";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {Element_add} from "../../../meta/Element_add";
+import {AccountDetails} from "../common/AccountDetails";
 
 /**
  * Base bank account details.
@@ -154,4 +148,4 @@ Element_add(BankAccountDetails, { name: "ACCTID", required: true, order: 20, typ
 Element_add(BankAccountDetails, { name: "ACCTTYPE", required: true, order: 30, type: AccountType, read: BankAccountDetails.prototype.getAccountType, write: BankAccountDetails.prototype.setAccountType });
 Element_add(BankAccountDetails, { name: "ACCTKEY", order: 40, type: String, read: BankAccountDetails.prototype.getAccountKey, write: BankAccountDetails.prototype.setAccountKey });
   
-}
+

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='StatusCode'/>
-///<reference path='Status'/>
-
-module ofx4js.domain.data.common {
+import {StatusCode, Severity} from "StatusCode";
+import {Status} from "Status";
 
 /**
  * Holder for an unknown status code.
@@ -54,4 +52,4 @@ export class UnknownStatusCode extends StatusCode {
   }
 }
 
-}
+

@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../domain/data/common/BalanceInfo'/>
-///<reference path='../domain/data/common/TransactionList'/>
-
-module ofx4js.client {
-
-import BalanceInfo = ofx4js.domain.data.common.BalanceInfo;
-import TransactionList = ofx4js.domain.data.common.TransactionList;
+import {BalanceInfo} from "../domain/data/common/BalanceInfo";
+import {TransactionList} from "../domain/data/common/TransactionList";
 
 /**
  * @author Ryan Heaton
@@ -57,4 +52,3 @@ export interface AccountStatement {
 
 }
 
-}

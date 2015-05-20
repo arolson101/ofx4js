@@ -13,34 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../OFXException'/>
-///<reference path='../../client/AccountStatement'/>
-///<reference path='../../client/FinancialInstitutionAccount'/>
-///<reference path='../../domain/data/common/StatementRange'/>
-///<reference path='../../domain/data/common/StatementRequest'/>
-///<reference path='../../domain/data/common/StatementResponse'/>
-///<reference path='../../domain/data/creditcard/CreditCardAccountDetails'/>
-///<reference path='../../domain/data/investment/accounts/InvestmentAccountDetails'/>
-///<reference path='../../domain/data/MessageSetType'/>
-
-module ofx4js.client.impl {
-
-import OFXException = ofx4js.OFXException;
-import AccountStatement = ofx4js.client.AccountStatement;
-import FinancialInstitutionAccount = ofx4js.client.FinancialInstitutionAccount;
+///<reference path="../../project.d.ts"/>
+import {OFXException} from "../../OFXException";
+import {AccountStatement} from "../AccountStatement";
+import {FinancialInstitutionAccount} from "../FinancialInstitutionAccount";
 //import data.* = ofx4js.domain.data.*;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-import StatementRange = ofx4js.domain.data.common.StatementRange;
-import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import {MessageSetType} from "../../domain/data/MessageSetType";
+import {RequestEnvelope} from "../../domain/data/RequestEnvelope";
+import {ResponseEnvelope} from "../../domain/data/ResponseEnvelope";
+import {RequestMessageSet} from "../../domain/data/RequestMessageSet";
+import {RequestMessage} from "../../domain/data/RequestMessage";
+import {TransactionWrappedRequestMessage} from "../../domain/data/TransactionWrappedRequestMessage";
+import {BankAccountDetails} from "../../domain/data/banking/BankAccountDetails";
+import {StatementRange} from "../../domain/data/common/StatementRange";
+import {StatementRequest} from "../../domain/data/common/StatementRequest";
+import {StatementResponse} from "../../domain/data/common/StatementResponse";
+import {CreditCardAccountDetails} from "../../domain/data/creditcard/CreditCardAccountDetails";
+import {InvestmentAccountDetails} from "../../domain/data/investment/accounts/InvestmentAccountDetails";
+import {FinancialInstitutionImpl} from "FinancialInstitutionImpl";
 
 /**
  * Base account implementation. Supports banking and credit card accounts.
@@ -157,4 +147,3 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
   }
 }
 
-}

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.transactions {
-
 /**
  * Type of sale for stocks and mutual funds.
  *
@@ -36,4 +34,4 @@ export function SellType_fromOfx(ofxVal: string): SellType {
   }
 }
 
-}
+

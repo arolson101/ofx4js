@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='SecurityInfo'/>
-///<reference path='SecurityId'/>
-
-module ofx4js.domain.data.seclist {
-
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {SecurityInfo} from "SecurityInfo";
+import {SecurityId} from "SecurityId";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
 /**
  * Base class for info about the various types of securities.
@@ -141,4 +137,3 @@ export class BaseSecurityInfo {
 }
 
 ChildAggregate_add(BaseSecurityInfo, { required: true, order: 10, type: SecurityInfo, read: BaseSecurityInfo.prototype.getSecurityInfo, write: BaseSecurityInfo.prototype.setSecurityInfo });
-}

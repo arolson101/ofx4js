@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../../collections/SortedSet'/>
-///<reference path='../../meta/Aggregate_add'/>
-///<reference path='../../meta/ChildAggregate_add'/>
-///<reference path='../../meta/Header_add'/>
-///<reference path='ApplicationSecurity'/>
-///<reference path='RequestMessageSet'/>
-
-module ofx4js.domain.data {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Header_add = ofx4js.meta.Header_add;
+import {ApplicationSecurity} from "ApplicationSecurity";
+import {RequestMessageSet} from "RequestMessageSet";
+import {SortedSet} from "../../collections/SortedSet";
+import {Aggregate_add} from "../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../meta/ChildAggregate_add";
+import {Header_add} from "../../meta/Header_add";
 
 var UUID: UUID = require("uuid");
 
@@ -141,4 +133,4 @@ Header_add(RequestEnvelope, { name: "NEWFILEUID", type: String, read: RequestEnv
 Header_add(RequestEnvelope, { name: "OLDFILEUID", type: String, read: RequestEnvelope.prototype.getLastProcessedUID, write: RequestEnvelope.prototype.setLastProcessedUID });
 ChildAggregate_add(RequestEnvelope, { order: 1, type: SortedSet, collectionEntryType: RequestMessageSet, read: RequestEnvelope.prototype.getMessageSets, write: RequestEnvelope.prototype.setMessageSets });
 
-}
+

@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../profile/AbstractMessageSetInfo'/>
-///<reference path='SignOnV1MessageSetInfo'/>
-
-module ofx4js.domain.data.profile.info {
-
-import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {SignOnV1MessageSetInfo} from "SignOnV1MessageSetInfo";
+import {AbstractMessageSetInfo} from "../AbstractMessageSetInfo";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
 
 /**
  * @author Jon Perlow
@@ -43,4 +37,4 @@ export class SignOnMessageSetInfo extends AbstractMessageSetInfo {
 Aggregate_add( SignOnMessageSetInfo, "SIGNONMSGSET" );
 ChildAggregate_add(SignOnMessageSetInfo, { order: 0, type: SignOnV1MessageSetInfo, read: SignOnMessageSetInfo.prototype.getVersion1Info, write: SignOnMessageSetInfo.prototype.setVersion1Info });
 
-}
+

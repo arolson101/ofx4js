@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../ResponseMessage'/>
-
-module ofx4js.domain.data.seclist {
-
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {ResponseMessage} from "../ResponseMessage";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
 /**
  * Security list response. This is an empty aggregate. The actual security information is included
@@ -38,4 +32,4 @@ export class SecurityListResponse extends ResponseMessage {
 
 Aggregate_add( SecurityListResponse, "SECLISTRS" );
 
-}
+

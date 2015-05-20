@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
-///<reference path='../../profile/info/signup/ClientEnrollment'/>
-///<reference path='../../profile/info/signup/OtherEnrollment'/>
-///<reference path='../../profile/info/signup/WebEnrollment'/>
-
-module ofx4js.domain.data.profile.info {
-
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ClientEnrollment = ofx4js.domain.data.profile.info.signup.ClientEnrollment;
-import OtherEnrollment = ofx4js.domain.data.profile.info.signup.OtherEnrollment;
-import WebEnrollment = ofx4js.domain.data.profile.info.signup.WebEnrollment;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {VersionSpecificMessageSetInfo} from "../VersionSpecificMessageSetInfo";
+import {MessageSetType} from "../../MessageSetType";
+import {ClientEnrollment} from "signup/ClientEnrollment";
+import {OtherEnrollment} from "signup/OtherEnrollment";
+import {WebEnrollment} from "signup/WebEnrollment";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Servers use the Signup Message Set Profile Information to define how enrollment should proceed.
@@ -127,4 +117,4 @@ Element_add(SignupV1MessageSetInfo, { name: "CHGUSERINFO", required: true, order
 Element_add(SignupV1MessageSetInfo, { name: "AVAILACCTS", required: true, order: 50, type: Boolean, read: SignupV1MessageSetInfo.prototype.getSupportsAvailableAccounts, write: SignupV1MessageSetInfo.prototype.setSupportsAvailableAccounts });
 Element_add(SignupV1MessageSetInfo, { name: "CLIENTACTREQ", required: true, order: 60, type: Boolean, read: SignupV1MessageSetInfo.prototype.getSupportsClientServiceActivationRequests, write: SignupV1MessageSetInfo.prototype.setSupportsClientServiceActivationRequests });
 
-}
+

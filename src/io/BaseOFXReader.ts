@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../project.d.ts'/>
-///<reference path='OFXHandler'/>
-///<reference path='DefaultHandler'/>
-///<reference path='OFXParseException'/>
-///<reference path='OFXV2ContentHandler'/>
-///<reference path='StringReader'/>
-///<reference path='OFXReader'/>
-
-module ofx4js.io {
-
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
+import {OFXHandler} from "OFXHandler";
+import {DefaultHandler} from "DefaultHandler";
+import {OFXParseException} from "OFXParseException";
+import {OFXV2ContentHandler} from "OFXV2ContentHandler";
+import {StringReader} from "StringReader";
+import {OFXReader} from "OFXReader";
+import {Log} from "../log/Log";
+import {LogFactory} from "../log/Log";
 
 var sax: SAXModule = require("sax");
 
@@ -222,4 +218,4 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
 
 LOG = LogFactory.getLog(BaseOFXReader);
 
-}
+

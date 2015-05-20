@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.common {
-
 /**
  * @author Ryan Heaton
  */
@@ -107,4 +105,4 @@ export enum TransactionType {
   OTHER
 }
 
-}
+

@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../profile/info/common/TransferProfile'/>
-
-module ofx4js.domain.data.profile.info {
-
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import TransferProfile = ofx4js.domain.data.profile.info.common.TransferProfile;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {VersionSpecificMessageSetInfo} from "../VersionSpecificMessageSetInfo";
+import {MessageSetType} from "../../MessageSetType";
+import {TransferProfile} from "common/TransferProfile";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Interbank Funds Transfer Message Set Profile
@@ -93,4 +86,4 @@ Element_add(InterbankTransferV1MessageSetInfo, { name: "CANCELWND", required: tr
 Element_add(InterbankTransferV1MessageSetInfo, { name: "DOMXFERFEE", required: true, order: 40, type: Number, read: InterbankTransferV1MessageSetInfo.prototype.getDomesticInterbankTransferFee, write: InterbankTransferV1MessageSetInfo.prototype.setDomesticInterbankTransferFee });
 Element_add(InterbankTransferV1MessageSetInfo, { name: "INTLXFERFEE", required: true, order: 50, type: Number, read: InterbankTransferV1MessageSetInfo.prototype.getInternationalInterbankTransferFee, write: InterbankTransferV1MessageSetInfo.prototype.setInternationalInterbankTransferFee });
 
-}
+

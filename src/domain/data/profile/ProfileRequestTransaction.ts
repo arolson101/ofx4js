@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../TransactionWrappedRequestMessage'/>
-///<reference path='ProfileRequest'/>
-
-module ofx4js.domain.data.profile {
-
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
+import {ProfileRequest} from "ProfileRequest";
+import {TransactionWrappedRequestMessage} from "../TransactionWrappedRequestMessage";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
 
 /**
  * @author Ryan Heaton
@@ -58,4 +52,4 @@ export class ProfileRequestTransaction extends TransactionWrappedRequestMessage<
 Aggregate_add( ProfileRequestTransaction, "PROFTRNRQ" );
 ChildAggregate_add(ProfileRequestTransaction, { required: true, order: 30, type: ProfileRequest, read: ProfileRequestTransaction.prototype.getMessage, write: ProfileRequestTransaction.prototype.setMessage });
 
-}
+

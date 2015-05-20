@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../OFXException'/>
-
-module ofx4js.client {
-
-import OFXException = ofx4js.OFXException;
+import {OFXException} from "../OFXException";
 
 /**
  * @author Ryan Heaton
@@ -29,4 +25,3 @@ export class NoOFXResponseException extends OFXException {
   }
 }
 
-}

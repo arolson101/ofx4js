@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../project.d.ts'/>
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../banking/BankAccountDetails'/>
-///<reference path='../creditcard/CreditCardAccountDetails'/>
-///<reference path='CorrectionAction'/>
-///<reference path='Currency'/>
-///<reference path='Payee'/>
-///<reference path='TransactionType'/>
-
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+import {CorrectionAction} from "CorrectionAction";
+import {Currency} from "Currency";
+import {Payee} from "Payee";
+import {TransactionType} from "TransactionType";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {Element_add} from "../../../meta/Element_add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {BankAccountDetails} from "../banking/BankAccountDetails";
+import {CreditCardAccountDetails} from "../creditcard/CreditCardAccountDetails";
 
 /**
  * @author Ryan Heaton
@@ -459,4 +450,4 @@ Element_add(Transaction, { name: "MEMO", order: 170, type: String, read: Transac
 ChildAggregate_add(Transaction, { order: 180, type: Currency, read: Transaction.prototype.getCurrency, write: Transaction.prototype.setCurrency });
 ChildAggregate_add(Transaction, { name: "ORIGCURRENCY", order: 190, type: Currency, read: Transaction.prototype.getOriginalCurrency, write: Transaction.prototype.setOriginalCurrency });
 
-}
+

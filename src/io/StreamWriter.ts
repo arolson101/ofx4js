@@ -1,6 +1,4 @@
 
-module ofx4js.io {
-
 export class OutputBuffer {
   private data: Array<string>;
   
@@ -52,4 +50,4 @@ export class StreamWriter {
 }
 
 
-}
+

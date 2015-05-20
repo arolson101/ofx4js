@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-module ofx4js {
+import {OFXException} from "./OFXException";
 
 /**
  * Thrown for unsupported OFX security type.
@@ -27,4 +26,3 @@ export class UnsupportedOFXSecurityTypeException extends OFXException {
   }
 }
 
-}

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='OFXHandler'/>
-///<reference path='StringReader'/>
-
-module ofx4js.io {
+import {OFXHandler} from "OFXHandler";
+import {StringReader} from "StringReader";
 
 /**
  * Basic interface for reading an OFX document.
@@ -40,4 +38,4 @@ export interface OFXReader {
   parse(stream: StringReader): void;
 }
 
-}
+

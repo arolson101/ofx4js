@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.accounts {
-
 //import java.util.HashMap;
 //import java.util.Map;
 
@@ -81,4 +79,4 @@ export function UnitedStatesAccountType_fromOfx(ofxVal: string): UnitedStatesAcc
   return ofxVal == null ? null : ofxMapping[ofxVal];
 }
 
-}
+

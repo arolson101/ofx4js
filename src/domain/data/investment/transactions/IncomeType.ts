@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.transactions {
-
 /**
  * Type of income.
  * @see "Section 13.9.2.4.2, OFX Spec"
@@ -46,4 +44,4 @@ export function IncomeType_fromOfx(ofxVal: string): IncomeType {
   }
 }
 
-}
+

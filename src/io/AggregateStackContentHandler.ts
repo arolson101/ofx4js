@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../collections/Stack'/>
-///<reference path='OFXHandler'/>
-///<reference path='AggregateInfo'/>
-///<reference path='AggregateAttribute'/>
-///<reference path='OFXSyntaxException'/>
-
-module ofx4js.io {
-
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
-import Stack = ofx4js.collections.Stack;
+import {OFXHandler} from "OFXHandler";
+import {AggregateInfo} from "AggregateInfo";
+import {StringConversion} from "StringConversion";
+import {AggregateIntrospector} from "AggregateIntrospector";
+import {AggregateAttribute, AggregateAttributeType} from "AggregateAttribute";
+import {OFXSyntaxException} from "OFXSyntaxException";
+import {Log} from "../log/Log";
+import {LogFactory} from "../log/Log";
+import {Stack} from "../collections/Stack";
 
 var LOG: Log;
 
@@ -224,4 +222,4 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
 
 LOG = LogFactory.getLog(AggregateStackContentHandler);
 
-}
+

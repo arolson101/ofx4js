@@ -13,29 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../MessageSetProfile'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../ResponseMessage'/>
-///<reference path='../SignonProfile'/>
-///<reference path='../../../client/FinancialInstitutionProfile'/>
-///<reference path='MessageSetInfoList'/>
-///<reference path='SignonInfoList'/>
-
-module ofx4js.domain.data.profile {
-
-import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import SignonProfile = ofx4js.domain.data.SignonProfile;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import FinancialInstitutionProfile = ofx4js.client.FinancialInstitutionProfile;
-
-//import java.net.URL;
+import {MessageSetInfoList} from "MessageSetInfoList";
+import {SignonInfoList} from "SignonInfoList";
+import {MessageSetProfile} from "../MessageSetProfile";
+import {MessageSetType} from "../MessageSetType";
+import {ResponseMessage} from "../ResponseMessage";
+import {SignonProfile} from "../SignonProfile";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../meta/Element_add";
+import {FinancialInstitutionProfile} from "../../../client/FinancialInstitutionProfile";
+import {AbstractMessageSetInfo} from "AbstractMessageSetInfo";
+import {VersionSpecificMessageSetInfo} from "VersionSpecificMessageSetInfo";
+import {SignonInfo} from "SignonInfo";
 
 /**
  * @author Ryan Heaton
@@ -453,4 +443,4 @@ Element_add(ProfileResponse, { name: "FAXPHONE", order: 130, type: String, read:
 Element_add(ProfileResponse, { name: "URL", order: 140, type: String, read: ProfileResponse.prototype.getSiteURL, write: ProfileResponse.prototype.setSiteURL });
 Element_add(ProfileResponse, { name: "EMAIL", order: 150, type: String, read: ProfileResponse.prototype.getEmail, write: ProfileResponse.prototype.setEmail });
 
-}
+

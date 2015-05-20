@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../TransactionWrappedResponseMessage'/>
-///<reference path='SecurityListResponse'/>
-
-module ofx4js.domain.data.seclist {
-
-import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {SecurityListResponse} from "SecurityListResponse";
+import {TransactionWrappedResponseMessage} from "../TransactionWrappedResponseMessage";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
 /**
  * Security list transaction response.
@@ -62,4 +56,4 @@ export class SecurityListResponseTransaction
 Aggregate_add( SecurityListResponseTransaction, "SECLISTTRNRS");
 ChildAggregate_add(SecurityListResponseTransaction, { required: true, order: 30, type: SecurityListResponse, read: SecurityListResponseTransaction.prototype.getMessage, write: SecurityListResponseTransaction.prototype.setMessage });
 
-}
+

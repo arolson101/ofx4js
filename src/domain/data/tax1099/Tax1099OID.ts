@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='PayerAddress'/>
-///<reference path='RecAddress'/>
+import {PayerAddress} from "PayerAddress";
+import {RecAddress} from "RecAddress";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.tax1099 {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-
-import Element_add = ofx4js.meta.Element_add;
+import {Element_add} from "../../../meta/Element_add";
 
 /**
  * @author Aparna Gawali
@@ -276,4 +270,4 @@ ChildAggregate_add(Tax1099OID, { required:true, order: 11, type: RecAddress, rea
 Element_add(Tax1099OID, { name: "RECID", required: true, order: 12, type: String, read: Tax1099OID.prototype.getRecId, write: Tax1099OID.prototype.setRecId });
 Element_add(Tax1099OID, { name: "RECACCT", required: true, order: 13, type: String, read: Tax1099OID.prototype.getRecAcct, write: Tax1099OID.prototype.setRecAcct });
 
-}
+

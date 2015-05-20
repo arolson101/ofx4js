@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='PayerAddress'/>
-///<reference path='RecAddress'/>
+import {PayerAddress} from "PayerAddress";
+import {RecAddress} from "RecAddress";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.tax1099 {
-
-import PayerAddress = ofx4js.domain.data.tax1099.PayerAddress;
-import RecAddress = ofx4js.domain.data.tax1099.RecAddress;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-
-import Element_add = ofx4js.meta.Element_add;
+import {Element_add} from "../../../meta/Element_add";
 
 /**
  * @author Aparna Gawali
@@ -294,4 +286,4 @@ Element_add(Tax1099INT, { name: "RECACCT", required: true, order: 12, type: Stri
 Element_add(Tax1099INT, { name: "TAXEXEMPTINT", required: false, order: 13, type: String, read: Tax1099INT.prototype.getTaxExemptInt, write: Tax1099INT.prototype.setTaxExemptInt });
 Element_add(Tax1099INT, { name: "SPECIFIEDPABINT", required: false, order: 14, type: String, read: Tax1099INT.prototype.getSpecifiedPabInt, write: Tax1099INT.prototype.setSpecifiedPabInt });
 
-}
+

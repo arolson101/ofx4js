@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.client.context {
-
 /**
  * The application context.
  *
@@ -38,4 +36,3 @@ export interface OFXApplicationContext {
   getAppVersion(): string;
 }
 
-}

@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../io/AggregateIntrospector'/>
-///<reference path='PropertyDescriptor'/>
+import {PropertyDescriptor} from "PropertyDescriptor";
+import {AggregateIntrospector} from "../io/AggregateIntrospector";
+import {Element, ElementParams} from "Element";
 
-module ofx4js.meta {
-
-import AggregateIntrospector = ofx4js.io.AggregateIntrospector;
 
 export function Element_add<Type>(clazz: any, params: ElementParams<Type>): void {
   console.assert(params.type != null);
   AggregateIntrospector.addElement(clazz, new Element(params));
 }
 
-}
+

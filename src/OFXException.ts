@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js {
-
-
 export declare class Error {
     public name: string;
     public message: string;
@@ -39,4 +36,4 @@ export class OFXException extends Error {
   }
 }
 
-}
+

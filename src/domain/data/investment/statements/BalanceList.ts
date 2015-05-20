@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../common/BalanceRecord'/>
-
-module ofx4js.domain.data.investment.statements {
-
-import BalanceRecord = ofx4js.domain.data.common.BalanceRecord;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {BalanceRecord} from "../../common/BalanceRecord";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
 
 /**
  * Aggregate for the investment balance list.
@@ -56,4 +49,4 @@ export class BalanceList {
 Aggregate_add( BalanceList, "BALLIST" );
 ChildAggregate_add(BalanceList, { order: 10, type: Array, collectionEntryType: BalanceRecord, read: BalanceList.prototype.getBalanceRecords, write: BalanceList.prototype.setBalanceRecords });
 
-}
+

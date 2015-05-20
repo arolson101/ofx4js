@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BaseBuyInvestmentTransaction'/>
-///<reference path='OptionBuyType'/>
-
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {BaseBuyInvestmentTransaction} from "BaseBuyInvestmentTransaction";
+import {TransactionType} from "TransactionType";
+import {OptionBuyType, OptionBuyType_fromOfx} from "OptionBuyType";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Transaction for buying options.
@@ -94,4 +90,4 @@ Aggregate_add( BuyOptionTransaction, "BUYOPT" );
 Element_add(BuyOptionTransaction, { name: "OPTBUYTYPE", required: true, order: 20, type: String, read: BuyOptionTransaction.prototype.getOptionBuyType, write: BuyOptionTransaction.prototype.setOptionBuyType });
 Element_add(BuyOptionTransaction, { name: "SHPERCTRCT", required: true, order: 30, type: Number, read: BuyOptionTransaction.prototype.getSharesPerContract, write: BuyOptionTransaction.prototype.setSharesPerContract });
 
-}
+

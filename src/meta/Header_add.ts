@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../io/AggregateIntrospector'/>
+import {AggregateIntrospector} from "../io/AggregateIntrospector";
+import {Header, HeaderParams} from "Header";
 
-module ofx4js.meta {
-
-import AggregateIntrospector = ofx4js.io.AggregateIntrospector;
 
 export function Header_add<Type>(clazz: any, params: HeaderParams<Type>): void {
   console.assert(params.type != null);
   AggregateIntrospector.addHeader(clazz, new Header(params));
 }
 
-}
+

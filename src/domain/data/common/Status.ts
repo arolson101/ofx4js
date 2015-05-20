@@ -13,23 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='StatusCode'/>
+import {StatusCode, Severity} from "StatusCode";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {Element_add} from "../../../meta/Element_add";
 
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-
-/**
- * Severity of the status.
- */
-export enum Severity {
-  INFO,
-  WARN,
-  ERROR
-}
 
 
 /**
@@ -209,4 +196,4 @@ Element_add(Status, { name: "CODE", required: true, order: 0, type: StatusCode, 
 Element_add(Status, { name: "SEVERITY", required: true, order: 10, type: Severity, read: Status.prototype.getSeverity, write: Status.prototype.setSeverity });
 Element_add(Status, { name: "MESSAGE", order: 20, type: String, read: Status.prototype.getMessage, write: Status.prototype.setMessage });
 
-}
+

@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../meta/ChildAggregate'/>
-///<reference path='../meta/Element'/>
-///<reference path='../meta/PropertyDescriptor'/>
-///<reference path='../collections/SortedSet'/>
-///<reference path='AggregateInfo'/>
-
-module ofx4js.io {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import ReadMethod = ofx4js.meta.ReadMethod;
-import WriteMethod = ofx4js.meta.WriteMethod;
-import ChildAggregate = ofx4js.meta.ChildAggregate;
-import Element = ofx4js.meta.Element;
-import PropertyDescriptor = ofx4js.meta.PropertyDescriptor;
+import {AggregateInfo} from "AggregateInfo";
+import {AggregateIntrospector} from "AggregateIntrospector";
+import {SortedSet} from "../collections/SortedSet";
+import {ReadMethod} from "../meta/PropertyDescriptor";
+import {WriteMethod} from "../meta/PropertyDescriptor";
+import {ChildAggregate} from "../meta/ChildAggregate";
+import {Element} from "../meta/Element";
+import {PropertyDescriptor} from "../meta/PropertyDescriptor";
 
 //import Log = org.apache.commons.logging.Log;
 //import LogFactory = org.apache.commons.logging.LogFactory;
@@ -196,4 +190,4 @@ export class AggregateAttribute {
 }
 
 
-}
+

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='PropertyDescriptor'/>
+import {PropertyDescriptor, PropertyDescriptorParams, _default} from "PropertyDescriptor";
 
-module ofx4js.meta {
 
 export interface ChildAggregateParams<T> extends PropertyDescriptorParams<T> {
   order: number;
@@ -79,4 +78,4 @@ export class ChildAggregate extends PropertyDescriptor {
   }
 }
 
-}
+

@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../project.d.ts'/>
-///<reference path='../collections/SortedSet'/>
-///<reference path='../meta/Aggregate'/>
-///<reference path='../meta/ChildAggregate'/>
-///<reference path='../meta/Element'/>
-///<reference path='../meta/Header'/>
-///<reference path='../meta/PropertyDescriptor'/>
-///<reference path='AggregateInfo'/>
-///<reference path='AggregateAttribute'/>
-
-module ofx4js.io {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import Aggregate = ofx4js.meta.Aggregate;
-import ChildAggregate = ofx4js.meta.ChildAggregate;
-import Element = ofx4js.meta.Element;
-import Header = ofx4js.meta.Header;
-import isAssignableFrom = ofx4js.meta.isAssignableFrom;
+import {AggregateAttribute} from "AggregateAttribute";
+import {SortedSet} from "../collections/SortedSet";
+import {Aggregate} from "../meta/Aggregate";
+import {ChildAggregate} from "../meta/ChildAggregate";
+import {Element} from "../meta/Element";
+import {Header} from "../meta/Header";
+import {isAssignableFrom} from "../meta/PropertyDescriptor";
 
 
 export interface HeaderMap {
@@ -216,4 +205,4 @@ export class AggregateInfo {
   }
 }
 
-}
+

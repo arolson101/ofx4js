@@ -13,28 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../common/StatementResponse'/>
-///<reference path='../../investment/accounts/InvestmentAccountDetails'/>
-///<reference path='../../investment/positions/InvestmentPositionList'/>
-///<reference path='../../seclist/SecurityList'/>
-///<reference path='../../seclist/SecurityListResponse'/>
-///<reference path='../../investment/transactions/InvestmentTransactionList'/>
-///<reference path='InvestmentBalance'/>
-
-module ofx4js.domain.data.investment.statements {
-
-import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-import InvestmentPositionList = ofx4js.domain.data.investment.positions.InvestmentPositionList;
-import SecurityList = ofx4js.domain.data.seclist.SecurityList;
-import SecurityListResponse = ofx4js.domain.data.seclist.SecurityListResponse;
-import InvestmentTransactionList = ofx4js.domain.data.investment.transactions.InvestmentTransactionList;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {InvestmentBalance} from "InvestmentBalance";
+import {StatementResponse} from "../../common/StatementResponse";
+import {InvestmentAccountDetails} from "../accounts/InvestmentAccountDetails";
+import {InvestmentPositionList} from "../positions/InvestmentPositionList";
+import {SecurityList} from "../../seclist/SecurityList";
+import {SecurityListResponse} from "../../seclist/SecurityListResponse";
+import {InvestmentTransactionList} from "../transactions/InvestmentTransactionList";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Aggregate for the investment statement download response.
@@ -192,4 +180,4 @@ ChildAggregate_add(InvestmentStatementResponse, { order: 70, type: InvestmentTra
 ChildAggregate_add(InvestmentStatementResponse, { order: 80, type: InvestmentPositionList, read: InvestmentStatementResponse.prototype.getPositionList, write: InvestmentStatementResponse.prototype.setPositionList });
 ChildAggregate_add(InvestmentStatementResponse, { order: 90, type: InvestmentBalance, read: InvestmentStatementResponse.prototype.getAccountBalance, write: InvestmentStatementResponse.prototype.setAccountBalance });
 
-}
+

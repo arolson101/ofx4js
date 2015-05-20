@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../TransactionWrappedResponseMessage'/>
-///<reference path='Tax1099Response'/>
-
-module ofx4js.domain.data.tax1099 {
-
-import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {Tax1099Response} from "Tax1099Response";
+import {TransactionWrappedResponseMessage} from "../TransactionWrappedResponseMessage";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
 /**
  * @author Aparna Gawali
@@ -59,4 +53,3 @@ export class Tax1099ResponseTransaction extends TransactionWrappedResponseMessag
 Aggregate_add( Tax1099ResponseTransaction, "TAX1099TRNRS");
 ChildAggregate_add(Tax1099ResponseTransaction, { required:false, order: 2, type: Tax1099Response, read: Tax1099ResponseTransaction.prototype.getTax1099Response, write: Tax1099ResponseTransaction.prototype.setTax1099Response });
 
-}

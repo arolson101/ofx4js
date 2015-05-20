@@ -13,25 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='../../investment/positions/Inv401KSource'/>
-///<reference path='../../seclist/SecurityId'/>
-///<reference path='BaseOtherInvestmentTransaction'/>
-///<reference path='OriginalCurrency'/>
-
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {BaseOtherInvestmentTransaction} from "BaseOtherInvestmentTransaction";
+import {OriginalCurrency} from "OriginalCurrency";
+import {TransactionType} from "TransactionType";
+import {SubAccountType} from "../accounts/SubAccountType";
+import {SubAccountType_fromOfx} from "../accounts/SubAccountType";
+import {Inv401KSource, Inv401KSource_fromOfx} from "../positions/Inv401KSource";
+import {SecurityId} from "../../seclist/SecurityId";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Transaction for a stock split.
@@ -323,4 +314,4 @@ Element_add(SplitTransaction, { name: "FRACCASH", order: 100, type: Number, read
 Element_add(SplitTransaction, { name: "SUBACCTFUND", order: 110, type: String, read: SplitTransaction.prototype.getSubAccountFund, write: SplitTransaction.prototype.setSubAccountFund });
 Element_add(SplitTransaction, { name: "INV401KSOURCE", order: 120, type: String, read: SplitTransaction.prototype.get401kSource, write: SplitTransaction.prototype.set401kSource });
 
-}
+

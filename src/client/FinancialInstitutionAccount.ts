@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../OFXException'/>
-///<reference path='AccountStatement'/>
-
-module ofx4js.client {
-
-import OFXException = ofx4js.OFXException;
+import {AccountStatement} from "AccountStatement";
+import {OFXException} from "../OFXException";
 
 /**
  * A specific account at a financial institution.
@@ -37,4 +33,4 @@ export interface FinancialInstitutionAccount {
   readStatement(start: Date, end: Date) /*throws OFXException*/: Promise<AccountStatement>;
 }
 
-}
+

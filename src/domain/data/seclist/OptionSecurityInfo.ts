@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='BaseSecurityInfo'/>
-///<reference path='OptionType'/>
-///<reference path='AssetClass'/>
-
-module ofx4js.domain.data.seclist {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {BaseSecurityInfo} from "BaseSecurityInfo";
+import {SecurityId} from "SecurityId";
+import {OptionType, OptionType_fromOfx} from "OptionType";
+import {AssetClass, AssetClass_fromOfx} from "AssetClass";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {Element_add} from "../../../meta/Element_add";
 
 /**
  * Info about an option security.
@@ -202,4 +198,4 @@ Element_add(OptionSecurityInfo, { name: "SECID", order: 60, type: SecurityId, re
 Element_add(OptionSecurityInfo, { name: "ASSETCLASS", order: 70, type: String, read: OptionSecurityInfo.prototype.getAssetClass, write: OptionSecurityInfo.prototype.setAssetClass });
 Element_add(OptionSecurityInfo, { name: "FIASSETCLASS", order: 80, type: String, read: OptionSecurityInfo.prototype.getFiAssetClass, write: OptionSecurityInfo.prototype.setFiAssetClass });
 
-}
+

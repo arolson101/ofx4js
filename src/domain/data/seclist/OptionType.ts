@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.seclist {
-
 /**
  * Type of option.
  * @see "Section 13.8.5.4, OFX Spec"
@@ -38,4 +36,4 @@ export function OptionType_fromOfx(ofxVal: string): OptionType {
   }
 }
 
-}
+

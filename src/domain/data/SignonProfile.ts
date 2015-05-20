@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='profile/CharacterType'/>
-
-module ofx4js.domain.data {
-
-import CharacterType = ofx4js.domain.data.profile.CharacterType;
+import {CharacterType} from "profile/CharacterType";
 
 /**
  * @author Ryan Heaton
@@ -143,4 +139,4 @@ export interface SignonProfile {
   getMfaChallengeRequiredForFirstSignon(): boolean;
 }
 
-}
+

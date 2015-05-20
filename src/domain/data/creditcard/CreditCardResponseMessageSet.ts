@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../ResponseMessage'/>
-///<reference path='../ResponseMessageSet'/>
-///<reference path='CreditCardStatementResponseTransaction'/>
-
-module ofx4js.domain.data.creditcard {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {CreditCardStatementResponseTransaction} from "CreditCardStatementResponseTransaction";
+import {MessageSetType} from "../MessageSetType";
+import {ResponseMessage} from "../ResponseMessage";
+import {ResponseMessageSet} from "../ResponseMessageSet";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
 /**
  * @author Ryan Heaton
@@ -92,4 +84,4 @@ export class CreditCardResponseMessageSet extends ResponseMessageSet {
 Aggregate_add( CreditCardResponseMessageSet, "CREDITCARDMSGSRSV1" );
 ChildAggregate_add(CreditCardResponseMessageSet, { order: 0, type: Array, collectionEntryType: CreditCardStatementResponseTransaction, read: CreditCardResponseMessageSet.prototype.getStatementResponses, write: CreditCardResponseMessageSet.prototype.setStatementResponses });
 
-}
+

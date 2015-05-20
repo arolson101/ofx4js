@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='PropertyDescriptor'/>
+import {PropertyDescriptor, PropertyDescriptorParams} from "PropertyDescriptor";
+import {AggregateIntrospector} from "../io/AggregateIntrospector";
 
-module ofx4js.meta {
-
-import AggregateIntrospector = ofx4js.io.AggregateIntrospector;
 
 export interface HeaderParams<T> extends PropertyDescriptorParams<T> {
   name: string;
@@ -47,4 +45,4 @@ export class Header extends PropertyDescriptor {
   }
 }
 
-}
+

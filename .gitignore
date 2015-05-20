@@ -6,6 +6,9 @@ results/
 .svn/
 ofx4j-code/
 .DS_Store
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
 
 *.seed
 *.log

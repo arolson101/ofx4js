@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.common {
-
 /**
  * Common details about an account.
  *
@@ -39,4 +37,4 @@ export interface AccountDetails {
 
 }
 
-}
+

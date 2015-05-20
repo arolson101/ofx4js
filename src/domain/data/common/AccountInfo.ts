@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='AccountDetails'/>
-
-module ofx4js.domain.data.common {
-
+import {AccountDetails} from "AccountDetails";
 /**
  * Marker interface for account information.
  *
@@ -33,4 +30,4 @@ export interface AccountInfo {
 
 }
 
-}
+

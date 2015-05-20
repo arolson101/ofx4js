@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../common/AccountDetails'/>
-
-module ofx4js.domain.data.creditcard {
-
-import Element_add = ofx4js.meta.Element_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import AccountDetails = ofx4js.domain.data.common.AccountDetails;
+import {Element_add} from "../../../meta/Element_add";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {AccountDetails} from "../common/AccountDetails";
 
 /**
  * @author Ryan Heaton
- * 
+ *
  * @see "OFX Spec, Section 11.3.2"
  */
 export class CreditCardAccountDetails implements AccountDetails {
@@ -73,5 +67,3 @@ export class CreditCardAccountDetails implements AccountDetails {
 Aggregate_add( CreditCardAccountDetails );
 Element_add(CreditCardAccountDetails, { name: "ACCTID", required: true, order: 0, type: String, read: CreditCardAccountDetails.prototype.getAccountNumber, write: CreditCardAccountDetails.prototype.setAccountNumber });
 Element_add(CreditCardAccountDetails, { name: "ACCKEY", order: 10, type: String, read: CreditCardAccountDetails.prototype.getAccountKey, write: CreditCardAccountDetails.prototype.setAccountKey });
-
-}

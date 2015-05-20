@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.io {
-
-
 /**
  * @author Ryan Heaton
  */
@@ -58,4 +55,4 @@ export interface OFXWriter {
   close() /*throws IOException*/: void;
 }
 
-}
+

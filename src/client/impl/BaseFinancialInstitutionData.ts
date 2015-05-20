@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../client/FinancialInstitutionData'/>
-
-module ofx4js.client.impl {
-
-import FinancialInstitutionData = ofx4js.client.FinancialInstitutionData;
+import {FinancialInstitutionData} from "../FinancialInstitutionData";
 
 //import java.net.URL;
 
@@ -88,4 +84,4 @@ export class BaseFinancialInstitutionData implements FinancialInstitutionData {
   }
 }
 
-}
+

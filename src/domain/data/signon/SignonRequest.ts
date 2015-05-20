@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../RequestMessage'/>
-///<reference path='FinancialInstitution'/>
-
-module ofx4js.domain.data.signon {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
+import {FinancialInstitution} from "FinancialInstitution";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../meta/Element_add";
+import {RequestMessage} from "../RequestMessage";
 
 /**
  * Sign-on request
@@ -353,4 +346,4 @@ Element_add(SignonRequest, { name: "USERCRED2", order: 120, type: String, read: 
 Element_add(SignonRequest, { name: "AUTHTOKEN", order: 130, type: String, read: SignonRequest.prototype.getAuthToken, write: SignonRequest.prototype.setAuthToken });
 Element_add(SignonRequest, { name: "ACCESSKEY", order: 140, type: String, read: SignonRequest.prototype.getAccessKey, write: SignonRequest.prototype.setAccessKey });
 
-}
+

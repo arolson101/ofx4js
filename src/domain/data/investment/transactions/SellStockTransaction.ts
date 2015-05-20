@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BaseSellInvestmentTransaction'/>
-///<reference path='SellType'/>
-
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {BaseSellInvestmentTransaction} from "BaseSellInvestmentTransaction";
+import {SellType, SellType_fromOfx} from "SellType";
+import {TransactionType} from "TransactionType";
+import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+import {Element_add} from "../../../../meta/Element_add";
 
 /**
  * Transaction for selling stock.
@@ -74,4 +69,4 @@ export class SellStockTransaction extends BaseSellInvestmentTransaction {
 Aggregate_add( SellStockTransaction, "SELLSTOCK" );
 Element_add(SellStockTransaction, { name: "SELLTYPE", required: true, order: 20, type: String, read: SellStockTransaction.prototype.getSellType, write: SellStockTransaction.prototype.setSellType });
 
-}
+

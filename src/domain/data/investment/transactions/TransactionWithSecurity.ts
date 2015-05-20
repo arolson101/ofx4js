@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../seclist/SecurityId'/>
-
-module ofx4js.domain.data.investment.transactions {
-
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import {SecurityId} from "../../seclist/SecurityId";
 
 /**
  * Interface for transactions that have a security associated with them.
@@ -34,4 +30,4 @@ export interface TransactionWithSecurity {
   getSecurityId(): SecurityId;
 }
 
-}
+

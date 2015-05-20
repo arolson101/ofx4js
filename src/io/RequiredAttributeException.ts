@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../OFXRuntimeException'/>
-
-module ofx4js.io {
-
-import OFXRuntimeException = ofx4js.OFXRuntimeException;
+import {OFXRuntimeException} from "../OFXRuntimeException";
 
 /**
  * Thrown when a required attribute of an aggregate is null or empty.
@@ -31,4 +27,4 @@ export class RequiredAttributeException extends OFXRuntimeException {
   }
 }
 
-}
+

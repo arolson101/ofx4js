@@ -13,40 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../domain/data/common/StatementResponse'/>
-///<reference path='../../domain/data/common/StatementRequest'/>
-///<reference path='../../domain/data/common/StatementRange'/>
-///<reference path='../../domain/data/ResponseEnvelope'/>
-///<reference path='../../domain/data/creditcard/CreditCardStatementRequest'/>
-///<reference path='../../domain/data/creditcard/CreditCardRequestMessageSet'/>
-///<reference path='../../domain/data/creditcard/CreditCardResponseMessageSet'/>
-///<reference path='../../domain/data/creditcard/CreditCardStatementResponse'/>
-///<reference path='../../OFXException'/>
-///<reference path='../CreditCardAccount'/>
-///<reference path='BaseAccountImpl'/>
-///<reference path='FinancialInstitutionImpl'/>
-
-module ofx4js.client.impl {
-
-import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-import StatementRange = ofx4js.domain.data.common.StatementRange;
+import {BaseAccountImpl} from "BaseAccountImpl";
+import {FinancialInstitutionImpl} from "FinancialInstitutionImpl";
+import {StatementResponse} from "../../domain/data/common/StatementResponse";
+import {StatementRequest} from "../../domain/data/common/StatementRequest";
+import {StatementRange} from "../../domain/data/common/StatementRange";
 //import data.* = ofx4js.domain.data.*;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import {ResponseEnvelope} from "../../domain/data/ResponseEnvelope";
+import {MessageSetType} from "../../domain/data/MessageSetType";
+import {TransactionWrappedRequestMessage} from "../../domain/data/TransactionWrappedRequestMessage";
+import {RequestMessage} from "../../domain/data/RequestMessage";
+import {RequestMessageSet} from "../../domain/data/RequestMessageSet";
 //import creditcard.* = ofx4js.domain.data.creditcard.*;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-import CreditCardRequestMessageSet = ofx4js.domain.data.creditcard.CreditCardRequestMessageSet;
-import CreditCardResponseMessageSet = ofx4js.domain.data.creditcard.CreditCardResponseMessageSet;
-import CreditCardStatementRequest = ofx4js.domain.data.creditcard.CreditCardStatementRequest;
-import CreditCardStatementResponse = ofx4js.domain.data.creditcard.CreditCardStatementResponse;
-import CreditCardStatementRequestTransaction = ofx4js.domain.data.creditcard.CreditCardStatementRequestTransaction;
-import CreditCardStatementResponseTransaction = ofx4js.domain.data.creditcard.CreditCardStatementResponseTransaction;
-import OFXException = ofx4js.OFXException;
-import CreditCardAccount = ofx4js.client.CreditCardAccount;
+import {CreditCardAccountDetails} from "../../domain/data/creditcard/CreditCardAccountDetails";
+import {CreditCardRequestMessageSet} from "../../domain/data/creditcard/CreditCardRequestMessageSet";
+import {CreditCardResponseMessageSet} from "../../domain/data/creditcard/CreditCardResponseMessageSet";
+import {CreditCardStatementRequest} from "../../domain/data/creditcard/CreditCardStatementRequest";
+import {CreditCardStatementResponse} from "../../domain/data/creditcard/CreditCardStatementResponse";
+import {CreditCardStatementRequestTransaction} from "../../domain/data/creditcard/CreditCardStatementRequestTransaction";
+import {CreditCardStatementResponseTransaction} from "../../domain/data/creditcard/CreditCardStatementResponseTransaction";
+import {OFXException} from "../../OFXException";
+import {CreditCardAccount} from "../CreditCardAccount";
 
 /**
  * @author Ryan Heaton
@@ -95,4 +82,4 @@ export class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDeta
 
 }
 
-}
+

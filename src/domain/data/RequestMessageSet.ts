@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='MessageSetType'/>
-///<reference path='RequestMessage'/>
-
-module ofx4js.domain.data {
-
+import {MessageSetType} from "MessageSetType";
+import {RequestMessage} from "RequestMessage";
 /**
  * A message set enclosed in an OFX request envelope.
  *
@@ -69,4 +66,4 @@ export /*abstract*/ class RequestMessageSet /*implements Comparable<RequestMessa
   
 }
 
-}
+

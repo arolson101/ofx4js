@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../ResponseMessage'/>
-///<reference path='../ResponseMessageSet'/>
-///<reference path='BankStatementResponseTransaction'/>
-
-module ofx4js.domain.data.banking {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import {BankStatementResponseTransaction} from "BankStatementResponseTransaction";
+import {MessageSetType} from "../MessageSetType";
+import {ResponseMessage} from "../ResponseMessage";
+import {ResponseMessageSet} from "../ResponseMessageSet";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
 
 /**
  * @author Ryan Heaton
@@ -85,4 +77,4 @@ export class BankingResponseMessageSet extends ResponseMessageSet {
 Aggregate_add( BankingResponseMessageSet, "BANKMSGSRSV1" );
 ChildAggregate_add(BankingResponseMessageSet, { order: 0, type: Array, collectionEntryType: BankStatementResponseTransaction, read: BankingResponseMessageSet.prototype.getStatementResponses, write: BankingResponseMessageSet.prototype.setStatementResponses });
 
-}
+

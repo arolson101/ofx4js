@@ -13,33 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../domain/data/RequestEnvelope'/>
-///<reference path='../../domain/data/ResponseEnvelope'/>
-///<reference path='../../io/OFXParseException'/>
-///<reference path='../../io/OFXWriter'/>
-///<reference path='../../io/AggregateMarshaller'/>
-///<reference path='../../io/AggregateUnmarshaller'/>
-///<reference path='../../io/v1/OFXV1Writer'/>
-///<reference path='../../io/StreamWriter'/>
-///<reference path='../../io/StringReader'/>
-///<reference path='../../log/Log'/>
-///<reference path='OFXConnection'/>
-///<reference path='OFXConnectionException'/>
-
-
-module ofx4js.client.net {
-
-import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import OFXParseException = ofx4js.io.OFXParseException;
-import OFXWriter = ofx4js.io.OFXWriter;
-import AggregateMarshaller = ofx4js.io.AggregateMarshaller;
-import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
-import AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
-import StringReader = ofx4js.io.StringReader;
-import OutputBuffer = ofx4js.io.OutputBuffer;
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
+import {OFXConnection} from "OFXConnection";
+import {OFXConnectionException} from "OFXConnectionException";
+import {RequestEnvelope} from "../../domain/data/RequestEnvelope";
+import {ResponseEnvelope} from "../../domain/data/ResponseEnvelope";
+import {OFXParseException} from "../../io/OFXParseException";
+import {OFXWriter} from "../../io/OFXWriter";
+import {AggregateMarshaller} from "../../io/AggregateMarshaller";
+import {OFXV1Writer} from "../../io/v1/OFXV1Writer";
+import {AggregateUnmarshaller} from "../../io/AggregateUnmarshaller";
+import {StringReader} from "../../io/StringReader";
+import {OutputBuffer} from "../../io/StreamWriter";
+import {Log} from "../../log/Log";
+import {LogFactory} from "../../log/Log";
 
 // import java.io.*;
 // import java.net.HttpURLConnection;
@@ -231,4 +217,4 @@ export class OFXV1Connection implements OFXConnection {
 
 LOG = LogFactory.getLog(OFXV1Connection);
 
-}
+

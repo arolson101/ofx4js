@@ -1,5 +1,3 @@
-module ofx4js.io {
-
 export class StringReader {
   private _text: string;
   private _cursor: number;
@@ -60,4 +58,3 @@ export class StringReader {
   }
 }
 
-}

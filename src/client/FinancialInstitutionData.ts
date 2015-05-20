@@ -13,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../project.d.ts'/>
-
-module ofx4js.client {
-
 /**
  * Interface for core FI data.  This is the base set of information
  * required in order to initiate a connection to an FI server.
@@ -68,4 +64,3 @@ export interface FinancialInstitutionData {
   getBrokerId(): string;
 }
 
-}

@@ -13,37 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../domain/data/common/StatementResponse'/>
-///<reference path='../../domain/data/common/StatementRequest'/>
-///<reference path='../../domain/data/banking/BankingResponseMessageSet'/>
-///<reference path='../../domain/data/banking/BankStatementRequest'/>
-///<reference path='../../domain/data/banking/BankingRequestMessageSet'/>
-///<reference path='../../OFXException'/>
-///<reference path='../../client/BankAccount'/>
-///<reference path='BaseAccountImpl'/>
-///<reference path='FinancialInstitutionImpl'/>
-
-module ofx4js.client.impl {
-
-import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-import StatementRange = ofx4js.domain.data.common.StatementRange;
+import {BaseAccountImpl} from "BaseAccountImpl";
+import {FinancialInstitutionImpl} from "FinancialInstitutionImpl";
+import {StatementResponse} from "../../domain/data/common/StatementResponse";
+import {StatementRequest} from "../../domain/data/common/StatementRequest";
+import {StatementRange} from "../../domain/data/common/StatementRange";
 //import data.* = ofx4js.domain.data.*;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import {RequestMessage} from "../../domain/data/RequestMessage";
+import {ResponseEnvelope} from "../../domain/data/ResponseEnvelope";
+import {RequestMessageSet} from "../../domain/data/RequestMessageSet";
+import {MessageSetType} from "../../domain/data/MessageSetType";
+import {TransactionWrappedRequestMessage} from "../../domain/data/TransactionWrappedRequestMessage";
 //import banking.* = ofx4js.domain.data.banking.*;
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-import BankingResponseMessageSet = ofx4js.domain.data.banking.BankingResponseMessageSet;
-import BankStatementRequest = ofx4js.domain.data.banking.BankStatementRequest;
-import BankStatementResponse = ofx4js.domain.data.banking.BankStatementResponse;
-import BankStatementResponseTransaction = ofx4js.domain.data.banking.BankStatementResponseTransaction;
-import BankingRequestMessageSet = ofx4js.domain.data.banking.BankingRequestMessageSet;
-import BankStatementRequestTransaction = ofx4js.domain.data.banking.BankStatementRequestTransaction;
-import OFXException = ofx4js.OFXException;
-import BankAccount = ofx4js.client.BankAccount;
+import {BankAccountDetails} from "../../domain/data/banking/BankAccountDetails";
+import {BankingResponseMessageSet} from "../../domain/data/banking/BankingResponseMessageSet";
+import {BankStatementRequest} from "../../domain/data/banking/BankStatementRequest";
+import {BankStatementResponse} from "../../domain/data/banking/BankStatementResponse";
+import {BankStatementResponseTransaction} from "../../domain/data/banking/BankStatementResponseTransaction";
+import {BankingRequestMessageSet} from "../../domain/data/banking/BankingRequestMessageSet";
+import {BankStatementRequestTransaction} from "../../domain/data/banking/BankStatementRequestTransaction";
+import {OFXException} from "../../OFXException";
+import {BankAccount} from "../BankAccount";
 
 /**
  * @author Ryan Heaton
@@ -92,4 +82,4 @@ export class BankingAccountImpl extends BaseAccountImpl<BankAccountDetails> impl
 
 }
 
-}
+

@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../OFXWriter'/>
-///<reference path='../StreamWriter'/>
-
-module ofx4js.io.v1 {
-
-import OFXWriter = ofx4js.io.OFXWriter;
-
-//import Map = java.util.Map;
+import {OFXWriter} from "../OFXWriter";
+import {StreamWriter, OutputBuffer} from "../StreamWriter";
 
 /**
  * OFX writer to SGML, suitable for OFX versions < 2.0.
@@ -163,4 +156,4 @@ export class OFXV1Writer implements OFXWriter {
   }
 }
 
-}
+

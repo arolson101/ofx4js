@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='BaseSecurityInfo'/>
-///<reference path='AssetClass'/>
-
-module ofx4js.domain.data.seclist {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import {BaseSecurityInfo} from "BaseSecurityInfo";
+import {AssetClass, AssetClass_fromOfx} from "AssetClass";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {Element_add} from "../../../meta/Element_add";
 
 /**
  * Info about any other type of security.
@@ -108,4 +103,4 @@ Element_add(OtherSecurityInfo, { name: "TYPEDESC", order: 20, type: String, read
 Element_add(OtherSecurityInfo, { name: "ASSETCLASS", order: 30, type: String, read: OtherSecurityInfo.prototype.getAssetClass, write: OtherSecurityInfo.prototype.setAssetClass });
 Element_add(OtherSecurityInfo, { name: "FIASSETCLASS", order: 40, type: String, read: OtherSecurityInfo.prototype.getFiAssetClass, write: OtherSecurityInfo.prototype.setFiAssetClass });
 
-}
+

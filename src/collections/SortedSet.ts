@@ -1,6 +1,4 @@
 
-module ofx4js.collections {
-	
 export interface CompareFcn<T> {
 	(a: T, b: T): number;
 }
@@ -50,4 +48,3 @@ export class SortedSet<T> {
 	}
 }
 
-}

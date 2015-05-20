@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../../meta/Element_add'/>
-///<reference path='RequestMessage'/>
-
-module ofx4js.domain.data {
-
-import Element_add = ofx4js.meta.Element_add;
+import {RequestMessage} from "RequestMessage";
+import {Element_add} from "../../meta/Element_add";
 
 var UUID: UUID = require("uuid");
 
@@ -106,4 +101,4 @@ export /*abstract*/ class TransactionWrappedRequestMessage<M extends RequestMess
 Element_add(TransactionWrappedRequestMessage, { name: "TRNUID", required: true, order: 0, type: String, read: TransactionWrappedRequestMessage.prototype.getUID, write: TransactionWrappedRequestMessage.prototype.setUID });
 Element_add(TransactionWrappedRequestMessage, { name: "CLTCOOKIE", order: 10, type: String, read: TransactionWrappedRequestMessage.prototype.getClientCookie, write: TransactionWrappedRequestMessage.prototype.setClientCookie });
 Element_add(TransactionWrappedRequestMessage, { name: "TAN", order: 20, type: String, read: TransactionWrappedRequestMessage.prototype.getTransactionAuthorizationNumber, write: TransactionWrappedRequestMessage.prototype.setTransactionAuthorizationNumber });
-}
+

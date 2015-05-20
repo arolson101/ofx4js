@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='OFXParseException'/>
-
-module ofx4js.io {
+import {OFXParseException} from "OFXParseException";
 
 /**
  * @author Ryan Heaton
@@ -27,4 +25,4 @@ export class OFXSyntaxException extends OFXParseException {
   }
 }
 
-}
+

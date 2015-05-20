@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='TransactionType'/>
-
-module ofx4js.domain.data.investment.transactions {
+import {TransactionType} from "TransactionType";
+import {InvestmentTransaction} from "InvestmentTransaction";
 
 /**
  * Base class for all investment transactions.
@@ -117,4 +116,4 @@ export /*abstract*/ class BaseInvestmentTransaction {
   }
 }
 
-}
+

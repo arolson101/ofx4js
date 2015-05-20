@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../SignonProfile'/>
-///<reference path='CharacterType'/>
-
-module ofx4js.domain.data.profile {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import SignonProfile = ofx4js.domain.data.SignonProfile;
+import {CharacterType} from "CharacterType";
+import {Aggregate_add} from "../../../meta/Aggregate_Add";
+import {Element_add} from "../../../meta/Element_add";
+import {SignonProfile} from "../SignonProfile";
 
 /**
  * Sign-on information
@@ -384,4 +378,4 @@ Element_add(SignonInfo, { name: "AUTHTOKENINFOURL", order: 140, type: String, re
 Element_add(SignonInfo, { name: "MFACHALLENGESUPT", order: 150, type: Boolean, read: SignonInfo.prototype.getMfaSupported, write: SignonInfo.prototype.setMfaSupported });
 Element_add(SignonInfo, { name: "MFACHALLENGEFIRST", order: 160, type: Boolean, read: SignonInfo.prototype.getMfaChallengeRequiredForFirstSignon, write: SignonInfo.prototype.setMfaChallengeRequiredForFirstSignon });
 
-}
+
