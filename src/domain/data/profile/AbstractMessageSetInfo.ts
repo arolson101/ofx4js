@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {VersionSpecificMessageSetInfo} from "VersionSpecificMessageSetInfo";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='VersionSpecificMessageSetInfo'/>
+
+module ofx4js.domain.data.profile {
+
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Information about a message set.
@@ -46,4 +50,4 @@ export /*abstract*/ class AbstractMessageSetInfo {
 }
 
 ChildAggregate_add(AbstractMessageSetInfo, { order: 0, type: Array, collectionEntryType: VersionSpecificMessageSetInfo, read: AbstractMessageSetInfo.prototype.getVersionSpecificInformationList, write: AbstractMessageSetInfo.prototype.setVersionSpecificInformationList });
-
+}

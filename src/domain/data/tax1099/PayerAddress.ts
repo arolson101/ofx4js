@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+
+module ofx4js.domain.data.tax1099 {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Aparna Gawali
@@ -139,4 +144,4 @@ Element_add(PayerAddress, { name: "STATE",required: true , order: 5, type: Strin
 Element_add(PayerAddress, { name: "POSTALCODE",required: true , order: 6, type: String, read: PayerAddress.prototype.getPostalCode, write: PayerAddress.prototype.setPostalCode });
 Element_add(PayerAddress, { name: "PHONE",required: false , order: 7, type: String, read: PayerAddress.prototype.getPhone, write: PayerAddress.prototype.setPhone });
 
-
+}

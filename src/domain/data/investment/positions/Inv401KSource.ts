@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.investment.positions {
+
 /**
  * Types of 401(k) sources.
  * @see "Section 13.9.2.4.2, OFX Spec"
@@ -48,4 +50,4 @@ export function Inv401KSource_fromOfx(ofxVal: string): Inv401KSource {
   return ofxVal == null ? null : ofxMapping[ofxVal];
 }
 
-
+}

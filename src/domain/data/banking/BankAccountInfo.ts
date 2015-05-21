@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BankAccountDetails} from "BankAccountDetails";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../meta/Element_add";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {AccountStatus} from "../common/AccountStatus";
-import {AccountInfo} from "../common/AccountInfo";
-import {AccountDetails} from "../common/AccountDetails";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../common/AccountDetails'/>
+///<reference path='../common/AccountInfo'/>
+///<reference path='../common/AccountStatus'/>
+///<reference path='BankAccountDetails'/>
+
+module ofx4js.domain.data.banking {
+
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import AccountStatus = ofx4js.domain.data.common.AccountStatus;
+import AccountInfo = ofx4js.domain.data.common.AccountInfo;
+import AccountDetails = ofx4js.domain.data.common.AccountDetails;
 
 /**
  * @author Ryan Heaton
@@ -135,4 +144,4 @@ Element_add(BankAccountInfo, { name: "XFERSRC", required: true, order: 20, type:
 Element_add(BankAccountInfo, { name: "XFERDEST", required: true, order: 30, type: Boolean, read: BankAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations, write: BankAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations });
 Element_add(BankAccountInfo, { name: "SVCSTATUS", required: true, order: 40, type: AccountStatus, read: BankAccountInfo.prototype.getStatus, write: BankAccountInfo.prototype.setStatus });
 
-
+}

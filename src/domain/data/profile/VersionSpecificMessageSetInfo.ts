@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {CoreMessageSetInfo} from "CoreMessageSetInfo";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
-import {MessageSetProfile} from "../MessageSetProfile";
-import {ApplicationSecurity} from "../ApplicationSecurity";
-import {MessageSetType} from "../MessageSetType";
-import {SynchronizationCapability} from "SynchronizationCapability";
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetProfile'/>
+///<reference path='../MessageSetType'/>
+///<reference path='CoreMessageSetInfo'/>
+
+module ofx4js.domain.data.profile {
+
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
+import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
 
 /**
  * Information specific to a version of a message set.
@@ -93,4 +98,4 @@ export /*abstract*/ class VersionSpecificMessageSetInfo implements MessageSetPro
 }
 
 ChildAggregate_add(VersionSpecificMessageSetInfo, { order: 0, type: CoreMessageSetInfo, read: VersionSpecificMessageSetInfo.prototype.getCore, write: VersionSpecificMessageSetInfo.prototype.setCore });
-
+}

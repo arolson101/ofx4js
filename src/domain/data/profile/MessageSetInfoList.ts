@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {AbstractMessageSetInfo} from "AbstractMessageSetInfo";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='AbstractMessageSetInfo'/>
+
+module ofx4js.domain.data.profile {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -47,4 +52,4 @@ export class MessageSetInfoList {
 Aggregate_add( MessageSetInfoList, "MSGSETLIST" );
 ChildAggregate_add(MessageSetInfoList, { order: 0, type: Array, collectionEntryType: AbstractMessageSetInfo, read: MessageSetInfoList.prototype.getInformationList, write: MessageSetInfoList.prototype.setInformationList });
 
-
+}

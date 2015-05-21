@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {SynchronizationCapability} from "SynchronizationCapability";
-import {ApplicationSecurity} from "../ApplicationSecurity";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ApplicationSecurity'/>
+///<reference path='SynchronizationCapability'/>
+
+module ofx4js.domain.data.profile {
+
+import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Core information about a specific version of a specific message set.
@@ -238,4 +244,4 @@ Element_add(CoreMessageSetInfo, { name: "SYNCMODE", required: true, order: 70, t
 Element_add(CoreMessageSetInfo, { name: "RESPFILEER", required: true, order: 80, type: Boolean, read: CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport, write: CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport });
 Element_add(CoreMessageSetInfo, { name: "INTU.TIMEOUT", order: 90, type: Number, read: CoreMessageSetInfo.prototype.getIntuTimeout, write: CoreMessageSetInfo.prototype.setIntuTimeout });
 
-
+}

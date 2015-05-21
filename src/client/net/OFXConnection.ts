@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {RequestEnvelope} from "../../domain/data/RequestEnvelope";
-import {ResponseEnvelope} from "../../domain/data/ResponseEnvelope";
+///<reference path='../../domain/data/RequestEnvelope'/>
+///<reference path='../../domain/data/ResponseEnvelope'/>
+
+module ofx4js.client.net {
+
+import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
 
 //import java.net.URL;
 
@@ -36,4 +41,4 @@ export interface OFXConnection {
 
 }
 
-
+}

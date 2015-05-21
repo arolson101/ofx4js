@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BasePosition} from "BasePosition";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BasePosition'/>
+
+module ofx4js.domain.data.investment.positions {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Represents a mutual fund position.
@@ -109,4 +114,4 @@ Element_add(MutualFundPosition, { name: "UNITSUSER", order: 30, type: Number, re
 Element_add(MutualFundPosition, { name: "REINVDIV", order: 50, type: Boolean, read: MutualFundPosition.prototype.getReinvestDividends, write: MutualFundPosition.prototype.setReinvestDividends });
 Element_add(MutualFundPosition, { name: "REINVCG", order: 60, type: Boolean, read: MutualFundPosition.prototype.getReinvestCapitalGains, write: MutualFundPosition.prototype.setReinvestCapitalGains });
 
-
+}

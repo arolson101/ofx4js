@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXHandler} from "OFXHandler";
+///<reference path='OFXHandler'/>
+
+module ofx4js.io {
+
 /**
  * Default (no-op) implementation of an OFX handler.
  *
@@ -35,4 +38,4 @@ export class DefaultHandler implements OFXHandler {
 
 }
 
-
+}

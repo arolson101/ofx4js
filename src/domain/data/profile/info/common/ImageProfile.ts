@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Aggregate_add} from "../../../../../meta/Aggregate_Add";
-import {Element_add} from "../../../../../meta/Element_add";
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
+
+module ofx4js.domain.data.profile.info.common {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Image Profile
@@ -47,4 +52,4 @@ Aggregate_add( ImageProfile, "IMAGEPROF" );
 Element_add(ImageProfile, { name: "CLOSINGIMGAVAIL", required: true, order: 10, type: Boolean, read: ImageProfile.prototype.getClosingImageAvailable, write: ImageProfile.prototype.setClosingImageAvailable });
 Element_add(ImageProfile, { name: "TRANIMGAVAIL", required: true, order: 20, type: Boolean, read: ImageProfile.prototype.getTransactionImageAvailable, write: ImageProfile.prototype.setTransactionImageAvailable });
 
-
+}

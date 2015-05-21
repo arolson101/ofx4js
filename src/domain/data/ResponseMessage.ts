@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data {
+
 /**
  * A message applicable to a response message set.
  *
@@ -30,4 +32,4 @@ export /*abstract*/ class ResponseMessage {
 
 }
 
-
+}

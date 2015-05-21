@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data {
+
 /**
  * @author Ryan Heaton
  * @see "Section 4, OFX spec"
@@ -25,4 +27,4 @@ export enum ApplicationSecurity {
   TYPE1
 }
 
-
+}

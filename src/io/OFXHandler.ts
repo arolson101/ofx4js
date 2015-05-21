@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.io {
+
 /**
  * Handler for events during OFX parsing.
  *
@@ -53,4 +55,4 @@ export interface OFXHandler {
 
 }
 
-
+}

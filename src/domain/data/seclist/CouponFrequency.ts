@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.seclist {
+
 /**
  * Coupon freqency for debt.
  * @see "Section 13.8.5.2, OFX Spec"
@@ -44,4 +46,4 @@ export function CouponFrequency_fromOfx(ofxVal: string): CouponFrequency {
   }
 }
 
-
+}

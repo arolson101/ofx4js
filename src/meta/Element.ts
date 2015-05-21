@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {PropertyDescriptor, PropertyDescriptorParams, _default} from "PropertyDescriptor";
+///<reference path='PropertyDescriptor'/>
+
+module ofx4js.meta {
 
 
 export interface ElementParams<T> extends PropertyDescriptorParams<T> {
@@ -68,4 +70,4 @@ export class Element extends PropertyDescriptor {
   }
 }
 
-
+}

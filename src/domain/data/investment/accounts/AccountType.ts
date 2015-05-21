@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.investment.accounts {
+
 /**
  * Type of investment account.
  *
@@ -42,4 +44,4 @@ export function AccountType_fromOfx(ofxVal: string): AccountType {
   }
 }
 
-
+}

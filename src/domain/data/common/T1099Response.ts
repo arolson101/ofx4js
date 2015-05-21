@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ResponseMessage} from "../ResponseMessage";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../meta/Element_add";
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../ResponseMessage'/>
+
+module ofx4js.domain.data.common {
+
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 //import java.util.Locale;
 
@@ -28,3 +34,4 @@ export /*abstract*/ class T1099Response extends ResponseMessage {
  
 }
 
+}

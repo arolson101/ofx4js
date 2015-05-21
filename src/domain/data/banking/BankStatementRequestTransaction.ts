@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BankStatementRequest} from "BankStatementRequest";
-import {TransactionWrappedRequestMessage} from "../TransactionWrappedRequestMessage";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedRequestMessage'/>
+///<reference path='BankStatementRequest'/>
+
+module ofx4js.domain.data.banking {
+
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -53,4 +59,4 @@ export class BankStatementRequestTransaction extends TransactionWrappedRequestMe
 Aggregate_add( BankStatementRequestTransaction, "STMTTRNRQ" );
 ChildAggregate_add(BankStatementRequestTransaction, { required: true, order: 30, type: BankStatementRequest, read: BankStatementRequestTransaction.prototype.getMessage, write: BankStatementRequestTransaction.prototype.setMessage });
 
-
+}

@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXV1Connection} from "OFXV1Connection";
-import {OFXWriter} from "../../io/OFXWriter";
-import {OFXV2Writer} from "../../io/v2/OFXV2Writer";
-import {OutputBuffer} from "../../io/StreamWriter";
+///<reference path='../../io/OFXWriter'/>
+///<reference path='../../io/v2/OFXV2Writer'/>
+///<reference path='OFXV1Connection'/>
+
+module ofx4js.client.net {
+
+import OFXWriter = ofx4js.io.OFXWriter;
+import OFXV2Writer = ofx4js.io.v2.OFXV2Writer;
+import OutputBuffer = ofx4js.io.OutputBuffer;
 
 /**
  * @author Ryan Heaton
@@ -29,4 +34,4 @@ export class OFXV2Connection extends OFXV1Connection {
   }
 }
 
-
+}

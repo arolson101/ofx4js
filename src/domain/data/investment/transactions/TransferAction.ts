@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.investment.transactions {
+
 /**
  * Type of transfer.
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -35,4 +37,4 @@ export function TransferAction_fromOfx(ofxVal: string): TransferAction {
   }
 }
 
-
+}

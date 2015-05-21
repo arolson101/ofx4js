@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXException} from "../OFXException";
+///<reference path='../OFXException'/>
+
+module ofx4js.io {
 
 /**
  * @author Ryan Heaton
  */
-export class OFXParseException extends OFXException {
+export class OFXParseException extends ofx4js.OFXException {
 
   constructor(message: string) {
     super(message);
   }
 }
 
-
+}

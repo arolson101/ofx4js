@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {PasswordChangeResponse} from "PasswordChangeResponse";
-import {TransactionWrappedResponseMessage} from "../TransactionWrappedResponseMessage";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../TransactionWrappedResponseMessage'/>
+///<reference path='PasswordChangeResponse'/>
+
+module ofx4js.domain.data.signon {
+
+import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -52,4 +58,4 @@ export class PasswordChangeResponseTransaction extends TransactionWrappedRespons
 Aggregate_add(PasswordChangeResponseTransaction, "PINCHTRNRS");
 ChildAggregate_add(PasswordChangeResponseTransaction, { required: true, order: 30, type: PasswordChangeResponse, read: PasswordChangeResponseTransaction.prototype.getMessage, write: PasswordChangeResponseTransaction.prototype.setMessage });
 
-
+}

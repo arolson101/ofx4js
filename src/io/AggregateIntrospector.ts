@@ -13,13 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {AggregateInfo} from "AggregateInfo";
-import {Aggregate} from "../meta/Aggregate";
-import {ChildAggregate} from "../meta/ChildAggregate";
-import {Header} from "../meta/Header";
-import {Element} from "../meta/Element";
-import {Log} from "../log/Log";
-import {LogFactory} from "../log/Log";
+///<reference path='../meta/Aggregate'/>
+///<reference path='../meta/ChildAggregate'/>
+///<reference path='../meta/Header'/>
+///<reference path='../meta/Element'/>
+///<reference path='../log/Log'/>
+///<reference path='AggregateInfo'/>
+
+module ofx4js.io {
+
+import Aggregate = ofx4js.meta.Aggregate;
+import ChildAggregate = ofx4js.meta.ChildAggregate;
+import Header = ofx4js.meta.Header;
+import Element = ofx4js.meta.Element;
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
 
 //import Log = org.apache.commons.logging.Log;
 //import LogFactory = org.apache.commons.logging.LogFactory;
@@ -123,4 +131,4 @@ export class AggregateIntrospector {
 
 LOG = LogFactory.getLog(AggregateIntrospector);
 
-
+}

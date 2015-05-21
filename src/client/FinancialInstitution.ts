@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path="../project.d.ts"/>
-import {BankAccount} from "BankAccount";
-import {CreditCardAccount} from "CreditCardAccount";
-import {InvestmentAccount} from "InvestmentAccount";
-import {FinancialInstitutionData} from "FinancialInstitutionData";
-import {FinancialInstitutionProfile} from "FinancialInstitutionProfile";
-import {OFXException} from "../OFXException";
-import {BankAccountDetails} from "../domain/data/banking/BankAccountDetails";
-import {CreditCardAccountDetails} from "../domain/data/creditcard/CreditCardAccountDetails";
-import {InvestmentAccountDetails} from "../domain/data/investment/accounts/InvestmentAccountDetails";
-import {AccountProfile} from "../domain/data/signup/AccountProfile";
+///<reference path='../OFXException'/>
+///<reference path='../domain/data/banking/BankAccountDetails'/>
+///<reference path='../domain/data/creditcard/CreditCardAccountDetails'/>
+///<reference path='../domain/data/investment/accounts/InvestmentAccountDetails'/>
+///<reference path='../domain/data/signup/AccountProfile'/>
+///<reference path='BankAccount'/>
+///<reference path='CreditCardAccount'/>
+///<reference path='FinancialInstitutionData'/>
+///<reference path='FinancialInstitutionProfile'/>
+
+module ofx4js.client {
+
+import OFXException = ofx4js.OFXException;
+import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import AccountProfile = ofx4js.domain.data.signup.AccountProfile;
 
 /**
  * @author Ryan Heaton
@@ -86,4 +92,4 @@ export interface FinancialInstitution {
   loadInvestmentAccount(details: InvestmentAccountDetails, username: string, password: string): InvestmentAccount;
 }
 
-
+}

@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXConnectionException} from "OFXConnectionException";
+///<reference path='OFXConnectionException'/>
+
+module ofx4js.client.net {
+
 /**
  * @author Ryan Heaton
  */
@@ -31,3 +34,4 @@ export class OFXServerException extends OFXConnectionException {
   }
 }
 
+}

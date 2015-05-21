@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BasePosition} from "BasePosition";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='BasePosition'/>
+
+module ofx4js.domain.data.investment.positions {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * Represents a debt position.
@@ -27,4 +31,4 @@ export class DebtPosition extends BasePosition {
 
 Aggregate_add( DebtPosition, "POSDEBT" )
 
-
+}

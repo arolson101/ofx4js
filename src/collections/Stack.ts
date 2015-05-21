@@ -1,3 +1,6 @@
+module ofx4js.collections {
+
+
 export class Stack<T> {
 	private values: Array<T>;
 	
@@ -30,4 +33,4 @@ export class Stack<T> {
 	}
 }
 
-
+}

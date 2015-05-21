@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseSellInvestmentTransaction} from "BaseSellInvestmentTransaction";
-import {SellDebtReason, SellDebtReason_fromOfx} from "SellDebtReason";
-import {TransactionType} from "TransactionType";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+///<reference path='SellDebtReason'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for selling debt (i.e. bonds, CDs, etc.,).
@@ -93,4 +98,4 @@ Aggregate_add( SellDebtTransaction, "SELLDEBT" );
 Element_add(SellDebtTransaction, { name: "SELLREASON", order: 30, type: String, read: SellDebtTransaction.prototype.getSellReason, write: SellDebtTransaction.prototype.setSellReason });
 Element_add(SellDebtTransaction, { name: "ACCRDINT", order: 40, type: Number, read: SellDebtTransaction.prototype.getAccruedInterest, write: SellDebtTransaction.prototype.setAccruedInterest });
 
-
+}

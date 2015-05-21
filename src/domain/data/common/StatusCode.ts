@@ -13,17 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Status} from "Status";
+///<reference path='Status'/>
 
-/**
- * Severity of the status.
- */
-export enum Severity {
-  INFO,
-  WARN,
-  ERROR
-}
-
+module ofx4js.domain.data.common {
 
 /**
  * @author Ryan Heaton
@@ -37,3 +29,5 @@ export /*abstract*/ class StatusCode {
   getDefaultSeverity(): /*Status.*/Severity { throw new Error("abstract"); }
 }
 
+
+}

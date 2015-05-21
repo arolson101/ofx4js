@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseSecurityInfo} from "BaseSecurityInfo";
-import {DebtType, DebtType_fromOfx} from "DebtType";
-import {DebtClass, DebtClass_fromOfx} from "DebtClass";
-import {CouponFrequency, CouponFrequency_fromOfx} from "CouponFrequency";
-import {CallType, CallType_fromOfx} from "CallType";
-import {AssetClass, AssetClass_fromOfx} from "AssetClass";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='DebtType'/>
+///<reference path='DebtClass'/>
+///<reference path='CouponFrequency'/>
+///<reference path='CallType'/>
+///<reference path='AssetClass'/>
+
+module ofx4js.domain.data.seclist {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a debt security.
@@ -371,4 +376,4 @@ Element_add(DebtSecurityInfo, { name: "DTMAT", order: 130, type: Date, read: Deb
 Element_add(DebtSecurityInfo, { name: "ASSETCLASS", order: 140, type: String, read: DebtSecurityInfo.prototype.getAssetClass, write: DebtSecurityInfo.prototype.setAssetClass });
 Element_add(DebtSecurityInfo, { name: "FIASSETCLASS", order: 150, type: String, read: DebtSecurityInfo.prototype.getFiAssetClass, write: DebtSecurityInfo.prototype.setFiAssetClass });
 
-
+}

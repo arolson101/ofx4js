@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Status} from "Status";
+///<reference path='Status'/>
+
+module ofx4js.domain.data.common {
+
 /**
  * A status holder (usually applied to a response).
  *
@@ -43,3 +46,4 @@ export function instanceof_StatusHolder(obj: any) : boolean {
        && (typeof obj.getStatus === 'function'));
 }
 
+}

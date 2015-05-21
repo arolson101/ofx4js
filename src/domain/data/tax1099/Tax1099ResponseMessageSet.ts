@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Tax1099ResponseTransaction} from "Tax1099ResponseTransaction";
-import {MessageSetType} from "../MessageSetType";
-import {ResponseMessage} from "../ResponseMessage";
-import {ResponseMessageSet} from "../ResponseMessageSet";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../ResponseMessageSet'/>
+///<reference path='Tax1099ResponseTransaction'/>
+
+module ofx4js.domain.data.tax1099 {
+
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
@@ -79,4 +86,4 @@ export class Tax1099ResponseMessageSet extends ResponseMessageSet {
 Aggregate_add( Tax1099ResponseMessageSet, "TAX1099MSGSRSV1" );
 ChildAggregate_add(Tax1099ResponseMessageSet, { order: 0, type: Array, collectionEntryType: Tax1099ResponseTransaction, read: Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction, write: Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction });
 
-
+}

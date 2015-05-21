@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.profile {
+
 /**
  * @author Ryan Heaton
  * @see "Section 7.2.1, OFX Spec"
@@ -25,4 +27,4 @@ export enum SynchronizationCapability {
   LITE
 }
 
-
+}

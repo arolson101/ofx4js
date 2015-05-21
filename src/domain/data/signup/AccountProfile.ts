@@ -13,13 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {InvestmentAccountInfo} from "../investment/accounts/InvestmentAccountInfo";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
-import {BankAccountInfo} from "../banking/BankAccountInfo";
-import {CreditCardAccountInfo} from "../creditcard/CreditCardAccountInfo";
-import * as common from "../common/AccountInfo";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../investment/accounts/InvestmentAccountInfo'/>
+///<reference path='../banking/BankAccountInfo'/>
+///<reference path='../creditcard/CreditCardAccountInfo'/>
+
+module ofx4js.domain.data.signup {
+
+import InvestmentAccountInfo = ofx4js.domain.data.investment.accounts.InvestmentAccountInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import BankAccountInfo = ofx4js.domain.data.banking.BankAccountInfo;
+import CreditCardAccountInfo = ofx4js.domain.data.creditcard.CreditCardAccountInfo;
 
 /**
  * @author Ryan Heaton
@@ -73,7 +81,7 @@ export class AccountProfile {
    *
    * @return Account specifics.
    */
-  public getSpecifics(): common.AccountInfo {
+  public getSpecifics(): ofx4js.domain.data.common.AccountInfo {
     if (this.getBankSpecifics() != null && this.getCreditCardSpecifics() != null) {
       throw new Error("Only one account specifics aggregate can be set at a time.");
     }
@@ -92,7 +100,7 @@ export class AccountProfile {
    *
    * @param specifics Account specifics.
    */
-  public setSpecifics(specifics: common.AccountInfo): void {
+  public setSpecifics(specifics: ofx4js.domain.data.common.AccountInfo): void {
     if (specifics instanceof BankAccountInfo) {
       this.setBankSpecifics(<BankAccountInfo> specifics);
     }
@@ -174,4 +182,4 @@ ChildAggregate_add(AccountProfile, { order: 20, type: BankAccountInfo, read: Acc
 ChildAggregate_add(AccountProfile, { order: 30, type: CreditCardAccountInfo, read: AccountProfile.prototype.getCreditCardSpecifics, write: AccountProfile.prototype.setCreditCardSpecifics });
 ChildAggregate_add(AccountProfile, { order: 40, type: InvestmentAccountInfo, read: AccountProfile.prototype.getInvestmentSpecifics, write: AccountProfile.prototype.setInvestmentSpecifics });
 
-
+}

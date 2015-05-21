@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.meta {
+
 /**
  * Annotation for a method that returns an OFX aggregate.
  *
@@ -36,4 +38,4 @@ export class Aggregate {
   }
 }
 
-
+}

@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {CreditCardAccountDetails} from "CreditCardAccountDetails";
-import {StatementResponse} from "../common/StatementResponse";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../common/StatementResponse'/>
+///<reference path='CreditCardAccountDetails'/>
+
+module ofx4js.domain.data.creditcard {
+
+import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -51,4 +57,4 @@ export class CreditCardStatementResponse extends StatementResponse {
 Aggregate_add( CreditCardStatementResponse, "CCSTMTRS");
 ChildAggregate_add(CreditCardStatementResponse, { name:"CCACCTFROM", order: 10, type: CreditCardAccountDetails, read: CreditCardStatementResponse.prototype.getAccount, write: CreditCardStatementResponse.prototype.setAccount });
   
-
+}

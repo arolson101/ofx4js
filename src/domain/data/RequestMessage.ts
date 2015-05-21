@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data {
+
 /**
  * A message applicable to a request message set.
  *
@@ -22,4 +24,4 @@
 export /*abstract*/ class RequestMessage {
 }
 
-
+}

@@ -13,16 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseOtherInvestmentTransaction} from "BaseOtherInvestmentTransaction";
-import {TransactionType} from "TransactionType";
-import {TransferAction, TransferAction_fromOfx} from "TransferAction";
-import {SubAccountType, SubAccountType_fromOfx} from "../accounts/SubAccountType";
-import {Inv401KSource, Inv401KSource_fromOfx} from "../positions/Inv401KSource";
-import {PositionType, PositionType_fromOfx} from "../positions/PositionType";
-import {SecurityId} from "../../seclist/SecurityId";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../investment/positions/Inv401KSource'/>
+///<reference path='../../investment/positions/PositionType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransferAction'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
+import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
+import PositionType = ofx4js.domain.data.investment.positions.PositionType;
+import PositionType_fromOfx = ofx4js.domain.data.investment.positions.PositionType_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for transfers.
@@ -292,4 +304,4 @@ Element_add(TransferInvestmentTransaction, { name: "UNITPRICE", required: true, 
 Element_add(TransferInvestmentTransaction, { name: "DTPURCHASE", order: 90, type: Date, read: TransferInvestmentTransaction.prototype.getPurchaseDate, write: TransferInvestmentTransaction.prototype.setPurchaseDate });
 Element_add(TransferInvestmentTransaction, { name: "INV401KSOURCE", order: 100, type: String, read: TransferInvestmentTransaction.prototype.get401kSource, write: TransferInvestmentTransaction.prototype.set401kSource });
 
-
+}

@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {StringConversion} from "StringConversion";
-import {Status} from "../domain/data/common/Status";
-import {StatusCode, Severity} from "../domain/data/common/StatusCode";
-import {KnownCode} from "../domain/data/common/Status";
-import {UnknownStatusCode} from "../domain/data/common/UnknownStatusCode";
-import {isAssignableFrom} from "../meta/PropertyDescriptor";
+///<reference path='../domain/data/common/Status'/>
+///<reference path='../domain/data/common/StatusCode'/>
+///<reference path='../domain/data/common/UnknownStatusCode'/>
+///<reference path='../meta/PropertyDescriptor'/>
+///<reference path='StringConversion'/>
+
+module ofx4js.io {
+
+import Status = ofx4js.domain.data.common.Status;
+import StatusCode = ofx4js.domain.data.common.StatusCode;
+import Severity = ofx4js.domain.data.common.Severity;
+import KnownCode = ofx4js.domain.data.common.KnownCode;
+import UnknownStatusCode = ofx4js.domain.data.common.UnknownStatusCode;
+import isAssignableFrom = ofx4js.meta.isAssignableFrom;
 
 
 /**
@@ -157,4 +165,4 @@ export class DefaultStringConversion implements StringConversion {
   }
 }
 
-
+}

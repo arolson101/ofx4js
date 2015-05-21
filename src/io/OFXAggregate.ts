@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.io {
+
 /**
  * An OFX aggregate is just an aggregate of name-value pairs that identify the elements and element values of the aggregate.
  * The element values can strings or another (sub)aggregate.  The implementation of a
@@ -53,4 +55,4 @@ export interface OFXAggregate {
   getElementValue(elementName: string): Object;
 }
 
-
+}

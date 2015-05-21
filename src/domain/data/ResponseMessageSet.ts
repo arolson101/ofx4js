@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ResponseMessage} from "ResponseMessage";
-import {MessageSetType} from "MessageSetType";
+///<reference path='ResponseMessage'/>
+
+module ofx4js.domain.data {
+
+
 /**
  * A message set enclosed in a response envelope.
  *
@@ -66,4 +69,4 @@ export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMes
   }
 }
 
-
+}

@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {SecurityListV1MessageSetInfo} from "SecurityListV1MessageSetInfo";
-import {AbstractMessageSetInfo} from "../AbstractMessageSetInfo";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../profile/AbstractMessageSetInfo'/>
+///<reference path='SecurityListV1MessageSetInfo'/>
+
+module ofx4js.domain.data.profile.info {
+
+import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -37,4 +43,4 @@ export class SecurityListMessageSetInfo extends AbstractMessageSetInfo {
 Aggregate_add( SecurityListMessageSetInfo, "SECLISTMSGSET" );
 ChildAggregate_add(SecurityListMessageSetInfo, { order: 0, type: SecurityListV1MessageSetInfo, read: SecurityListMessageSetInfo.prototype.getVersion1Info, write: SecurityListMessageSetInfo.prototype.setVersion1Info });
 
-
+}

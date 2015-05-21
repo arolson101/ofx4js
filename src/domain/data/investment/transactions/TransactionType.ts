@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.investment.transactions {
+
 /**
  * Type of investment transaction.
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -44,4 +46,4 @@ export enum TransactionType {
   TRANSFER
 }
 
-
+}

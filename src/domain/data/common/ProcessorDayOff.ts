@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.common {
+
 /**
  * Day of week used in "PROCDAYSOFF" lists.
  *
@@ -50,4 +52,4 @@ export function ProcessorDayOff_fromOfx(ofxVal: string): ProcessorDayOff {
   }
 }
 
-
+}

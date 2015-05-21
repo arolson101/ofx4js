@@ -1,3 +1,5 @@
+module ofx4js.meta {
+
 /**
  * convenience function to supply a default value if the given value is not specified
  */
@@ -65,4 +67,4 @@ export /*abstract*/ class PropertyDescriptor {
 	}
 }
 
-
+}

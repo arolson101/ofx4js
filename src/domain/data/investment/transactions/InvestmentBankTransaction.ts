@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Transaction} from "../../common/Transaction";
-import {SubAccountType} from "../accounts/SubAccountType";
-import {SubAccountType_fromOfx} from "../accounts/SubAccountType";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../common/Transaction'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import Transaction = ofx4js.domain.data.common.Transaction;
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
@@ -81,4 +89,4 @@ Aggregate_add( InvestmentBankTransaction, "INVBANKTRAN" );
 ChildAggregate_add(InvestmentBankTransaction, { order: 10, type: Transaction, read: InvestmentBankTransaction.prototype.getTransaction, write: InvestmentBankTransaction.prototype.setTransaction });
 Element_add(InvestmentBankTransaction, { name: "SUBACCTFUND", required: true, order: 20, type: String, read: InvestmentBankTransaction.prototype.getSubAccountFund, write: InvestmentBankTransaction.prototype.setSubAccountFund });
 
-
+}

@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ProcessorDayOff} from "../../common/ProcessorDayOff";
-import {VersionSpecificMessageSetInfo} from "../VersionSpecificMessageSetInfo";
-import {MessageSetType} from "../../MessageSetType";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/ProcessorDayOff'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+
+module ofx4js.domain.data.profile.info {
+
+import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * BillPay Message Set Profile
@@ -225,4 +232,4 @@ Element_add(BillpayV1MessageSetInfo, { name: "DIFFFIRSTPMT", required: true, ord
 Element_add(BillpayV1MessageSetInfo, { name: "DIFFLASTPMT", required: true, order: 180, type: Boolean, read: BillpayV1MessageSetInfo.prototype.getSupportsDifferentLastPayment, write: BillpayV1MessageSetInfo.prototype.setSupportsDifferentLastPayment });
 Element_add(BillpayV1MessageSetInfo, { name: "BILLPUBCONTEXT", order: 190, type: Boolean, read: BillpayV1MessageSetInfo.prototype.getSupportsBillPresentmentContext, write: BillpayV1MessageSetInfo.prototype.setSupportsBillPresentmentContext });
 
-
+}

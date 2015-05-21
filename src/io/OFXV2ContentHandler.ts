@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXParseEvent, OFXParseEventType} from "OFXParseEvent";
-import {OFXHandler} from "OFXHandler";
-import {Log} from "../log/Log";
-import {LogFactory} from "../log/Log";
-import {Stack} from "../collections/Stack";
+///<reference path='../collections/Stack'/>
+///<reference path='OFXParseEvent'/>
+///<reference path='OFXHandler'/>
+
+module ofx4js.io {
+
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
+import Stack = ofx4js.collections.Stack;
 
 var LOG: Log;
 
@@ -146,4 +150,4 @@ export class OFXV2ContentHandler {
 
 LOG = LogFactory.getLog(OFXV2ContentHandler);
 
-
+}

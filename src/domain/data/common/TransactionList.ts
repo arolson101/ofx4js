@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Transaction} from "Transaction";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='Transaction'/>
+
+module ofx4js.domain.data.common {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 //import java.util.Date;
 //import java.util.List;
@@ -90,4 +96,4 @@ Element_add(TransactionList, { name: "DTSTART", required: true, order: 0, type: 
 Element_add(TransactionList, { name: "DTEND", required: true, order: 10, type: Date, read: TransactionList.prototype.getEnd, write: TransactionList.prototype.setEnd });
 ChildAggregate_add(TransactionList, { order: 20, type: Array, collectionEntryType: Transaction, read: TransactionList.prototype.getTransactions, write: TransactionList.prototype.setTransactions });
 
-
+}

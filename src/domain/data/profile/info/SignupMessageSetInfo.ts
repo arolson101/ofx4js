@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {SignupV1MessageSetInfo} from "SignupV1MessageSetInfo";
-import {AbstractMessageSetInfo} from "../AbstractMessageSetInfo";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../profile/AbstractMessageSetInfo'/>
+///<reference path='SignupV1MessageSetInfo'/>
+
+module ofx4js.domain.data.profile.info {
+
+import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -37,4 +43,4 @@ export class SignupMessageSetInfo extends AbstractMessageSetInfo {
 Aggregate_add( SignupMessageSetInfo, "SIGNUPMSGSET" );
 ChildAggregate_add(SignupMessageSetInfo, { order: 0, type: SignupV1MessageSetInfo, read: SignupMessageSetInfo.prototype.getVersion1Info, write: SignupMessageSetInfo.prototype.setVersion1Info });
 
-
+}

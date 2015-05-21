@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {InvestmentStatementRequest} from "InvestmentStatementRequest";
-import {TransactionWrappedRequestMessage} from "../../TransactionWrappedRequestMessage";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../TransactionWrappedRequestMessage'/>
+///<reference path='InvestmentStatementRequest'/>
+
+module ofx4js.domain.data.investment.statements {
+
+import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Investment statement transaction request.
@@ -56,4 +62,4 @@ export class InvestmentStatementRequestTransaction
 Aggregate_add(InvestmentStatementRequestTransaction, "INVSTMTTRNRQ");
 ChildAggregate_add(InvestmentStatementRequestTransaction, { required: true, order: 30, type: InvestmentStatementRequest, read: InvestmentStatementRequestTransaction.prototype.getMessage, write: InvestmentStatementRequestTransaction.prototype.setMessage });
 
-
+}

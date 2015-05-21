@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseInvestmentTransaction} from "BaseInvestmentTransaction";
-import {InvestmentTransaction} from "InvestmentTransaction";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {TransactionType} from "TransactionType";
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BaseInvestmentTransaction'/>
+///<reference path='InvestmentTransaction'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for investment transactions that aren't buys or sales..
@@ -56,4 +59,4 @@ export class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
 }
 
 ChildAggregate_add(BaseOtherInvestmentTransaction, { order: 10, type: InvestmentTransaction, read: BaseOtherInvestmentTransaction.prototype.getInvestmentTransaction, write: BaseOtherInvestmentTransaction.prototype.setInvestmentTransaction });
-
+}

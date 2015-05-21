@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+module ofx4js.domain.data.investment.transactions {
+
 /**
  * Related option transaction type.
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -40,4 +42,4 @@ export function RelatedOptionType_fromOfx(ofxVal: string): RelatedOptionType {
   }
 }
 
-
+}

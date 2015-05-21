@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXException} from "OFXException";
+///<reference path='OFXException'/>
+
+module ofx4js {
+
 /**
  * @author Ryan Heaton
  */
@@ -24,3 +27,4 @@ export class OFXRuntimeException extends OFXException {
   }
 }
 
+}

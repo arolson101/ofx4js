@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {StringConversion} from "StringConversion";
-import {DefaultStringConversion} from "DefaultStringConversion";
-import {AggregateIntrospector} from "AggregateIntrospector";
-import {AggregateInfo, HeaderValues} from "AggregateInfo";
-import {AggregateAttribute, AggregateAttributeType} from "AggregateAttribute";
-import {OFXWriter} from "OFXWriter";
-import {SortedSet} from "../collections/SortedSet";
-import {Log} from "../log/Log";
-import {LogFactory} from "../log/Log";
+///<reference path='../collections/SortedSet'/>
+///<reference path='StringConversion'/>
+///<reference path='DefaultStringConversion'/>
+///<reference path='AggregateIntrospector'/>
+///<reference path='AggregateInfo'/>
+///<reference path='AggregateAttribute'/>
+///<reference path='OFXWriter'/>
+
+module ofx4js.io {
+
+import SortedSet = ofx4js.collections.SortedSet;
+import Log = ofx4js.log.Log;
+import LogFactory = ofx4js.log.LogFactory;
 
 var LOG: Log;
 
@@ -149,4 +153,4 @@ export class AggregateMarshaller {
 
 LOG = LogFactory.getLog(AggregateMarshaller);
 
-
+}

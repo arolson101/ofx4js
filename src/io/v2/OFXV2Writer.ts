@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXV1Writer} from "../v1/OFXV1Writer";
-import {StreamWriter, OutputBuffer} from "../StreamWriter";
+///<reference path='../v1/OFXV1Writer'/>
+
+module ofx4js.io.v2 {
+
+import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
+
+//import Map = java.util.Map;
 
 /**
  * OFX writer to XML, suitable for OFX version 2.0.
@@ -70,4 +75,4 @@ export class OFXV2Writer extends OFXV1Writer {
   }
 }
 
-
+}

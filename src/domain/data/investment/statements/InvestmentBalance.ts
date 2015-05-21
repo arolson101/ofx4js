@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BalanceList} from "BalanceList";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='BalanceList'/>
+
+module ofx4js.domain.data.investment.statements {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Aggregate for the investment balance.
@@ -138,4 +144,4 @@ Element_add(InvestmentBalance, { name: "SHORTBALANCE", required: true, order: 30
 Element_add(InvestmentBalance, { name: "BUYPOWER", order: 40, type: Number, read: InvestmentBalance.prototype.getBuyingPower, write: InvestmentBalance.prototype.setBuyingPower });
 ChildAggregate_add(InvestmentBalance, { order: 50, type: BalanceList, read: InvestmentBalance.prototype.getBalanceList, write: InvestmentBalance.prototype.setBalanceList });
 
-
+}

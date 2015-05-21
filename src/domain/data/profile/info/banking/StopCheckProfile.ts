@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ProcessorDayOff} from "../../../common/ProcessorDayOff";
-import {Aggregate_add} from "../../../../../meta/Aggregate_Add";
-import {Element_add} from "../../../../../meta/Element_add";
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
+///<reference path='../../../common/ProcessorDayOff'/>
+
+module ofx4js.domain.data.profile.info.banking {
+
+import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Stop Check Profile
@@ -100,4 +106,4 @@ Element_add(StopCheckProfile, { name: "CANUSERANGE", required: true, order: 20, 
 Element_add(StopCheckProfile, { name: "CANUSEDESC", required: true, order: 30, type: Boolean, read: StopCheckProfile.prototype.getCanUseDescription, write: StopCheckProfile.prototype.setCanUseDescription });
 Element_add(StopCheckProfile, { name: "STPCHKFEE", required: true, order: 40, type: Number, read: StopCheckProfile.prototype.getStopCheckFee, write: StopCheckProfile.prototype.setStopCheckFee });
 
-
+}

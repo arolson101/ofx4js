@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {CreditCardStatementRequestTransaction} from "CreditCardStatementRequestTransaction";
-import {MessageSetType} from "../MessageSetType";
-import {RequestMessageSet} from "../RequestMessageSet";
-import {RequestMessage} from "../RequestMessage";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='../MessageSetType'/>
+///<reference path='../RequestMessageSet'/>
+///<reference path='CreditCardStatementRequestTransaction'/>
+
+module ofx4js.domain.data.creditcard {
+
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestMessage = ofx4js.domain.data.RequestMessage;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 //import java.util.List;
 //import java.util.ArrayList;
@@ -65,4 +72,4 @@ export class CreditCardRequestMessageSet extends RequestMessageSet {
 Aggregate_add( CreditCardRequestMessageSet, "CREDITCARDMSGSRQV1" );
 ChildAggregate_add(CreditCardRequestMessageSet, { order: 0, type: CreditCardStatementRequestTransaction, read: CreditCardRequestMessageSet.prototype.getStatementRequest, write: CreditCardRequestMessageSet.prototype.setStatementRequest });
 
-
+}

@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {IncludePosition} from "IncludePosition";
-import {StatementRequest} from "../../common/StatementRequest";
-import {InvestmentAccountDetails} from "../accounts/InvestmentAccountDetails";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../common/StatementRequest'/>
+///<reference path='../../investment/accounts/InvestmentAccountDetails'/>
+///<reference path='IncludePosition'/>
+
+module ofx4js.domain.data.investment.statements {
+
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Aggregate for the investment statement download request.
@@ -124,4 +132,4 @@ Element_add(InvestmentStatementRequest, { name: "INCOO", order: 20, type: Boolea
 ChildAggregate_add(InvestmentStatementRequest, { name: "INCPOS", required: true, order: 30, type: IncludePosition, read: InvestmentStatementRequest.prototype.getIncludePosition, write: InvestmentStatementRequest.prototype.setIncludePosition });
 Element_add(InvestmentStatementRequest, { name: "INCBAL", required: true, order: 40, type: Boolean, read: InvestmentStatementRequest.prototype.getIncludeBalance, write: InvestmentStatementRequest.prototype.setIncludeBalance });
 
-
+}

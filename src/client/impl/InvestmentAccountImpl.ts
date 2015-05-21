@@ -13,32 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {OFXException} from "../../OFXException";
+///<reference path='../../OFXException'/>
+///<reference path='../../client/InvestmentAccount'/>
+///<reference path='../../domain/data/RequestEnvelope'/>
+///<reference path='../../domain/data/ResponseEnvelope'/>
+///<reference path='../../domain/data/common/StatementRange'/>
+///<reference path='../../domain/data/common/StatementRequest'/>
+///<reference path='../../domain/data/investment/statements/InvestmentStatementRequest'/>
+///<reference path='../../domain/data/investment/statements/InvestmentStatementRequestMessageSet'/>
+///<reference path='../../domain/data/investment/statements/InvestmentStatementResponse'/>
+///<reference path='../../domain/data/investment/statements/InvestmentStatementRequestTransaction'/>
+///<reference path='../../domain/data/investment/statements/InvestmentStatementResponseMessageSet'/>
+///<reference path='../../domain/data/investment/statements/IncludePosition'/>
+///<reference path='../../domain/data/seclist/SecurityListRequestTransaction'/>
+///<reference path='../../domain/data/seclist/SecurityRequest'/>
+///<reference path='../../domain/data/seclist/SecurityListRequestMessageSet'/>
+///<reference path='../../domain/data/seclist/SecurityListResponseMessageSet'/>
+
+module ofx4js.client.impl {
+
+import OFXException = ofx4js.OFXException;
 // import .* = ofx4js.domain.data.*;
-import {InvestmentAccount} from "../InvestmentAccount";
-import {StatementRange} from "../../domain/data/common/StatementRange";
-import {StatementRequest} from "../../domain/data/common/StatementRequest";
-import {InvestmentAccountDetails} from "../../domain/data/investment/accounts/InvestmentAccountDetails";
+import InvestmentAccount = ofx4js.client.InvestmentAccount;
+import StatementRange = ofx4js.domain.data.common.StatementRange;
+import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
 // import .* = ofx4js.domain.data.seclist.*;
 // import .* = ofx4js.domain.data.investment.statements.*;
-import {IncludePosition} from "../../domain/data/investment/statements/IncludePosition";
-import {InvestmentStatementRequest} from "../../domain/data/investment/statements/InvestmentStatementRequest";
-import {InvestmentStatementRequestMessageSet} from "../../domain/data/investment/statements/InvestmentStatementRequestMessageSet";
-import {InvestmentStatementResponse} from "../../domain/data/investment/statements/InvestmentStatementResponse";
-import {InvestmentStatementRequestTransaction} from "../../domain/data/investment/statements/InvestmentStatementRequestTransaction";
-import {InvestmentStatementResponseMessageSet} from "../../domain/data/investment/statements/InvestmentStatementResponseMessageSet";
-import {InvestmentStatementResponseTransaction} from "../../domain/data/investment/statements/InvestmentStatementResponseTransaction";
-import {MessageSetType} from "../../domain/data/MessageSetType";
-import {RequestMessageSet} from "../../domain/data/RequestMessageSet";
-import {RequestEnvelope} from "../../domain/data/RequestEnvelope";
-import {ResponseEnvelope} from "../../domain/data/ResponseEnvelope";
-import {SecurityListRequestTransaction} from "../../domain/data/seclist/SecurityListRequestTransaction";
-import {SecurityRequest} from "../../domain/data/seclist/SecurityRequest";
-import {SecurityListRequest} from "../../domain/data/seclist/SecurityListRequest";
-import {SecurityListRequestMessageSet} from "../../domain/data/seclist/SecurityListRequestMessageSet";
-import {SecurityList} from "../../domain/data/seclist/SecurityList";
-import {SecurityListResponseMessageSet} from "../../domain/data/seclist/SecurityListResponseMessageSet";
-import {FinancialInstitutionImpl} from "FinancialInstitutionImpl";
+import IncludePosition = ofx4js.domain.data.investment.statements.IncludePosition;
+import InvestmentStatementRequest = ofx4js.domain.data.investment.statements.InvestmentStatementRequest;
+import InvestmentStatementRequestMessageSet = ofx4js.domain.data.investment.statements.InvestmentStatementRequestMessageSet;
+import InvestmentStatementResponse = ofx4js.domain.data.investment.statements.InvestmentStatementResponse;
+import InvestmentStatementRequestTransaction = ofx4js.domain.data.investment.statements.InvestmentStatementRequestTransaction;
+import InvestmentStatementResponseMessageSet = ofx4js.domain.data.investment.statements.InvestmentStatementResponseMessageSet;
+import InvestmentStatementResponseTransaction = ofx4js.domain.data.investment.statements.InvestmentStatementResponseTransaction;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
+import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
+import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+import SecurityListRequestTransaction = ofx4js.domain.data.seclist.SecurityListRequestTransaction;
+import SecurityRequest = ofx4js.domain.data.seclist.SecurityRequest;
+import SecurityListRequest = ofx4js.domain.data.seclist.SecurityListRequest;
+import SecurityListRequestMessageSet = ofx4js.domain.data.seclist.SecurityListRequestMessageSet;
+import SecurityList = ofx4js.domain.data.seclist.SecurityList;
+import SecurityListResponseMessageSet = ofx4js.domain.data.seclist.SecurityListResponseMessageSet;
 
 /**
  * @author Jon Perlow
@@ -173,4 +191,4 @@ export class InvestmentAccountImpl implements InvestmentAccount {
   }
 }
 
-
+}

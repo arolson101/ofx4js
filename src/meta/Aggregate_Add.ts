@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {AggregateIntrospector} from "../io/AggregateIntrospector";
+///<reference path='../io/AggregateIntrospector'/>
+
+module ofx4js.meta {
+
+import AggregateIntrospector = ofx4js.io.AggregateIntrospector;
 
 export function Aggregate_add(clazz: Object, value: string = "#NOT_SET#"): void {
   AggregateIntrospector.addAggregate(clazz, value);
 }
 
-
+}

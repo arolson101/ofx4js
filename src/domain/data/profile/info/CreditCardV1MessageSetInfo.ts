@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {VersionSpecificMessageSetInfo} from "../VersionSpecificMessageSetInfo";
-import {MessageSetType} from "../../MessageSetType";
-import {ImageProfile} from "common/ImageProfile";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+///<reference path='../../profile/info/common/ImageProfile'/>
+///<reference path='../../MessageSetType'/>
+
+module ofx4js.domain.data.profile.info {
+
+import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+import MessageSetType = ofx4js.domain.data.MessageSetType;
+import ImageProfile = ofx4js.domain.data.profile.info.common.ImageProfile;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Credit Card Message Set Profile
@@ -64,4 +73,4 @@ Aggregate_add( CreditCardV1MessageSetInfo, "CREDITCARDMSGSETV1" );
 Element_add(CreditCardV1MessageSetInfo, { name: "CLOSINGAVAIL", required: true, order: 20, type: Boolean, read: CreditCardV1MessageSetInfo.prototype.getClosingAvail, write: CreditCardV1MessageSetInfo.prototype.setClosingAvail });
 ChildAggregate_add(CreditCardV1MessageSetInfo, { name: "IMAGEPROF", order: 10, type: ImageProfile, read: CreditCardV1MessageSetInfo.prototype.getImageProfile, write: CreditCardV1MessageSetInfo.prototype.setImageProfile });
 
-
+}

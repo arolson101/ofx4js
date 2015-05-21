@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {SignonInfo} from "SignonInfo";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../meta/ChildAggregate_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/ChildAggregate_add'/>
+///<reference path='SignonInfo'/>
+
+module ofx4js.domain.data.profile {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * List of signon information.
@@ -49,4 +54,4 @@ export class SignonInfoList {
 Aggregate_add( SignonInfoList, "SIGNONINFOLIST" );
 ChildAggregate_add(SignonInfoList, { order: 0, type: Array, collectionEntryType: SignonInfo, read: SignonInfoList.prototype.getInfoList, write: SignonInfoList.prototype.setInfoList });
 
-
+}

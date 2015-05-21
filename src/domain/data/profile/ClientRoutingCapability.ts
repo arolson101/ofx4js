@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+module ofx4js.domain.data.profile {
+
 /**
  * @author Ryan Heaton
  * @see "Section 7.1.5, OFX Spec"
@@ -27,4 +29,4 @@ export enum ClientRoutingCapability {
   MESSAGE_SET
 }
 
-
+}

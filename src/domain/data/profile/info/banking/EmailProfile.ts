@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Aggregate_add} from "../../../../../meta/Aggregate_Add";
-import {Element_add} from "../../../../../meta/Element_add";
+///<reference path='../../../../../meta/Aggregate_add'/>
+///<reference path='../../../../../meta/Element_add'/>
+
+module ofx4js.domain.data.profile.info.banking {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Email Profile
@@ -47,4 +52,4 @@ Aggregate_add( EmailProfile, "EMAILPROF");
 Element_add(EmailProfile, { name: "CANEMAIL", required: true, order: 10, type: Boolean, read: EmailProfile.prototype.getCanEmail, write: EmailProfile.prototype.setCanEmail });
 Element_add(EmailProfile, { name: "CANNOTIFY", required: true, order: 20, type: Boolean, read: EmailProfile.prototype.getCanNotify, write: EmailProfile.prototype.setCanNotify });
 
-
+}

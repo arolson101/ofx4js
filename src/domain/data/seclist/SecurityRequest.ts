@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {SecurityId} from "SecurityId";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='SecurityId'/>
+
+module ofx4js.domain.data.seclist {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Security request aggregate.
@@ -65,4 +70,4 @@ Element_add(SecurityRequest, { name: "SECID", order: 10, type: SecurityId, read:
 Element_add(SecurityRequest, { name: "TICKER", order: 20, type: String, read: SecurityRequest.prototype.getTickerSymbol, write: SecurityRequest.prototype.setTickerSymbol });
 Element_add(SecurityRequest, { name: "FIID", order: 30, type: String, read: SecurityRequest.prototype.getFiId, write: SecurityRequest.prototype.setFiId });
 
-
+}

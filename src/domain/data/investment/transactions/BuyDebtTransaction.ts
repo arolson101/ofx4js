@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseBuyInvestmentTransaction} from "BaseBuyInvestmentTransaction";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
-import {TransactionType} from "TransactionType";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BaseBuyInvestmentTransaction'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for buying debt (i.e. bonds, CDs, etc.,).
@@ -59,4 +64,4 @@ export class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
 Aggregate_add( BuyDebtTransaction, "BUYDEBT" );
 Element_add(BuyDebtTransaction, { name: "ACCRDINT", order: 20, type: Number, read: BuyDebtTransaction.prototype.getAccruedInterest, write: BuyDebtTransaction.prototype.setAccruedInterest });
 
-
+}

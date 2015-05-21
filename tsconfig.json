@@ -8,7 +8,9 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "noEmit": true
+        "out": "./lib/ofx4js.js",
+        "declaration": true,
+        "sourceMap": true
     },
     "filesGlob": [
         "./src/**/*.ts",

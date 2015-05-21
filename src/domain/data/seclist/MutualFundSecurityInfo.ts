@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseSecurityInfo} from "BaseSecurityInfo";
-import {MutualFundType, MutualFundType_fromOfx} from "MutualFundType";
-import {Aggregate_add} from "../../../meta/Aggregate_Add";
-import {Element_add} from "../../../meta/Element_add";
+///<reference path='../../../meta/Aggregate_add'/>
+///<reference path='../../../meta/Element_add'/>
+///<reference path='BaseSecurityInfo'/>
+///<reference path='MutualFundType'/>
+
+module ofx4js.domain.data.seclist {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a mutual fund security.
@@ -102,4 +107,4 @@ Element_add(MutualFundSecurityInfo, { name: "MFTYPE", order: 20, type: String, r
 Element_add(MutualFundSecurityInfo, { name: "YIELD", order: 30, type: Number, read: MutualFundSecurityInfo.prototype.getYield, write: MutualFundSecurityInfo.prototype.setYield });
 Element_add(MutualFundSecurityInfo, { name: "DTYIELDASOF", order: 40, type: Date, read: MutualFundSecurityInfo.prototype.getDateYieldAsOf, write: MutualFundSecurityInfo.prototype.setDateYieldAsOf });
 
-
+}

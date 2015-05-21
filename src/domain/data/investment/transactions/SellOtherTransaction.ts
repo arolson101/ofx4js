@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseSellInvestmentTransaction} from "BaseSellInvestmentTransaction";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {TransactionType} from "TransactionType";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Transaction for buying other types of securities.
@@ -33,4 +37,4 @@ export class SellOtherTransaction extends BaseSellInvestmentTransaction {
 
 Aggregate_add( SellOtherTransaction, "SELLOTHER" );
 
-
+}

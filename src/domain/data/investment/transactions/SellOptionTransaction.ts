@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseSellInvestmentTransaction} from "BaseSellInvestmentTransaction";
-import {OptionSellType, OptionSellType_fromOfx} from "OptionSellType";
-import {RelatedOptionType, RelatedOptionType_fromOfx} from "RelatedOptionType";
-import {TransactionType} from "TransactionType";
-import {ShortOptionSecurity, ShortOptionSecurity_fromOfx} from "../positions/ShortOptionSecurity";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/positions/ShortOptionSecurity'/>
+///<reference path='BaseSellInvestmentTransaction'/>
+///<reference path='OptionSellType'/>
+///<reference path='RelatedOptionType'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import ShortOptionSecurity = ofx4js.domain.data.investment.positions.ShortOptionSecurity;
+import ShortOptionSecurity_fromOfx = ofx4js.domain.data.investment.positions.ShortOptionSecurity_fromOfx;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for selling options.
@@ -183,4 +190,4 @@ Element_add(SellOptionTransaction, { name: "RELFITID", order: 40, type: String, 
 Element_add(SellOptionTransaction, { name: "RELTYPE", order: 50, type: String, read: SellOptionTransaction.prototype.getRelatedType, write: SellOptionTransaction.prototype.setRelatedType });
 Element_add(SellOptionTransaction, { name: "SECURED", order: 60, type: String, read: SellOptionTransaction.prototype.getSecured, write: SellOptionTransaction.prototype.setSecured });
 
-
+}

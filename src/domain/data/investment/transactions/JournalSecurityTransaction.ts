@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {BaseOtherInvestmentTransaction} from "BaseOtherInvestmentTransaction";
-import {TransactionType} from "TransactionType";
-import {TransactionWithSecurity} from "TransactionWithSecurity";
-import {SubAccountType} from "../accounts/SubAccountType";
-import {SubAccountType_fromOfx} from "../accounts/SubAccountType";
-import {SecurityId} from "../../seclist/SecurityId";
-import {Aggregate_add} from "../../../../meta/Aggregate_Add";
-import {ChildAggregate_add} from "../../../../meta/ChildAggregate_add";
-import {Element_add} from "../../../../meta/Element_add";
+///<reference path='../../../../meta/Aggregate_add'/>
+///<reference path='../../../../meta/ChildAggregate_add'/>
+///<reference path='../../../../meta/Element_add'/>
+///<reference path='../../investment/accounts/SubAccountType'/>
+///<reference path='../../seclist/SecurityId'/>
+///<reference path='BaseOtherInvestmentTransaction'/>
+///<reference path='TransactionWithSecurity'/>
+
+module ofx4js.domain.data.investment.transactions {
+
+import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
+import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+import Aggregate_add = ofx4js.meta.Aggregate_add;
+import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -149,4 +156,4 @@ Element_add(JournalSecurityTransaction, { name: "SUBACCTFROM", order: 30, type: 
 Element_add(JournalSecurityTransaction, { name: "SUBACCTTO", order: 40, type: String, read: JournalSecurityTransaction.prototype.getToSubAccountFund, write: JournalSecurityTransaction.prototype.setToSubAccountFund });
 Element_add(JournalSecurityTransaction, { name: "TOTAL", order: 50, type: Number, read: JournalSecurityTransaction.prototype.getTotal, write: JournalSecurityTransaction.prototype.setTotal });
 
-
+}
