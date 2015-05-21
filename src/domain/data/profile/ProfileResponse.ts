@@ -386,11 +386,9 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
   protected getProfiles(type: MessageSetType): Array<MessageSetProfile> {
     var profiles: Array<MessageSetProfile> = new Array<MessageSetProfile>();
     if (this.getMessageSetList() != null && this.getMessageSetList().getInformationList() != null) {
-      for (var info_ in this.getMessageSetList().getInformationList()) {
-        var info: AbstractMessageSetInfo = info_;
+      for (var info of this.getMessageSetList().getInformationList()) {
         if (info.getVersionSpecificInformationList() != null) {
-          for (var versionSpecificInfo_ in info.getVersionSpecificInformationList()) {
-            var versionSpecificInfo: VersionSpecificMessageSetInfo = versionSpecificInfo_;
+          for (var versionSpecificInfo of info.getVersionSpecificInformationList()) {
             if (versionSpecificInfo.getMessageSetType() == type) {
               profiles.push(versionSpecificInfo);
             }
@@ -402,8 +400,7 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
   }
 
   public getMessageSetProfile_version(type: MessageSetType, version: string): MessageSetProfile {
-    for (var profile_ in this.getProfiles(type)) {
-      var profile: MessageSetProfile = profile_;
+    for (var profile of this.getProfiles(type)) {
       if (version == null) {
         if (profile.getVersion() == null) {
           return profile;
@@ -419,8 +416,7 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
 
   public getSignonProfile(messageSet: MessageSetProfile): SignonProfile {
     if (this.getSignonInfoList() != null && this.getSignonInfoList().getInfoList() != null) {
-      for (var signonInfo_ in this.getSignonInfoList().getInfoList()) {
-        var signonInfo: SignonInfo = signonInfo_;
+      for (var signonInfo of this.getSignonInfoList().getInfoList()) {
         if (messageSet.getRealm() == null) {
           if (signonInfo.getRealm() == null) {
             return signonInfo;

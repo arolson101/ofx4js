@@ -139,8 +139,7 @@ export class AggregateInfo {
         return candidates[0];
       }
       else {
-        for (var candidate_ in candidates) {
-          var candidate: AggregateAttribute = candidate_;
+        for (var candidate of candidates) {
           if (candidate.getOrder() >= orderHint) {
             return candidate;
           }
@@ -157,7 +156,7 @@ export class AggregateInfo {
    * @return Whether this aggregate has headers.
    */
   public hasHeaders(): boolean {
-    return this.headers != {};
+    return Object.keys(this.headers).length != 0;
   }
 
   /**

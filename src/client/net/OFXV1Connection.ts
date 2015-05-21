@@ -62,6 +62,7 @@ export class OFXV1Connection implements OFXConnection {
   private unmarshaller: AggregateUnmarshaller<ResponseEnvelope>;
 
   constructor() {
+    this.async = true;
     this.marshaller = new AggregateMarshaller();
     this.unmarshaller = new AggregateUnmarshaller<ResponseEnvelope>(ResponseEnvelope);
   }

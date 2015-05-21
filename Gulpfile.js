@@ -14,7 +14,7 @@ var fs = require("fs");
 var webpack = require("webpack");
 
 gulp.task('compile', function() {
-    var tsProject = ts.createProject('tsconfig.json', { sortOutput: true });
+    var tsProject = ts.createProject('tsconfig.json', { sortOutput: true, typescript: require('typescript') });
     var tsResult = tsProject.src() // instead of gulp.src(...)
         .pipe(sourcemaps.init())
         .pipe(ts(tsProject));

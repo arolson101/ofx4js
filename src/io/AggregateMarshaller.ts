@@ -57,8 +57,7 @@ export class AggregateMarshaller {
     if (aggregateInfo.hasHeaders()) {
       var headerValues: HeaderValues = aggregateInfo.getHeaders(aggregate);
       var convertedValues: StringMap = {};
-      for (var header_ in headerValues) {
-        var header: string = header;
+      for (var header in headerValues) {
         convertedValues[header] = this.getConversion().toString(headerValues[header]);
       }
       writer.writeHeaders(convertedValues);
@@ -95,12 +94,14 @@ export class AggregateMarshaller {
             if (childValue instanceof Array) {
               childValues = childValue;
             }
+            else if(childValue instanceof SortedSet) {
+              childValues = (<SortedSet<Object>>childValue).values();
+            }
             else {
               childValues = [childValue];
             }
 
-            for (var value_ in childValues) {
-              var objValue: Object = value_;
+            for (var objValue of childValues) {
               var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(objValue.constructor);
               if (aggregateInfo == null) {
                 throw new Error("Unable to marshal object of type " + objValue.constructor.name + " (no aggregate metadata found).");

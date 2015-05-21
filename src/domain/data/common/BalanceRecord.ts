@@ -53,7 +53,7 @@ export class BalanceRecord {
    * @return Name of the balance.
    */
   public getName(): string {
-    return name;
+    return this.name;
   }
 
   /**

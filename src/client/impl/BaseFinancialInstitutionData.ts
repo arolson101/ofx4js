@@ -56,7 +56,7 @@ export class BaseFinancialInstitutionData implements FinancialInstitutionData {
   }
 
   public getName(): string {
-    return name;
+    return this.name;
   }
 
   public setName(name: string): void {

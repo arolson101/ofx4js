@@ -159,7 +159,6 @@ describe("ofx parsing", function() {
 
     var messageSets = data.getMessageSets().values();
     expect(messageSets).to.have.length(2);
-    console.log(messageSets);
     expect(messageSets[0]).to.be.an.instanceOf(ofx4js.domain.data.signon.SignonRequestMessageSet);
     expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingRequestMessageSet);
 

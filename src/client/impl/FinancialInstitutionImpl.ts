@@ -242,8 +242,7 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
       throw new OFXException("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + request);
     }
 
-    for (var requestSet_ in request.getMessageSets()) {
-      var requestSet: RequestMessageSet = requestSet_;
+    for (var requestSet of request.getMessageSets().values()) {
       var responseSet: ResponseMessageSet = response.getMessageSet(requestSet.getType());
       if (responseSet == null) {
         throw new NoOFXResponseException("No response for the " + requestSet.getType() + " request.");
@@ -258,15 +257,13 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
       }
 
       var transactionIds: StringSet = {};
-      for (var requestMessage_ in requestSet.getRequestMessages()) {
-        var requestMessage: RequestMessage = requestMessage_;
+      for (var requestMessage of requestSet.getRequestMessages()) {
         if (requestMessage instanceof TransactionWrappedRequestMessage) {
           transactionIds[(<TransactionWrappedRequestMessage<RequestMessage>> requestMessage).getUID()] = true;
         }
       }
 
-      for (var responseMessage_ in responseSet.getResponseMessages()) {
-        var responseMessage: ResponseMessage = responseMessage_;
+      for (var responseMessage of responseSet.getResponseMessages()) {
         if (instanceof_StatusHolder(responseMessage)) {
           this.validateStatus(<StatusHolder><any>responseMessage);
         }
@@ -284,7 +281,7 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
         }
       }
 
-      if (transactionIds != {}) {
+      if (Object.keys(transactionIds).length != 0) {
         throw new OFXTransactionException("No response to the following transactions: " + transactionIds);
       }
     }
