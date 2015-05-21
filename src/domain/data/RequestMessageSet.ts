@@ -27,7 +27,7 @@ export /*abstract*/ class RequestMessageSet /*implements Comparable<RequestMessa
 
   private version: string;
 
-  public /*abstract*/ getType(): MessageSetType { throw new Error("abstract"); }
+  public /*abstract*/ getType(): MessageSetType { throw new OFXException("abstract"); }
 
   constructor() {
     this.version = "1";
@@ -56,7 +56,7 @@ export /*abstract*/ class RequestMessageSet /*implements Comparable<RequestMessa
    *
    * @return The request messages for this request message set.
    */
-  public /*abstract*/ getRequestMessages(): Array<RequestMessage> { throw new Error("abstract"); }
+  public /*abstract*/ getRequestMessages(): Array<RequestMessage> { throw new OFXException("abstract"); }
 
   // Inherited.
   /*public compareTo(o: RequestMessageSet): number {

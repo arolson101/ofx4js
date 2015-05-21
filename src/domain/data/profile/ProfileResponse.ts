@@ -367,7 +367,7 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
   public getMessageSetProfile_noversion(type: MessageSetType): MessageSetProfile {
     var profiles: Array<MessageSetProfile> = this.getProfiles(type);
     if (profiles.length > 1) {
-      throw new Error("More than one profile of type " + type);
+      throw new OFXException("More than one profile of type " + type);
     }
     else if (profiles.length == 0) {
       return null;

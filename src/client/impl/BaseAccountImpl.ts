@@ -81,7 +81,7 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
       messageType = MessageSetType.investment;
     }
     else {
-      throw new Error("Illegal details");
+      throw new OFXException("Illegal details");
     }
     return messageType;
   }
@@ -112,7 +112,7 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
    * @param response The response envelope to unwrap.
    * @return The response.
    */
-  protected /*abstract*/ unwrapStatementResponse(response: ResponseEnvelope): StatementResponse /*throws OFXException*/ { throw new Error("abstract"); }
+  protected /*abstract*/ unwrapStatementResponse(response: ResponseEnvelope): StatementResponse /*throws OFXException*/ { throw new OFXException("abstract"); }
 
   /**
    * Create a request message set from the specified transaction.
@@ -120,14 +120,14 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
    * @param transaction The transaction.
    * @return The request message set.
    */
-  protected /*abstract*/ createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet { throw new Error("abstract"); }
+  protected /*abstract*/ createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet { throw new OFXException("abstract"); }
 
   /**
    * Create a transaction.
    *
    * @return The transaction.
    */
-  protected /*abstract*/ createTransaction(): TransactionWrappedRequestMessage<RequestMessage> { throw new Error("abstract"); }
+  protected /*abstract*/ createTransaction(): TransactionWrappedRequestMessage<RequestMessage> { throw new OFXException("abstract"); }
 
   /**
    * Create a statement request.
@@ -136,7 +136,7 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
    * @param range the range.
    * @return The statement request.
    */
-  protected /*abstract*/ createStatementRequest(details: D, range: StatementRange): StatementRequest { throw new Error("abstract"); }
+  protected /*abstract*/ createStatementRequest(details: D, range: StatementRange): StatementRequest { throw new OFXException("abstract"); }
 
   /**
    * The details of this account.

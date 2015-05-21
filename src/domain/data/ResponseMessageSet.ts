@@ -27,7 +27,7 @@ export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMes
 
   private version: string;
 
-  public /*abstract*/ getType(): MessageSetType { throw new Error("abstract"); }
+  public /*abstract*/ getType(): MessageSetType { throw new OFXException("abstract"); }
 
   constructor() {
     this.version = "1";
@@ -56,7 +56,7 @@ export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMes
    *
    * @return The list of response messages.
    */
-  public /*abstract*/ getResponseMessages(): Array<ResponseMessage> { throw new Error("abstract"); }
+  public /*abstract*/ getResponseMessages(): Array<ResponseMessage> { throw new OFXException("abstract"); }
 /*
   // Inherited.
   public compareTo(o: ResponseMessageSet): number {

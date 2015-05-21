@@ -35,6 +35,7 @@ export class OFXException extends Error {
 
   constructor(message: string = null, e: Error = null) {
     super(message);
+    this.message = message;
     this.innerError = e;
   }
 }

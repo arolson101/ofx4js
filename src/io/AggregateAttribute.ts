@@ -65,7 +65,7 @@ export class AggregateAttribute {
     } else if(arg instanceof ChildAggregate) {
       this.AggregateAttributeFromChildAggregate(arg);
     } else {
-      throw new Error("invalid type");
+      throw new OFXException("invalid type");
     }
   }
 
@@ -73,10 +73,10 @@ export class AggregateAttribute {
     this.readMethod = elementInfo.getReadMethod();
     this.writeMethod = elementInfo.getWriteMethod();
     if (this.readMethod == null) {
-      throw new Error("Illegal property for aggregate: no read method.");
+      throw new OFXException("Illegal property for aggregate: no read method.");
     }
     else if (this.writeMethod == null) {
-      throw new Error("Illegal property for aggregate: no write method.");
+      throw new OFXException("Illegal property for aggregate: no write method.");
     }
 
     this.attributeType = elementInfo.getPropertyType();
@@ -95,10 +95,10 @@ export class AggregateAttribute {
     this.readMethod = childAggregate.getReadMethod();
     this.writeMethod = childAggregate.getWriteMethod();
     if (this.readMethod == null) {
-      throw new Error("Illegal property for aggregate: no read method.");
+      throw new OFXException("Illegal property for aggregate: no read method.");
     }
     else if (this.writeMethod == null) {
-      throw new Error("Illegal property for aggregate: no write method.");
+      throw new OFXException("Illegal property for aggregate: no write method.");
     }
 
     this.attributeType = childAggregate.getPropertyType();
@@ -111,12 +111,12 @@ export class AggregateAttribute {
     else if ("##not_specified##" === childAggregate.name()) {
       var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(this.attributeType);
       if (aggregateInfo == null) {
-        throw new Error("Illegal child aggregate type '" + childAggregate.getPropertyType() + "': no aggregate information available.");
+        throw new OFXException("Illegal child aggregate type '" + childAggregate.getPropertyType() + "': no aggregate information available.");
       }
 
       this.name = aggregateInfo.getName();
       if ("##not_specified##" === this.name) {
-        throw new Error("Illegal child aggregate type '" + childAggregate.getPropertyType() + "': a child aggregate name must be specified.");
+        throw new OFXException("Illegal child aggregate type '" + childAggregate.getPropertyType() + "': a child aggregate name must be specified.");
       }
       this.collectionEntryType = null;
     }

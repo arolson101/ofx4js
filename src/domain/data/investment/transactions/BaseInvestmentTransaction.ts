@@ -48,7 +48,7 @@ export /*abstract*/ class BaseInvestmentTransaction {
    *
    * @return the {@link InvestmentTransaction} aggregate
    */
-  public /*abstract*/ getInvestmentTransaction(): InvestmentTransaction { throw new Error("abstract"); }
+  public /*abstract*/ getInvestmentTransaction(): InvestmentTransaction { throw new OFXException("abstract"); }
 
   /**
    * Gets the unique financial institution assigned transaction id. This is a

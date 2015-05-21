@@ -22,11 +22,11 @@ module ofx4js.domain.data.common {
  */
 export /*abstract*/ class StatusCode {
 
-  getCode(): number { throw new Error("abstract"); }
+  getCode(): number { throw new OFXException("abstract"); }
 
-  getMessage(): string { throw new Error("abstract"); }
+  getMessage(): string { throw new OFXException("abstract"); }
 
-  getDefaultSeverity(): /*Status.*/Severity { throw new Error("abstract"); }
+  getDefaultSeverity(): /*Status.*/Severity { throw new OFXException("abstract"); }
 }
 
 

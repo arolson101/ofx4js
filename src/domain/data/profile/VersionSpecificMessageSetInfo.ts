@@ -58,7 +58,7 @@ export /*abstract*/ class VersionSpecificMessageSetInfo implements MessageSetPro
    *
    * @return The message set type.
    */
-  public /*abstract*/ getMessageSetType(): MessageSetType { throw new Error("abstract"); }
+  public /*abstract*/ getMessageSetType(): MessageSetType { throw new OFXException("abstract"); }
 
   public getVersion(): string {
     return this.core != null ? this.core.getVersion() : null;

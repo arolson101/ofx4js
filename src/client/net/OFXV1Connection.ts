@@ -70,7 +70,7 @@ export class OFXV1Connection implements OFXConnection {
   // Inherited.
   public sendRequest(request: RequestEnvelope, url: string): Promise<ResponseEnvelope> {
 //    if (!url.protocol().toLowerCase().startsWith("http")) {
-//      throw new Error("Invalid URL: " + url + " only http(s) is supported.");
+//      throw new OFXException("Invalid URL: " + url + " only http(s) is supported.");
 //    }
 
     //marshal to memory so we can determine the size...
@@ -130,13 +130,13 @@ export class OFXV1Connection implements OFXConnection {
         if (request.status >= 200 && request.status < 300) {
           resolve(request.responseText);
         } else if (request.status >= 400 && request.status < 500) {
-          reject(new Error("Error " + request.status + " with client request: " + request.responseText));
+          reject(new OFXException("Error " + request.status + " with client request: " + request.responseText));
         } else {
-          reject(new Error("Invalid response code from OFX server: " + request.status));
+          reject(new OFXException("Invalid response code from OFX server: " + request.status));
         }
       };
       request.onerror = function() {
-        reject(new Error("Network error"));
+        reject(new OFXException("Network error"));
       };
       
       request.send(outText);

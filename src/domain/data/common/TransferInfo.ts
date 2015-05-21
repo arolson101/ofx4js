@@ -121,7 +121,7 @@ export class TransferInfo {
     else if(accountTo instanceof CreditCardAccountDetails)
       this.setCreditCardAccountTo(accountTo);
     else
-      throw new Error("invalid type");
+      throw new OFXException("invalid type");
   }
 
 

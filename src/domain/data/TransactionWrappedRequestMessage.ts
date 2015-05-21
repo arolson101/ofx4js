@@ -99,7 +99,7 @@ export /*abstract*/ class TransactionWrappedRequestMessage<M extends RequestMess
    *
    * @param message The wrapped message.
    */
-  public /*abstract*/ setWrappedMessage(message: M): void { throw new Error("abstract"); }
+  public /*abstract*/ setWrappedMessage(message: M): void { throw new OFXException("abstract"); }
 
 }
 

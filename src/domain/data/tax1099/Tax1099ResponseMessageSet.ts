@@ -63,7 +63,7 @@ export class Tax1099ResponseMessageSet extends ResponseMessageSet {
     } else if(taxResponseTransaction instanceof Tax1099ResponseTransaction) {
       this.taxResponseTransaction = [<Tax1099ResponseTransaction>taxResponseTransaction];
     } else {
-      throw new Error("invalid type");
+      throw new OFXException("invalid type");
     }
   }
 

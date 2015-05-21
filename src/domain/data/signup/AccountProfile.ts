@@ -83,7 +83,7 @@ export class AccountProfile {
    */
   public getSpecifics(): ofx4js.domain.data.common.AccountInfo {
     if (this.getBankSpecifics() != null && this.getCreditCardSpecifics() != null) {
-      throw new Error("Only one account specifics aggregate can be set at a time.");
+      throw new OFXException("Only one account specifics aggregate can be set at a time.");
     }
     else if (this.getBankSpecifics() != null) {
       return this.getBankSpecifics();
@@ -110,7 +110,7 @@ export class AccountProfile {
       this.setInvestmentSpecifics(<InvestmentAccountInfo> specifics);
     }
     else {
-      throw new Error("Unknown specifics type: " + specifics);
+      throw new OFXException("Unknown specifics type: " + specifics);
     }
   }
 

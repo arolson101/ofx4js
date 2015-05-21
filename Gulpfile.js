@@ -23,7 +23,7 @@ gulp.task('compile', function() {
     var js = tsResult.js;
 
     js = js
-        .pipe(sourcemaps.write('./', {sourceRoot: "../src"}))
+        .pipe(sourcemaps.write('./', {sourceRoot: "../"}))
         .pipe(gulp.dest('./lib'));
 
     return merge([dts, js]);
@@ -49,7 +49,7 @@ gulp.task('webpack', ['compile'], function(callback) {
       devtool: "source-map",
       plugins: [
         // minify
-        new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+        //new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
       ]
     }, function(err, stats) {
         if(err) throw new gutil.PluginError("webpack", err);

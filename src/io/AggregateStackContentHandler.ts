@@ -45,7 +45,7 @@ class AggregateInfoHolder {
         break;
         
       default:
-        throw new Error("invalid number of arguments");
+        throw new OFXException("invalid number of arguments");
     }
   }
 
@@ -88,7 +88,7 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
 
     var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(root.constructor);
     if (aggregateInfo == null) {
-      throw new Error("Unable to marshal object of type '" + root.constructor.name + "' (no aggregate metadata found).");
+      throw new OFXException("Unable to marshal object of type '" + root.constructor.name + "' (no aggregate metadata found).");
     }
 
     this.stack.push(new AggregateInfoHolder(root, aggregateInfo, aggregateInfo.getName()));
@@ -126,7 +126,7 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
     }
     else if (!this.parsingRoot) {
       if (aggregateName !== this.stack.peek().info.getName()) {
-        throw new Error("Unexpected root element: " + aggregateName);
+        throw new OFXException("Unexpected root element: " + aggregateName);
       }
 
       this.parsingRoot = true;
@@ -148,7 +148,7 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
           if (aggregateType != null) {
             var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(aggregateType);
             if (aggregateInfo == null) {
-              throw new Error("Unable to locate aggregate info for type " + aggregateType.getName());
+              throw new OFXException("Unable to locate aggregate info for type " + aggregateType.getName());
             }
 
             var aggregate: Object = aggregate = new aggregateType();

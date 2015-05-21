@@ -51,7 +51,7 @@ export class AggregateMarshaller {
   public marshal(aggregate: Object, writer: OFXWriter) /*throws IOException*/: void {
     var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(aggregate.constructor);
     if (aggregateInfo == null) {
-      throw new Error("Unable to marshal object (no aggregate metadata found).");
+      throw new OFXException("Unable to marshal object (no aggregate metadata found).");
     }
 
     if (aggregateInfo.hasHeaders()) {
@@ -104,7 +104,7 @@ export class AggregateMarshaller {
             for (var objValue of childValues) {
               var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(objValue.constructor);
               if (aggregateInfo == null) {
-                throw new Error("Unable to marshal object of type " + objValue.constructor.name + " (no aggregate metadata found).");
+                throw new OFXException("Unable to marshal object of type " + objValue.constructor.name + " (no aggregate metadata found).");
               }
 
               var attributeName: string = aggregateAttribute.getName();
@@ -124,11 +124,11 @@ export class AggregateMarshaller {
             }
             break;
           default:
-            throw new Error("Unknown aggregate attribute type: " + aggregateAttribute.getType());
+            throw new OFXException("Unknown aggregate attribute type: " + aggregateAttribute.getType());
         }
       }
       else if (aggregateAttribute.isRequired()) {
-        throw new Error("Required " + aggregateAttribute.toString() + " is null or empty.");
+        throw new OFXException("Required " + aggregateAttribute.toString() + " is null or empty.");
       }
     }
   }

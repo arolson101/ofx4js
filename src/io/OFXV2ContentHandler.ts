@@ -39,7 +39,7 @@ export class OFXV2ContentHandler {
     this.startedEvents = new Array<OFXParseEvent>();
 
     if (ofxHandler == null) {
-      throw new Error("An OFX handler must be supplied.");
+      throw new OFXException("An OFX handler must be supplied.");
     }
 
     this.ofxHandler = ofxHandler;
@@ -92,12 +92,12 @@ export class OFXV2ContentHandler {
       var chars: string = eventToFinish.getEventValue().trim();
 
       if (this.eventStack.isEmpty()) {
-        throw new Error("Illegal character data outside main OFX root element: \"" + chars + "\".");
+        throw new OFXException("Illegal character data outside main OFX root element: \"" + chars + "\".");
       }
       else {
         var elementEvent: OFXParseEvent = this.eventStack.pop();
         if (elementEvent.getEventType() != OFXParseEventType.ELEMENT) {
-          throw new Error("Illegal OFX event before characters \"" + chars + "\" (" + elementEvent.getEventType() + ")!");
+          throw new OFXException("Illegal OFX event before characters \"" + chars + "\" (" + elementEvent.getEventType() + ")!");
         }
         else {
           var value: string = elementEvent.getEventValue();
@@ -125,11 +125,11 @@ export class OFXV2ContentHandler {
         }
       }
       else {
-        throw new Error("Unexpected end tag: " + eventToFinish.getEventValue());
+        throw new OFXException("Unexpected end tag: " + eventToFinish.getEventValue());
       }
     }
     else {
-      throw new Error("Illegal OFX event: " + eventToFinish.getEventType());
+      throw new OFXException("Illegal OFX event: " + eventToFinish.getEventType());
     }
   }
   

@@ -39,7 +39,7 @@ export class OFXV2Writer extends OFXV1Writer {
 
   public writeHeaders(headers: StringMap) /*throws IOException*/: void {
     if (this.headersWritten) {
-      throw new Error("Headers have already been written!");
+      throw new OFXException("Headers have already been written!");
     }
 
     //write out the XML PI

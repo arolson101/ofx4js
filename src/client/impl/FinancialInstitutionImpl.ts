@@ -110,10 +110,10 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
 
   constructor(data: FinancialInstitutionData, connection: OFXConnection) {
     if (data == null) {
-      throw new Error("Data cannot be null");
+      throw new OFXException("Data cannot be null");
     }
     if (connection == null) {
-      throw new Error("An OFX connection must be supplied");
+      throw new OFXException("An OFX connection must be supplied");
     }
 
     this.data = data;

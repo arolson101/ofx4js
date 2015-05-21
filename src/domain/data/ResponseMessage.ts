@@ -28,7 +28,7 @@ export /*abstract*/ class ResponseMessage {
    *
    * @return The name of the response message.
    */
-  public /*abstract*/ getResponseMessageName(): string { throw new Error("abstract"); }
+  public /*abstract*/ getResponseMessageName(): string { throw new OFXException("abstract"); }
 
 }
 

@@ -120,7 +120,7 @@ export /*abstract*/ class TransactionWrappedResponseMessage<M extends ResponseMe
    *
    * @return The wrapped message.
    */
-  public /*abstract*/ getWrappedMessage(): M { throw new Error("abstract"); }
+  public /*abstract*/ getWrappedMessage(): M { throw new OFXException("abstract"); }
 
 }
 

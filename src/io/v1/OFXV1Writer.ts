@@ -45,7 +45,7 @@ export class OFXV1Writer implements OFXWriter {
     } else if(out instanceof OutputBuffer) {
       this.writer = this.newWriter(out);
     } else {
-      throw new Error("invalid parameter type");
+      throw new OFXException("invalid parameter type");
     }
   }
 
@@ -55,7 +55,7 @@ export class OFXV1Writer implements OFXWriter {
 
   public writeHeaders(headers: StringMap) /*throws IOException*/: void {
     if (this.headersWritten) {
-      throw new Error("Headers have already been written!");
+      throw new OFXException("Headers have already been written!");
     }
 
     //write out the 1.0 headers
@@ -100,7 +100,7 @@ export class OFXV1Writer implements OFXWriter {
 
   public writeElement(name: string, value: string) /*throws IOException*/: void {
     if ((value == null) || ("" === value)) {
-      throw new Error("Illegal element value for element '" + name + "' (value must not be null or empty).");
+      throw new OFXException("Illegal element value for element '" + name + "' (value must not be null or empty).");
     }
 
     //todo: optimize performance of the character escaping
