@@ -205,7 +205,9 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
    */
   protected processOFXv2Headers(chars: string) /*throws OFXParseException*/: void {
     var nameValuePairs: string[] = chars.split("\\s+");
-    for (var nameValuePair of nameValuePairs) {
+    //for (var nameValuePair of nameValuePairs) {
+    for (var nameValuePairKey in nameValuePairs) {
+      var nameValuePair: string = nameValuePairs[nameValuePairKey];
       var equalsIndex: number = nameValuePair.indexOf('=');
       if (equalsIndex >= 0) {
         var name: string = nameValuePair.substring(0, equalsIndex);

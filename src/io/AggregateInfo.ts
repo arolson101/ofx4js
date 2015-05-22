@@ -139,7 +139,9 @@ export class AggregateInfo {
         return candidates[0];
       }
       else {
-        for (var candidate of candidates) {
+        //for (var candidate of candidates) {
+        for (var candidateKey in candidates) {
+          var candidate: AggregateAttribute = candidates[candidateKey];
           if (candidate.getOrder() >= orderHint) {
             return candidate;
           }

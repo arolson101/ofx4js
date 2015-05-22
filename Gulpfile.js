@@ -60,20 +60,26 @@ gulp.task('webpack', ['compile'], function(callback) {
     });
 });
 
-gulp.task("typedoc", function() {
-    return gulp
-        .src(["src/*.ts"])
-        .pipe(typedoc({
-            module: "commonjs",
-            out: "./doc",
-            theme: "minimal",
-            name: "Ofx4js",
-            target: "es5",
-            mode: "file",
-            includeDeclarations: true
-        }))
-    ;
+var child_process = require("child_process");
+gulp.task("typedoc", function(cb) {
+    child_process.exec("typedoc --out doc --mode file --module commonjs --target es5 --name Ofx4js ./src/", cb);
 });
+
+//gulp.task("typedoc", function() {
+//    return gulp
+//        .src(["src/**/*.ts"])
+//        .pipe(typedoc({
+//            module: "commonjs",
+//            out: "./doc",
+//            theme: "minimal",
+//            name: "Ofx4js",
+//            target: "es5",
+//            mode: "file",
+//            json: "ofx4js.json",
+//            includeDeclarations: true
+//        }))
+//    ;
+//});
 
 gulp.task('watch', ['compile'], function() {
     gulp.watch('src/*.ts', ['compile']);

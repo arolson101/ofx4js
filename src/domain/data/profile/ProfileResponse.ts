@@ -386,9 +386,13 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
   protected getProfiles(type: MessageSetType): Array<MessageSetProfile> {
     var profiles: Array<MessageSetProfile> = new Array<MessageSetProfile>();
     if (this.getMessageSetList() != null && this.getMessageSetList().getInformationList() != null) {
-      for (var info of this.getMessageSetList().getInformationList()) {
+      //for (var info of this.getMessageSetList().getInformationList()) {
+      for (var infoKey in this.getMessageSetList().getInformationList()) {
+        var info = this.getMessageSetList().getInformationList()[infoKey];
         if (info.getVersionSpecificInformationList() != null) {
-          for (var versionSpecificInfo of info.getVersionSpecificInformationList()) {
+          //for (var versionSpecificInfo of info.getVersionSpecificInformationList()) {
+          for (var versionSpecificInfoKey in info.getVersionSpecificInformationList()) {
+            var versionSpecificInfo: VersionSpecificMessageSetInfo = info.getVersionSpecificInformationList()[versionSpecificInfoKey];
             if (versionSpecificInfo.getMessageSetType() == type) {
               profiles.push(versionSpecificInfo);
             }
@@ -400,7 +404,9 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
   }
 
   public getMessageSetProfile_version(type: MessageSetType, version: string): MessageSetProfile {
-    for (var profile of this.getProfiles(type)) {
+    //for (var profile of this.getProfiles(type)) {
+    for (var profileKey in this.getProfiles(type)) {
+      var profile: MessageSetProfile = this.getProfiles(type)[profileKey];
       if (version == null) {
         if (profile.getVersion() == null) {
           return profile;
@@ -416,7 +422,9 @@ export class ProfileResponse extends ResponseMessage implements FinancialInstitu
 
   public getSignonProfile(messageSet: MessageSetProfile): SignonProfile {
     if (this.getSignonInfoList() != null && this.getSignonInfoList().getInfoList() != null) {
-      for (var signonInfo of this.getSignonInfoList().getInfoList()) {
+      //for (var signonInfo of this.getSignonInfoList().getInfoList()) {
+      for (var signonInfoKey in this.getSignonInfoList().getInfoList()) {
+        var signonInfo: SignonInfo = this.getSignonInfoList().getInfoList()[signonInfoKey];
         if (messageSet.getRealm() == null) {
           if (signonInfo.getRealm() == null) {
             return signonInfo;

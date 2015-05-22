@@ -242,7 +242,9 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
       throw new OFXException("Invalid transaction ID '" + response.getUID() + "' in response.  Expected: " + request);
     }
 
-    for (var requestSet of request.getMessageSets().values()) {
+    //for (var requestSet of request.getMessageSets().values()) {
+    for (var requestSetKey in request.getMessageSets().values()) {
+      var requestSet: RequestMessageSet = request.getMessageSets().values()[requestSetKey];
       var responseSet: ResponseMessageSet = response.getMessageSet(requestSet.getType());
       if (responseSet == null) {
         throw new NoOFXResponseException("No response for the " + requestSet.getType() + " request.");
@@ -257,13 +259,17 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
       }
 
       var transactionIds: StringSet = {};
-      for (var requestMessage of requestSet.getRequestMessages()) {
+      //for (var requestMessage of requestSet.getRequestMessages()) {
+      for (var requestMessageKey in requestSet.getRequestMessages()) {
+        var requestMessage: RequestMessage = requestSet.getRequestMessages()[requestMessageKey];
         if (requestMessage instanceof TransactionWrappedRequestMessage) {
           transactionIds[(<TransactionWrappedRequestMessage<RequestMessage>> requestMessage).getUID()] = true;
         }
       }
 
-      for (var responseMessage of responseSet.getResponseMessages()) {
+      //for (var responseMessage of responseSet.getResponseMessages()) {
+      for (var responseMessageKey in responseSet.getResponseMessages()) {
+        var responseMessage: ResponseMessage = responseSet.getResponseMessages()[responseMessageKey];
         if (instanceof_StatusHolder(responseMessage)) {
           this.validateStatus(<StatusHolder><any>responseMessage);
         }

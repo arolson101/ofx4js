@@ -61,7 +61,7 @@ export class KnownCode extends StatusCode {
   public static DB_EXCEPTION: KnownCode = new KnownCode(14702,"Database error has occured.",Severity.ERROR);
   public static NO_TAXSUPPORT: KnownCode = new KnownCode(14703,"This Tax Year is not supported.",Severity.ERROR);
   
-  static KnownCodes: KnownCode[] = [
+  private static KnownCodes: KnownCode[] = [
     KnownCode.SUCCESS,
     KnownCode.CLIENT_UP_TO_DATE,
     KnownCode.GENERAL_ERROR,

@@ -101,7 +101,9 @@ export class AggregateMarshaller {
               childValues = [childValue];
             }
 
-            for (var objValue of childValues) {
+            //for (var objValue of childValues) {
+            for (var objValueKey in childValues) {
+              var objValue: Object = childValue[objValueKey];
               var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(objValue.constructor);
               if (aggregateInfo == null) {
                 throw new OFXException("Unable to marshal object of type " + objValue.constructor.name + " (no aggregate metadata found).");

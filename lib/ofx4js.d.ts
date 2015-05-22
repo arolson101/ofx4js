@@ -420,7 +420,7 @@ declare module ofx4js.domain.data.common {
         static NO_DATA: KnownCode;
         static DB_EXCEPTION: KnownCode;
         static NO_TAXSUPPORT: KnownCode;
-        static KnownCodes: KnownCode[];
+        private static KnownCodes;
         private code;
         private message;
         private defaultSeverity;
