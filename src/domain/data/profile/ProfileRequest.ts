@@ -35,7 +35,7 @@ export class ProfileRequest extends RequestMessage {
   
   constructor() {
     super();
-    this.routingCapability = ClientRoutingCapability.NONE;
+    this.routingCapability = ClientRoutingCapability.MESSAGE_SET;
   }
 
   /**
