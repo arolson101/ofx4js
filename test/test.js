@@ -142,7 +142,7 @@ var ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
 var FinancialInstitutionImpl = ofx4js.client.impl.FinancialInstitutionImpl;
 var BaseFinancialInstitutionData = ofx4js.client.impl.BaseFinancialInstitutionData;
 var OFXV1Connection = ofx4js.client.net.OFXV1Connection;
-var Status = ofx4js.domain.data.common.Status;
+var KnownCode = ofx4js.domain.data.common.KnownCode;
 
 /*jshint -W098*/
 function enableLog(enabled) {
@@ -157,7 +157,7 @@ describe("ofx parsing", function() {
     var data = m.unmarshal(ofxStatementDownloadv1);
     expect(data).to.be.ok();
 
-    var messageSets = data.getMessageSets();
+    var messageSets = data.getMessageSets().values();
     expect(messageSets).to.have.length(2);
     expect(messageSets[0]).to.be.an.instanceOf(ofx4js.domain.data.signon.SignonRequestMessageSet);
     expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingRequestMessageSet);
@@ -179,7 +179,7 @@ describe("ofx parsing", function() {
     var bankStatementRequest = messageSets[1].getStatementRequest().getMessage();
     var account = bankStatementRequest.getAccount();
     expect(account.getAccountNumber()).to.equal("098-121");
-    expect(account.getAccountType()).to.equal("SAVINGS");
+    expect(account.getAccountType()).to.equal(ofx4js.domain.data.banking.AccountType.SAVINGS);
     expect(account.getBankId()).to.equal("987654321");
   });
   
@@ -188,13 +188,13 @@ describe("ofx parsing", function() {
     var data = m.unmarshal(ofxResponsev1);
     expect(data).to.be.ok();
 
-    var messageSets = data.getMessageSets();
+    var messageSets = data.getMessageSets().values();
     expect(messageSets).to.have.length(2);
     expect(messageSets[0]).to.be.an.instanceOf(ofx4js.domain.data.signon.SignonResponseMessageSet);
     expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingResponseMessageSet);
     
     var signonResponse = messageSets[0].getSignonResponse();
-    expect(signonResponse.getStatus().getCode()).to.equal(Status.KnownCode.SUCCESS);
+    expect(signonResponse.getStatus().getCode()).to.equal(KnownCode.SUCCESS);
 
     var fi = signonResponse.getFinancialInstitution();
     expect(fi).to.be.ok();
@@ -204,12 +204,12 @@ describe("ofx parsing", function() {
     expect(messageSets[1].getStatementResponses()).to.have.length(1);
     var bankingResponse = messageSets[1].getStatementResponse();
     expect(bankingResponse).to.be.an.instanceOf(ofx4js.domain.data.banking.BankStatementResponseTransaction);
-    expect(bankingResponse.getStatus().getCode()).to.equal(Status.KnownCode.SUCCESS);
+    expect(bankingResponse.getStatus().getCode()).to.equal(KnownCode.SUCCESS);
     
     var message = bankingResponse.getMessage();
     var account = message.getAccount();
     expect(account.getAccountNumber()).to.equal("098-121");
-    expect(account.getAccountType()).to.equal("SAVINGS");
+    expect(account.getAccountType()).to.equal(ofx4js.domain.data.banking.AccountType.SAVINGS);
     expect(account.getBankId()).to.equal("987654321");
     expect(message.getCurrencyCode()).to.equal("USD");
     expect(message.getAvailableBalance().getAmount()).to.equal("5250.00");

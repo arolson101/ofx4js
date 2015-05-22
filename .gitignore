@@ -2,9 +2,10 @@ bower_components/
 node_modules/
 temp/
 tmp/
-logs/
-log/
 results/
+.svn/
+ofx4j-code/
+.DS_Store
 
 *.seed
 *.log

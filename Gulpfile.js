@@ -1,104 +1,85 @@
 'use strict';
 
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var jshint = require('gulp-jshint');
-var jsdoc = require("gulp-jsdoc");
-var source = require('vinyl-source-stream');
-var watchify = require('watchify');
-var browserify = require('browserify');
-var mochaPhantomJS = require('gulp-mocha-phantomjs');
-var uglify = require('gulp-uglify');
 var buffer = require('vinyl-buffer');
+var gulp = require('gulp');
+var merge = require('merge2');
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+var source = require('vinyl-source-stream');
 var sourcemaps = require('gulp-sourcemaps');
 var sync = require('gulp-config-sync');
+var ts = require('gulp-typescript');
+var typedoc = require("gulp-typedoc");
+var gutil = require("gulp-util");
+var fs = require("fs");
+var webpack = require("webpack");
 
-function makeBundle(watch, minify) {
-  var b = browserify({
-    debug: true,
-    cache: {},
-    packageCache: {},
-    standalone: 'ofx4js',
-    fullPaths: true
-  });
-  
-  var bundle = function(file) {
-    if(file) {
-      file.map(function (fileName) {
-        gutil.log('File updated', gutil.colors.yellow(fileName));
-      });
-    }
-    
-    var ret = b
-      .bundle()
-      .on('error', function(err) {
-        gutil.log("Browserify error:", err.message);
-      });
-    
-    ret = ret
-      .pipe(source(minify ? 'ofx4js.min.js' : 'ofx4js.js'));
-    
-    ret = ret
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}));
-    
-    if(minify) {
-      ret = ret
-        // Add transformation tasks to the pipeline here.
-        .pipe(uglify());
-    }
-    
-    ret = ret
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./dist/'));
-  };
+gulp.task('compile', function() {
+    var tsProject = ts.createProject('tsconfig.json', { sortOutput: true, typescript: require('typescript') });
+    var tsResult = tsProject.src() // instead of gulp.src(...)
+        .pipe(sourcemaps.init())
+        .pipe(ts(tsProject));
 
-  if(watch) {
-    b = watchify(b);
-    b.on('update', bundle);
-  }
-  
-  b.add('./src/main.js');
-  return bundle();
-}
+    var dts = tsResult.dts.pipe(gulp.dest('./lib'));
+    var js = tsResult.js;
 
-gulp.task('bundle', function() {
-  makeBundle(false, false);
-  makeBundle(false, true);
+    js = js
+        .pipe(sourcemaps.write('./', {sourceRoot: "../"}))
+        .pipe(gulp.dest('./lib'));
+
+    return merge([dts, js]);
 });
 
-gulp.task('watch', function() {
-  makeBundle(true);
+gulp.task('webpack', ['compile'], function(callback) {
+    webpack({
+      entry: "./lib/ofx4js.js",
+      output: {
+          library: "ofx4js",
+          libraryTarget: "umd",
+          path: __dirname,
+          filename: "dist/ofx4js.min.js"
+      },
+      module: {
+          preLoaders: [
+            {
+              test: /\.js$/,
+              loader: "source-map-loader"
+            }
+          ],
+      },
+      devtool: "source-map",
+      plugins: [
+        // minify
+        //new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+      ]
+    }, function(err, stats) {
+        if(err) throw new gutil.PluginError("webpack", err);
+        gutil.log("[webpack]", stats.toString({
+            colors: true
+        }));
+        callback();
+    });
 });
 
-gulp.task('lint', function() {
-  return gulp.src('./src/**/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+gulp.task("typedoc", function() {
+    return gulp
+        .src(["src/*.ts"])
+        .pipe(typedoc({
+            module: "commonjs",
+            out: "./doc",
+            theme: "minimal",
+            name: "Ofx4js",
+            target: "es5",
+            mode: "file",
+            includeDeclarations: true
+        }))
+    ;
 });
 
-gulp.task('jsdoc', function() {
-  var infos = null;
-  var template = {
-    path            : 'ink-docstrap',
-    systemName      : 'Ofx4js',
-    navType         : "vertical",
-    theme           : "journal",
-    linenums        : false,
-    collapseSymbols : false,
-    inverseNav      : false
-  };
-  var options = {
-    'private': true,
-    'outputSourceFiles': false,
-    debug: true,
-    verbose: true
-  };
-  return gulp.src(['./src/**/*.js', 'README.md'])
-    .pipe(jsdoc('./docs', template, infos, options));
+gulp.task('watch', ['compile'], function() {
+    gulp.watch('src/*.ts', ['compile']);
 });
 
-gulp.task('test', ['bundle'], function() {
+gulp.task('test', ['webpack'], function() {
      return gulp.src('./test/test.html')
         .pipe(mochaPhantomJS({ 'webSecurityEnabled': false, "outputEncoding": "utf8", "localToRemoteUrlAccessEnabled": true }));
 });
@@ -109,4 +90,4 @@ gulp.task('sync', function() {
     .pipe(gulp.dest('.')); // write it to the same dir
 });
 
-gulp.task('default', ['bundle', 'lint', 'test', 'jsdoc', 'sync']);
+gulp.task('default', ['compile', 'webpack', 'test', 'typedoc', 'sync']);
