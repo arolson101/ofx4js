@@ -86,11 +86,10 @@ export class InvestmentAccountImpl implements InvestmentAccount {
     requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
     request.getMessageSets().insert(this.createStatementRequestMessageSet(requestTransaction));
 
-    var self = this;
-    return self.institution.sendRequest(request)
-    .then(function(response: ResponseEnvelope): InvestmentStatementResponse {
-      self.institution.doGeneralValidationChecks(request, response);
-      return self.unwrapStatementResponse(response);
+    return this.institution.sendRequest(request)
+    .then((response: ResponseEnvelope): InvestmentStatementResponse => {
+      this.institution.doGeneralValidationChecks(request, response);
+      return this.unwrapStatementResponse(response);
     });
   }
 
@@ -100,12 +99,11 @@ export class InvestmentAccountImpl implements InvestmentAccount {
     requestTransaction.setWrappedMessage(this.createSecurityListRequest(securities));
     request.getMessageSets().insert(this.createSecurityListRequestMessageSet(requestTransaction));
 
-    var self = this;
-    return self.institution.sendRequest(request)
-    .then(function(response: ResponseEnvelope): SecurityList {
-      self.institution.doGeneralValidationChecks(request, response);
+    return this.institution.sendRequest(request)
+    .then((response: ResponseEnvelope): SecurityList => {
+      this.institution.doGeneralValidationChecks(request, response);
   
-      return self.unwrapSecurityList(response);
+      return this.unwrapSecurityList(response);
     });
   }
 

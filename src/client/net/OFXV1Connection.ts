@@ -79,11 +79,10 @@ export class OFXV1Connection implements OFXConnection {
     this.getMarshaller().marshal(request, ofxWriter);
     ofxWriter.close();
     this.logRequest(outBuffer);
-    var self = this;
-    return self.sendBuffer(url, outBuffer)
-    .then(function(in_: string): ResponseEnvelope {
-      self.logResponse(in_);
-      return self.unmarshal(in_);
+    return this.sendBuffer(url, outBuffer)
+    .then((in_: string): ResponseEnvelope => {
+      this.logResponse(in_);
+      return this.unmarshal(in_);
     });
   }
 

@@ -97,12 +97,11 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
     requestTransaction.setWrappedMessage(this.createStatementRequest(this.getDetails(), range));
     request.getMessageSets().insert(this.createRequestMessageSet(requestTransaction));
 
-    var self = this;
-    return self.institution.sendRequest(request)
-    .then(function(response: ResponseEnvelope): AccountStatement {
-      self.institution.doGeneralValidationChecks(request, response);
-  
-      return self.unwrapStatementResponse(response);
+    return this.institution.sendRequest(request)
+    .then((response: ResponseEnvelope): AccountStatement => {
+      this.institution.doGeneralValidationChecks(request, response);
+
+      return this.unwrapStatementResponse(response);
     });
   }
 

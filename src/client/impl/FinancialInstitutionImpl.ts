@@ -126,11 +126,10 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
     var profileRequest: ProfileRequestMessageSet = new ProfileRequestMessageSet();
     profileRequest.setProfileRequest(this.createProfileTransaction());
     request.getMessageSets().insert(profileRequest);
-    var self = this;
-    return self.sendRequest(request, this.getData().getOFXURL())
-    .then(function(response: ResponseEnvelope): FinancialInstitutionProfile {
-      self.doGeneralValidationChecks(request, response);
-      return self.getProfile(response);
+    return this.sendRequest(request, this.getData().getOFXURL())
+    .then((response: ResponseEnvelope): FinancialInstitutionProfile => {
+      this.doGeneralValidationChecks(request, response);
+      return this.getProfile(response);
     });
   }
 
@@ -140,11 +139,10 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
     var signupRequest: SignupRequestMessageSet = new SignupRequestMessageSet();
     signupRequest.setAccountInfoRequest(this.createAccountInfoTransaction());
     request.getMessageSets().insert(signupRequest);
-    var self = this;
     return this.sendRequest(request, this.getData().getOFXURL())
-    .then(function(response: ResponseEnvelope): Array<AccountProfile> {
-      self.doGeneralValidationChecks(request, response);
-      return self.getAccountProfiles(response);
+    .then((response: ResponseEnvelope): Array<AccountProfile> => {
+      this.doGeneralValidationChecks(request, response);
+      return this.getAccountProfiles(response);
     });
   }
 
