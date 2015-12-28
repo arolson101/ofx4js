@@ -49,7 +49,7 @@
         "./src/client/net/OFXV2Connection.ts",
         "./src/collections/SortedSet.ts",
         "./src/collections/Stack.ts",
-        "./src/collections/collections.d.ts",
+        "./src/collections/collections.ts",
         "./src/domain/data/ApplicationSecurity.ts",
         "./src/domain/data/MessageSetProfile.ts",
         "./src/domain/data/MessageSetType.ts",

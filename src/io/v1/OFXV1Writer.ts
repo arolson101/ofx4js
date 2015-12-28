@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 ///<reference path='../../project.d.ts'/>
+///<reference path='../../collections/collections'/>
 ///<reference path='../OFXWriter'/>
 ///<reference path='../StreamWriter'/>
 
 module ofx4js.io.v1 {
 
 import OFXWriter = ofx4js.io.OFXWriter;
+import StringMap = ofx4js.collections.StringMap;
 
 //import Map = java.util.Map;
 

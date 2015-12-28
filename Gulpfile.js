@@ -3,6 +3,7 @@
 var buffer = require('vinyl-buffer');
 var gulp = require('gulp');
 var merge = require('merge2');
+var insert = require("gulp-insert");
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var source = require('vinyl-source-stream');
 var sourcemaps = require('gulp-sourcemaps');
@@ -18,13 +19,25 @@ gulp.task('compile', function() {
     var tsResult = tsProject.src() // instead of gulp.src(...)
         .pipe(sourcemaps.init())
         .pipe(ts(tsProject));
-
-    var dts = tsResult.dts.pipe(gulp.dest('./lib'));
+	
+		var dts = tsResult.dts
+			.pipe(insert.transform(function(contents, file) {
+				contents = contents.replace(/\/\/\/\s*\<reference path=".*"\s*\/\>\s*\n/ig, "");
+				contents = contents.replace(/SAXParser/g, "any /*SAXParser*/")
+				contents = contents.replace(/SAXTag/g, "any /*SAXTag*/")
+				contents = contents.replace(/declare var module\: any\;/ig, "");
+				contents += "declare module \"ofx4js\" {\n" +
+										"	export = ofx4js;\n" +
+										"}\n";
+				return contents;
+		}))
+		.pipe(gulp.dest('./'));
+	
     var js = tsResult.js;
 
     js = js
         .pipe(sourcemaps.write('./', {sourceRoot: "../"}))
-        .pipe(gulp.dest('./lib'));
+        .pipe(gulp.dest('./'));
 
     return merge([dts, js]);
 });

@@ -1,4 +1,3 @@
-/// <reference path="../src/project.d.ts" />
 declare module ofx4js {
     class Error {
         name: string;
@@ -147,6 +146,7 @@ declare module ofx4js.meta {
         order: number;
         name: string;
         required?: boolean;
+        collectionEntryType?: any;
     }
     /**
      * An OFX element, applied to a javabean property.
@@ -157,6 +157,7 @@ declare module ofx4js.meta {
         private _name;
         private _required;
         private _order;
+        private _collectionEntryType;
         constructor(params: ElementParams<any>);
         /**
          * The name of the element.
@@ -176,6 +177,10 @@ declare module ofx4js.meta {
          * @return The order this element comes in its parent aggregate.
          */
         order(): number;
+        /**
+         * If the type is a collection, return the type of the elements of the collection (otherwise null)
+         */
+        collectionEntryType(): any;
     }
 }
 declare module ofx4js.log {
@@ -194,6 +199,17 @@ declare module ofx4js.log {
     }
     class LogFactory {
         static getLog(clazz: any): any;
+    }
+}
+declare module ofx4js.collections {
+    interface StringSet {
+        [key: string]: boolean;
+    }
+    interface StringMap {
+        [key: string]: string;
+    }
+    interface AnyMap {
+        [key: string]: any;
     }
 }
 declare module ofx4js.collections {
@@ -6946,6 +6962,7 @@ declare module ofx4js.io {
     }
 }
 declare module ofx4js.io {
+    import StringMap = ofx4js.collections.StringMap;
     /**
      * @author Ryan Heaton
      */
@@ -7250,8 +7267,8 @@ declare module ofx4js.io {
         private ofxHandler;
         private startedEvents;
         constructor(ofxHandler: OFXHandler);
-        install(parser: SAXParser): void;
-        onopentag(node: SAXTag): void;
+        install(parser: any /*SAXParser*/): void;
+        onopentag(node: any /*SAXTag*/): void;
         /**
          * Whether the specified element aggregate has already been started.
          *
@@ -7383,6 +7400,7 @@ declare module ofx4js.io {
 }
 declare module ofx4js.io.v1 {
     import OFXWriter = ofx4js.io.OFXWriter;
+    import StringMap = ofx4js.collections.StringMap;
     /**
      * OFX writer to SGML, suitable for OFX versions < 2.0.
      *
@@ -7494,6 +7512,7 @@ declare module ofx4js.client.net {
 }
 declare module ofx4js.io.v2 {
     import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
+    import StringMap = ofx4js.collections.StringMap;
     /**
      * OFX writer to XML, suitable for OFX version 2.0.
      *
@@ -13653,7 +13672,7 @@ declare module ofx4js {
     interface dummy {
     }
 }
-declare var module: any;
+
 declare module ofx4js.io {
     /**
      * An OFX aggregate is just an aggregate of name-value pairs that identify the elements and element values of the aggregate.
@@ -13700,4 +13719,7 @@ declare module ofx4js.io {
     class RequiredAttributeException extends OFXRuntimeException {
         constructor(message: string);
     }
+}
+declare module "ofx4js" {
+	export = ofx4js;
 }

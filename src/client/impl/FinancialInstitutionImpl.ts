@@ -43,6 +43,7 @@
 ///<reference path='../FinancialInstitution'/>
 ///<reference path='BankingAccountImpl'/>
 ///<reference path='InvestmentAccountImpl'/>
+///<reference path='../../collections/collections'/>
 
 module ofx4js.client.impl {
 
@@ -95,6 +96,7 @@ import SignupResponseMessageSet = ofx4js.domain.data.signup.SignupResponseMessag
 import OFXConnection = ofx4js.client.net.OFXConnection;
 import OFXConnectionException = ofx4js.client.net.OFXConnectionException;
 import BankAccount = ofx4js.client.BankAccount;
+import StringSet = ofx4js.collections.StringSet;
 
 //import java.net.URL;
 

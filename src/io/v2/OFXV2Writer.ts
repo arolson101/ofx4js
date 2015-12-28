@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 ///<reference path='../v1/OFXV1Writer'/>
+///<reference path='../../collections/collections'/>
 
 module ofx4js.io.v2 {
 
 import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
+import StringMap = ofx4js.collections.StringMap;
+
 
 //import Map = java.util.Map;
 

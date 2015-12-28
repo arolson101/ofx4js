@@ -1,4 +1,4 @@
-///<reference path="collections/collections.d.ts"/>
+///<reference path="collections/collections.ts"/>
 ///<reference path='../typings/tsd.d.ts'/>
 
 

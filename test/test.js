@@ -155,7 +155,7 @@ describe("ofx parsing", function() {
   it("should parse an ofx statement request", function() {
     var m = new AggregateUnmarshaller(RequestEnvelope);
     var data = m.unmarshal(ofxStatementDownloadv1);
-    expect(data).to.be.ok();
+    expect(data).to.be.ok;
 
     var messageSets = data.getMessageSets().values();
     expect(messageSets).to.have.length(2);
@@ -172,7 +172,7 @@ describe("ofx parsing", function() {
     expect(signonRequest.getTimestamp()).to.equalDate(date);
     
     var fi = signonRequest.getFinancialInstitution();
-    expect(fi).to.be.ok();
+    expect(fi).to.be.ok;
     expect(fi.getOrganization()).to.equal("MYBANK");
     expect(fi.getId()).to.equal("01234");
     
@@ -186,7 +186,7 @@ describe("ofx parsing", function() {
   it("should parse an ofx response", function() {
     var m = new AggregateUnmarshaller(ResponseEnvelope);
     var data = m.unmarshal(ofxResponsev1);
-    expect(data).to.be.ok();
+    expect(data).to.be.ok;
 
     var messageSets = data.getMessageSets().values();
     expect(messageSets).to.have.length(2);
@@ -197,7 +197,7 @@ describe("ofx parsing", function() {
     expect(signonResponse.getStatus().getCode()).to.equal(KnownCode.SUCCESS);
 
     var fi = signonResponse.getFinancialInstitution();
-    expect(fi).to.be.ok();
+    expect(fi).to.be.ok;
     expect(fi.getOrganization()).to.equal("MYBANK");
     expect(fi.getId()).to.equal("01234");
     

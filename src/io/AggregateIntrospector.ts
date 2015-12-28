@@ -19,6 +19,7 @@
 ///<reference path='../meta/Element'/>
 ///<reference path='../log/Log'/>
 ///<reference path='AggregateInfo'/>
+///<reference path='../collections/collections'/>
 
 module ofx4js.io {
 
@@ -28,6 +29,7 @@ import Header = ofx4js.meta.Header;
 import Element = ofx4js.meta.Element;
 import Log = ofx4js.log.Log;
 import LogFactory = ofx4js.log.LogFactory;
+import AnyMap = ofx4js.collections.AnyMap;
 
 //import Log = org.apache.commons.logging.Log;
 //import LogFactory = org.apache.commons.logging.LogFactory;

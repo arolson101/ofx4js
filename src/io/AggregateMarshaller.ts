@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 ///<reference path='../collections/SortedSet'/>
+///<reference path='../collections/collections'/>
 ///<reference path='StringConversion'/>
 ///<reference path='DefaultStringConversion'/>
 ///<reference path='AggregateIntrospector'/>
@@ -24,6 +25,7 @@
 module ofx4js.io {
 
 import SortedSet = ofx4js.collections.SortedSet;
+import StringMap = ofx4js.collections.StringMap;
 import Log = ofx4js.log.Log;
 import LogFactory = ofx4js.log.LogFactory;
 
