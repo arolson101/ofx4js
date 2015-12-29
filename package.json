@@ -9,7 +9,7 @@
   ],
   "main": "lib/ofx4js.js",
   "typescript": {
-    "definition": "./dist/ofx4js.d.ts"
+    "definition": "./lib/ofx4js.d.ts"
   },
   "dependencies": {
     "sax": "^1.1.4",
