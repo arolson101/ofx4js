@@ -50,6 +50,41 @@ import LogFactory = ofx4js.log.LogFactory;
 
 var LOG: Log;
 
+export type HeadersObject = { [header: string]: string };
+export type AjaxHandler = (url: string, verb: string, headers: HeadersObject, data: string, async: boolean) => Promise<string>;
+
+
+function DefaultAjaxHandler(url: string, verb: string, headers: HeadersObject, data: string, async: boolean): Promise<string> {
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest();
+    var onloadCalled: boolean = false;
+    request.open("POST", url, async);
+    for (var header in headers) {
+      request.setRequestHeader(header, headers[header]);
+    }
+    request.onload = function() {
+      onloadCalled = true;
+      if (request.status >= 200 && request.status < 300) {
+        resolve(request.responseText);
+      } else if (request.status >= 400 && request.status < 500) {
+        reject(new OFXException("Error " + request.status + " with client request: " + request.responseText));
+      } else {
+        reject(new OFXException("Invalid response code from OFX server: " + request.status));
+      }
+    };
+    request.onerror = function() {
+      reject(new OFXException("Network error"));
+    };
+    
+    request.send(data);
+    
+    if (!async && !onloadCalled) {
+      (<any>request).onload();
+    }
+  });
+}
+
+
 /**
  * Base implementation for an OFX connection.
  *
@@ -60,11 +95,13 @@ export class OFXV1Connection implements OFXConnection {
   private async: boolean;
   private marshaller: AggregateMarshaller;
   private unmarshaller: AggregateUnmarshaller<ResponseEnvelope>;
+  private ajax: AjaxHandler;
 
   constructor() {
     this.async = true;
     this.marshaller = new AggregateMarshaller();
     this.unmarshaller = new AggregateUnmarshaller<ResponseEnvelope>(ResponseEnvelope);
+    this.ajax = DefaultAjaxHandler;
   }
 
   // Inherited.
@@ -118,32 +155,12 @@ export class OFXV1Connection implements OFXConnection {
   protected sendBuffer(url: string, outBuffer: OutputBuffer) /*throws IOException, OFXConnectionException*/: Promise<string> {
     var outText = outBuffer.toString();
     var async: boolean = this.getAsync();
-    return new Promise(function(resolve, reject) {
-      var request = new XMLHttpRequest();
-      var onloadCalled: boolean = false;
-      request.open("POST", url, async);
-      request.setRequestHeader("Content-Type", "application/x-ofx");
-      request.setRequestHeader("Accept", "*/*, application/x-ofx");
-      request.onload = function() {
-        onloadCalled = true;
-        if (request.status >= 200 && request.status < 300) {
-          resolve(request.responseText);
-        } else if (request.status >= 400 && request.status < 500) {
-          reject(new OFXException("Error " + request.status + " with client request: " + request.responseText));
-        } else {
-          reject(new OFXException("Invalid response code from OFX server: " + request.status));
-        }
-      };
-      request.onerror = function() {
-        reject(new OFXException("Network error"));
-      };
-      
-      request.send(outText);
-      
-      if (!async && !onloadCalled) {
-        (<any>request).onload();
-      }
-    });
+    var headers: HeadersObject = {
+      "Content-Type": "application/x-ofx",
+      "Accept": "*/*, application/x-ofx"
+    };
+
+    return this.ajax(url, "POST", headers, outText, async);
   }
 
   /**
@@ -227,6 +244,25 @@ export class OFXV1Connection implements OFXConnection {
     this.async = async;
   }
   
+  /**
+   * Async mode
+   *
+   * @return {bool} Whether in async mode.
+   */
+  public getAjax() {
+    return this.ajax;
+  }
+  
+  
+  /**
+   * Async mode
+   *
+   * @param {bool} async async mode.
+   */
+  public setAjax(ajax: AjaxHandler) {
+    this.ajax = ajax;
+  }
+
 }
 
 LOG = LogFactory.getLog(OFXV1Connection);
