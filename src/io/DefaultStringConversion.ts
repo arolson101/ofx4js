@@ -40,7 +40,7 @@ export class DefaultStringConversion implements StringConversion {
     if (!value) {
       return null;
     }
-    else if (value instanceof Boolean) {
+    else if (typeof value === "boolean") {
       return value ? "Y" : "N";
     }
     else if (value instanceof Date) {
@@ -66,6 +66,9 @@ export class DefaultStringConversion implements StringConversion {
       }
       
       return <E><any>statusCode;
+    }
+    else if (isAssignableFrom(Number, clazz)) {
+      return <E><any>parseFloat(value)
     }
     else if (isAssignableFrom(Boolean, clazz)) {
       return <E><any>("Y" === value.toUpperCase());
@@ -96,8 +99,8 @@ export class DefaultStringConversion implements StringConversion {
     var day: number = parseInt(value.substr(6, 2));
     var hour: number = parseInt(value.substr(8, 2));
     var minute: number = parseInt(value.substr(10, 2));
-    var second: number = parseInt(value.substr(12, 2));
-    var milli: number = parseInt(value.substr(15, 3));
+    var second: number = parseInt(value.substr(12, 2)) || 0;
+    var milli: number = parseInt(value.substr(15, 3)) || 0;
   
     // add timezone offset
     var bracket: number = value.indexOf("[");

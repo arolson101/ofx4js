@@ -132,7 +132,11 @@ export class AggregateAttribute {
   }
 
   public get(instance: Object) /*throws Exception*/: any {
-    return this.readMethod.call(instance);
+    let val = this.readMethod.call(instance);
+    if (this.attributeType && val in this.attributeType) {
+      val = this.attributeType[val]
+    }
+    return val;
   }
 
   public set(value: any, instance: Object) /*throws Exception*/: void {
