@@ -7432,6 +7432,10 @@ declare module ofx4js.client.net {
     import AggregateMarshaller = ofx4js.io.AggregateMarshaller;
     import AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
     import OutputBuffer = ofx4js.io.OutputBuffer;
+    type HeadersObject = {
+        [header: string]: string;
+    };
+    type AjaxHandler = (url: string, verb: string, headers: HeadersObject, data: string, async: boolean) => Promise<string>;
     /**
      * Base implementation for an OFX connection.
      *
@@ -7441,6 +7445,7 @@ declare module ofx4js.client.net {
         private async;
         private marshaller;
         private unmarshaller;
+        private ajax;
         constructor();
         sendRequest(request: RequestEnvelope, url: string): Promise<ResponseEnvelope>;
         /**
@@ -7508,6 +7513,20 @@ declare module ofx4js.client.net {
          * @param {bool} async async mode.
          */
         setAsync(async: boolean): void;
+        /**
+         * Async mode
+         *
+         * @return {bool} Whether in async mode.
+         */
+        getAjax(): (url: string, verb: string, headers: {
+            [header: string]: string;
+        }, data: string, async: boolean) => Promise<string>;
+        /**
+         * Async mode
+         *
+         * @param {bool} async async mode.
+         */
+        setAjax(ajax: AjaxHandler): void;
     }
 }
 declare module ofx4js.io.v2 {
