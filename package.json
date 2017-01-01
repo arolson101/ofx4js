@@ -8,6 +8,7 @@
     "finance"
   ],
   "main": "lib/ofx4js.js",
+  "typings": "lib/ofx4js.d.ts",
   "typescript": {
     "definition": "./lib/ofx4js.d.ts"
   },
