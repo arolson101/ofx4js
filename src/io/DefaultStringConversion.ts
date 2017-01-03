@@ -127,7 +127,7 @@ export class DefaultStringConversion implements StringConversion {
     var gmt = new Date(date.valueOf() + date.getTimezoneOffset() * 60000);
     return this.pad(gmt.getFullYear(), 4) +
       this.pad(gmt.getMonth() + 1, 2) +
-      this.pad(gmt.getDay(), 2) +
+      this.pad(gmt.getDate(), 2) +
       this.pad(gmt.getHours(), 2) +
       this.pad(gmt.getMinutes(), 2) +
       this.pad(gmt.getSeconds(), 2) +
