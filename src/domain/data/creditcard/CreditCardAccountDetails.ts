@@ -72,6 +72,6 @@ export class CreditCardAccountDetails implements AccountDetails {
 
 Aggregate_add( CreditCardAccountDetails );
 Element_add(CreditCardAccountDetails, { name: "ACCTID", required: true, order: 0, type: String, read: CreditCardAccountDetails.prototype.getAccountNumber, write: CreditCardAccountDetails.prototype.setAccountNumber });
-Element_add(CreditCardAccountDetails, { name: "ACCKEY", order: 10, type: String, read: CreditCardAccountDetails.prototype.getAccountKey, write: CreditCardAccountDetails.prototype.setAccountKey });
+Element_add(CreditCardAccountDetails, { name: "ACCTKEY", order: 10, type: String, read: CreditCardAccountDetails.prototype.getAccountKey, write: CreditCardAccountDetails.prototype.setAccountKey });
 
 }
