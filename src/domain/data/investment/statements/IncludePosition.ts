@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-
-module ofx4js.domain.data.investment.statements {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
 
 /**
@@ -32,7 +27,7 @@ export class IncludePosition {
 
   private sentDownDate: Date;
   private includePositions: boolean;
-  
+
   constructor() {
     this.includePositions = true;
   }
@@ -79,5 +74,3 @@ export class IncludePosition {
 Aggregate_add( IncludePosition, "INCPOS" );
 Element_add(IncludePosition, { name: "DTASOF", order: 0, type: Date, read: IncludePosition.prototype.getDateSentDown, write: IncludePosition.prototype.setDateSentDown });
 Element_add(IncludePosition, { name: "INCLUDE", order: 10, type: Boolean, read: IncludePosition.prototype.getIncludePositions, write: IncludePosition.prototype.setIncludePositions });
-
-}

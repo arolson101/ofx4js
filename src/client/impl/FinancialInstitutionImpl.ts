@@ -13,90 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../collections/SortedSet'/>
-///<reference path='../../OFXException'/>
-///<reference path='../../OFXStatusException'/>
-///<reference path='../../client/NoOFXResponseException'/>
-///<reference path='../../UnsupportedOFXSecurityTypeException'/>
-///<reference path='../../OFXTransactionException'/>
-///<reference path='../context/OFXApplicationContextHolder'/>
-///<reference path='../../domain/data/signon/SignonRequest'/>
-///<reference path='../../domain/data/signon/SignonRequestMessageSet'/>
-///<reference path='../../domain/data/signup/SignupRequestMessageSet'/>
-///<reference path='../../domain/data/signup/SignupResponseMessageSet'/>
-///<reference path='../../domain/data/common/StatusHolder'/>
-///<reference path='../../domain/data/profile/ProfileRequestMessageSet'/>
-///<reference path='../../domain/data/profile/ProfileRequestTransaction'/>
-///<reference path='../../domain/data/profile/ProfileResponse'/>
-///<reference path='../../domain/data/profile/ProfileResponseMessageSet'/>
-///<reference path='../../domain/data/profile/ProfileResponseTransaction'/>
-///<reference path='../../domain/data/signup/AccountProfile'/>
-///<reference path='../../domain/data/signup/AccountInfoRequest'/>
-///<reference path='../../domain/data/signup/AccountInfoResponse'/>
-///<reference path='../../domain/data/ApplicationSecurity'/>
-///<reference path='../../domain/data/RequestEnvelope'/>
-///<reference path='../../domain/data/RequestMessageSet'/>
-///<reference path='../../domain/data/ResponseMessageSet'/>
-///<reference path='../net/OFXConnection'/>
-///<reference path='../net/OFXConnectionException'/>
-///<reference path='../BankAccount'/>
-///<reference path='../FinancialInstitution'/>
-///<reference path='BankingAccountImpl'/>
-///<reference path='InvestmentAccountImpl'/>
-///<reference path='../../collections/collections'/>
+import { OFXConnection } from "../net/OFXConnection";
+import { FinancialInstitutionData } from "../FinancialInstitutionData";
+import { OFXException } from "../../OFXException";
+import { FinancialInstitutionProfile } from "../FinancialInstitutionProfile";
+import { RequestEnvelope } from "../../domain/data/RequestEnvelope";
+import { SignonRequest } from "../../domain/data/signon/SignonRequest";
+import { ProfileRequestMessageSet } from "../../domain/data/profile/ProfileRequestMessageSet";
+import { ResponseEnvelope } from "../../domain/data/ResponseEnvelope";
+import { AccountProfile } from "../../domain/data/signup/AccountProfile";
+import { SignupRequestMessageSet } from "../../domain/data/signup/SignupRequestMessageSet";
+import { BankAccountDetails } from "../../domain/data/banking/BankAccountDetails";
+import { BankAccount } from "../BankAccount";
+import { BankingAccountImpl } from "./BankingAccountImpl";
+import { CreditCardAccountDetails } from "../../domain/data/creditcard/CreditCardAccountDetails";
+import { CreditCardAccount } from "../CreditCardAccount";
+import { CreditCardAccountImpl } from "./CreditCardAccountImpl";
+import { InvestmentAccountDetails } from "../../domain/data/investment/accounts/InvestmentAccountDetails";
+import { InvestmentAccount } from "../InvestmentAccount";
+import { InvestmentAccountImpl } from "./InvestmentAccountImpl";
+import { SortedSet } from "../../collections/SortedSet";
+import { RequestMessageSet } from "../../domain/data/RequestMessageSet";
+import { SignonRequestMessageSet } from "../../domain/data/signon/SignonRequestMessageSet";
+import { ProfileResponseMessageSet } from "../../domain/data/profile/ProfileResponseMessageSet";
+import { MessageSetType } from "../../domain/data/MessageSetType";
+import { ProfileResponseTransaction } from "../../domain/data/profile/ProfileResponseTransaction";
+import { ProfileResponse } from "../../domain/data/profile/ProfileResponse";
+import { ApplicationSecurity } from "../../domain/data/ApplicationSecurity";
+import { UnsupportedOFXSecurityTypeException } from "../../UnsupportedOFXSecurityTypeException";
+import { ResponseMessageSet } from "../../domain/data/ResponseMessageSet";
+import { NoOFXResponseException } from "../NoOFXResponseException";
+import { SignonResponse } from "../../domain/data/signon/SignonResponse";
+import { SignonResponseMessageSet } from "../../domain/data/signon/SignonResponseMessageSet";
+import { StringSet } from "../../collections/collections";
+import { TransactionWrappedRequestMessage } from "../../domain/data/TransactionWrappedRequestMessage";
+import { RequestMessage } from "../../domain/data/RequestMessage";
+import { instanceof_StatusHolder, StatusHolder } from "../../domain/data/common/StatusHolder";
+import { TransactionWrappedResponseMessage } from "../../domain/data/TransactionWrappedResponseMessage";
+import { ResponseMessage } from "../../domain/data/ResponseMessage";
+import { OFXTransactionException } from "../../OFXTransactionException";
+import { Status, KnownCode } from "../../domain/data/common/Status";
+import { OFXStatusException } from "../../OFXStatusException";
+import { ProfileRequestTransaction } from "../../domain/data/profile/ProfileRequestTransaction";
+import { ProfileRequest } from "../../domain/data/profile/ProfileRequest";
+import { OFXApplicationContextHolder } from "../context/OFXApplicationContextHolder";
+import { AccountInfoRequestTransaction } from "../../domain/data/signup/AccountInfoRequestTransaction";
+import { AccountInfoRequest } from "../../domain/data/signup/AccountInfoRequest";
+import { SignupResponseMessageSet } from "../../domain/data/signup/SignupResponseMessageSet";
+import { AccountInfoResponseTransaction } from "../../domain/data/signup/AccountInfoResponseTransaction";
+import { AccountInfoResponse } from "../../domain/data/signup/AccountInfoResponse";
+import { FinancialInstitution } from "../../domain/data/signon/FinancialInstitution";
 
-module ofx4js.client.impl {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import OFXException = ofx4js.OFXException;
-import OFXStatusException = ofx4js.OFXStatusException;
-import UnsupportedOFXSecurityTypeException = ofx4js.UnsupportedOFXSecurityTypeException;
-import OFXTransactionException = ofx4js.OFXTransactionException;
-import NoOFXResponseException = ofx4js.client.NoOFXResponseException;
-//import client.* = ofx4js.client.*;
-import OFXApplicationContextHolder = ofx4js.client.context.OFXApplicationContextHolder;
-//import data.* = ofx4js.domain.data.*;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-import AccountProfile = ofx4js.domain.data.signup.AccountProfile;
-import AccountInfoRequest = ofx4js.domain.data.signup.AccountInfoRequest;
-import AccountInfoRequestTransaction = ofx4js.domain.data.signup.AccountInfoRequestTransaction;
-import AccountInfoResponse = ofx4js.domain.data.signup.AccountInfoResponse;
-import AccountInfoResponseTransaction = ofx4js.domain.data.signup.AccountInfoResponseTransaction;
-import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
-import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import ProfileRequest = ofx4js.domain.data.profile.ProfileRequest;
-import ProfileRequestMessageSet = ofx4js.domain.data.profile.ProfileRequestMessageSet;
-import ProfileRequestTransaction = ofx4js.domain.data.profile.ProfileRequestTransaction;
-import ProfileResponse = ofx4js.domain.data.profile.ProfileResponse;
-import ProfileResponseMessageSet = ofx4js.domain.data.profile.ProfileResponseMessageSet;
-import ProfileResponseTransaction = ofx4js.domain.data.profile.ProfileResponseTransaction;
-import InvestmentAccount = ofx4js.client.InvestmentAccount;
-import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-//import signup.* = ofx4js.domain.data.signup.*;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-import Status = ofx4js.domain.data.common.Status;
-import KnownCode = ofx4js.domain.data.common.KnownCode;
-import StatusHolder = ofx4js.domain.data.common.StatusHolder;
-import instanceof_StatusHolder = ofx4js.domain.data.common.instanceof_StatusHolder;
-import SignonRequest = ofx4js.domain.data.signon.SignonRequest;
-//import profile.* = ofx4js.domain.data.signon.SignonRequest;
-import SignonRequestMessageSet = ofx4js.domain.data.signon.SignonRequestMessageSet;
-import SignonResponse = ofx4js.domain.data.signon.SignonResponse;
-import SignonResponseMessageSet = ofx4js.domain.data.signon.SignonResponseMessageSet;
-import SignupRequestMessageSet = ofx4js.domain.data.signup.SignupRequestMessageSet;
-import SignupResponseMessageSet = ofx4js.domain.data.signup.SignupResponseMessageSet;
-import OFXConnection = ofx4js.client.net.OFXConnection;
-import OFXConnectionException = ofx4js.client.net.OFXConnectionException;
-import BankAccount = ofx4js.client.BankAccount;
-import StringSet = ofx4js.collections.StringSet;
 
 //import java.net.URL;
 
@@ -105,12 +72,13 @@ import StringSet = ofx4js.collections.StringSet;
  *
  * @author Ryan Heaton
  */
-export class FinancialInstitutionImpl implements FinancialInstitution {
+export class FinancialInstitutionImpl extends FinancialInstitution {
 
   private connection: OFXConnection;
   private data: FinancialInstitutionData;
 
   constructor(data: FinancialInstitutionData, connection: OFXConnection) {
+    super();
     if (data == null) {
       throw new OFXException("Data cannot be null");
     }
@@ -344,7 +312,7 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
   protected createSignonRequest(username: string, password: string): SignonRequest {
     var signonRequest: SignonRequest = new SignonRequest();
     signonRequest.setTimestamp(new Date());
-    var fi: ofx4js.domain.data.signon.FinancialInstitution = new ofx4js.domain.data.signon.FinancialInstitution();
+    var fi: FinancialInstitution = new FinancialInstitution();
     fi.setId(this.getData().getFinancialInstitutionId());
     fi.setOrganization(this.getData().getOrganization());
     signonRequest.setFinancialInstitution(fi);
@@ -417,6 +385,4 @@ export class FinancialInstitutionImpl implements FinancialInstitution {
   public getData(): FinancialInstitutionData {
     return this.data;
   }
-}
-
 }

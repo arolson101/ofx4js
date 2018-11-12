@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='FinancialInstitution'/>
+import { FinancialInstitution } from "./FinancialInstitution";
+import { FinancialInstitutionData } from "./FinancialInstitutionData";
 
-module ofx4js.client {
 
 /**
  * @author Ryan Heaton
@@ -37,7 +37,5 @@ export interface FinancialInstitutionService {
    * @return The financial institution, or null if not found.
    */
   getFinancialInstitution(data: FinancialInstitutionData): FinancialInstitution;
-
-}
 
 }

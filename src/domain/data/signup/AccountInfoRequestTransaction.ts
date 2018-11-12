@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../TransactionWrappedRequestMessage'/>
-///<reference path='AccountInfoRequest'/>
+import { TransactionWrappedRequestMessage } from "../TransactionWrappedRequestMessage";
+import { AccountInfoRequest } from "./AccountInfoRequest";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.signup {
-
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -57,5 +52,3 @@ export class AccountInfoRequestTransaction extends TransactionWrappedRequestMess
 
 Aggregate_add( AccountInfoRequestTransaction, "ACCTINFOTRNRQ" );
 ChildAggregate_add(AccountInfoRequestTransaction, { required: true, order: 30, type: AccountInfoRequest, read: AccountInfoRequestTransaction.prototype.getMessage, write: AccountInfoRequestTransaction.prototype.setMessage });
-
-}

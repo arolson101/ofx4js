@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetProfile'/>
-///<reference path='../MessageSetType'/>
-///<reference path='CoreMessageSetInfo'/>
+import { MessageSetProfile } from "../MessageSetProfile";
+import { CoreMessageSetInfo } from "./CoreMessageSetInfo";
+import { MessageSetType } from "../MessageSetType";
+import { ApplicationSecurity } from "../ApplicationSecurity";
+import { SynchronizationCapability } from "./SynchronizationCapability";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.profile {
-
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
-import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
 
 /**
  * Information specific to a version of a message set.
@@ -31,7 +27,7 @@ import MessageSetType = ofx4js.domain.data.MessageSetType;
  * @author Ryan Heaton
  * @see "Section 7.2.1, OFX Spec"
  */
-export /*abstract*/ class VersionSpecificMessageSetInfo implements MessageSetProfile {
+export abstract class VersionSpecificMessageSetInfo implements MessageSetProfile {
 
   private core: CoreMessageSetInfo;
 
@@ -58,7 +54,7 @@ export /*abstract*/ class VersionSpecificMessageSetInfo implements MessageSetPro
    *
    * @return The message set type.
    */
-  public /*abstract*/ getMessageSetType(): MessageSetType { throw new OFXException("abstract"); }
+  public abstract getMessageSetType(): MessageSetType;
 
   public getVersion(): string {
     return this.core != null ? this.core.getVersion() : null;
@@ -98,4 +94,3 @@ export /*abstract*/ class VersionSpecificMessageSetInfo implements MessageSetPro
 }
 
 ChildAggregate_add(VersionSpecificMessageSetInfo, { order: 0, type: CoreMessageSetInfo, read: VersionSpecificMessageSetInfo.prototype.getCore, write: VersionSpecificMessageSetInfo.prototype.setCore });
-}

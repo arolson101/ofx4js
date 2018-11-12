@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../ResponseMessageSet'/>
-///<reference path='../MessageSetType'/>
-///<reference path='AccountInfoResponseTransaction'/>
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ResponseMessageSet } from "../ResponseMessageSet";
+import { AccountInfoResponseTransaction } from "./AccountInfoResponseTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { ResponseMessage } from "../ResponseMessage";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.signup {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -71,5 +68,3 @@ export class SignupResponseMessageSet extends ResponseMessageSet {
 
 Aggregate_add(SignupResponseMessageSet, "SIGNUPMSGSRSV1");
 ChildAggregate_add(SignupResponseMessageSet, { order: 0, type: AccountInfoResponseTransaction, read: SignupResponseMessageSet.prototype.getAccountInfoResponse, write: SignupResponseMessageSet.prototype.setAccountInfoResponse });
-
-}

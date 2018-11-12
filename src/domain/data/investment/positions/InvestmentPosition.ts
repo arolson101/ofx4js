@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BasePosition'/>
+import { SecurityId } from "../../seclist/SecurityId";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { PositionType, PositionType_fromOfx } from "./PositionType";
+import { Inv401KSource, Inv401KSource_fromOfx } from "./Inv401KSource";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.positions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Class for the investment position aggregate.
@@ -309,5 +304,3 @@ Element_add(InvestmentPosition, { name: "DTPRICEASOF", required: true, order: 70
 Element_add(InvestmentPosition, { name: "CURRENCY", order: 80, type: String, read: InvestmentPosition.prototype.getCurrencyCode, write: InvestmentPosition.prototype.setCurrencyCode });
 Element_add(InvestmentPosition, { name: "MEMO", order: 90, type: String, read: InvestmentPosition.prototype.getMemo, write: InvestmentPosition.prototype.setMemo });
 Element_add(InvestmentPosition, { name: "INV401KSOURCE", order: 100, type: String, read: InvestmentPosition.prototype.get401kSource, write: InvestmentPosition.prototype.set401kSource });
-
-}

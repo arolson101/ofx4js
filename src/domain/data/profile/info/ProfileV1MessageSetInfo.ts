@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+import { VersionSpecificMessageSetInfo } from "../VersionSpecificMessageSetInfo";
+import { MessageSetType } from "../../MessageSetType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
 
-module ofx4js.domain.data.profile.info {
-
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -32,5 +28,3 @@ export class ProfileV1MessageSetInfo extends VersionSpecificMessageSetInfo {
 }
 
 Aggregate_add( ProfileV1MessageSetInfo, "PROFMSGSETV1" );
-
-}

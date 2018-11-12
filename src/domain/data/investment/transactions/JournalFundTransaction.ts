@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='BaseOtherInvestmentTransaction'/>
+import { TransactionType } from "./TransactionType";
+import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for journal fund transactions between sub-accounts within the same investment
@@ -126,5 +120,3 @@ Aggregate_add( JournalFundTransaction, "JRNLFUND" );
 Element_add(JournalFundTransaction, { name: "SUBACCTFROM", order: 20, type: String, read: JournalFundTransaction.prototype.getFromSubAccountFund, write: JournalFundTransaction.prototype.setFromSubAccountFund });
 Element_add(JournalFundTransaction, { name: "SUBACCTTO", order: 30, type: String, read: JournalFundTransaction.prototype.getToSubAccountFund, write: JournalFundTransaction.prototype.setToSubAccountFund });
 Element_add(JournalFundTransaction, { name: "TOTAL", order: 40, type: Number, read: JournalFundTransaction.prototype.getTotal, write: JournalFundTransaction.prototype.setTotal });
-
-}

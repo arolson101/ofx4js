@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.seclist {
-
 /**
  * The type of mutual fund.
  * @see "Section 13.8.5.2, OFX Spec"
@@ -38,6 +36,4 @@ export function MutualFundType_fromOfx(ofxVal: string): MutualFundType {
   } else {
     return null;
   }
-}
-
 }

@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='StringConversion'/>
-///<reference path='DefaultStringConversion'/>
-///<reference path='AggregateStackContentHandler'/>
-///<reference path='OFXReader'/>
-///<reference path='BaseOFXReader'/>
+import { StringConversion } from "./StringConversion";
+import { DefaultStringConversion } from "./DefaultStringConversion";
+import { StringReader } from "./StringReader";
+import { OFXReader } from "./OFXReader";
+import { BaseOFXReader } from "./BaseOFXReader";
+import { AggregateStackContentHandler } from "./AggregateStackContentHandler";
 
-module ofx4js.io {
 
 /**
  * Unmarshaller for aggregate objects.
- * 
+ *
  * @author Ryan Heaton
  */
 export class AggregateUnmarshaller<A> {
@@ -71,6 +71,4 @@ export class AggregateUnmarshaller<A> {
   public setConversion(conversion: StringConversion): void {
     this.conversion = conversion;
   }
-}
-
 }

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.accounts {
-
 /**
  * Activation status of an account.
  * @see "Section 13.6.2, OFX Spec"
@@ -38,6 +36,4 @@ export function ActivationStatus_fromOfx(ofxVal: string): ActivationStatus {
   } else {
     return null;
   }
-}
-
 }

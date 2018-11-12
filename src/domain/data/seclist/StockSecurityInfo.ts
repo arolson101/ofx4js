@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='BaseSecurityInfo'/>
-///<reference path='StockType'/>
-///<reference path='AssetClass'/>
-
-module ofx4js.domain.data.seclist {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import { BaseSecurityInfo } from "./BaseSecurityInfo";
+import { StockType, StockType_fromOfx } from "./StockType";
+import { AssetClass, AssetClass_fromOfx } from "./AssetClass";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
 /**
  * Info about a stock security.
@@ -159,5 +154,3 @@ Element_add(StockSecurityInfo, { name: "YIELD", order: 30, type: Number, read: S
 Element_add(StockSecurityInfo, { name: "DTYIELDASOF", order: 40, type: Date, read: StockSecurityInfo.prototype.getDateYieldAsOf, write: StockSecurityInfo.prototype.setDateYieldAsOf });
 Element_add(StockSecurityInfo, { name: "ASSETCLASS", order: 50, type: String, read: StockSecurityInfo.prototype.getAssetClass, write: StockSecurityInfo.prototype.setAssetClass });
 Element_add(StockSecurityInfo, { name: "FIASSETCLASS", order: 60, type: String, read: StockSecurityInfo.prototype.getFiAssetClass, write: StockSecurityInfo.prototype.setFiAssetClass });
-
-}

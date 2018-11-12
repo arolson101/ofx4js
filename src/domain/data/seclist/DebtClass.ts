@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.seclist {
-
 /**
  * The class of debt.
  * @see "Section 13.8.5.2, OFX Spec"
@@ -41,6 +39,4 @@ export function DebtClass_fromOfx(ofxVal: string): DebtClass {
   } else {
     return null;
   }
-}
-
 }

@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data {
-
 /**
  * A message applicable to a request message set.
  *
  * @author Ryan Heaton
  */
-export /*abstract*/ class RequestMessage {
-}
-
+export abstract class RequestMessage {
 }

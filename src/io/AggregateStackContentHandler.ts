@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../collections/Stack'/>
-///<reference path='OFXHandler'/>
-///<reference path='AggregateInfo'/>
-///<reference path='AggregateAttribute'/>
-///<reference path='OFXSyntaxException'/>
+import { Log, LogFactory } from "../log/Log";
+import { AggregateInfo } from "./AggregateInfo";
+import { OFXException } from "../OFXException";
+import { OFXHandler } from "./OFXHandler";
+import { Stack } from "../collections/Stack";
+import { StringConversion } from "./StringConversion";
+import { AggregateIntrospector } from "./AggregateIntrospector";
+import { AggregateAttribute, AggregateAttributeType } from "./AggregateAttribute";
+import { OFXSyntaxException } from "./OFXSyntaxException";
 
-module ofx4js.io {
-
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
-import Stack = ofx4js.collections.Stack;
 
 var LOG: Log;
 
@@ -32,18 +31,18 @@ class AggregateInfoHolder {
   public info: AggregateInfo;
   public aggregateName: string;
   public currentAttributeIndex: number;
-  
+
   constructor(arg1: string | Object, arg2?: AggregateInfo, arg3?: string) {
     this.currentAttributeIndex = 0;
     switch(arguments.length) {
       case 1:
         this.AggregateInfoHolder1.apply(this, arguments);
         break;
-        
+
       case 3:
         this.AggregateInfoHolder3.apply(this, arguments);
         break;
-        
+
       default:
         throw new OFXException("invalid number of arguments");
     }
@@ -223,5 +222,3 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
 }
 
 LOG = LogFactory.getLog(AggregateStackContentHandler);
-
-}

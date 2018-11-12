@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../RequestMessage'/>
+import { RequestMessage } from "../RequestMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
 
-module ofx4js.domain.data.common {
-
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
@@ -31,5 +25,3 @@ export class T1099Request extends RequestMessage {
 }
 
 Aggregate_add( T1099Request, "STMTRQ" );
-
-}

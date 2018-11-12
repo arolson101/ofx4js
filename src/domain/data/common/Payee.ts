@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -211,5 +207,3 @@ Element_add(Payee, { name: "STATE", required: true, order: 80, type: String, rea
 Element_add(Payee, { name: "POSTALCODE", required: true, order: 90, type: String, read: Payee.prototype.getZip, write: Payee.prototype.setZip });
 Element_add(Payee, { name: "COUNTRY", required: true, order: 100, type: String, read: Payee.prototype.getCountry, write: Payee.prototype.setCountry });
 Element_add(Payee, { name: "PHONE", order: 110, type: String, read: Payee.prototype.getPhone, write: Payee.prototype.setPhone });
-
-}

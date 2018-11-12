@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../RequestMessageSet'/>
-///<reference path='AccountInfoRequestTransaction'/>
+import { RequestMessageSet } from "../RequestMessageSet";
+import { AccountInfoRequestTransaction } from "./AccountInfoRequestTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { RequestMessage } from "../RequestMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.signup {
-
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -66,12 +61,10 @@ export class SignupRequestMessageSet extends RequestMessageSet {
     if (this.getAccountInfoRequest() != null) {
       messages.push(this.getAccountInfoRequest());
     }
-    
+
     return messages;
   }
 }
 
 Aggregate_add(SignupRequestMessageSet, "SIGNUPMSGSRQV1");
 ChildAggregate_add(SignupRequestMessageSet, { order: 0, type: AccountInfoRequestTransaction, read: SignupRequestMessageSet.prototype.getAccountInfoRequest, write: SignupRequestMessageSet.prototype.setAccountInfoRequest });
-
-}

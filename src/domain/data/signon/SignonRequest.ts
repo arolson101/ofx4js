@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../RequestMessage'/>
-///<reference path='FinancialInstitution'/>
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { RequestMessage } from "../RequestMessage";
+import { Element_add } from "../../../meta/Element_add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
+import { FinancialInstitution } from "./FinancialInstitution";
 
-module ofx4js.domain.data.signon {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
 
 /**
  * Sign-on request
@@ -54,7 +48,7 @@ export class SignonRequest extends RequestMessage {
   private additionalCredentials2: string;
   private authToken: string;
   private accessKey: string;
-  
+
   constructor() {
     super();
     this.language = "ENG"; //Locale.US.getISO3Language().toUpperCase();
@@ -352,5 +346,3 @@ Element_add(SignonRequest, { name: "USERCRED1", order: 110, type: String, read: 
 Element_add(SignonRequest, { name: "USERCRED2", order: 120, type: String, read: SignonRequest.prototype.getAdditionalCredentials2, write: SignonRequest.prototype.setAdditionalCredentials2 });
 Element_add(SignonRequest, { name: "AUTHTOKEN", order: 130, type: String, read: SignonRequest.prototype.getAuthToken, write: SignonRequest.prototype.setAuthToken });
 Element_add(SignonRequest, { name: "ACCESSKEY", order: 140, type: String, read: SignonRequest.prototype.getAccessKey, write: SignonRequest.prototype.setAccessKey });
-
-}

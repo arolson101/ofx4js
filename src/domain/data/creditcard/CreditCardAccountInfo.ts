@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../common/AccountStatus'/>
-///<reference path='../common/AccountInfo'/>
-///<reference path='../common/AccountDetails'/>
-///<reference path='CreditCardAccountDetails'/>
+import { AccountInfo } from "../common/AccountInfo";
+import { CreditCardAccountDetails } from "./CreditCardAccountDetails";
+import { AccountStatus } from "../common/AccountStatus";
+import { AccountDetails } from "../common/AccountDetails";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.creditcard {
-
-import AccountStatus = ofx4js.domain.data.common.AccountStatus;
-import AccountInfo = ofx4js.domain.data.common.AccountInfo;
-import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -143,5 +135,3 @@ Element_add(CreditCardAccountInfo, { name: "SUPTXDL", required: true, order: 10,
 Element_add(CreditCardAccountInfo, { name: "XFERSRC", required: true, order: 20, type: Boolean, read: CreditCardAccountInfo.prototype.getSupportsTransferToOtherAccountOperations, write: CreditCardAccountInfo.prototype.setSupportsTransferToOtherAccountOperations });
 Element_add(CreditCardAccountInfo, { name: "XFERDEST", required: true, order: 30, type: Boolean, read: CreditCardAccountInfo.prototype.getSupportsTransferFromOtherAccountOperations, write: CreditCardAccountInfo.prototype.setSupportsTransferFromOtherAccountOperations });
 Element_add(CreditCardAccountInfo, { name: "SVCSTATUS", required: true, order: 40, type: AccountStatus, read: CreditCardAccountInfo.prototype.getStatus, write: CreditCardAccountInfo.prototype.setStatus });
-
-}

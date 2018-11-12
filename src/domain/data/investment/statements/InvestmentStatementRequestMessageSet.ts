@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../MessageSetType'/>
-///<reference path='../../RequestMessage'/>
-///<reference path='../../RequestMessageSet'/>
-///<reference path='InvestmentStatementRequestTransaction'/>
+import { RequestMessageSet } from "../../RequestMessageSet";
+import { InvestmentStatementRequestTransaction } from "./InvestmentStatementRequestTransaction";
+import { MessageSetType } from "../../MessageSetType";
+import { RequestMessage } from "../../RequestMessage";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.investment.statements {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Investment statement request message set.
@@ -72,5 +65,3 @@ export class InvestmentStatementRequestMessageSet extends RequestMessageSet {
 
 Aggregate_add( InvestmentStatementRequestMessageSet, "INVSTMTMSGSRQV1" );
 ChildAggregate_add(InvestmentStatementRequestMessageSet, { order: 0, type: InvestmentStatementRequestTransaction, read: InvestmentStatementRequestMessageSet.prototype.getStatementRequest, write: InvestmentStatementRequestMessageSet.prototype.setStatementRequest });
-
-}

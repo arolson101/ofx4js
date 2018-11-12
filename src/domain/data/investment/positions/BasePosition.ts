@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../accounts/SubAccountType'/>
-///<reference path='../../seclist/SecurityId'/>
-///<reference path='InvestmentPosition'/>
-///<reference path='Inv401KSource'/>
-///<reference path='PositionType'/>
+import { InvestmentPosition } from "./InvestmentPosition";
+import { SecurityId } from "../../seclist/SecurityId";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { PositionType, PositionType_fromOfx } from "./PositionType";
+import { Inv401KSource, Inv401KSource_fromOfx } from "./Inv401KSource";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.investment.positions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for the various types of positions.
@@ -199,4 +193,3 @@ export class BasePosition {
 }
 
 ChildAggregate_add(BasePosition, { required: true, order: 10, type: InvestmentPosition, read: BasePosition.prototype.getInvestmentPosition, write: BasePosition.prototype.setInvestmentPosition });
-}

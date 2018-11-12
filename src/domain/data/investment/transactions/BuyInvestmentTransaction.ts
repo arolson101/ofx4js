@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='BaseBuyInvestmentTransaction'/>
-///<reference path='OriginalCurrency'/>
+import { InvestmentTransaction } from "./InvestmentTransaction";
+import { SecurityId } from "../../seclist/SecurityId";
+import { OriginalCurrency } from "./OriginalCurrency";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Buy investment transaction aggregate ("INVBUY").
@@ -223,7 +216,7 @@ export class BuyInvestmentTransaction {
    * @param fees the transaction fees
    */
   public setFees(fees: number): void {
-    this.fees = fees; 
+    this.fees = fees;
   }
 
   /**
@@ -389,5 +382,3 @@ Element_add(BuyInvestmentTransaction, { name: "CURRENCY", order: 110, type: Stri
 ChildAggregate_add(BuyInvestmentTransaction, { order: 120, type: OriginalCurrency, read: BuyInvestmentTransaction.prototype.getOriginalCurrencyInfo, write: BuyInvestmentTransaction.prototype.setOriginalCurrencyInfo });
 Element_add(BuyInvestmentTransaction, { name: "SUBACCTSEC", order: 130, type: String, read: BuyInvestmentTransaction.prototype.getSubAccountSecurity, write: BuyInvestmentTransaction.prototype.setSubAccountSecurity });
 Element_add(BuyInvestmentTransaction, { name: "SUBACCTFUND", order: 140, type: String, read: BuyInvestmentTransaction.prototype.getSubAccountFund, write: BuyInvestmentTransaction.prototype.setSubAccountFund });
-
-}

@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../RequestMessage'/>
+import { RequestMessage } from "../RequestMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.signon {
-
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Request to change a user password.
@@ -74,5 +69,3 @@ export class PasswordChangeRequest extends RequestMessage {
 Aggregate_add( PasswordChangeRequest, "PINCHRQ" );
 Element_add(PasswordChangeRequest, { name: "USERID", required: true, order: 0, type: String, read: PasswordChangeRequest.prototype.getUserId, write: PasswordChangeRequest.prototype.setUserId });
 Element_add(PasswordChangeRequest, { name: "NEWUSERPASS", required: true, order: 10, type: String, read: PasswordChangeRequest.prototype.getNewPassword, write: PasswordChangeRequest.prototype.setNewPassword });
-
-}

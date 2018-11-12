@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../common/AccountDetails'/>
-///<reference path='../../common/AccountInfo'/>
-///<reference path='AccountType'/>
-///<reference path='ActivationStatus'/>
-///<reference path='InvestmentAccountDetails'/>
-///<reference path='UnitedStatesAccountType'/>
+import { AccountInfo } from "../../common/AccountInfo";
+import { InvestmentAccountDetails } from "./InvestmentAccountDetails";
+import { AccountDetails } from "../../common/AccountDetails";
+import { UnitedStatesAccountType, UnitedStatesAccountType_fromOfx } from "./UnitedStatesAccountType";
+import { ActivationStatus, ActivationStatus_fromOfx } from "./ActivationStatus";
+import { AccountType } from "./AccountType";
+import { AccountType_fromOfx } from "./AccountType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.accounts {
-
-import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-import AccountInfo = ofx4js.domain.data.common.AccountInfo;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Aggregate for the info about a brokerage account.
@@ -205,5 +199,3 @@ Element_add(InvestmentAccountInfo, { name: "CHECKING", required: true, order: 20
 Element_add(InvestmentAccountInfo, { name: "SVCSTATUS", required: true, order: 30, type: String, read: InvestmentAccountInfo.prototype.getActivationStatus, write: InvestmentAccountInfo.prototype.setActivationStatus });
 Element_add(InvestmentAccountInfo, { name: "INVACCTTYPE", order: 40, type: String, read: InvestmentAccountInfo.prototype.getInvestmentAccountType, write: InvestmentAccountInfo.prototype.setInvestmentAccountType });
 Element_add(InvestmentAccountInfo, { name: "OPTIONLEVEL", order: 50, type: String, read: InvestmentAccountInfo.prototype.getOptionLevel, write: InvestmentAccountInfo.prototype.setOptionLevel });
-
-}

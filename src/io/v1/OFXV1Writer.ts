@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../../collections/collections'/>
-///<reference path='../OFXWriter'/>
-///<reference path='../StreamWriter'/>
+import { OFXWriter } from "../OFXWriter";
+import { StreamWriter, OutputBuffer } from "../StreamWriter";
+import { OFXException } from "../../OFXException";
+import { StringMap } from "../../collections/collections";
 
-module ofx4js.io.v1 {
-
-import OFXWriter = ofx4js.io.OFXWriter;
-import StringMap = ofx4js.collections.StringMap;
 
 //import Map = java.util.Map;
 
@@ -36,7 +32,7 @@ export class OFXV1Writer implements OFXWriter {
   protected headersWritten: boolean;
   protected writer: StreamWriter;
   private writeAttributesOnNewLine: boolean;
-  
+
   constructor(out: OutputBuffer | StreamWriter) {
     this.LINE_SEPARATOR = "\r\n";
     this.headersWritten = false;
@@ -117,7 +113,7 @@ export class OFXV1Writer implements OFXWriter {
     if (value.indexOf('>') >= 0) {
       value = value.replace(/>/g, "&gt;");
     }
-    
+
     this.print('<');
     this.print(name);
     this.print('>');
@@ -163,6 +159,4 @@ export class OFXV1Writer implements OFXWriter {
   /*protected*/ print(line: string) /*throws IOException*/: void {
     this.writer.write(line == null ? "null" : line);
   }
-}
-
 }

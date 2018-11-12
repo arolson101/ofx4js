@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../project.d.ts'/>
-///<reference path='OFXHandler'/>
-///<reference path='DefaultHandler'/>
-///<reference path='OFXParseException'/>
-///<reference path='OFXV2ContentHandler'/>
-///<reference path='StringReader'/>
-///<reference path='OFXReader'/>
 
-module ofx4js.io {
-
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
-
-var sax: SAXModule = require("sax");
+import sax, { SAXParser } from "sax";
+import { Log, LogFactory } from "../log/Log";
+import { OFXReader } from "./OFXReader";
+import { OFXHandler } from "./OFXHandler";
+import { DefaultHandler } from "./DefaultHandler";
+import { StringReader } from "./StringReader";
+import { OFXParseException } from "./OFXParseException";
+import { OFXV2ContentHandler } from "./OFXV2ContentHandler";
 
 var LOG: Log;
 
@@ -52,7 +47,7 @@ function arraysEqual(a1: Array<string>, a2: Array<string>) {
 export /*abstract*/ class BaseOFXReader implements OFXReader {
   public static OFX_2_PROCESSING_INSTRUCTION_PATTERN: RegExp = /<\\?OFX ([^\\?]+)\\?>/;
   private contentHandler: OFXHandler;
-  
+
   constructor() {
     this.contentHandler = new DefaultHandler();
   }
@@ -161,7 +156,7 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
    */
   protected parseV1FromFirstElement(text: string): void {
     var strict = false;
-    var parser: SAXParser = sax.parser(strict);
+    var parser: SAXParser = sax.parser(strict, {});
     var handler = new OFXV2ContentHandler(this.getContentHandler());
     handler.install(parser);
     parser.write(text);
@@ -174,7 +169,7 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
    */
   protected parseV2FromFirstElement(text: string): void {
     var strict = true;
-    var parser: SAXParser = sax.parser(strict);
+    var parser: SAXParser = sax.parser(strict, {});
     var handler = new OFXV2ContentHandler(this.getContentHandler());
     handler.install(parser);
     parser.write(text);
@@ -220,5 +215,3 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
 }
 
 LOG = LogFactory.getLog(BaseOFXReader);
-
-}

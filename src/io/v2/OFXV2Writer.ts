@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../v1/OFXV1Writer'/>
-///<reference path='../../collections/collections'/>
+import { OFXV1Writer } from "../v1/OFXV1Writer";
+import { OutputBuffer, StreamWriter } from "../StreamWriter";
+import { StringMap } from "../../collections/collections";
+import { OFXException } from "../../OFXException";
 
-module ofx4js.io.v2 {
-
-import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
-import StringMap = ofx4js.collections.StringMap;
-
-
-//import Map = java.util.Map;
 
 /**
  * OFX writer to XML, suitable for OFX version 2.0.
@@ -76,6 +71,4 @@ export class OFXV2Writer extends OFXV1Writer {
   public isWriteAttributesOnNewLine(): boolean {
     return false;
   }
-}
-
 }

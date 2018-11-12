@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='BaseSecurityInfo'/>
+import { BaseSecurityInfo } from "./BaseSecurityInfo";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.seclist {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Aggregate for a list of securities.
@@ -42,5 +38,3 @@ export class SecurityList {
 
 Aggregate_add( SecurityList, "SECLIST" );
 ChildAggregate_add(SecurityList, { order: 10, type: Array, collectionEntryType: BaseSecurityInfo, read: SecurityList.prototype.getSecurityInfos, write: SecurityList.prototype.setSecurityInfos });
-
-}

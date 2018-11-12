@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../RequestMessage'/>
-///<reference path='StatementRange'/>
+import { RequestMessage } from "../RequestMessage";
+import { StatementRange } from "./StatementRange";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.common {
-
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -52,5 +47,3 @@ export class StatementRequest extends RequestMessage {
 
 Aggregate_add( StatementRequest, "STMTRQ" );
 ChildAggregate_add(StatementRequest, { name: "INCTRAN", required: false, order: 10, type: StatementRange, read: StatementRequest.prototype.getStatementRange, write: StatementRequest.prototype.setStatementRange });
-
-}

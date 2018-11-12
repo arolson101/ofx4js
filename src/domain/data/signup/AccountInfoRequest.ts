@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../RequestMessage'/>
+import { RequestMessage } from "../RequestMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.signup {
-
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -29,7 +24,7 @@ import Element_add = ofx4js.meta.Element_add;
 export class AccountInfoRequest extends RequestMessage {
 
   private lastUpdated: Date;
-  
+
   constructor() {
     super();
     this.lastUpdated = new Date(0); //default is never updated.
@@ -56,5 +51,3 @@ export class AccountInfoRequest extends RequestMessage {
 
 Aggregate_add(AccountInfoRequest, "ACCTINFORQ");
 Element_add(AccountInfoRequest, { name: "DTACCTUP", required: true, order: 0, type: Date, read: AccountInfoRequest.prototype.getLastUpdated, write: AccountInfoRequest.prototype.setLastUpdated });
-
-}

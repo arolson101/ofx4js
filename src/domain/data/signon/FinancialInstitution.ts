@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.signon {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -69,5 +65,3 @@ export class FinancialInstitution {
 Aggregate_add( FinancialInstitution, "FI" );
 Element_add(FinancialInstitution, { name: "FID", order: 10, type: String, read: FinancialInstitution.prototype.getId, write: FinancialInstitution.prototype.setId });
 Element_add(FinancialInstitution, { name: "ORG", required: true, order: 0, type: String, read: FinancialInstitution.prototype.getOrganization, write: FinancialInstitution.prototype.setOrganization });
-
-}

@@ -1,5 +1,3 @@
-module ofx4js.meta {
-
 /**
  * convenience function to supply a default value if the given value is not specified
  */
@@ -41,30 +39,28 @@ export interface PropertyDescriptorParams<T> {
 
 
 /**
- * an interface to read and write a value into an object 
+ * an interface to read and write a value into an object
  */
-export /*abstract*/ class PropertyDescriptor {
+export abstract class PropertyDescriptor {
 	private propertyType: any;
 	private readMethod: ReadMethod<any>;
 	private writeMethod: WriteMethod<any>;
-	
+
 	constructor(params: PropertyDescriptorParams<any>) {
 		this.propertyType = params.type;
 		this.readMethod = params.read;
 		this.writeMethod = params.write;
 	}
-	
+
 	public getPropertyType(): any {
 		return this.propertyType;
 	}
-	
+
 	public getReadMethod(): ReadMethod<any> {
 		return this.readMethod;
 	}
-	
+
 	public getWriteMethod(): WriteMethod<any> {
 		return this.writeMethod;
 	}
-}
-
 }

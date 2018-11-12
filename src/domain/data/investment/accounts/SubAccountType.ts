@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.accounts {
-
 /**
  * Types of well-known sub-accounts.
  * @see "Section 13.9.2.4.2, OFX Spec"
@@ -41,6 +39,4 @@ export function SubAccountType_fromOfx(ofxVal: string): SubAccountType {
   } else {
     return null;
   }
-}
-
 }

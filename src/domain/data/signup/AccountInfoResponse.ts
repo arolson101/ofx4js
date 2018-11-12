@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../ResponseMessage'/>
-///<reference path='AccountProfile'/>
-
-module ofx4js.domain.data.signup {
-
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import { ResponseMessage } from "../ResponseMessage";
+import { AccountProfile } from "./AccountProfile";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
 /**
  * @author Ryan Heaton
@@ -33,7 +26,7 @@ export class AccountInfoResponse extends ResponseMessage {
 
   private lastUpdated: Date;
   private accounts: Array<AccountProfile>;
-  
+
   constructor() {
     super();
     this.lastUpdated = new Date(0); //default is never updated.
@@ -83,5 +76,3 @@ export class AccountInfoResponse extends ResponseMessage {
 Aggregate_add(AccountInfoResponse, "ACCTINFORS");
 Element_add(AccountInfoResponse, { name: "DTACCTUP", required: true, order: 0, type: Date, read: AccountInfoResponse.prototype.getLastUpdated, write: AccountInfoResponse.prototype.setLastUpdated });
 ChildAggregate_add(AccountInfoResponse, { order: 10, type: Array, collectionEntryType: AccountProfile, read: AccountInfoResponse.prototype.getAccounts, write: AccountInfoResponse.prototype.setAccounts });
-
-}

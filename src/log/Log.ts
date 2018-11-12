@@ -1,11 +1,8 @@
 
-module ofx4js.log {
-
-	
 export class Log {
 	private infoEnabled: boolean;
 	private debugEnabled: boolean;
-	
+
 	constructor() {
 		this.infoEnabled = false;
 		this.debugEnabled = false;
@@ -18,7 +15,7 @@ export class Log {
 	public isInfoEnabled(): boolean {
 		return this.infoEnabled;
 	}
-	
+
 	public info(...texts: Array<string>): void {
 		if(this.isInfoEnabled()) {
 			console.log(texts);
@@ -32,17 +29,17 @@ export class Log {
 	public isDebugEnabled(): boolean {
 		return this.debugEnabled;
 	}
-	
+
 	public debug(...texts: Array<string>): void {
 		if(this.isDebugEnabled()) {
 			console.log(texts);
 		}
 	}
-	
+
 	public warning(...texts: Array<string>): void {
 		console.log(texts);
 	}
-	
+
 	public error(...texts: Array<string>): void {
 		console.log(texts);
 	}
@@ -50,14 +47,12 @@ export class Log {
 
 
 export class LogFactory {
-	
+
 	static getLog(clazz: any) {
 		if(!clazz.Log) {
 			clazz.Log = new Log();
 		}
-		
+
 		return clazz.Log;
 	}
-}
-
 }

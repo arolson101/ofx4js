@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='BaseBuyInvestmentTransaction'/>
-
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
+import { TransactionType } from "./TransactionType";
+import { BaseBuyInvestmentTransaction } from "./BaseBuyInvestmentTransaction";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
 
 /**
  * Transaction for buying other types of securities.
@@ -34,5 +31,3 @@ export class BuyOtherTransaction extends BaseBuyInvestmentTransaction {
 }
 
 Aggregate_add( BuyOtherTransaction, "BUYOTHER" );
-
-}

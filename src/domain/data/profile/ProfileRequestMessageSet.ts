@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../RequestMessageSet'/>
-///<reference path='ProfileRequestTransaction'/>
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { RequestMessageSet } from "../RequestMessageSet";
+import { ProfileRequestTransaction } from "./ProfileRequestTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { RequestMessage } from "../RequestMessage";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.profile {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -70,5 +64,3 @@ export class ProfileRequestMessageSet extends RequestMessageSet {
 
 Aggregate_add( ProfileRequestMessageSet, "PROFMSGSRQV1" );
 ChildAggregate_add(ProfileRequestMessageSet, { required: true, order: 0, type: ProfileRequestTransaction, read: ProfileRequestMessageSet.prototype.getProfileRequest, write: ProfileRequestMessageSet.prototype.setProfileRequest });
-
-}

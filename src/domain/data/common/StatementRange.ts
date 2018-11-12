@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -93,5 +89,3 @@ Aggregate_add( StatementRange, "INCTRAN" );
 Element_add(StatementRange, { name: "DTSTART", order: 0, type: Date, read: StatementRange.prototype.getStart, write: StatementRange.prototype.setStart });
 Element_add(StatementRange, { name: "DTEND", order: 10, type: Date, read: StatementRange.prototype.getEnd, write: StatementRange.prototype.setEnd });
 Element_add(StatementRange, { name: "INCLUDE", required: true, order: 20, type: Boolean, read: StatementRange.prototype.getIncludeTransactions, write: StatementRange.prototype.setIncludeTransactions });
-
-}

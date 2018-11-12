@@ -17,4 +17,3 @@
 /**
  * Support for "bill pay" features of the OFX spec.
  */
-module ofx4js.domain.data.billpay {}

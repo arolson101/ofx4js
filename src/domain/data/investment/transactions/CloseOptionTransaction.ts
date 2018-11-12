@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='../../seclist/SecurityId'/>
-///<reference path='BaseOtherInvestmentTransaction'/>
-///<reference path='TransactionWithSecurity'/>
-///<reference path='CloseOptionAction'/>
+import { TransactionType } from "./TransactionType";
+import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
+import { TransactionWithSecurity } from "./TransactionWithSecurity";
+import { SecurityId } from "../../seclist/SecurityId";
+import { CloseOptionAction, CloseOptionAction_fromOfx } from "./CloseOptionAction";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for closing an option position due to expiration, exercise, or assignment.
@@ -227,5 +220,3 @@ Element_add(CloseOptionTransaction, { name: "SHPERCTRCT", required: true, order:
 Element_add(CloseOptionTransaction, { name: "SUBACCTSEC", required: true, order: 60, type: String, read: CloseOptionTransaction.prototype.getSubAccountSecurity, write: CloseOptionTransaction.prototype.setSubAccountSecurity });
 Element_add(CloseOptionTransaction, { name: "RELFITID", order: 70, type: String, read: CloseOptionTransaction.prototype.getRelatedTransactionId, write: CloseOptionTransaction.prototype.setRelatedTransactionId });
 Element_add(CloseOptionTransaction, { name: "GAIN", order: 80, type: Number, read: CloseOptionTransaction.prototype.getGain, write: CloseOptionTransaction.prototype.setGain });
-
-}

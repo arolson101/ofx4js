@@ -1,5 +1,6 @@
-declare module ofx4js {
-    class Error {
+/// <reference types="node" />
+declare module "OFXException" {
+    export class Error {
         name: string;
         message: string;
         stack: string;
@@ -10,58 +11,42 @@ declare module ofx4js {
      *
      * @author Ryan Heaton
      */
-    class OFXException extends Error {
+    export class OFXException extends Error {
         private innerError;
         constructor(message?: string, e?: Error);
     }
 }
-declare module ofx4js {
+declare module "OFXRuntimeException" {
+    import { OFXException } from "OFXException";
     /**
      * @author Ryan Heaton
      */
-    class OFXRuntimeException extends OFXException {
+    export class OFXRuntimeException extends OFXException {
         constructor(message?: string);
     }
 }
-declare module ofx4js.meta {
-    /**
-     * Annotation for a method that returns an OFX aggregate.
-     *
-     * @author Ryan Heaton
-     */
-    class Aggregate {
-        private _value;
-        constructor(value: string);
-        /**
-         * The name of the aggregate.
-         *
-         * @return The name of the aggregate.
-         */
-        value(): string;
-    }
-}
-declare module ofx4js.meta {
+declare module "meta/PropertyDescriptor" {
     /**
      * convenience function to supply a default value if the given value is not specified
      */
-    function _default<T>(value: T, defaultValue: T): T;
-    function isAssignableFrom(entryType: any, assignableTo: any): boolean;
+    export function _default<T>(value: T, defaultValue: T): T;
+    export function isAssignableFrom(entryType: any, assignableTo: any): boolean;
     /**
      * a function called on an object instance that will return the desired property value
      */
-    interface ReadMethod<Type> {
+    export interface ReadMethod<Type> {
         (): Type;
     }
     /**
      * a function called on an object instance that will set the desired property value
      */
-    interface WriteMethod<Type> {
+    export interface WriteMethod<Type> {
         (value: Type): void;
     }
     /**
      * parameters used to create a PropertyDescriptor
      */
-    interface PropertyDescriptorParams<T> {
+    export interface PropertyDescriptorParams<T> {
         type: any;
         read: ReadMethod<T>;
         write: WriteMethod<T>;
@@ -69,7 +54,7 @@ declare module ofx4js.meta {
     /**
      * an interface to read and write a value into an object
      */
-    class PropertyDescriptor {
+    export abstract class PropertyDescriptor {
         private propertyType;
         private readMethod;
         private writeMethod;
@@ -79,8 +64,9 @@ declare module ofx4js.meta {
         getWriteMethod(): WriteMethod<any>;
     }
 }
-declare module ofx4js.meta {
-    interface ChildAggregateParams<T> extends PropertyDescriptorParams<T> {
+declare module "meta/ChildAggregate" {
+    import { PropertyDescriptorParams, PropertyDescriptor } from "meta/PropertyDescriptor";
+    export interface ChildAggregateParams<T> extends PropertyDescriptorParams<T> {
         order: number;
         name?: string;
         required?: boolean;
@@ -91,7 +77,7 @@ declare module ofx4js.meta {
      *
      * @author Ryan Heaton
      */
-    class ChildAggregate extends PropertyDescriptor {
+    export class ChildAggregate extends PropertyDescriptor {
         private _name;
         private _required;
         private _order;
@@ -121,8 +107,9 @@ declare module ofx4js.meta {
         collectionEntryType(): any;
     }
 }
-declare module ofx4js.meta {
-    interface HeaderParams<T> extends PropertyDescriptorParams<T> {
+declare module "meta/Header" {
+    import { PropertyDescriptorParams, PropertyDescriptor } from "meta/PropertyDescriptor";
+    export interface HeaderParams<T> extends PropertyDescriptorParams<T> {
         name: string;
     }
     /**
@@ -130,7 +117,7 @@ declare module ofx4js.meta {
      *
      * @author Ryan Heaton
      */
-    class Header extends PropertyDescriptor {
+    export class Header extends PropertyDescriptor {
         private _name;
         constructor(params: HeaderParams<any>);
         /**
@@ -141,8 +128,9 @@ declare module ofx4js.meta {
         name(): string;
     }
 }
-declare module ofx4js.meta {
-    interface ElementParams<T> extends PropertyDescriptorParams<T> {
+declare module "meta/Element" {
+    import { PropertyDescriptorParams, PropertyDescriptor } from "meta/PropertyDescriptor";
+    export interface ElementParams<T> extends PropertyDescriptorParams<T> {
         order: number;
         name: string;
         required?: boolean;
@@ -153,7 +141,7 @@ declare module ofx4js.meta {
      *
      * @author Ryan Heaton
      */
-    class Element extends PropertyDescriptor {
+    export class Element extends PropertyDescriptor {
         private _name;
         private _required;
         private _order;
@@ -183,8 +171,8 @@ declare module ofx4js.meta {
         collectionEntryType(): any;
     }
 }
-declare module ofx4js.log {
-    class Log {
+declare module "log/Log" {
+    export class Log {
         private infoEnabled;
         private debugEnabled;
         constructor();
@@ -197,26 +185,15 @@ declare module ofx4js.log {
         warning(...texts: Array<string>): void;
         error(...texts: Array<string>): void;
     }
-    class LogFactory {
+    export class LogFactory {
         static getLog(clazz: any): any;
     }
 }
-declare module ofx4js.collections {
-    interface StringSet {
-        [key: string]: boolean;
-    }
-    interface StringMap {
-        [key: string]: string;
-    }
-    interface AnyMap {
-        [key: string]: any;
-    }
-}
-declare module ofx4js.collections {
-    interface CompareFcn<T> {
+declare module "collections/SortedSet" {
+    export interface CompareFcn<T> {
         (a: T, b: T): number;
     }
-    class SortedSet<T> {
+    export class SortedSet<T> {
         private valueArray;
         private compareFcn;
         private isSorted;
@@ -228,19 +205,19 @@ declare module ofx4js.collections {
         count(): number;
     }
 }
-declare module ofx4js.io {
-    import ChildAggregate = ofx4js.meta.ChildAggregate;
-    import Element = ofx4js.meta.Element;
-    enum AggregateAttributeType {
+declare module "io/AggregateAttribute" {
+    import { ChildAggregate } from "meta/ChildAggregate";
+    import { Element } from "meta/Element";
+    export enum AggregateAttributeType {
         CHILD_AGGREGATE = 0,
-        ELEMENT = 1,
+        ELEMENT = 1
     }
     /**
      * A generic descriptor for an attribute of an OFX aggregate.
      *
      * @author Ryan Heaton
      */
-    class AggregateAttribute {
+    export class AggregateAttribute {
         private readMethod;
         private writeMethod;
         private attributeType;
@@ -267,15 +244,16 @@ declare module ofx4js.io {
         toString(): string;
     }
 }
-declare module ofx4js.io {
-    import SortedSet = ofx4js.collections.SortedSet;
-    import ChildAggregate = ofx4js.meta.ChildAggregate;
-    import Element = ofx4js.meta.Element;
-    import Header = ofx4js.meta.Header;
-    interface HeaderMap {
+declare module "io/AggregateInfo" {
+    import { SortedSet } from "collections/SortedSet";
+    import { ChildAggregate } from "meta/ChildAggregate";
+    import { Element } from "meta/Element";
+    import { Header } from "meta/Header";
+    import { AggregateAttribute } from "io/AggregateAttribute";
+    export interface HeaderMap {
         [key: string]: Header;
     }
-    interface HeaderValues {
+    export interface HeaderValues {
         [key: string]: Object;
     }
     /**
@@ -283,7 +261,7 @@ declare module ofx4js.io {
      *
      * @author Ryan Heaton
      */
-    class AggregateInfo {
+    export class AggregateInfo {
         private name;
         private attributes;
         private headers;
@@ -350,16 +328,28 @@ declare module ofx4js.io {
         addHeader(header: Header): void;
     }
 }
-declare module ofx4js.io {
-    import ChildAggregate = ofx4js.meta.ChildAggregate;
-    import Header = ofx4js.meta.Header;
-    import Element = ofx4js.meta.Element;
+declare module "collections/collections" {
+    export interface StringSet {
+        [key: string]: boolean;
+    }
+    export interface StringMap {
+        [key: string]: string;
+    }
+    export interface AnyMap {
+        [key: string]: any;
+    }
+}
+declare module "io/AggregateIntrospector" {
+    import { ChildAggregate } from "meta/ChildAggregate";
+    import { Header } from "meta/Header";
+    import { Element } from "meta/Element";
+    import { AggregateInfo } from "io/AggregateInfo";
     /**
      * Introspector for aggregate information.
      *
      * @author Ryan Heaton
      */
-    class AggregateIntrospector {
+    export class AggregateIntrospector {
         private static AGGREGATE_CLASSES_BY_NAME;
         private static placeholderName;
         /**
@@ -369,7 +359,7 @@ declare module ofx4js.io {
          * @return The aggregate meta information, or null if the class isn't an aggregate.
          */
         static getAggregateInfo(clazz: any): AggregateInfo;
-        private static getAncestorAggregateInfo(clazz);
+        private static getAncestorAggregateInfo;
         /**
          * Find the aggregate class by name.
          *
@@ -383,35 +373,37 @@ declare module ofx4js.io {
         static addHeader(clazz: any, header: Header): void;
     }
 }
-declare module ofx4js.meta {
-    function Aggregate_add(clazz: Object, value?: string): void;
+declare module "meta/Aggregate_add" {
+    export function Aggregate_add(clazz: Object, value?: string): void;
 }
-declare module ofx4js.meta {
-    function Element_add<Type>(clazz: any, params: ElementParams<Type>): void;
+declare module "meta/Element_add" {
+    import { ElementParams } from "meta/Element";
+    export function Element_add<Type>(clazz: any, params: ElementParams<Type>): void;
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/StatusCode" {
+    /**
+     * Severity of the status.
+     */
+    export enum Severity {
+        INFO = 0,
+        WARN = 1,
+        ERROR = 2
+    }
     /**
      * @author Ryan Heaton
      */
-    class StatusCode {
+    export abstract class StatusCode {
         getCode(): number;
         getMessage(): string;
         getDefaultSeverity(): Severity;
     }
 }
-declare module ofx4js.domain.data.common {
-    /**
-     * Severity of the status.
-     */
-    enum Severity {
-        INFO = 0,
-        WARN = 1,
-        ERROR = 2,
-    }
+declare module "domain/data/common/Status" {
+    import { Severity, StatusCode } from "domain/data/common/StatusCode";
     /**
      * Known status codes.
      */
-    class KnownCode extends StatusCode {
+    export class KnownCode extends StatusCode {
         static SUCCESS: KnownCode;
         static CLIENT_UP_TO_DATE: KnownCode;
         static GENERAL_ERROR: KnownCode;
@@ -453,7 +445,7 @@ declare module ofx4js.domain.data.common {
      * @author Ryan Heaton
      * @see "Section 3.1.4, OFX Spec"
      */
-    class Status {
+    export class Status {
         private code;
         private severity;
         private message;
@@ -496,281 +488,84 @@ declare module ofx4js.domain.data.common {
         setMessage(message: string): void;
     }
 }
-declare module ofx4js {
-    import Status = ofx4js.domain.data.common.Status;
+declare module "OFXStatusException" {
+    import { Status } from "domain/data/common/Status";
+    import { OFXException } from "OFXException";
     /**
      * Exception based on a StatusCode response
      *
      * @author Michael Mosseri
      */
-    class OFXStatusException extends OFXException {
+    export class OFXStatusException extends OFXException {
         private status;
         constructor(status: Status, message: string);
         getStatus(): Status;
     }
 }
-declare module ofx4js {
+declare module "OFXTransactionException" {
+    import { OFXException } from "OFXException";
     /**
      * @author Ryan Heaton
      */
-    class OFXTransactionException extends OFXException {
+    export class OFXTransactionException extends OFXException {
         constructor(message?: string);
     }
 }
-declare module ofx4js {
+declare module "UnsupportedOFXSecurityTypeException" {
+    import { OFXException } from "OFXException";
     /**
      * Thrown for unsupported OFX security type.
      *
      * @author Ryan Heaton
      */
-    class UnsupportedOFXSecurityTypeException extends OFXException {
+    export class UnsupportedOFXSecurityTypeException extends OFXException {
         constructor(message: string);
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/investment/transactions/TransactionType" {
     /**
-     * @author Ryan Heaton
-     */
-    class BalanceInfo {
-        private amount;
-        private asOfDate;
-        /**
-         * The amount.
-         *
-         * @return The amount.
-         */
-        getAmount(): number;
-        /**
-         * The amount.
-         *
-         * @param amount The amount.
-         */
-        setAmount(amount: number): void;
-        /**
-         * The as-of date.
-         *
-         * @return The as-of date.
-         */
-        getAsOfDate(): Date;
-        /**
-         * The as-of date.
-         *
-         * @param asOfDate The as-of date.
-         */
-        setAsOfDate(asOfDate: Date): void;
-    }
-}
-declare module ofx4js.meta {
-    function ChildAggregate_add<Type>(clazz: any, params: ChildAggregateParams<Type>): void;
-}
-declare module ofx4js.domain.data.common {
-    /**
-     * Common details about an account.
+     * Type of investment transaction.
+     * @see "Section 13.9.2.4.4, OFX Spec"
      *
-     * @author Ryan Heaton
+     * @author Jon Perlow
      */
-    interface AccountDetails {
-        /**
-         * The account number.
-         *
-         * @return The account number.
-         */
-        getAccountNumber(): string;
-        /**
-         * The account key.
-         *
-         * @return The account key.
-         */
-        getAccountKey(): string;
+    export enum TransactionType {
+        BUY_DEBT = 0,
+        BUY_MUTUAL_FUND = 1,
+        BUY_OPTION = 2,
+        BUY_OTHER = 3,
+        BUY_STOCK = 4,
+        CLOSE_OPTION = 5,
+        INCOME = 6,
+        INVESTMENT_EXPENSE = 7,
+        JOURNAL_FUND = 8,
+        JOURNAL_SECURITY = 9,
+        MARGIN_INTEREST = 10,
+        REINVEST_INCOME = 11,
+        RETURN_OF_CAPITAL = 12,
+        SELL_DEBT = 13,
+        SELL_MUTUAL_FUND = 14,
+        SELL_OPTION = 15,
+        SELL_OTHER = 16,
+        SELL_STOCK = 17,
+        SPLIT = 18,
+        TRANSFER = 19
     }
 }
-declare module ofx4js.domain.data.banking {
-    /**
-     * @author Ryan Heaton
-     *
-     * @see "OFX Spec, Section 11.3.1.1"
-     */
-    enum AccountType {
-        CHECKING = 0,
-        SAVINGS = 1,
-        MONEYMRKT = 2,
-        CREDITLINE = 3,
-    }
-}
-declare module ofx4js.domain.data.banking {
-    import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-    /**
-     * Base bank account details.
-     *
-     * @author Ryan Heaton
-     * @see "OFX Spec, Section 11.3.1"
-     */
-    class BankAccountDetails implements AccountDetails {
-        private bankId;
-        private branchId;
-        private accountNumber;
-        private accountType;
-        private accountKey;
-        /**
-         * The routing and transit number.
-         *
-         * @return The routing and transit number.
-         */
-        getBankId(): string;
-        /**
-         * The routing and transit number.
-         *
-         * @param bankId The routing and transit number.
-         */
-        setBankId(bankId: string): void;
-        /**
-         * The routing and transit number.
-         *
-         * @return The routing and transit number.
-         */
-        getRoutingNumber(): string;
-        /**
-         * The routing and transit number.
-         *
-         * @param routingNumber The routing and transit number.
-         */
-        setRoutingNumber(routingNumber: string): void;
-        /**
-         * The branch id.
-         *
-         * @return The branch id.
-         */
-        getBranchId(): string;
-        /**
-         * The branch id.
-         *
-         * @param branchId The branch id.
-         */
-        setBranchId(branchId: string): void;
-        /**
-         * The account number.
-         *
-         * @return The account number.
-         */
-        getAccountNumber(): string;
-        /**
-         * The account number.
-         *
-         * @param accountNumber The account number.
-         */
-        setAccountNumber(accountNumber: string): void;
-        /**
-         * The account type.
-         *
-         * @return The account type.
-         */
-        getAccountType(): AccountType;
-        /**
-         * The account type.
-         *
-         * @param accountType The account type.
-         */
-        setAccountType(accountType: AccountType): void;
-        /**
-         * The account key.
-         *
-         * @return The account key.
-         */
-        getAccountKey(): string;
-        /**
-         * The account key.
-         *
-         * @param accountKey The account key.
-         */
-        setAccountKey(accountKey: string): void;
-    }
-}
-declare module ofx4js.domain.data.creditcard {
-    import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-    /**
-     * @author Ryan Heaton
-     *
-     * @see "OFX Spec, Section 11.3.2"
-     */
-    class CreditCardAccountDetails implements AccountDetails {
-        private accountNumber;
-        private accountKey;
-        /**
-         * The account number.
-         *
-         * @return The account number.
-         */
-        getAccountNumber(): string;
-        /**
-         * The account number.
-         *
-         * @param accountNumber The account number.
-         */
-        setAccountNumber(accountNumber: string): void;
-        /**
-         * The account key.
-         *
-         * @return The account key.
-         */
-        getAccountKey(): string;
-        /**
-         * The account key.
-         *
-         * @param accountKey The account key.
-         */
-        setAccountKey(accountKey: string): void;
-    }
-}
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/CorrectionAction" {
     /**
      * @author Ryan Heaton
      */
-    enum CorrectionAction {
+    export enum CorrectionAction {
         REPLACE = 0,
-        DELETE = 1,
+        DELETE = 1
     }
 }
-declare module ofx4js.domain.data.common {
-    /**
-     * @author Ryan Heaton
-     * @see "Section 5.2, OFX Spec"
-     */
-    class Currency {
-        private code;
-        private exchangeRate;
-        constructor();
-        /**
-         * The currency code.
-         *
-         * @return The currency code.
-         * @see java.util.Currency#getCurrencyCode()
-         */
-        getCode(): string;
-        /**
-         * The currency code
-         *
-         * @param code The currency code
-         */
-        setCode(code: string): void;
-        /**
-         * The exchange rate.
-         *
-         * @return The exchange rate.
-         */
-        getExchangeRate(): number;
-        /**
-         * The exchange rate.
-         *
-         * @param exchangeRate The exchange rate.
-         */
-        setExchangeRate(exchangeRate: number): void;
-    }
-}
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/Payee" {
     /**
      * @author Ryan Heaton
      */
-    class Payee {
+    export class Payee {
         private name;
         private address1;
         private address2;
@@ -891,88 +686,216 @@ declare module ofx4js.domain.data.common {
         setPhone(phone: string): void;
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/AccountDetails" {
     /**
+     * Common details about an account.
+     *
      * @author Ryan Heaton
      */
-    enum TransactionType {
+    export interface AccountDetails {
         /**
-         * generic credit.
+         * The account number.
+         *
+         * @return The account number.
          */
-        CREDIT = 0,
+        getAccountNumber(): string;
         /**
-         * genertic debit.
+         * The account key.
+         *
+         * @return The account key.
          */
-        DEBIT = 1,
-        /**
-         * interest earned.
-         */
-        INT = 2,
-        /**
-         * dividend.
-         */
-        DIV = 3,
-        /**
-         * bank fee.
-         */
-        FEE = 4,
-        /**
-         * service charge.
-         */
-        SRVCHG = 5,
-        /**
-         * deposit.
-         */
-        DEP = 6,
-        /**
-         * ATM transaction.
-         */
-        ATM = 7,
-        /**
-         * point of sale
-         */
-        POS = 8,
-        /**
-         * transfer
-         */
-        XFER = 9,
-        /**
-         * check
-         */
-        CHECK = 10,
-        /**
-         * electronic payment
-         */
-        PAYMENT = 11,
-        /**
-         * cash.
-         */
-        CASH = 12,
-        /**
-         * direct deposit.
-         */
-        DIRECTDEP = 13,
-        /**
-         * merchant-initiated debit
-         */
-        DIRECTDEBIT = 14,
-        /**
-         * repeating payment.
-         */
-        REPEATPMT = 15,
-        /**
-         * other
-         */
-        OTHER = 16,
+        getAccountKey(): string;
     }
 }
-declare module ofx4js.domain.data.common {
-    import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-    import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+declare module "domain/data/banking/AccountType" {
+    /**
+     * @author Ryan Heaton
+     *
+     * @see "OFX Spec, Section 11.3.1.1"
+     */
+    export enum AccountType {
+        CHECKING = 0,
+        SAVINGS = 1,
+        MONEYMRKT = 2,
+        CREDITLINE = 3
+    }
+}
+declare module "domain/data/banking/BankAccountDetails" {
+    import { AccountDetails } from "domain/data/common/AccountDetails";
+    import { AccountType } from "domain/data/banking/AccountType";
+    /**
+     * Base bank account details.
+     *
+     * @author Ryan Heaton
+     * @see "OFX Spec, Section 11.3.1"
+     */
+    export class BankAccountDetails implements AccountDetails {
+        private bankId;
+        private branchId;
+        private accountNumber;
+        private accountType;
+        private accountKey;
+        /**
+         * The routing and transit number.
+         *
+         * @return The routing and transit number.
+         */
+        getBankId(): string;
+        /**
+         * The routing and transit number.
+         *
+         * @param bankId The routing and transit number.
+         */
+        setBankId(bankId: string): void;
+        /**
+         * The routing and transit number.
+         *
+         * @return The routing and transit number.
+         */
+        getRoutingNumber(): string;
+        /**
+         * The routing and transit number.
+         *
+         * @param routingNumber The routing and transit number.
+         */
+        setRoutingNumber(routingNumber: string): void;
+        /**
+         * The branch id.
+         *
+         * @return The branch id.
+         */
+        getBranchId(): string;
+        /**
+         * The branch id.
+         *
+         * @param branchId The branch id.
+         */
+        setBranchId(branchId: string): void;
+        /**
+         * The account number.
+         *
+         * @return The account number.
+         */
+        getAccountNumber(): string;
+        /**
+         * The account number.
+         *
+         * @param accountNumber The account number.
+         */
+        setAccountNumber(accountNumber: string): void;
+        /**
+         * The account type.
+         *
+         * @return The account type.
+         */
+        getAccountType(): AccountType;
+        /**
+         * The account type.
+         *
+         * @param accountType The account type.
+         */
+        setAccountType(accountType: AccountType): void;
+        /**
+         * The account key.
+         *
+         * @return The account key.
+         */
+        getAccountKey(): string;
+        /**
+         * The account key.
+         *
+         * @param accountKey The account key.
+         */
+        setAccountKey(accountKey: string): void;
+    }
+}
+declare module "domain/data/creditcard/CreditCardAccountDetails" {
+    import { AccountDetails } from "domain/data/common/AccountDetails";
+    /**
+     * @author Ryan Heaton
+     *
+     * @see "OFX Spec, Section 11.3.2"
+     */
+    export class CreditCardAccountDetails implements AccountDetails {
+        private accountNumber;
+        private accountKey;
+        /**
+         * The account number.
+         *
+         * @return The account number.
+         */
+        getAccountNumber(): string;
+        /**
+         * The account number.
+         *
+         * @param accountNumber The account number.
+         */
+        setAccountNumber(accountNumber: string): void;
+        /**
+         * The account key.
+         *
+         * @return The account key.
+         */
+        getAccountKey(): string;
+        /**
+         * The account key.
+         *
+         * @param accountKey The account key.
+         */
+        setAccountKey(accountKey: string): void;
+    }
+}
+declare module "domain/data/common/Currency" {
+    /**
+     * @author Ryan Heaton
+     * @see "Section 5.2, OFX Spec"
+     */
+    export class Currency {
+        private code;
+        private exchangeRate;
+        constructor();
+        /**
+         * The currency code.
+         *
+         * @return The currency code.
+         * @see java.util.Currency#getCurrencyCode()
+         */
+        getCode(): string;
+        /**
+         * The currency code
+         *
+         * @param code The currency code
+         */
+        setCode(code: string): void;
+        /**
+         * The exchange rate.
+         *
+         * @return The exchange rate.
+         */
+        getExchangeRate(): number;
+        /**
+         * The exchange rate.
+         *
+         * @param exchangeRate The exchange rate.
+         */
+        setExchangeRate(exchangeRate: number): void;
+    }
+}
+declare module "meta/ChildAggregate_add" {
+    import { ChildAggregateParams } from "meta/ChildAggregate";
+    export function ChildAggregate_add<Type>(clazz: any, params: ChildAggregateParams<Type>): void;
+}
+declare module "domain/data/common/Transaction" {
+    import { TransactionType } from "domain/data/investment/transactions/TransactionType";
+    import { CorrectionAction } from "domain/data/common/CorrectionAction";
+    import { Payee } from "domain/data/common/Payee";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    import { Currency } from "domain/data/common/Currency";
     /**
      * @author Ryan Heaton
      */
-    class Transaction {
+    export class Transaction {
         private transactionType;
         private datePosted;
         private dateInitiated;
@@ -1247,11 +1170,12 @@ declare module ofx4js.domain.data.common {
         setOriginalCurrency(originalCurrency: Currency): void;
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/TransactionList" {
+    import { Transaction } from "domain/data/common/Transaction";
     /**
      * @author Ryan Heaton
      */
-    class TransactionList {
+    export class TransactionList {
         private start;
         private end;
         private transactions;
@@ -1293,13 +1217,46 @@ declare module ofx4js.domain.data.common {
         setTransactions(transactions: Array<Transaction>): void;
     }
 }
-declare module ofx4js.client {
-    import BalanceInfo = ofx4js.domain.data.common.BalanceInfo;
-    import TransactionList = ofx4js.domain.data.common.TransactionList;
+declare module "domain/data/common/BalanceInfo" {
     /**
      * @author Ryan Heaton
      */
-    interface AccountStatement {
+    export class BalanceInfo {
+        private amount;
+        private asOfDate;
+        /**
+         * The amount.
+         *
+         * @return The amount.
+         */
+        getAmount(): number;
+        /**
+         * The amount.
+         *
+         * @param amount The amount.
+         */
+        setAmount(amount: number): void;
+        /**
+         * The as-of date.
+         *
+         * @return The as-of date.
+         */
+        getAsOfDate(): Date;
+        /**
+         * The as-of date.
+         *
+         * @param asOfDate The as-of date.
+         */
+        setAsOfDate(asOfDate: Date): void;
+    }
+}
+declare module "client/AccountStatement" {
+    import { TransactionList } from "domain/data/common/TransactionList";
+    import { BalanceInfo } from "domain/data/common/BalanceInfo";
+    /**
+     * @author Ryan Heaton
+     */
+    export interface AccountStatement {
         /**
          * The currency code.
          *
@@ -1327,13 +1284,14 @@ declare module ofx4js.client {
         getAvailableBalance(): BalanceInfo;
     }
 }
-declare module ofx4js.client {
+declare module "client/FinancialInstitutionAccount" {
+    import { AccountStatement } from "client/AccountStatement";
     /**
      * A specific account at a financial institution.
      *
      * @author Ryan Heaton
      */
-    interface FinancialInstitutionAccount {
+    export interface FinancialInstitutionAccount {
         /**
          * Read an account statement.
          *
@@ -1344,12 +1302,13 @@ declare module ofx4js.client {
         readStatement(start: Date, end: Date): Promise<AccountStatement>;
     }
 }
-declare module ofx4js.client {
-    import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
+declare module "client/BankAccount" {
+    import { FinancialInstitutionAccount } from "client/FinancialInstitutionAccount";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
     /**
      * @author Ryan Heaton
      */
-    interface BankAccount extends FinancialInstitutionAccount {
+    export interface BankAccount extends FinancialInstitutionAccount {
         /**
          * The details of the account.
          *
@@ -1358,12 +1317,13 @@ declare module ofx4js.client {
         getDetails(): BankAccountDetails;
     }
 }
-declare module ofx4js.client {
-    import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+declare module "client/CreditCardAccount" {
+    import { FinancialInstitutionAccount } from "client/FinancialInstitutionAccount";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
     /**
      * @author Ryan Heaton
      */
-    interface CreditCardAccount extends FinancialInstitutionAccount {
+    export interface CreditCardAccount extends FinancialInstitutionAccount {
         /**
          * The details of the credit card account.
          *
@@ -1372,517 +1332,14 @@ declare module ofx4js.client {
         getDetails(): CreditCardAccountDetails;
     }
 }
-declare module ofx4js.domain.data.investment.accounts {
-    import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-    /**
-     * Aggregate for the details that identifity a brokerage account.
-     *
-     * @author Jon Perlow
-     * @see "OFX Spec, Section 13.6.1"
-     */
-    class InvestmentAccountDetails implements AccountDetails {
-        private brokerId;
-        private accountNumber;
-        private accountKey;
-        /**
-         * Gets the broker id.
-         *
-         * @return the id of the broker
-         */
-        getBrokerId(): string;
-        /**
-         * Sets the broker id.
-         *
-         * @param brokerId the id of the broker
-         */
-        setBrokerId(brokerId: string): void;
-        /**
-         * Gets the account number.
-         *
-         * @return the account number
-         */
-        getAccountNumber(): string;
-        /**
-         * Sets the account number.
-         *
-         * @param accountNumber the account number
-         */
-        setAccountNumber(accountNumber: string): void;
-        /**
-         * Gets the account key.
-         *
-         * @return the account key
-         */
-        getAccountKey(): string;
-        /**
-         * Sets the account key.
-         *
-         * @param accountKey the account key
-         */
-        setAccountKey(accountKey: string): void;
-    }
-}
-declare module ofx4js.domain.data.common {
-    /**
-     * Marker interface for account information.
-     *
-     * @author Ryan Heaton
-     */
-    interface AccountInfo {
-        /**
-         * The account details.
-         *
-         * @return The account details.
-         */
-        getAccountDetails(): AccountDetails;
-    }
-}
-declare module ofx4js.domain.data.investment.accounts {
-    /**
-     * Type of investment account.
-     *
-     * @author Jon Perlow
-     * @see "OFX Spec, Section 13.6.2"
-     */
-    enum AccountType {
-        INDIVIDUAL = 0,
-        JOINT = 1,
-        TRUST = 2,
-        CORPORATE = 3,
-    }
-    function AccountType_fromOfx(ofxVal: string): AccountType;
-}
-declare module ofx4js.domain.data.investment.accounts {
-    /**
-     * Activation status of an account.
-     * @see "Section 13.6.2, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    enum ActivationStatus {
-        ACTIVE = 0,
-        PENDING = 1,
-        AVAILABLE = 2,
-    }
-    function ActivationStatus_fromOfx(ofxVal: string): ActivationStatus;
-}
-declare module ofx4js.domain.data.investment.accounts {
-    /**
-     * @author Jon Perlow
-     * @see "OFX Spec, Section 13.6.2.1"
-     */
-    enum UnitedStatesAccountType {
-        /** A 401(k) retirement account */
-        R401K = 0,
-        /** A 403(B) retirement account */
-        R403B = 1,
-        /** An IRA retirement account */
-        IRA = 2,
-        /** Keough (money purchase/profit sharing) account */
-        KEOUGH = 3,
-        /** Other account type */
-        OTHER = 4,
-        /** Salary Reduction Employer Pension Plan */
-        SARSEP = 5,
-        /** Savings Incentive Match Plan for Employees*/
-        SIMPLE = 6,
-        /** Regular investment account */
-        NORMAL = 7,
-        /** Tax Deferred Annuity */
-        TDA = 8,
-        /** Trust (including UTMA) */
-        TRUST = 9,
-        /** Custodial account */
-        UGMA = 10,
-    }
-    function UnitedStatesAccountType_fromOfx(ofxVal: string): UnitedStatesAccountType;
-}
-declare module ofx4js.domain.data.investment.accounts {
-    import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-    import AccountInfo = ofx4js.domain.data.common.AccountInfo;
-    /**
-     * Aggregate for the info about a brokerage account.
-     *
-     * @author Jon Perlow
-     * @see "OFX Spec, Section 13.6.2"
-     */
-    class InvestmentAccountInfo implements AccountInfo {
-        private investmentAccount;
-        private unitedStatesAccountType;
-        private supportsChecking;
-        private activationStatus;
-        private investmentAccountType;
-        private optionLevel;
-        /**
-         * Gets the investment account this information is referencing.
-         *
-         * @return the investment account this information is referencing
-         */
-        getInvestmentAccount(): InvestmentAccountDetails;
-        /**
-         * Sets the investment account this information is referencing. This is a required field
-         * according to the OFX spec.
-         *
-         * @param investmentAccount the investment account this information is referencing
-         */
-        setInvestmentAccount(investmentAccount: InvestmentAccountDetails): void;
-        getAccountDetails(): AccountDetails;
-        /**
-         * Gets the United States account type. This is a required field according to the OFX spec.
-         * @see "OFX Spec, Section 13.6.1"
-         *
-         * @return the United States account type
-         */
-        getUnitedStatesAccountType(): string;
-        /**
-         * Sets United States account type. This is a required field according to the OFX spec.
-         * @see "OFX Spec, Section 13.6.1"
-         *
-         * @param unitedStatesAccountType the United States account type
-         */
-        setUnitedStatesAccountType(unitedStatesAccountType: string): void;
-        /**
-         * Gets the United States account type as one of the well-known types.
-         *
-         * @return the account type or null if it's not one of the well-known types
-         */
-        getUnitedStatesAccountTypeEnum(): UnitedStatesAccountType;
-        /**
-         * Gets whether the account supports checking. This is a required field according to the OFX spec.
-         * @see "OFX Spec, Section 13.6.1"
-         *
-         * @return whether the account supports checking
-         */
-        getSupportsChecking(): boolean;
-        /**
-         * Sets whether the account supports checking. This is a required field according to the OFX spec.
-         * @see "OFX Spec, Section 13.6.1"
-         *
-         * @param supportsChecking whether the account supports checking
-         */
-        setSupportsChecking(supportsChecking: boolean): void;
-        /**
-         * Gets the activation status for investment statement download. This is a required field
-         * according to the OFX spec.
-         *
-         * @return the activation status
-         */
-        getActivationStatus(): string;
-        /**
-         * Sets the activation status for investment statement download. This is a required field
-         * according to the OFX spec.
-         *
-         * @param activationStatus the activation status
-         */
-        setActivationStatus(activationStatus: string): void;
-        /**
-         * Gets the activation status as one of the well-known types.
-         *
-         * @return the activation status or null if it wasn't one of the well known types
-         */
-        getActivationStatusEnum(): ActivationStatus;
-        /**
-         * Gets the type of investment account. One of "INDIVIDUAL", "JOINT", "TRUST", or "CORPORATE".
-         * This is an optional field according to the OFX spec.
-         *
-         * @return the type of account
-         */
-        getInvestmentAccountType(): string;
-        /**
-         * Sets the type of investment account. One of "INDIVIDUAL", "JOINT", "TRUST", or "CORPORATE".
-         * This is an optional field according to the OFX spec.
-         *
-         * @param investmentAccountType the type of account
-         */
-        setInvestmentAccountType(investmentAccountType: string): void;
-        /**
-         * Gets the type of investment account as one of the well-known types.
-         *
-         * @return the type of investment account or null if it's not one of the well-known types
-         */
-        getInvestmentAccountTypeEnum(): AccountType;
-        /**
-         * Gets the description of option trading privileges. * This is an optional field according to
-         * the OFX spec.
-         *
-         * @return the description of option trading privileges.
-         */
-        getOptionLevel(): string;
-        /**
-         * Sets the description of option trading privileges. * This is an optional field according to
-         * the OFX spec.
-         *
-         * @param optionLevel the description of option trading privileges.
-         */
-        setOptionLevel(optionLevel: string): void;
-    }
-}
-declare module ofx4js.domain.data.common {
-    /**
-     * @author Ryan Heaton
-     */
-    enum AccountStatus {
-        /**
-         * Available, but not yet requested.
-         */
-        AVAIL = 0,
-        /**
-         * Requested, but not yet available.
-         */
-        PEND = 1,
-        /**
-         * Active.
-         */
-        ACTIVE = 2,
-    }
-}
-declare module ofx4js.domain.data.banking {
-    import AccountStatus = ofx4js.domain.data.common.AccountStatus;
-    import AccountInfo = ofx4js.domain.data.common.AccountInfo;
-    import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-    /**
-     * @author Ryan Heaton
-     */
-    class BankAccountInfo implements AccountInfo {
-        private bankAccount;
-        private supportsTransactionDetailOperations;
-        private supportsTransferToOtherAccountOperations;
-        private supportsTransferFromOtherAccountOperations;
-        private status;
-        /**
-         * The bank account this information is referencing.
-         *
-         * @return The bank account this information is referencing.
-         */
-        getBankAccount(): BankAccountDetails;
-        /**
-         * The bank account this information is referencing.
-         *
-         * @param bankAccount The bank account this information is referencing.
-         */
-        setBankAccount(bankAccount: BankAccountDetails): void;
-        getAccountDetails(): AccountDetails;
-        /**
-         * Whether this account supports download of transaction details.
-         *
-         * @return Whether this account supports download of transaction details.
-         */
-        getSupportsTransactionDetailOperations(): boolean;
-        /**
-         * Whether this account supports download of transaction details.
-         *
-         * @param supportsTransactionDetailOperations Whether this account supports download of transaction details.
-         */
-        setSupportsTransactionDetailOperations(supportsTransactionDetailOperations: boolean): void;
-        /**
-         * Whether this account supports transfer operations to other accounts.
-         *
-         * @return Whether this account supports transfer operations to other accounts.
-         */
-        getSupportsTransferToOtherAccountOperations(): boolean;
-        /**
-         * Whether this account supports transfer operations to other accounts.
-         *
-         * @param supportsTransferToOtherAccountOperations Whether this account supports transfer operations to other accounts.
-         */
-        setSupportsTransferToOtherAccountOperations(supportsTransferToOtherAccountOperations: boolean): void;
-        /**
-         * Whether this account supports transfer operations from other accounts.
-         *
-         * @return Whether this account supports transfer operations from other accounts.
-         */
-        getSupportsTransferFromOtherAccountOperations(): boolean;
-        /**
-         * Whether this account supports transfer operations from other accounts.
-         *
-         * @param supportsTransferFromOtherAccountOperations Whether this account supports transfer operations from other accounts.
-         */
-        setSupportsTransferFromOtherAccountOperations(supportsTransferFromOtherAccountOperations: boolean): void;
-        /**
-         * The account status.
-         *
-         * @return The account status.
-         */
-        getStatus(): AccountStatus;
-        /**
-         * The account status.
-         *
-         * @param status The account status.
-         */
-        setStatus(status: AccountStatus): void;
-    }
-}
-declare module ofx4js.domain.data.creditcard {
-    import AccountStatus = ofx4js.domain.data.common.AccountStatus;
-    import AccountInfo = ofx4js.domain.data.common.AccountInfo;
-    import AccountDetails = ofx4js.domain.data.common.AccountDetails;
-    /**
-     * @author Ryan Heaton
-     */
-    class CreditCardAccountInfo implements AccountInfo {
-        private creditCardAccount;
-        private supportsTransactionDetailOperations;
-        private supportsTransferToOtherAccountOperations;
-        private supportsTransferFromOtherAccountOperations;
-        private status;
-        /**
-         * The credit card account this information is referencing.
-         *
-         * @return The credit card account this information is referencing.
-         */
-        getCreditCardAccount(): CreditCardAccountDetails;
-        /**
-         * The credit card account this information is referencing.
-         *
-         * @param creditCardAccount The credit card account this information is referencing.
-         */
-        setCreditCardAccount(creditCardAccount: CreditCardAccountDetails): void;
-        getAccountDetails(): AccountDetails;
-        /**
-         * Whether this account supports download of transaction details.
-         *
-         * @return Whether this account supports download of transaction details.
-         */
-        getSupportsTransactionDetailOperations(): boolean;
-        /**
-         * Whether this account supports download of transaction details.
-         *
-         * @param supportsTransactionDetailOperations Whether this account supports download of transaction details.
-         */
-        setSupportsTransactionDetailOperations(supportsTransactionDetailOperations: boolean): void;
-        /**
-         * Whether this account supports transfer operations to other accounts.
-         *
-         * @return Whether this account supports transfer operations to other accounts.
-         */
-        getSupportsTransferToOtherAccountOperations(): boolean;
-        /**
-         * Whether this account supports transfer operations to other accounts.
-         *
-         * @param supportsTransferToOtherAccountOperations Whether this account supports transfer operations to other accounts.
-         */
-        setSupportsTransferToOtherAccountOperations(supportsTransferToOtherAccountOperations: boolean): void;
-        /**
-         * Whether this account supports transfer operations from other accounts.
-         *
-         * @return Whether this account supports transfer operations from other accounts.
-         */
-        getSupportsTransferFromOtherAccountOperations(): boolean;
-        /**
-         * Whether this account supports transfer operations from other accounts.
-         *
-         * @param supportsTransferFromOtherAccountOperations Whether this account supports transfer operations from other accounts.
-         */
-        setSupportsTransferFromOtherAccountOperations(supportsTransferFromOtherAccountOperations: boolean): void;
-        /**
-         * The account status.
-         *
-         * @return The account status.
-         */
-        getStatus(): AccountStatus;
-        /**
-         * The account status.
-         *
-         * @param status The account status.
-         */
-        setStatus(status: AccountStatus): void;
-    }
-}
-declare module ofx4js.domain.data.signup {
-    import InvestmentAccountInfo = ofx4js.domain.data.investment.accounts.InvestmentAccountInfo;
-    import BankAccountInfo = ofx4js.domain.data.banking.BankAccountInfo;
-    import CreditCardAccountInfo = ofx4js.domain.data.creditcard.CreditCardAccountInfo;
-    /**
-     * @author Ryan Heaton
-     */
-    class AccountProfile {
-        private description;
-        private phone;
-        private bankSpecifics;
-        private creditCardSpecifics;
-        private investSpecifics;
-        /**
-         * Description of the account.
-         *
-         * @return The description of the account.
-         */
-        getDescription(): string;
-        /**
-         * The description of the account.
-         *
-         * @param description The description of the account.
-         */
-        setDescription(description: string): void;
-        /**
-         * Phone number for the account.
-         *
-         * @return Phone number for the account.
-         */
-        getPhone(): string;
-        /**
-         * Phone number for the account.
-         *
-         * @param phone Phone number for the account.
-         */
-        setPhone(phone: string): void;
-        /**
-         * Account specifics.
-         *
-         * @return Account specifics.
-         */
-        getSpecifics(): ofx4js.domain.data.common.AccountInfo;
-        /**
-         * Account specifics.
-         *
-         * @param specifics Account specifics.
-         */
-        setSpecifics(specifics: ofx4js.domain.data.common.AccountInfo): void;
-        /**
-         * Bank-specific info.
-         *
-         * @return Bank-specific info.
-         */
-        getBankSpecifics(): BankAccountInfo;
-        /**
-         * Bank-specific info.
-         *
-         * @param bankSpecifics Bank-specific info.
-         */
-        setBankSpecifics(bankSpecifics: BankAccountInfo): void;
-        /**
-         * Credit-card account info.
-         *
-         * @return Credit-card account info.
-         */
-        getCreditCardSpecifics(): CreditCardAccountInfo;
-        /**
-         * Credit-card account info.
-         *
-         * @param creditCardSpecifics Credit-card account info.
-         */
-        setCreditCardSpecifics(creditCardSpecifics: CreditCardAccountInfo): void;
-        /**
-         * Investment account info.
-         *
-         * @return Investment account info.
-         */
-        getInvestmentSpecifics(): InvestmentAccountInfo;
-        /**
-         * Investment account info.
-         *
-         * @param investSpecifics Investment account info.
-         */
-        setInvestmentSpecifics(investSpecifics: InvestmentAccountInfo): void;
-    }
-}
-declare module ofx4js.client {
+declare module "client/FinancialInstitutionData" {
     /**
      * Interface for core FI data.  This is the base set of information
      * required in order to initiate a connection to an FI server.
      *
      * @author Ryan Heaton
      */
-    interface FinancialInstitutionData {
+    export interface FinancialInstitutionData {
         /**
          * A unique id for this FI.
          *
@@ -1921,32 +1378,55 @@ declare module ofx4js.client {
         getBrokerId(): string;
     }
 }
-declare module ofx4js.domain.data.profile {
+declare module "domain/data/MessageSetType" {
     /**
+     * The message set type, used to define message set order in the envelope.
+     *
      * @author Ryan Heaton
-     * @see "Section 7.2.1, OFX Spec"
+     * @see "Section 2.4.5.2, OFX spec"
      */
-    enum SynchronizationCapability {
-        FULL = 0,
-        LITE = 1,
+    export enum MessageSetType {
+        signon = 0,
+        signup = 1,
+        banking = 2,
+        creditcard = 3,
+        investment = 4,
+        interbank_transfer = 5,
+        wire_transfer = 6,
+        payments = 7,
+        email = 8,
+        investment_security = 9,
+        profile = 10,
+        tax1099 = 11
     }
 }
-declare module ofx4js.domain.data {
+declare module "domain/data/ApplicationSecurity" {
     /**
      * @author Ryan Heaton
      * @see "Section 4, OFX spec"
      */
-    enum ApplicationSecurity {
+    export enum ApplicationSecurity {
         NONE = 0,
-        TYPE1 = 1,
+        TYPE1 = 1
     }
 }
-declare module ofx4js.domain.data {
-    import SynchronizationCapability = ofx4js.domain.data.profile.SynchronizationCapability;
+declare module "domain/data/profile/SynchronizationCapability" {
+    /**
+     * @author Ryan Heaton
+     * @see "Section 7.2.1, OFX Spec"
+     */
+    export enum SynchronizationCapability {
+        FULL = 0,
+        LITE = 1
+    }
+}
+declare module "domain/data/MessageSetProfile" {
+    import { ApplicationSecurity } from "domain/data/ApplicationSecurity";
+    import { SynchronizationCapability } from "domain/data/profile/SynchronizationCapability";
     /**
      * @author Ryan Heaton
      */
-    interface MessageSetProfile {
+    export interface MessageSetProfile {
         /**
          * Version of the message set.
          *
@@ -2004,46 +1484,24 @@ declare module ofx4js.domain.data {
         hasFileBasedErrorRecoverySupport(): boolean;
     }
 }
-declare module ofx4js.domain.data {
-    /**
-     * The message set type, used to define message set order in the envelope.
-     *
-     * @author Ryan Heaton
-     * @see "Section 2.4.5.2, OFX spec"
-     */
-    enum MessageSetType {
-        signon = 0,
-        signup = 1,
-        banking = 2,
-        creditcard = 3,
-        investment = 4,
-        interbank_transfer = 5,
-        wire_transfer = 6,
-        payments = 7,
-        email = 8,
-        investment_security = 9,
-        profile = 10,
-        tax1099 = 11,
-    }
-}
-declare module ofx4js.domain.data.profile {
+declare module "domain/data/profile/CharacterType" {
     /**
      * @author Ryan Heaton
      * @see "Section 7.2.2, OFX Spec"
      */
-    enum CharacterType {
+    export enum CharacterType {
         ALPHAONLY = 0,
         NUMERICONLY = 1,
         ALPHAORNUMERIC = 2,
-        ALPHAANDNUMERIC = 3,
+        ALPHAANDNUMERIC = 3
     }
 }
-declare module ofx4js.domain.data {
-    import CharacterType = ofx4js.domain.data.profile.CharacterType;
+declare module "domain/data/SignonProfile" {
+    import { CharacterType } from "domain/data/profile/CharacterType";
     /**
      * @author Ryan Heaton
      */
-    interface SignonProfile {
+    export interface SignonProfile {
         /**
          * The name of the sign-on realm.
          *
@@ -2148,14 +1606,14 @@ declare module ofx4js.domain.data {
         getMfaChallengeRequiredForFirstSignon(): boolean;
     }
 }
-declare module ofx4js.client {
-    import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import SignonProfile = ofx4js.domain.data.SignonProfile;
+declare module "client/FinancialInstitutionProfile" {
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { MessageSetProfile } from "domain/data/MessageSetProfile";
+    import { SignonProfile } from "domain/data/SignonProfile";
     /**
      * @author Ryan Heaton
      */
-    interface FinancialInstitutionProfile {
+    export interface FinancialInstitutionProfile {
         /**
          * When this profile was last updated.
          *
@@ -2266,128 +1724,541 @@ declare module ofx4js.client {
         getSignonProfile(messageSet: MessageSetProfile): SignonProfile;
     }
 }
-declare module ofx4js.client {
-    import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-    import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-    import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-    import AccountProfile = ofx4js.domain.data.signup.AccountProfile;
+declare module "domain/data/common/AccountInfo" {
+    import { AccountDetails } from "domain/data/common/AccountDetails";
+    /**
+     * Marker interface for account information.
+     *
+     * @author Ryan Heaton
+     */
+    export interface AccountInfo {
+        /**
+         * The account details.
+         *
+         * @return The account details.
+         */
+        getAccountDetails(): AccountDetails;
+    }
+}
+declare module "domain/data/common/AccountStatus" {
     /**
      * @author Ryan Heaton
      */
-    interface FinancialInstitution {
+    export enum AccountStatus {
         /**
-         * The financial institution data defining this FI.
-         *
-         * @return The financial institution data.
+         * Available, but not yet requested.
          */
-        getData(): FinancialInstitutionData;
+        AVAIL = 0,
         /**
-         * Read the specified financial institution profile. Implies a network call.
-         *
-         * @return The profile.
-         * @throws OFXException if something goes awry.
+         * Requested, but not yet available.
          */
-        readProfile(): Promise<FinancialInstitutionProfile>;
+        PEND = 1,
         /**
-         * Read the account profiles of the specified user.
-         *
-         * @param username The username.
-         * @param password The password.
-         * @return The profiles.
+         * Active.
          */
-        readAccountProfiles(username: string, password: string): Promise<Array<AccountProfile>>;
-        /**
-         * Load a bank account.
-         *
-         * @param details The bank account details.
-         * @param username The username.
-         * @param password The password.
-         * @return The bank account.
-         */
-        loadBankAccount(details: BankAccountDetails, username: string, password: string): BankAccount;
-        /**
-         * Load a credit card account.
-         *
-         * @param details The credit card account details.
-         * @param username The username.
-         * @param password The password.
-         * @return The credit card account.
-         */
-        loadCreditCardAccount(details: CreditCardAccountDetails, username: string, password: string): CreditCardAccount;
-        /**
-         * Load an investment account.
-         *
-         * @param details The investment account details.
-         * @param username The username.
-         * @param password The password.
-         * @return The investment account.
-         */
-        loadInvestmentAccount(details: InvestmentAccountDetails, username: string, password: string): InvestmentAccount;
+        ACTIVE = 2
     }
 }
-declare module ofx4js.client {
+declare module "domain/data/banking/BankAccountInfo" {
+    import { AccountInfo } from "domain/data/common/AccountInfo";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    import { AccountStatus } from "domain/data/common/AccountStatus";
+    import { AccountDetails } from "domain/data/common/AccountDetails";
     /**
      * @author Ryan Heaton
      */
-    interface FinancialInstitutionDataStore {
+    export class BankAccountInfo implements AccountInfo {
+        private bankAccount;
+        private supportsTransactionDetailOperations;
+        private supportsTransferToOtherAccountOperations;
+        private supportsTransferFromOtherAccountOperations;
+        private status;
         /**
-         * Get the data for the financial institution of the specified id.
+         * The bank account this information is referencing.
          *
-         * @param fid The id of the financial institution.
-         * @return The financial institution data, or null if none exists for the specified id.
+         * @return The bank account this information is referencing.
          */
-        getInstitutionData(fid: string): FinancialInstitutionData;
+        getBankAccount(): BankAccountDetails;
         /**
-         * Get the whole list of financial institution data.
+         * The bank account this information is referencing.
          *
-         * @return The whole list of financial institution data.
+         * @param bankAccount The bank account this information is referencing.
          */
-        getInstitutionDataList(): Array<FinancialInstitutionData>;
+        setBankAccount(bankAccount: BankAccountDetails): void;
+        getAccountDetails(): AccountDetails;
+        /**
+         * Whether this account supports download of transaction details.
+         *
+         * @return Whether this account supports download of transaction details.
+         */
+        getSupportsTransactionDetailOperations(): boolean;
+        /**
+         * Whether this account supports download of transaction details.
+         *
+         * @param supportsTransactionDetailOperations Whether this account supports download of transaction details.
+         */
+        setSupportsTransactionDetailOperations(supportsTransactionDetailOperations: boolean): void;
+        /**
+         * Whether this account supports transfer operations to other accounts.
+         *
+         * @return Whether this account supports transfer operations to other accounts.
+         */
+        getSupportsTransferToOtherAccountOperations(): boolean;
+        /**
+         * Whether this account supports transfer operations to other accounts.
+         *
+         * @param supportsTransferToOtherAccountOperations Whether this account supports transfer operations to other accounts.
+         */
+        setSupportsTransferToOtherAccountOperations(supportsTransferToOtherAccountOperations: boolean): void;
+        /**
+         * Whether this account supports transfer operations from other accounts.
+         *
+         * @return Whether this account supports transfer operations from other accounts.
+         */
+        getSupportsTransferFromOtherAccountOperations(): boolean;
+        /**
+         * Whether this account supports transfer operations from other accounts.
+         *
+         * @param supportsTransferFromOtherAccountOperations Whether this account supports transfer operations from other accounts.
+         */
+        setSupportsTransferFromOtherAccountOperations(supportsTransferFromOtherAccountOperations: boolean): void;
+        /**
+         * The account status.
+         *
+         * @return The account status.
+         */
+        getStatus(): AccountStatus;
+        /**
+         * The account status.
+         *
+         * @param status The account status.
+         */
+        setStatus(status: AccountStatus): void;
     }
 }
-declare module ofx4js.client {
+declare module "domain/data/creditcard/CreditCardAccountInfo" {
+    import { AccountInfo } from "domain/data/common/AccountInfo";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    import { AccountStatus } from "domain/data/common/AccountStatus";
+    import { AccountDetails } from "domain/data/common/AccountDetails";
     /**
      * @author Ryan Heaton
      */
-    interface FinancialInstitutionService {
+    export class CreditCardAccountInfo implements AccountInfo {
+        private creditCardAccount;
+        private supportsTransactionDetailOperations;
+        private supportsTransferToOtherAccountOperations;
+        private supportsTransferFromOtherAccountOperations;
+        private status;
         /**
-         * Get the financial institution by the specified id.
+         * The credit card account this information is referencing.
          *
-         * @param fid The financial institution id.
-         * @return The financial institution, or null if not found.
+         * @return The credit card account this information is referencing.
          */
-        getFinancialInstitution(fid: string): FinancialInstitution;
+        getCreditCardAccount(): CreditCardAccountDetails;
         /**
-         * Get the financial institution by the specified data.
+         * The credit card account this information is referencing.
          *
-         * @param data The financial institution data.
-         * @return The financial institution, or null if not found.
+         * @param creditCardAccount The credit card account this information is referencing.
          */
-        getFinancialInstitution(data: FinancialInstitutionData): FinancialInstitution;
+        setCreditCardAccount(creditCardAccount: CreditCardAccountDetails): void;
+        getAccountDetails(): AccountDetails;
+        /**
+         * Whether this account supports download of transaction details.
+         *
+         * @return Whether this account supports download of transaction details.
+         */
+        getSupportsTransactionDetailOperations(): boolean;
+        /**
+         * Whether this account supports download of transaction details.
+         *
+         * @param supportsTransactionDetailOperations Whether this account supports download of transaction details.
+         */
+        setSupportsTransactionDetailOperations(supportsTransactionDetailOperations: boolean): void;
+        /**
+         * Whether this account supports transfer operations to other accounts.
+         *
+         * @return Whether this account supports transfer operations to other accounts.
+         */
+        getSupportsTransferToOtherAccountOperations(): boolean;
+        /**
+         * Whether this account supports transfer operations to other accounts.
+         *
+         * @param supportsTransferToOtherAccountOperations Whether this account supports transfer operations to other accounts.
+         */
+        setSupportsTransferToOtherAccountOperations(supportsTransferToOtherAccountOperations: boolean): void;
+        /**
+         * Whether this account supports transfer operations from other accounts.
+         *
+         * @return Whether this account supports transfer operations from other accounts.
+         */
+        getSupportsTransferFromOtherAccountOperations(): boolean;
+        /**
+         * Whether this account supports transfer operations from other accounts.
+         *
+         * @param supportsTransferFromOtherAccountOperations Whether this account supports transfer operations from other accounts.
+         */
+        setSupportsTransferFromOtherAccountOperations(supportsTransferFromOtherAccountOperations: boolean): void;
+        /**
+         * The account status.
+         *
+         * @return The account status.
+         */
+        getStatus(): AccountStatus;
+        /**
+         * The account status.
+         *
+         * @param status The account status.
+         */
+        setStatus(status: AccountStatus): void;
     }
 }
-declare module ofx4js.domain.data {
+declare module "domain/data/investment/accounts/InvestmentAccountDetails" {
+    import { AccountDetails } from "domain/data/common/AccountDetails";
+    /**
+     * Aggregate for the details that identifity a brokerage account.
+     *
+     * @author Jon Perlow
+     * @see "OFX Spec, Section 13.6.1"
+     */
+    export class InvestmentAccountDetails implements AccountDetails {
+        private brokerId;
+        private accountNumber;
+        private accountKey;
+        /**
+         * Gets the broker id.
+         *
+         * @return the id of the broker
+         */
+        getBrokerId(): string;
+        /**
+         * Sets the broker id.
+         *
+         * @param brokerId the id of the broker
+         */
+        setBrokerId(brokerId: string): void;
+        /**
+         * Gets the account number.
+         *
+         * @return the account number
+         */
+        getAccountNumber(): string;
+        /**
+         * Sets the account number.
+         *
+         * @param accountNumber the account number
+         */
+        setAccountNumber(accountNumber: string): void;
+        /**
+         * Gets the account key.
+         *
+         * @return the account key
+         */
+        getAccountKey(): string;
+        /**
+         * Sets the account key.
+         *
+         * @param accountKey the account key
+         */
+        setAccountKey(accountKey: string): void;
+    }
+}
+declare module "domain/data/investment/accounts/UnitedStatesAccountType" {
+    /**
+     * @author Jon Perlow
+     * @see "OFX Spec, Section 13.6.2.1"
+     */
+    export enum UnitedStatesAccountType {
+        /** A 401(k) retirement account */
+        R401K = 0,
+        /** A 403(B) retirement account */
+        R403B = 1,
+        /** An IRA retirement account */
+        IRA = 2,
+        /** Keough (money purchase/profit sharing) account */
+        KEOUGH = 3,
+        /** Other account type */
+        OTHER = 4,
+        /** Salary Reduction Employer Pension Plan */
+        SARSEP = 5,
+        /** Savings Incentive Match Plan for Employees*/
+        SIMPLE = 6,
+        /** Regular investment account */
+        NORMAL = 7,
+        /** Tax Deferred Annuity */
+        TDA = 8,
+        /** Trust (including UTMA) */
+        TRUST = 9,
+        /** Custodial account */
+        UGMA = 10
+    }
+    export function UnitedStatesAccountType_fromOfx(ofxVal: string): UnitedStatesAccountType;
+}
+declare module "domain/data/investment/accounts/ActivationStatus" {
+    /**
+     * Activation status of an account.
+     * @see "Section 13.6.2, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export enum ActivationStatus {
+        ACTIVE = 0,
+        PENDING = 1,
+        AVAILABLE = 2
+    }
+    export function ActivationStatus_fromOfx(ofxVal: string): ActivationStatus;
+}
+declare module "domain/data/investment/accounts/AccountType" {
+    /**
+     * Type of investment account.
+     *
+     * @author Jon Perlow
+     * @see "OFX Spec, Section 13.6.2"
+     */
+    export enum AccountType {
+        INDIVIDUAL = 0,
+        JOINT = 1,
+        TRUST = 2,
+        CORPORATE = 3
+    }
+    export function AccountType_fromOfx(ofxVal: string): AccountType;
+}
+declare module "domain/data/investment/accounts/InvestmentAccountInfo" {
+    import { AccountInfo } from "domain/data/common/AccountInfo";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
+    import { AccountDetails } from "domain/data/common/AccountDetails";
+    import { UnitedStatesAccountType } from "domain/data/investment/accounts/UnitedStatesAccountType";
+    import { ActivationStatus } from "domain/data/investment/accounts/ActivationStatus";
+    import { AccountType } from "domain/data/investment/accounts/AccountType";
+    /**
+     * Aggregate for the info about a brokerage account.
+     *
+     * @author Jon Perlow
+     * @see "OFX Spec, Section 13.6.2"
+     */
+    export class InvestmentAccountInfo implements AccountInfo {
+        private investmentAccount;
+        private unitedStatesAccountType;
+        private supportsChecking;
+        private activationStatus;
+        private investmentAccountType;
+        private optionLevel;
+        /**
+         * Gets the investment account this information is referencing.
+         *
+         * @return the investment account this information is referencing
+         */
+        getInvestmentAccount(): InvestmentAccountDetails;
+        /**
+         * Sets the investment account this information is referencing. This is a required field
+         * according to the OFX spec.
+         *
+         * @param investmentAccount the investment account this information is referencing
+         */
+        setInvestmentAccount(investmentAccount: InvestmentAccountDetails): void;
+        getAccountDetails(): AccountDetails;
+        /**
+         * Gets the United States account type. This is a required field according to the OFX spec.
+         * @see "OFX Spec, Section 13.6.1"
+         *
+         * @return the United States account type
+         */
+        getUnitedStatesAccountType(): string;
+        /**
+         * Sets United States account type. This is a required field according to the OFX spec.
+         * @see "OFX Spec, Section 13.6.1"
+         *
+         * @param unitedStatesAccountType the United States account type
+         */
+        setUnitedStatesAccountType(unitedStatesAccountType: string): void;
+        /**
+         * Gets the United States account type as one of the well-known types.
+         *
+         * @return the account type or null if it's not one of the well-known types
+         */
+        getUnitedStatesAccountTypeEnum(): UnitedStatesAccountType;
+        /**
+         * Gets whether the account supports checking. This is a required field according to the OFX spec.
+         * @see "OFX Spec, Section 13.6.1"
+         *
+         * @return whether the account supports checking
+         */
+        getSupportsChecking(): boolean;
+        /**
+         * Sets whether the account supports checking. This is a required field according to the OFX spec.
+         * @see "OFX Spec, Section 13.6.1"
+         *
+         * @param supportsChecking whether the account supports checking
+         */
+        setSupportsChecking(supportsChecking: boolean): void;
+        /**
+         * Gets the activation status for investment statement download. This is a required field
+         * according to the OFX spec.
+         *
+         * @return the activation status
+         */
+        getActivationStatus(): string;
+        /**
+         * Sets the activation status for investment statement download. This is a required field
+         * according to the OFX spec.
+         *
+         * @param activationStatus the activation status
+         */
+        setActivationStatus(activationStatus: string): void;
+        /**
+         * Gets the activation status as one of the well-known types.
+         *
+         * @return the activation status or null if it wasn't one of the well known types
+         */
+        getActivationStatusEnum(): ActivationStatus;
+        /**
+         * Gets the type of investment account. One of "INDIVIDUAL", "JOINT", "TRUST", or "CORPORATE".
+         * This is an optional field according to the OFX spec.
+         *
+         * @return the type of account
+         */
+        getInvestmentAccountType(): string;
+        /**
+         * Sets the type of investment account. One of "INDIVIDUAL", "JOINT", "TRUST", or "CORPORATE".
+         * This is an optional field according to the OFX spec.
+         *
+         * @param investmentAccountType the type of account
+         */
+        setInvestmentAccountType(investmentAccountType: string): void;
+        /**
+         * Gets the type of investment account as one of the well-known types.
+         *
+         * @return the type of investment account or null if it's not one of the well-known types
+         */
+        getInvestmentAccountTypeEnum(): AccountType;
+        /**
+         * Gets the description of option trading privileges. * This is an optional field according to
+         * the OFX spec.
+         *
+         * @return the description of option trading privileges.
+         */
+        getOptionLevel(): string;
+        /**
+         * Sets the description of option trading privileges. * This is an optional field according to
+         * the OFX spec.
+         *
+         * @param optionLevel the description of option trading privileges.
+         */
+        setOptionLevel(optionLevel: string): void;
+    }
+}
+declare module "domain/data/signup/AccountProfile" {
+    import { BankAccountInfo } from "domain/data/banking/BankAccountInfo";
+    import { CreditCardAccountInfo } from "domain/data/creditcard/CreditCardAccountInfo";
+    import { InvestmentAccountInfo } from "domain/data/investment/accounts/InvestmentAccountInfo";
+    import { AccountInfo } from "domain/data/common/AccountInfo";
+    /**
+     * @author Ryan Heaton
+     */
+    export class AccountProfile {
+        private description;
+        private phone;
+        private bankSpecifics;
+        private creditCardSpecifics;
+        private investSpecifics;
+        /**
+         * Description of the account.
+         *
+         * @return The description of the account.
+         */
+        getDescription(): string;
+        /**
+         * The description of the account.
+         *
+         * @param description The description of the account.
+         */
+        setDescription(description: string): void;
+        /**
+         * Phone number for the account.
+         *
+         * @return Phone number for the account.
+         */
+        getPhone(): string;
+        /**
+         * Phone number for the account.
+         *
+         * @param phone Phone number for the account.
+         */
+        setPhone(phone: string): void;
+        /**
+         * Account specifics.
+         *
+         * @return Account specifics.
+         */
+        getSpecifics(): AccountInfo;
+        /**
+         * Account specifics.
+         *
+         * @param specifics Account specifics.
+         */
+        setSpecifics(specifics: AccountInfo): void;
+        /**
+         * Bank-specific info.
+         *
+         * @return Bank-specific info.
+         */
+        getBankSpecifics(): BankAccountInfo;
+        /**
+         * Bank-specific info.
+         *
+         * @param bankSpecifics Bank-specific info.
+         */
+        setBankSpecifics(bankSpecifics: BankAccountInfo): void;
+        /**
+         * Credit-card account info.
+         *
+         * @return Credit-card account info.
+         */
+        getCreditCardSpecifics(): CreditCardAccountInfo;
+        /**
+         * Credit-card account info.
+         *
+         * @param creditCardSpecifics Credit-card account info.
+         */
+        setCreditCardSpecifics(creditCardSpecifics: CreditCardAccountInfo): void;
+        /**
+         * Investment account info.
+         *
+         * @return Investment account info.
+         */
+        getInvestmentSpecifics(): InvestmentAccountInfo;
+        /**
+         * Investment account info.
+         *
+         * @param investSpecifics Investment account info.
+         */
+        setInvestmentSpecifics(investSpecifics: InvestmentAccountInfo): void;
+    }
+}
+declare module "domain/data/ResponseMessage" {
     /**
      * A message applicable to a response message set.
      *
      * @author Ryan Heaton
      */
-    class ResponseMessage {
+    export abstract class ResponseMessage {
         /**
          * The name of the response message.
          *
          * @return The name of the response message.
          */
-        getResponseMessageName(): string;
+        abstract getResponseMessageName(): string;
     }
 }
-declare module ofx4js.domain.data.common {
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import AccountStatement = ofx4js.client.AccountStatement;
+declare module "domain/data/common/StatementResponse" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    import { AccountStatement } from "client/AccountStatement";
+    import { TransactionList } from "domain/data/common/TransactionList";
+    import { BalanceInfo } from "domain/data/common/BalanceInfo";
     /**
      * @author Ryan Heaton
      */
-    class StatementResponse extends ResponseMessage implements AccountStatement {
+    export abstract class StatementResponse extends ResponseMessage implements AccountStatement {
         private currencyCode;
         private transactionList;
         private ledgerBalance;
@@ -2457,29 +2328,328 @@ declare module ofx4js.domain.data.common {
         setMarketingInfo(marketingInfo: string): void;
     }
 }
-declare module ofx4js.domain.data.investment.accounts {
+declare module "domain/data/investment/transactions/InvestmentTransaction" {
+    /**
+     * Investment transaction aggregate ("INVTRAN").
+     * @see "Section 13.9.2.4.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentTransaction {
+        private transactionId;
+        private serverId;
+        private tradeDate;
+        private settlementDate;
+        private reversalTransactionId;
+        private memo;
+        /**
+         * Gets the unique financial institution assigned transaction id. This is a
+         * required field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the financial institution asssigned transaction id
+         */
+        getTransactionId(): string;
+        /**
+         * Sets the unique financial institution assigned transaction id. This is a
+         * required field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @param transactionId the financial institution asssigned transaction id
+         */
+        setTransactionId(transactionId: string): void;
+        /**
+         * Gets the server assigned transaction id. This is an optional field
+         * according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the server assigned transaction id
+         */
+        getServerId(): string;
+        /**
+         * Sets the server assigned transaction id. This is an optional field
+         * according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @param serverId the server assigned transaction id
+         */
+        setServerId(serverId: string): void;
+        /**
+         * Gets the trade date of the transaction. For stock splits, this is the
+         * day of record. This is a required field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the trade date
+         */
+        getTradeDate(): Date;
+        /**
+         * Sets the trade date of the transaction. For stock splits, this is the
+         * day of record. This is a required field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @param tradeDate the trade date
+         */
+        setTradeDate(tradeDate: Date): void;
+        /**
+         * Gets the settlement date of the transaction. For stock splits, this is the
+         * day of of execution. This is an optional field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the trade date
+         */
+        getSettlementDate(): Date;
+        /**
+         * Sets the settlement date of the transaction. For stock splits, this is the
+         * day of of execution. This is an optional field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @param settlementDate the trade date
+         */
+        setSettlementDate(settlementDate: Date): void;
+        /**
+         * For a reveral transaction, gets the financial institution assigned
+         * transaction id for the transaction being revesed.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the transaction id of the transaction being reversed
+         */
+        getReversalTransactionId(): string;
+        /**
+         * For a reveral transaction, gets the financial institution assigned
+         * transaction id for the transaction being revesed.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @param reversalTransactionId the transaction id of the transaction being reversed
+         */
+        setReversalTransactionId(reversalTransactionId: string): void;
+        /**
+         * Gets the memo associated with the transaction. This is an optional field
+         * according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the memo
+         */
+        getMemo(): string;
+        /**
+         * Sets the memo associated with the transaction. This is an optional field
+         * according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @param memo the memo
+         */
+        setMemo(memo: string): void;
+    }
+}
+declare module "domain/data/investment/transactions/BaseInvestmentTransaction" {
+    import { TransactionType } from "domain/data/investment/transactions/TransactionType";
+    import { InvestmentTransaction } from "domain/data/investment/transactions/InvestmentTransaction";
+    /**
+     * Base class for all investment transactions.
+     * <br>
+     * This class exposes a read-only view of the flattened aggregates that are
+     * common to all investment transactions as a convenience to application
+     * developers who may not find the ofx aggregation model intuitive.
+     *
+     * @author Jon Perlow
+     */
+    export abstract class BaseInvestmentTransaction {
+        private transactionType;
+        constructor(transactionType: TransactionType);
+        /**
+         * Gets the type of transaction.
+         *
+         * @return the type of transaction
+         */
+        getTransactionType(): TransactionType;
+        /**
+         * Gets the {@link InvestmentTransaction} aggregate.
+         *
+         * @return the {@link InvestmentTransaction} aggregate
+         */
+        abstract getInvestmentTransaction(): InvestmentTransaction;
+        /**
+         * Gets the unique financial institution assigned transaction id. This is a
+         * required field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the financial institution asssigned transaction id
+         */
+        getTransactionId(): string;
+        /**
+         * Gets the server assigned transaction id. This is an optional field
+         * according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the server assigned transaction id
+         */
+        getServerId(): string;
+        /**
+         * Gets the trade date of the transaction. For stock splits, this is the
+         * day of record. This is a required field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the trade date
+         */
+        getTradeDate(): Date;
+        /**
+         * Gets the settlement date of the transaction. For stock splits, this is the
+         * day of of execution. This is an optional field according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the trade date
+         */
+        getSettlementDate(): Date;
+        /**
+         * For a reveral transaction, gets the financial institution assigned
+         * transaction id for the transaction being revesed.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the transaction id of the transaction being reversed
+         */
+        getReversalTransactionId(): string;
+        /**
+         * Gets the memo associated with the transaction. This is an optional field
+         * according to the OFX spec.
+         * @see "Section 13.9.2.4.1, OFX Spec"
+         *
+         * @return the memo
+         */
+        getMemo(): string;
+    }
+}
+declare module "domain/data/investment/accounts/SubAccountType" {
     /**
      * Types of well-known sub-accounts.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum SubAccountType {
+    export enum SubAccountType {
         CASH = 0,
         MARGIN = 1,
         SHORT = 2,
-        OTHER = 3,
+        OTHER = 3
     }
-    function SubAccountType_fromOfx(ofxVal: string): SubAccountType;
+    export function SubAccountType_fromOfx(ofxVal: string): SubAccountType;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/investment/transactions/InvestmentBankTransaction" {
+    import { Transaction } from "domain/data/common/Transaction";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    /**
+     * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
+     * @see "Section 13.9.2.3, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentBankTransaction {
+        private transaction;
+        private subAccountFund;
+        /**
+         * Gets the wrapped transaction aggregate.
+         * @return the wrapped transaction
+         */
+        getTransaction(): Transaction;
+        /**
+         * Sets the wrapped transaction aggregate.
+         * @param transaction the wrapped transaction
+         */
+        setTransaction(transaction: Transaction): void;
+        /**
+         * Gets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
+         * @see "Section 13.9.2.4.2, OFX Spec"
+         *
+         * @return the sub account fund for the transaction
+         */
+        getSubAccountFund(): string;
+        /**
+         * Sets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
+         * @see "Section 13.9.2.4.2, OFX Spec"
+         *
+         * @param subAccountFund the sub account fund for the transaction
+         */
+        setSubAccountFund(subAccountFund: string): void;
+        /**
+         * Gets the result of getSubAccountFund as one of the well-known types.
+         *
+         * @return the type of null if it wasn't one of the well known types
+         */
+        getSubAccountFundEnum(): SubAccountType;
+    }
+}
+declare module "domain/data/investment/transactions/InvestmentTransactionList" {
+    import { BaseInvestmentTransaction } from "domain/data/investment/transactions/BaseInvestmentTransaction";
+    import { InvestmentBankTransaction } from "domain/data/investment/transactions/InvestmentBankTransaction";
+    /**
+     * The transaction list aggregate.
+     * @see "Section 13.9.1.2, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentTransactionList {
+        private start;
+        private end;
+        private transactions;
+        private bankTransactions;
+        /**
+         * Gets the start date. This is a required field according to the OFX spec.
+         *
+         * @return The start date
+         */
+        getStart(): Date;
+        /**
+         * Sets the start date. This is a required field according to the OFX spec.
+         *
+         * @param start The start date
+         */
+        setStart(start: Date): void;
+        /**
+         * Gets the end date. This is a required field according to the OFX spec.
+         *
+         * @return he end date
+         */
+        getEnd(): Date;
+        /**
+         * Sets the end date. This is a required field according to the OFX spec.
+         *
+         * @param end the end date
+         */
+        setEnd(end: Date): void;
+        /**
+         * Gets the investment transaction list. This is a heterogenous list of different types of
+         * transactions returned in the order the brokerage provides them.
+         *
+         * @return the investment transaction list
+         */
+        getInvestmentTransactions(): Array<BaseInvestmentTransaction>;
+        /**
+         * Sets the investment transaction list. This is a heterogenous list of different types of
+         * transactions returned in the order the brokerage provides them.
+         *
+         * @param transactions the investment transaction list
+         */
+        setInvestmentTransactions(transactions: Array<BaseInvestmentTransaction>): void;
+        /**
+         * Gets the bank transaction list.
+         *
+         * @return the bank transaction list
+         */
+        getBankTransactions(): Array<InvestmentBankTransaction>;
+        /**
+         * Sets the bank transaction list.
+         *
+         * @param bankTransactions the bank transaction list
+         */
+        setBankTransactions(bankTransactions: Array<InvestmentBankTransaction>): void;
+    }
+}
+declare module "domain/data/seclist/SecurityId" {
     /**
      * Identifier for a security.
      * @see "Section 13.8.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SecurityId {
+    export class SecurityId {
         private uniqueId;
         private uniqueIdType;
         /**
@@ -2508,16 +2678,49 @@ declare module ofx4js.domain.data.seclist {
         setUniqueIdType(uniqueIdType: string): void;
     }
 }
-declare module ofx4js.domain.data.investment.positions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/positions/PositionType" {
+    /**
+     * Type of position.
+     * @see "Section 13.9.2.4.4, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export enum PositionType {
+        LONG = 0,
+        SHORT = 1
+    }
+    export function PositionType_fromOfx(ofxVal: string): PositionType;
+}
+declare module "domain/data/investment/positions/Inv401KSource" {
+    /**
+     * Types of 401(k) sources.
+     * @see "Section 13.9.2.4.2, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export enum Inv401KSource {
+        PRETAX = 0,
+        AFTER_TAX = 1,
+        MATCH = 2,
+        PROFIT_SHARING = 3,
+        ROLLOVER = 4,
+        OTHER_VEST = 5,
+        OTHER_NONVEST = 6
+    }
+    export function Inv401KSource_fromOfx(ofxVal: string): Inv401KSource;
+}
+declare module "domain/data/investment/positions/InvestmentPosition" {
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { PositionType } from "domain/data/investment/positions/PositionType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Class for the investment position aggregate.
      * @see "Section 13.9.2.6.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class InvestmentPosition {
+    export class InvestmentPosition {
         private securityId;
         private heldInAccount;
         private positionType;
@@ -2712,40 +2915,12 @@ declare module ofx4js.domain.data.investment.positions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.positions {
-    /**
-     * Types of 401(k) sources.
-     * @see "Section 13.9.2.4.2, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    enum Inv401KSource {
-        PRETAX = 0,
-        AFTER_TAX = 1,
-        MATCH = 2,
-        PROFIT_SHARING = 3,
-        ROLLOVER = 4,
-        OTHER_VEST = 5,
-        OTHER_NONVEST = 6,
-    }
-    function Inv401KSource_fromOfx(ofxVal: string): Inv401KSource;
-}
-declare module ofx4js.domain.data.investment.positions {
-    /**
-     * Type of position.
-     * @see "Section 13.9.2.4.4, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    enum PositionType {
-        LONG = 0,
-        SHORT = 1,
-    }
-    function PositionType_fromOfx(ofxVal: string): PositionType;
-}
-declare module ofx4js.domain.data.investment.positions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/positions/BasePosition" {
+    import { InvestmentPosition } from "domain/data/investment/positions/InvestmentPosition";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { PositionType } from "domain/data/investment/positions/PositionType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Base class for the various types of positions.
      * <br>
@@ -2755,7 +2930,7 @@ declare module ofx4js.domain.data.investment.positions {
      *
      * @author Jon Perlow
      */
-    class BasePosition {
+    export class BasePosition {
         private investmentPosition;
         /**
          * Gets the investment position child aggregate.
@@ -2872,14 +3047,15 @@ declare module ofx4js.domain.data.investment.positions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/InvestmentPositionList" {
+    import { BasePosition } from "domain/data/investment/positions/BasePosition";
     /**
      * Aggregate for a list of invesment positions.
      * @see "Section 13.9.2.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class InvestmentPositionList {
+    export class InvestmentPositionList {
         private positions;
         /**
          * Gets the list of positions
@@ -2895,14 +3071,215 @@ declare module ofx4js.domain.data.investment.positions {
         setPositions(positions: Array<BasePosition>): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/common/BalanceRecord" {
+    import { Currency } from "domain/data/common/Currency";
+    export enum BalanceRecordType {
+        DOLLAR = 0,
+        PERCENT = 1,
+        NUMBER = 2
+    }
+    /**
+     * @author Ryan Heaton
+     * @see "Section 3.1.3, OFX Spec"
+     */
+    export class BalanceRecord {
+        private name;
+        private description;
+        private type;
+        private value;
+        private timestamp;
+        private currency;
+        /**
+         * Name of the balance.
+         *
+         * @return Name of the balance.
+         */
+        getName(): string;
+        /**
+         * Name of the balance.
+         *
+         * @param name Name of the balance.
+         */
+        setName(name: string): void;
+        /**
+         * Description of the balance.
+         *
+         * @return Description of the balance.
+         */
+        getDescription(): string;
+        /**
+         * Description of the balance.
+         *
+         * @param description Description of the balance.
+         */
+        setDescription(description: string): void;
+        /**
+         * Type of the balance.
+         *
+         * @return Type of the balance.
+         */
+        getType(): BalanceRecordType;
+        /**
+         * Type of the balance.
+         *
+         * @param type Type of the balance.
+         */
+        setType(type: BalanceRecordType): void;
+        /**
+         * The value of the balance.
+         *
+         * @return The value of the balance.
+         */
+        getValue(): string;
+        /**
+         * The value of the balance.
+         *
+         * @param value The value of the balance.
+         */
+        setValue(value: string): void;
+        /**
+         * Timestamp of the balance.
+         *
+         * @return Timestamp of the balance.
+         */
+        getTimestamp(): Date;
+        /**
+         * Timestamp of the balance.
+         *
+         * @param timestamp Timestamp of the balance.
+         */
+        setTimestamp(timestamp: Date): void;
+        /**
+         * Currency.
+         *
+         * @return Currency.
+         */
+        getCurrency(): Currency;
+        /**
+         * Currency.
+         *
+         * @param currency Currency.
+         */
+        setCurrency(currency: Currency): void;
+    }
+}
+declare module "domain/data/investment/statements/BalanceList" {
+    import { BalanceRecord } from "domain/data/common/BalanceRecord";
+    /**
+     * Aggregate for the investment balance list.
+     * @see "Section 13.9.2.7, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class BalanceList {
+        private balanceRecords;
+        /**
+         * Gets the list of balance records.
+         *
+         * @return the list of balance records.
+         */
+        getBalanceRecords(): Array<BalanceRecord>;
+        /**
+         * Sets the list of balance records.
+         *
+         * @param balanceRecords the list of balance records.
+         */
+        setBalanceRecords(balanceRecords: Array<BalanceRecord>): void;
+    }
+}
+declare module "domain/data/investment/statements/InvestmentBalance" {
+    import { BalanceList } from "domain/data/investment/statements/BalanceList";
+    /**
+     * Aggregate for the investment balance.
+     * @see "Section 13.9.2.7, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentBalance {
+        private availableCash;
+        private marginBalance;
+        private shortBalance;
+        private buyingPower;
+        private balanceList;
+        /**
+         * Gets the available cash balance across all sub-accounts, including sweep funds. This is
+         * required field according to the OFX spec.
+         *
+         * @return the available cash balance
+         */
+        getAvailableCash(): number;
+        /**
+         * Sets the available cash balance across all sub-accounts, including sweep funds. This is
+         * required field according to the OFX spec.
+         *
+         * @param availableCash the available cash balance
+         */
+        setAvailableCash(availableCash: number): void;
+        /**
+         * Gets the margin account balance. A positive balance indicates a positive cash balance, while
+         * a negative balance indicates the customer borrowed funds. This is a required field according
+         * to the OFX spec.
+         *
+         * @return the margin account balance
+         */
+        getMarginBalance(): number;
+        /**
+         * Sets the margin account balance. A positive balance indicates a positive cash balance, while
+         * a negative balance indicates the customer borrowed funds. This is a required field according
+         * to the OFX spec.
+         *
+         * @param marginBalance the margin account balance
+         */
+        setMarginBalance(marginBalance: number): void;
+        /**
+         * Gets the market value of all short positions. This is a positive balance. This is a required
+         * field according to the OFX spec.
+         *
+         * @return the market value of all short positions
+         */
+        getShortBalance(): number;
+        /**
+         * Sets the market value of all short positions. This is a positive balance. This is a required
+         * field according to the OFX spec.
+         *
+         * @param shortBalance the market value of all short positions
+         */
+        setShortBalance(shortBalance: number): void;
+        /**
+         * Gets the buying power amount. This is an optional field according to the OFX spec.
+         *
+         * @return the buying power
+         */
+        getBuyingPower(): number;
+        /**
+         * Sets the buying power amount. This is an optional field according to the OFX spec.
+         *
+         * @param buyingPower the buying power
+         */
+        setBuyingPower(buyingPower: number): void;
+        /**
+         * Gets the investment balance list. This is an optional field according to the OFX spec.
+         *
+         * @return the investment balance list
+         */
+        getBalanceList(): BalanceList;
+        /**
+         * Sets the investment balance list. This is an optional field according to the OFX spec.
+         *
+         * @param balanceList the investment balance list
+         */
+        setBalanceList(balanceList: BalanceList): void;
+    }
+}
+declare module "domain/data/seclist/SecurityInfo" {
+    import { SecurityId } from "domain/data/seclist/SecurityId";
     /**
      * Info about a security.
      * @see "Section 13.8.5.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SecurityInfo {
+    export class SecurityInfo {
         private securityId;
         private securityName;
         private tickerSymbol;
@@ -3034,7 +3411,9 @@ declare module ofx4js.domain.data.seclist {
         setMemo(memo: string): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/BaseSecurityInfo" {
+    import { SecurityInfo } from "domain/data/seclist/SecurityInfo";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
     /**
      * Base class for info about the various types of securities.
      * @see "Section 13.8.5.1, OFX Spec"
@@ -3045,7 +3424,7 @@ declare module ofx4js.domain.data.seclist {
      *
      * @author Jon Perlow
      */
-    class BaseSecurityInfo {
+    export class BaseSecurityInfo {
         private securityInfo;
         /**
          * Gets the security info aggregate.
@@ -3121,595 +3500,34 @@ declare module ofx4js.domain.data.seclist {
         getMemo(): string;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/SecurityList" {
+    import { BaseSecurityInfo } from "domain/data/seclist/BaseSecurityInfo";
     /**
      * Aggregate for a list of securities.
      * @see "Section 13.8.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SecurityList {
+    export class SecurityList {
         private securityInfos;
         getSecurityInfos(): Array<BaseSecurityInfo>;
         setSecurityInfos(securityInfos: Array<BaseSecurityInfo>): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    /**
-     * Security list response. This is an empty aggregate. The actual security information is included
-     * in the "SECLIST" aggregate.
-     * @see "Section 13.8.3, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class SecurityListResponse extends ResponseMessage {
-        getResponseMessageName(): string;
-    }
-}
-declare module ofx4js.domain.data.investment.transactions {
-    /**
-     * Type of investment transaction.
-     * @see "Section 13.9.2.4.4, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    enum TransactionType {
-        BUY_DEBT = 0,
-        BUY_MUTUAL_FUND = 1,
-        BUY_OPTION = 2,
-        BUY_OTHER = 3,
-        BUY_STOCK = 4,
-        CLOSE_OPTION = 5,
-        INCOME = 6,
-        INVESTMENT_EXPENSE = 7,
-        JOURNAL_FUND = 8,
-        JOURNAL_SECURITY = 9,
-        MARGIN_INTEREST = 10,
-        REINVEST_INCOME = 11,
-        RETURN_OF_CAPITAL = 12,
-        SELL_DEBT = 13,
-        SELL_MUTUAL_FUND = 14,
-        SELL_OPTION = 15,
-        SELL_OTHER = 16,
-        SELL_STOCK = 17,
-        SPLIT = 18,
-        TRANSFER = 19,
-    }
-}
-declare module ofx4js.domain.data.investment.transactions {
-    /**
-     * Base class for all investment transactions.
-     * <br>
-     * This class exposes a read-only view of the flattened aggregates that are
-     * common to all investment transactions as a convenience to application
-     * developers who may not find the ofx aggregation model intuitive.
-     *
-     * @author Jon Perlow
-     */
-    class BaseInvestmentTransaction {
-        private transactionType;
-        constructor(transactionType: TransactionType);
-        /**
-         * Gets the type of transaction.
-         *
-         * @return the type of transaction
-         */
-        getTransactionType(): TransactionType;
-        /**
-         * Gets the {@link InvestmentTransaction} aggregate.
-         *
-         * @return the {@link InvestmentTransaction} aggregate
-         */
-        getInvestmentTransaction(): InvestmentTransaction;
-        /**
-         * Gets the unique financial institution assigned transaction id. This is a
-         * required field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the financial institution asssigned transaction id
-         */
-        getTransactionId(): string;
-        /**
-         * Gets the server assigned transaction id. This is an optional field
-         * according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the server assigned transaction id
-         */
-        getServerId(): string;
-        /**
-         * Gets the trade date of the transaction. For stock splits, this is the
-         * day of record. This is a required field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the trade date
-         */
-        getTradeDate(): Date;
-        /**
-         * Gets the settlement date of the transaction. For stock splits, this is the
-         * day of of execution. This is an optional field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the trade date
-         */
-        getSettlementDate(): Date;
-        /**
-         * For a reveral transaction, gets the financial institution assigned
-         * transaction id for the transaction being revesed.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the transaction id of the transaction being reversed
-         */
-        getReversalTransactionId(): string;
-        /**
-         * Gets the memo associated with the transaction. This is an optional field
-         * according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the memo
-         */
-        getMemo(): string;
-    }
-}
-declare module ofx4js.domain.data.investment.transactions {
-    /**
-     * Investment transaction aggregate ("INVTRAN").
-     * @see "Section 13.9.2.4.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentTransaction {
-        private transactionId;
-        private serverId;
-        private tradeDate;
-        private settlementDate;
-        private reversalTransactionId;
-        private memo;
-        /**
-         * Gets the unique financial institution assigned transaction id. This is a
-         * required field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the financial institution asssigned transaction id
-         */
-        getTransactionId(): string;
-        /**
-         * Sets the unique financial institution assigned transaction id. This is a
-         * required field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @param transactionId the financial institution asssigned transaction id
-         */
-        setTransactionId(transactionId: string): void;
-        /**
-         * Gets the server assigned transaction id. This is an optional field
-         * according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the server assigned transaction id
-         */
-        getServerId(): string;
-        /**
-         * Sets the server assigned transaction id. This is an optional field
-         * according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @param serverId the server assigned transaction id
-         */
-        setServerId(serverId: string): void;
-        /**
-         * Gets the trade date of the transaction. For stock splits, this is the
-         * day of record. This is a required field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the trade date
-         */
-        getTradeDate(): Date;
-        /**
-         * Sets the trade date of the transaction. For stock splits, this is the
-         * day of record. This is a required field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @param tradeDate the trade date
-         */
-        setTradeDate(tradeDate: Date): void;
-        /**
-         * Gets the settlement date of the transaction. For stock splits, this is the
-         * day of of execution. This is an optional field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the trade date
-         */
-        getSettlementDate(): Date;
-        /**
-         * Sets the settlement date of the transaction. For stock splits, this is the
-         * day of of execution. This is an optional field according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @param settlementDate the trade date
-         */
-        setSettlementDate(settlementDate: Date): void;
-        /**
-         * For a reveral transaction, gets the financial institution assigned
-         * transaction id for the transaction being revesed.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the transaction id of the transaction being reversed
-         */
-        getReversalTransactionId(): string;
-        /**
-         * For a reveral transaction, gets the financial institution assigned
-         * transaction id for the transaction being revesed.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @param reversalTransactionId the transaction id of the transaction being reversed
-         */
-        setReversalTransactionId(reversalTransactionId: string): void;
-        /**
-         * Gets the memo associated with the transaction. This is an optional field
-         * according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @return the memo
-         */
-        getMemo(): string;
-        /**
-         * Sets the memo associated with the transaction. This is an optional field
-         * according to the OFX spec.
-         * @see "Section 13.9.2.4.1, OFX Spec"
-         *
-         * @param memo the memo
-         */
-        setMemo(memo: string): void;
-    }
-}
-declare module ofx4js.domain.data.investment.transactions {
-    /**
-     * Base class for investment transactions that aren't buys or sales..
-     * <br>
-     * This class exposes a read-only view of the flattened aggregates that are
-     * common to all investment transactions as a convenience to application
-     * developers who may not find the ofx aggregation model intuitive.
-     *
-     * @author Jon Perlow
-     */
-    class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
-        private investmentTransaction;
-        constructor(transactionType: TransactionType);
-        /**
-         * Gets the {@link InvestmentTransaction} aggregate.
-         *
-         * @return the {@link InvestmentTransaction} aggregate
-         */
-        getInvestmentTransaction(): InvestmentTransaction;
-        /**
-         * Sets the {@link InvestmentTransaction} aggregate.
-         *
-         * @param investmentTransaction the {@link InvestmentTransaction} aggregate
-         */
-        setInvestmentTransaction(investmentTransaction: InvestmentTransaction): void;
-    }
-}
-declare module ofx4js.domain.data.investment.transactions {
-    import Transaction = ofx4js.domain.data.common.Transaction;
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    /**
-     * Bank transactions that are part of an investment account statement. Wraps a {@link Transaction}.
-     * @see "Section 13.9.2.3, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentBankTransaction {
-        private transaction;
-        private subAccountFund;
-        /**
-         * Gets the wrapped transaction aggregate.
-         * @return the wrapped transaction
-         */
-        getTransaction(): Transaction;
-        /**
-         * Sets the wrapped transaction aggregate.
-         * @param transaction the wrapped transaction
-         */
-        setTransaction(transaction: Transaction): void;
-        /**
-         * Gets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
-         * @see "Section 13.9.2.4.2, OFX Spec"
-         *
-         * @return the sub account fund for the transaction
-         */
-        getSubAccountFund(): string;
-        /**
-         * Sets the sub account type that the security is from (e.g. CASH, MARGIN, SHORT, OTHER).
-         * @see "Section 13.9.2.4.2, OFX Spec"
-         *
-         * @param subAccountFund the sub account fund for the transaction
-         */
-        setSubAccountFund(subAccountFund: string): void;
-        /**
-         * Gets the result of getSubAccountFund as one of the well-known types.
-         *
-         * @return the type of null if it wasn't one of the well known types
-         */
-        getSubAccountFundEnum(): SubAccountType;
-    }
-}
-declare module ofx4js.domain.data.investment.transactions {
-    /**
-     * The transaction list aggregate.
-     * @see "Section 13.9.1.2, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentTransactionList {
-        private start;
-        private end;
-        private transactions;
-        private bankTransactions;
-        /**
-         * Gets the start date. This is a required field according to the OFX spec.
-         *
-         * @return The start date
-         */
-        getStart(): Date;
-        /**
-         * Sets the start date. This is a required field according to the OFX spec.
-         *
-         * @param start The start date
-         */
-        setStart(start: Date): void;
-        /**
-         * Gets the end date. This is a required field according to the OFX spec.
-         *
-         * @return he end date
-         */
-        getEnd(): Date;
-        /**
-         * Sets the end date. This is a required field according to the OFX spec.
-         *
-         * @param end the end date
-         */
-        setEnd(end: Date): void;
-        /**
-         * Gets the investment transaction list. This is a heterogenous list of different types of
-         * transactions returned in the order the brokerage provides them.
-         *
-         * @return the investment transaction list
-         */
-        getInvestmentTransactions(): Array<BaseInvestmentTransaction>;
-        /**
-         * Sets the investment transaction list. This is a heterogenous list of different types of
-         * transactions returned in the order the brokerage provides them.
-         *
-         * @param transactions the investment transaction list
-         */
-        setInvestmentTransactions(transactions: Array<BaseInvestmentTransaction>): void;
-        /**
-         * Gets the bank transaction list.
-         *
-         * @return the bank transaction list
-         */
-        getBankTransactions(): Array<InvestmentBankTransaction>;
-        /**
-         * Sets the bank transaction list.
-         *
-         * @param bankTransactions the bank transaction list
-         */
-        setBankTransactions(bankTransactions: Array<InvestmentBankTransaction>): void;
-    }
-}
-declare module ofx4js.domain.data.common {
-    enum BalanceRecordType {
-        DOLLAR = 0,
-        PERCENT = 1,
-        NUMBER = 2,
-    }
-    /**
-     * @author Ryan Heaton
-     * @see "Section 3.1.3, OFX Spec"
-     */
-    class BalanceRecord {
-        private name;
-        private description;
-        private type;
-        private value;
-        private timestamp;
-        private currency;
-        /**
-         * Name of the balance.
-         *
-         * @return Name of the balance.
-         */
-        getName(): string;
-        /**
-         * Name of the balance.
-         *
-         * @param name Name of the balance.
-         */
-        setName(name: string): void;
-        /**
-         * Description of the balance.
-         *
-         * @return Description of the balance.
-         */
-        getDescription(): string;
-        /**
-         * Description of the balance.
-         *
-         * @param description Description of the balance.
-         */
-        setDescription(description: string): void;
-        /**
-         * Type of the balance.
-         *
-         * @return Type of the balance.
-         */
-        getType(): BalanceRecordType;
-        /**
-         * Type of the balance.
-         *
-         * @param type Type of the balance.
-         */
-        setType(type: BalanceRecordType): void;
-        /**
-         * The value of the balance.
-         *
-         * @return The value of the balance.
-         */
-        getValue(): string;
-        /**
-         * The value of the balance.
-         *
-         * @param value The value of the balance.
-         */
-        setValue(value: string): void;
-        /**
-         * Timestamp of the balance.
-         *
-         * @return Timestamp of the balance.
-         */
-        getTimestamp(): Date;
-        /**
-         * Timestamp of the balance.
-         *
-         * @param timestamp Timestamp of the balance.
-         */
-        setTimestamp(timestamp: Date): void;
-        /**
-         * Currency.
-         *
-         * @return Currency.
-         */
-        getCurrency(): Currency;
-        /**
-         * Currency.
-         *
-         * @param currency Currency.
-         */
-        setCurrency(currency: Currency): void;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import BalanceRecord = ofx4js.domain.data.common.BalanceRecord;
-    /**
-     * Aggregate for the investment balance list.
-     * @see "Section 13.9.2.7, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class BalanceList {
-        private balanceRecords;
-        /**
-         * Gets the list of balance records.
-         *
-         * @return the list of balance records.
-         */
-        getBalanceRecords(): Array<BalanceRecord>;
-        /**
-         * Sets the list of balance records.
-         *
-         * @param balanceRecords the list of balance records.
-         */
-        setBalanceRecords(balanceRecords: Array<BalanceRecord>): void;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    /**
-     * Aggregate for the investment balance.
-     * @see "Section 13.9.2.7, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentBalance {
-        private availableCash;
-        private marginBalance;
-        private shortBalance;
-        private buyingPower;
-        private balanceList;
-        /**
-         * Gets the available cash balance across all sub-accounts, including sweep funds. This is
-         * required field according to the OFX spec.
-         *
-         * @return the available cash balance
-         */
-        getAvailableCash(): number;
-        /**
-         * Sets the available cash balance across all sub-accounts, including sweep funds. This is
-         * required field according to the OFX spec.
-         *
-         * @param availableCash the available cash balance
-         */
-        setAvailableCash(availableCash: number): void;
-        /**
-         * Gets the margin account balance. A positive balance indicates a positive cash balance, while
-         * a negative balance indicates the customer borrowed funds. This is a required field according
-         * to the OFX spec.
-         *
-         * @return the margin account balance
-         */
-        getMarginBalance(): number;
-        /**
-         * Sets the margin account balance. A positive balance indicates a positive cash balance, while
-         * a negative balance indicates the customer borrowed funds. This is a required field according
-         * to the OFX spec.
-         *
-         * @param marginBalance the margin account balance
-         */
-        setMarginBalance(marginBalance: number): void;
-        /**
-         * Gets the market value of all short positions. This is a positive balance. This is a required
-         * field according to the OFX spec.
-         *
-         * @return the market value of all short positions
-         */
-        getShortBalance(): number;
-        /**
-         * Sets the market value of all short positions. This is a positive balance. This is a required
-         * field according to the OFX spec.
-         *
-         * @param shortBalance the market value of all short positions
-         */
-        setShortBalance(shortBalance: number): void;
-        /**
-         * Gets the buying power amount. This is an optional field according to the OFX spec.
-         *
-         * @return the buying power
-         */
-        getBuyingPower(): number;
-        /**
-         * Sets the buying power amount. This is an optional field according to the OFX spec.
-         *
-         * @param buyingPower the buying power
-         */
-        setBuyingPower(buyingPower: number): void;
-        /**
-         * Gets the investment balance list. This is an optional field according to the OFX spec.
-         *
-         * @return the investment balance list
-         */
-        getBalanceList(): BalanceList;
-        /**
-         * Sets the investment balance list. This is an optional field according to the OFX spec.
-         *
-         * @param balanceList the investment balance list
-         */
-        setBalanceList(balanceList: BalanceList): void;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-    import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-    import InvestmentPositionList = ofx4js.domain.data.investment.positions.InvestmentPositionList;
-    import SecurityList = ofx4js.domain.data.seclist.SecurityList;
-    import InvestmentTransactionList = ofx4js.domain.data.investment.transactions.InvestmentTransactionList;
+declare module "domain/data/investment/statements/InvestmentStatementResponse" {
+    import { StatementResponse } from "domain/data/common/StatementResponse";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
+    import { InvestmentTransactionList } from "domain/data/investment/transactions/InvestmentTransactionList";
+    import { InvestmentPositionList } from "domain/data/investment/positions/InvestmentPositionList";
+    import { InvestmentBalance } from "domain/data/investment/statements/InvestmentBalance";
+    import { SecurityList } from "domain/data/seclist/SecurityList";
     /**
      * Aggregate for the investment statement download response.
      * @see "Section 13.9.2.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class InvestmentStatementResponse extends StatementResponse {
+    export class InvestmentStatementResponse extends StatementResponse {
         private dateOfStatement;
         private account;
         private investmentTransactionList;
@@ -3806,14 +3624,15 @@ declare module ofx4js.domain.data.investment.statements {
         setSecurityList(securityList: SecurityList): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/SecurityRequest" {
+    import { SecurityId } from "domain/data/seclist/SecurityId";
     /**
      * Security request aggregate.
      * @see "Section 13.8.2.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SecurityRequest {
+    export class SecurityRequest {
         private securityId;
         private tickerSymbol;
         private fiId;
@@ -3825,15 +3644,16 @@ declare module ofx4js.domain.data.seclist {
         setFiId(fiId: string): void;
     }
 }
-declare module ofx4js.client {
-    import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-    import InvestmentStatementResponse = ofx4js.domain.data.investment.statements.InvestmentStatementResponse;
-    import SecurityList = ofx4js.domain.data.seclist.SecurityList;
-    import SecurityRequest = ofx4js.domain.data.seclist.SecurityRequest;
+declare module "client/InvestmentAccount" {
+    import { FinancialInstitutionAccount } from "client/FinancialInstitutionAccount";
+    import { InvestmentStatementResponse } from "domain/data/investment/statements/InvestmentStatementResponse";
+    import { SecurityRequest } from "domain/data/seclist/SecurityRequest";
+    import { SecurityList } from "domain/data/seclist/SecurityList";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
     /**
      * @author Jon Perlow
      */
-    interface InvestmentAccount extends FinancialInstitutionAccount {
+    export interface InvestmentAccount extends FinancialInstitutionAccount {
         /**
          * Read an account statement.
          *
@@ -3859,22 +3679,130 @@ declare module ofx4js.client {
         getDetails(): InvestmentAccountDetails;
     }
 }
-declare module ofx4js.client {
-    import OFXException = ofx4js.OFXException;
+declare module "client/FinancialInstitution" {
+    import { FinancialInstitutionData } from "client/FinancialInstitutionData";
+    import { FinancialInstitutionProfile } from "client/FinancialInstitutionProfile";
+    import { AccountProfile } from "domain/data/signup/AccountProfile";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    import { BankAccount } from "client/BankAccount";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    import { CreditCardAccount } from "client/CreditCardAccount";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
+    import { InvestmentAccount } from "client/InvestmentAccount";
     /**
      * @author Ryan Heaton
      */
-    class NoOFXResponseException extends OFXException {
+    export interface FinancialInstitution {
+        /**
+         * The financial institution data defining this FI.
+         *
+         * @return The financial institution data.
+         */
+        getData(): FinancialInstitutionData;
+        /**
+         * Read the specified financial institution profile. Implies a network call.
+         *
+         * @return The profile.
+         * @throws OFXException if something goes awry.
+         */
+        readProfile(): Promise<FinancialInstitutionProfile>;
+        /**
+         * Read the account profiles of the specified user.
+         *
+         * @param username The username.
+         * @param password The password.
+         * @return The profiles.
+         */
+        readAccountProfiles(username: string, password: string): Promise<Array<AccountProfile>>;
+        /**
+         * Load a bank account.
+         *
+         * @param details The bank account details.
+         * @param username The username.
+         * @param password The password.
+         * @return The bank account.
+         */
+        loadBankAccount(details: BankAccountDetails, username: string, password: string): BankAccount;
+        /**
+         * Load a credit card account.
+         *
+         * @param details The credit card account details.
+         * @param username The username.
+         * @param password The password.
+         * @return The credit card account.
+         */
+        loadCreditCardAccount(details: CreditCardAccountDetails, username: string, password: string): CreditCardAccount;
+        /**
+         * Load an investment account.
+         *
+         * @param details The investment account details.
+         * @param username The username.
+         * @param password The password.
+         * @return The investment account.
+         */
+        loadInvestmentAccount(details: InvestmentAccountDetails, username: string, password: string): InvestmentAccount;
+    }
+}
+declare module "client/FinancialInstitutionDataStore" {
+    import { FinancialInstitutionData } from "client/FinancialInstitutionData";
+    /**
+     * @author Ryan Heaton
+     */
+    export interface FinancialInstitutionDataStore {
+        /**
+         * Get the data for the financial institution of the specified id.
+         *
+         * @param fid The id of the financial institution.
+         * @return The financial institution data, or null if none exists for the specified id.
+         */
+        getInstitutionData(fid: string): FinancialInstitutionData;
+        /**
+         * Get the whole list of financial institution data.
+         *
+         * @return The whole list of financial institution data.
+         */
+        getInstitutionDataList(): Array<FinancialInstitutionData>;
+    }
+}
+declare module "client/FinancialInstitutionService" {
+    import { FinancialInstitution } from "client/FinancialInstitution";
+    import { FinancialInstitutionData } from "client/FinancialInstitutionData";
+    /**
+     * @author Ryan Heaton
+     */
+    export interface FinancialInstitutionService {
+        /**
+         * Get the financial institution by the specified id.
+         *
+         * @param fid The financial institution id.
+         * @return The financial institution, or null if not found.
+         */
+        getFinancialInstitution(fid: string): FinancialInstitution;
+        /**
+         * Get the financial institution by the specified data.
+         *
+         * @param data The financial institution data.
+         * @return The financial institution, or null if not found.
+         */
+        getFinancialInstitution(data: FinancialInstitutionData): FinancialInstitution;
+    }
+}
+declare module "client/NoOFXResponseException" {
+    import { OFXException } from "OFXException";
+    /**
+     * @author Ryan Heaton
+     */
+    export class NoOFXResponseException extends OFXException {
         constructor(message?: string);
     }
 }
-declare module ofx4js.client.context {
+declare module "client/context/OFXApplicationContext" {
     /**
      * The application context.
      *
      * @author Ryan Heaton
      */
-    interface OFXApplicationContext {
+    export interface OFXApplicationContext {
         /**
          * The current application id.
          *
@@ -3889,13 +3817,14 @@ declare module ofx4js.client.context {
         getAppVersion(): string;
     }
 }
-declare module ofx4js.client.context {
+declare module "client/context/DefaultApplicationContext" {
+    import { OFXApplicationContext } from "client/context/OFXApplicationContext";
     /**
      * Default application context.
      *
      * @author Ryan Heaton
      */
-    class DefaultApplicationContext implements OFXApplicationContext {
+    export class DefaultApplicationContext implements OFXApplicationContext {
         private appId;
         private appVersion;
         constructor(appId: string, appVersion: string);
@@ -3903,11 +3832,12 @@ declare module ofx4js.client.context {
         getAppVersion(): string;
     }
 }
-declare module ofx4js.client.context {
+declare module "client/context/OFXApplicationContextHolder" {
+    import { OFXApplicationContext } from "client/context/OFXApplicationContext";
     /**
      * @author Ryan Heaton
      */
-    class OFXApplicationContextHolder {
+    export class OFXApplicationContextHolder {
         private static CURRENT_CONTEXT;
         /**
          * Get the current (thread-safe) context.
@@ -3923,92 +3853,137 @@ declare module ofx4js.client.context {
         static setCurrentContext(context: OFXApplicationContext): void;
     }
 }
-declare module ofx4js.domain.data {
+declare module "meta/Header_add" {
+    import { HeaderParams } from "meta/Header";
+    export function Header_add<Type>(clazz: any, params: HeaderParams<Type>): void;
+}
+declare module "domain/data/RequestMessage" {
     /**
      * A message applicable to a request message set.
      *
      * @author Ryan Heaton
      */
-    class RequestMessage {
+    export abstract class RequestMessage {
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/RequestMessageSet" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
-     * @author Ryan Heaton
-     */
-    class StatementRange {
-        private start;
-        private end;
-        private includeTransactions;
+    * A message set enclosed in an OFX request envelope.
+    *
+    * @author Ryan Heaton
+    */
+    export abstract class RequestMessageSet {
+        private version;
+        abstract getType(): MessageSetType;
         constructor();
         /**
-         * The start of the statement range.
+         * The version of this request message.
          *
-         * @return The start of the statement range.
+         * @return The version of this request message.
          */
-        getStart(): Date;
+        getVersion(): string;
         /**
-         * The start of the statement range.
+         * The version of this request message.
          *
-         * @param start The start of the statement range.
+         * @param version The version of this request message.
          */
-        setStart(start: Date): void;
+        setVersion(version: string): void;
         /**
-         * The end of the statement range.
+         * The request messages for this request message set.
          *
-         * @return The end of the statement range.
+         * @return The request messages for this request message set.
          */
-        getEnd(): Date;
-        /**
-         * The end of the statement range.
-         *
-         * @param end The end of the statement range.
-         */
-        setEnd(end: Date): void;
-        /**
-         * Whether to include transactions.
-         *
-         * @return Whether to include transactions.
-         */
-        getIncludeTransactions(): boolean;
-        /**
-         * Whether to include transactions.
-         *
-         * @param includeTransactions Whether to include transactions.
-         */
-        setIncludeTransactions(includeTransactions: boolean): void;
+        abstract getRequestMessages(): Array<RequestMessage>;
+        static contentCompare(left: RequestMessageSet, right: RequestMessageSet): number;
     }
 }
-declare module ofx4js.domain.data.common {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
+declare module "domain/data/RequestEnvelope" {
+    import { SortedSet } from "collections/SortedSet";
+    import { ApplicationSecurity } from "domain/data/ApplicationSecurity";
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
     /**
+     * Envelope for enclosing an OFX request.
+     *
      * @author Ryan Heaton
+     * @see "Section 2.4.3, OFX Spec"
      */
-    class StatementRequest extends RequestMessage {
-        private statementRange;
+    export class RequestEnvelope {
+        private security;
+        private UID;
+        private lastProcessedUID;
+        private messageSets;
+        constructor(UID?: string);
         /**
-         * The statement range.
+         * The security of this envelope.
          *
-         * @return The statement range.
+         * @return The security of this envelope.
+         * @see "Section 2.2, OFX spec"
          */
-        getStatementRange(): StatementRange;
+        getSecurity(): ApplicationSecurity;
         /**
-         * The statement range.
+         * The security of this envelope.
          *
-         * @param statementRange The statement range.
+         * @param security The security of this envelope.
+         * @see "Section 2.2, OFX spec"
          */
-        setStatementRange(statementRange: StatementRange): void;
+        setSecurity(security: ApplicationSecurity): void;
+        /**
+         * The UID for the envelope.
+         *
+         * @return The UID for the envelope.
+         * @see "Section 2.2, OFX spec"
+         */
+        getUID(): string;
+        /**
+         * The UID for the envelope.
+         *
+         * @param UID The UID for the envelope.
+         * @see "Section 2.2, OFX spec"
+         */
+        setUID(UID: string): void;
+        /**
+         * The UID of the last-processed request/response (used for file-based error recovery).
+         *
+         * @return The UID of the last-processed request/response (used for file-based error recovery).
+         * @see "Section 2.2, OFX spec"
+         */
+        getLastProcessedUID(): string;
+        /**
+         * The UID of the last-processed request/response (used for file-based error recovery).
+         *
+         * @param lastProcessedUID The UID of the last-processed request/response (used for file-based error recovery).
+         * @see "Section 2.2, OFX spec"
+         */
+        setLastProcessedUID(lastProcessedUID: string): void;
+        /**
+         * The message sets that make up the content of this request.
+         *
+         * @return The message sets that make up the content of this request.
+         * @see "Section 2.4.5, OFX Spec"
+         */
+        getMessageSets(): SortedSet<RequestMessageSet>;
+        /**
+         * The message sets that make up the content of this request.
+         *
+         * @param messageSets The message sets that make up the content of this request.
+         * @see "Section 2.4.5, OFX Spec"
+         */
+        setMessageSets(messageSets: SortedSet<RequestMessageSet>): void;
     }
 }
-declare module ofx4js.domain.data {
+declare module "domain/data/ResponseMessageSet" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * A message set enclosed in a response envelope.
      *
      * @author Ryan Heaton
      */
-    class ResponseMessageSet {
+    export abstract class ResponseMessageSet {
         private version;
-        getType(): MessageSetType;
+        abstract getType(): MessageSetType;
         constructor();
         /**
          * The version of this message set.
@@ -4027,17 +4002,18 @@ declare module ofx4js.domain.data {
          *
          * @return The list of response messages.
          */
-        getResponseMessages(): Array<ResponseMessage>;
+        abstract getResponseMessages(): Array<ResponseMessage>;
         static contentCompare(left: ResponseMessageSet, right: ResponseMessageSet): number;
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/StatusHolder" {
+    import { Status } from "domain/data/common/Status";
     /**
      * A status holder (usually applied to a response).
      *
      * @author Ryan Heaton
      */
-    interface StatusHolder {
+    export interface StatusHolder {
         /**
          * The name of this status holder (for error reporting).
          *
@@ -4051,18 +4027,200 @@ declare module ofx4js.domain.data.common {
          */
         getStatus(): Status;
     }
-    function instanceof_StatusHolder(obj: any): boolean;
+    export function instanceof_StatusHolder(obj: any): boolean;
 }
-declare module ofx4js.domain.data {
-    import Status = ofx4js.domain.data.common.Status;
-    import StatusHolder = ofx4js.domain.data.common.StatusHolder;
+declare module "domain/data/signon/FinancialInstitution" {
+    /**
+     * @author Ryan Heaton
+     */
+    export class FinancialInstitution {
+        private id;
+        private organization;
+        /**
+         * Financial institution id.
+         *
+         * @return Financial institution id.
+         */
+        getId(): string;
+        /**
+         * Financial institution id.
+         *
+         * @param id Financial institution id.
+         */
+        setId(id: string): void;
+        /**
+         * The organization.
+         *
+         * @return The organization.
+         */
+        getOrganization(): string;
+        /**
+         * The organization.
+         *
+         * @param organization The organization.
+         */
+        setOrganization(organization: string): void;
+    }
+}
+declare module "domain/data/signon/SignonResponse" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    import { StatusHolder } from "domain/data/common/StatusHolder";
+    import { Status } from "domain/data/common/Status";
+    import { FinancialInstitution } from "domain/data/signon/FinancialInstitution";
+    /**
+     * The signon response message.
+     *
+     * @author Ryan Heaton
+     * @see "Section 2.5.1.2, OFX Spec."
+     */
+    export class SignonResponse extends ResponseMessage implements StatusHolder {
+        private status;
+        private timestamp;
+        private userKey;
+        private userKeyExpiration;
+        private language;
+        private profileLastUpdated;
+        private accountLastUpdated;
+        private financialInstitution;
+        private sessionId;
+        private accessKey;
+        constructor();
+        getResponseMessageName(): string;
+        getStatusHolderName(): string;
+        /**
+         * The signon response status.
+         *
+         * @return The signon response status.
+         */
+        getStatus(): Status;
+        /**
+         * The signon response status.
+         *
+         * @param status The signon response status.
+         */
+        setStatus(status: Status): void;
+        /**
+         * The timestamp of this response.
+         *
+         * @return The timestamp of this response.
+         */
+        getTimestamp(): Date;
+        /**
+         * The timestamp of this response.
+         *
+         * @param timestamp The timestamp of this response.
+         */
+        setTimestamp(timestamp: Date): void;
+        /**
+         * The userkey that can be used instead of the username/password.
+         *
+         * @return The userkey that can be used instead of the username/password.
+         */
+        getUserKey(): string;
+        /**
+         * The userkey that can be used instead of the username/password.
+         *
+         * @param userKey The userkey that can be used instead of the username/password.
+         */
+        setUserKey(userKey: string): void;
+        /**
+         * The date/time of the expiration of the user key.
+         *
+         * @return The date/time of the expiration of the user key.
+         */
+        getUserKeyExpiration(): Date;
+        /**
+         * The date/time of the expiration of the user key.
+         *
+         * @param userKeyExpiration The date/time of the expiration of the user key.
+         */
+        setUserKeyExpiration(userKeyExpiration: Date): void;
+        /**
+         * The three-letter langauge code.
+         *
+         * @return The three-letter langauge code.
+         * @see java.util.Locale#getISO3Language()
+         */
+        getLanguage(): string;
+        /**
+         * The three-letter langauge code.
+         *
+         * @param language The three-letter langauge code.
+         */
+        setLanguage(language: string): void;
+        /**
+         * The date/time that the FI profile was last updated.
+         *
+         * @return The date/time that the FI profile was last updated.
+         */
+        getProfileLastUpdated(): Date;
+        /**
+         * The date/time that the FI profile was last updated.
+         *
+         * @param profileLastUpdated The date/time that the FI profile was last updated.
+         */
+        setProfileLastUpdated(profileLastUpdated: Date): void;
+        /**
+         * The date/time that the user's account information was updated.
+         *
+         * @return The date/time that the user's account information was updated.
+         */
+        getAccountLastUpdated(): Date;
+        /**
+         * The date/time that the user's account information was updated.
+         *
+         * @param accountLastUpdated The date/time that the user's account information was updated.
+         */
+        setAccountLastUpdated(accountLastUpdated: Date): void;
+        /**
+         * The financial instutution identity information.
+         *
+         * @return The financial instutution identity information.
+         */
+        getFinancialInstitution(): FinancialInstitution;
+        /**
+         * The financial instutution identity information.
+         *
+         * @param financialInstitution The financial instutution identity information.
+         */
+        setFinancialInstitution(financialInstitution: FinancialInstitution): void;
+        /**
+         * The session id for the client.
+         *
+         * @return The session id for the client.
+         */
+        getSessionId(): string;
+        /**
+         * The session id for the client.
+         *
+         * @param sessionId The session id for the client.
+         */
+        setSessionId(sessionId: string): void;
+        /**
+         * The access key that the client should return in the next sign-on requuest.
+         *
+         * @return The access key that the client should return in the next sign-on requuest.
+         */
+        getAccessKey(): string;
+        /**
+         * The access key that the client should return in the next sign-on requuest.
+         *
+         * @param accessKey The access key that the client should return in the next sign-on requuest.
+         */
+        setAccessKey(accessKey: string): void;
+    }
+}
+declare module "domain/data/TransactionWrappedResponseMessage" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    import { StatusHolder } from "domain/data/common/StatusHolder";
+    import { Status } from "domain/data/common/Status";
     /**
      * A response message wrapped in a transaction.
      *
      * @author Ryan Heaton
      * @see "Section 2.4.6, OFX Spec"
      */
-    class TransactionWrappedResponseMessage<M extends ResponseMessage> extends ResponseMessage implements StatusHolder {
+    export abstract class TransactionWrappedResponseMessage<M extends ResponseMessage> extends ResponseMessage implements StatusHolder {
         private UID;
         private clientCookie;
         private status;
@@ -4109,361 +4267,215 @@ declare module ofx4js.domain.data {
          *
          * @return The wrapped message.
          */
-        getWrappedMessage(): M;
+        abstract getWrappedMessage(): M;
     }
 }
-declare module ofx4js.domain.data.banking {
-    import StatementResponse = ofx4js.domain.data.common.StatementResponse;
+declare module "domain/data/signon/PasswordChangeResponse" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
     /**
+     * Response to a change a user password request.
+     *
      * @author Ryan Heaton
+     * @see "Section 2.5.2.2, OFX Spec."
      */
-    class BankStatementResponse extends StatementResponse {
-        private account;
+    export class PasswordChangeResponse extends ResponseMessage {
+        private userId;
+        private changeTimestamp;
+        /**
+         * The id of the user changing password.
+         *
+         * @return The id of the user changing password.
+         */
+        getUserId(): string;
         getResponseMessageName(): string;
         /**
-         * The account for the statement.
+         * The id of the user changing password.
          *
-         * @return The account for the statement.
+         * @param userId The id of the user changing password.
          */
-        getAccount(): BankAccountDetails;
+        setUserId(userId: string): void;
         /**
-         * The account for the statement.
+         * The timestamp of the password change.
          *
-         * @param account The account for the statement.
+         * @return The timestamp of the password change.
          */
-        setAccount(account: BankAccountDetails): void;
+        getChangeTimestamp(): Date;
+        /**
+         * The timestamp of the password change.
+         *
+         * @param changeTimestamp The timestamp of the password change.
+         */
+        setChangeTimestamp(changeTimestamp: Date): void;
     }
 }
-declare module ofx4js.domain.data.banking {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+declare module "domain/data/signon/PasswordChangeResponseTransaction" {
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    import { PasswordChangeResponse } from "domain/data/signon/PasswordChangeResponse";
     /**
      * @author Ryan Heaton
      */
-    class BankStatementResponseTransaction extends TransactionWrappedResponseMessage<BankStatementResponse> {
+    export class PasswordChangeResponseTransaction extends TransactionWrappedResponseMessage<PasswordChangeResponse> {
         private message;
         /**
          * The message.
          *
          * @return The message.
          */
-        getMessage(): BankStatementResponse;
+        getMessage(): PasswordChangeResponse;
         /**
          * The message.
          *
          * @param message The message.
          */
-        setMessage(message: BankStatementResponse): void;
-        getWrappedMessage(): BankStatementResponse;
+        setMessage(message: PasswordChangeResponse): void;
+        getWrappedMessage(): PasswordChangeResponse;
     }
 }
-declare module ofx4js.domain.data.banking {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+declare module "domain/data/signon/SignonResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { SignonResponse } from "domain/data/signon/SignonResponse";
+    import { PasswordChangeResponseTransaction } from "domain/data/signon/PasswordChangeResponseTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
     /**
+     * The sign-on response message set.
+     *
      * @author Ryan Heaton
+     * @see "Section 2.5, OFX Spec."
      */
-    class BankingResponseMessageSet extends ResponseMessageSet {
-        private statementResponses;
+    export class SignonResponseMessageSet extends ResponseMessageSet {
+        private signonResponse;
+        private passwordChangeResponse;
         getType(): MessageSetType;
         /**
-         * The statement response list.
+         * The message for this message set.
          *
-         * Most OFX files have a single statement response, except MT2OFX
-         * which outputs OFX with multiple statement responses
-         * in a single banking response message set.
-         *
-         * @return The statement response list.
+         * @return The message for this message set.
          */
-        getStatementResponses(): Array<BankStatementResponseTransaction>;
+        getSignonResponse(): SignonResponse;
         /**
-         * The statement response.
+         * The message for this message set.
          *
-         * @param statementResponses The statement responses.
+         * @param signonResponse The message for this message set.
          */
-        setStatementResponses(statementResponses: Array<BankStatementResponseTransaction>): void;
+        setSignonResponse(signonResponse: SignonResponse): void;
+        /**
+         * The password change response.
+         *
+         * @return The password change response.
+         */
+        getPasswordChangeResponse(): PasswordChangeResponseTransaction;
+        /**
+         * The password change response.
+         *
+         * @param passwordChangeResponse The password change response.
+         */
+        setPasswordChangeResponse(passwordChangeResponse: PasswordChangeResponseTransaction): void;
         getResponseMessages(): Array<ResponseMessage>;
-        /**
-         * The first statement response.
-         *
-         * @return the first bank statement response.
-         * @deprecated Use getStatementResponses() because sometimes there are multiple responses
-         */
-        getStatementResponse(): BankStatementResponseTransaction;
-        setStatementResponse(statementResponse: BankStatementResponseTransaction): void;
     }
 }
-declare module ofx4js.domain.data.banking {
-    import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+declare module "domain/data/ResponseEnvelope" {
+    import { ApplicationSecurity } from "domain/data/ApplicationSecurity";
+    import { SortedSet } from "collections/SortedSet";
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { SignonResponse } from "domain/data/signon/SignonResponse";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
-     * @author Ryan Heaton
-     */
-    class BankStatementRequest extends StatementRequest {
-        private account;
-        /**
-         * The account details.
-         *
-         * @return The account details.
-         */
-        getAccount(): BankAccountDetails;
-        /**
-         * The account details.
-         *
-         * @param account The account details.
-         */
-        setAccount(account: BankAccountDetails): void;
-    }
-}
-declare module ofx4js.domain.data {
-    /**
-     * A message set enclosed in an OFX request envelope.
+     * Envelope for enclosing an OFX response.
      *
      * @author Ryan Heaton
+     * @see "Section 2.4.3, OFX Spec"
      */
-    class RequestMessageSet {
-        private version;
-        getType(): MessageSetType;
-        constructor();
-        /**
-         * The version of this request message.
-         *
-         * @return The version of this request message.
-         */
-        getVersion(): string;
-        /**
-         * The version of this request message.
-         *
-         * @param version The version of this request message.
-         */
-        setVersion(version: string): void;
-        /**
-         * The request messages for this request message set.
-         *
-         * @return The request messages for this request message set.
-         */
-        getRequestMessages(): Array<RequestMessage>;
-        static contentCompare(left: RequestMessageSet, right: RequestMessageSet): number;
-    }
-}
-declare module ofx4js.domain.data {
-    /**
-     * A request message wrapped in a transaction.
-     *
-     * @author Ryan Heaton
-     * @see "Section 2.4.6, OFX Spec"
-     */
-    class TransactionWrappedRequestMessage<M extends RequestMessage> extends RequestMessage {
+    export class ResponseEnvelope {
+        private security;
         private UID;
-        private clientCookie;
-        private transactionAuthorizationNumber;
-        constructor(UID?: string);
+        private messageSets;
         /**
-         * UID of this transaction.
+         * The security of this envelope.
          *
-         * @return UID of this transaction.
+         * @return The security of this envelope.
+         * @see "Section 2.2, OFX spec"
+         */
+        getSecurity(): ApplicationSecurity;
+        /**
+         * The security of this envelope.
+         *
+         * @param security The security of this envelope.
+         * @see "Section 2.2, OFX spec"
+         */
+        setSecurity(security: ApplicationSecurity): void;
+        /**
+         * The UID for the envelope.
+         *
+         * @return The UID for the envelope.
+         * @see "Section 2.2, OFX spec"
          */
         getUID(): string;
         /**
-         * UID of this transaction.
+         * The UID for the envelope.
          *
-         * @param UID UID of this transaction.
+         * @param UID The UID for the envelope.
+         * @see "Section 2.2, OFX spec"
          */
         setUID(UID: string): void;
         /**
-         * Client cookie (echoed back by the response).
+         * The message sets that make up the content of this response.
          *
-         * @return Client cookie (echoed back by the response).
+         * @return The message sets that make up the content of this response.
+         * @see "Section 2.4.5, OFX Spec"
          */
-        getClientCookie(): string;
+        getMessageSets(): SortedSet<ResponseMessageSet>;
         /**
-         * Client cookie (echoed back by the response).
+         * The message sets that make up the content of this response.
          *
-         * @param clientCookie Client cookie (echoed back by the response).
+         * @param messageSets The message sets that make up the content of this response.
+         * @see "Section 2.4.5, OFX Spec"
          */
-        setClientCookie(clientCookie: string): void;
+        setMessageSets(messageSets: SortedSet<ResponseMessageSet>): void;
         /**
-         * The transaction authorization number.
+         * Helper method for looking up the signon response.
          *
-         * @return The transaction authorization number.
+         * @return The signon response, or null if none found.
          */
-        getTransactionAuthorizationNumber(): string;
+        getSignonResponse(): SignonResponse;
         /**
-         * The transaction authorization number.
+         * Get the message set of the specified type.
          *
-         * @param transactionAuthorizationNumber The transaction authorization number.
+         * @param type The type.
+         * @return The message set, or null.
          */
-        setTransactionAuthorizationNumber(transactionAuthorizationNumber: string): void;
-        /**
-         * Set the wrapped message.
-         *
-         * @param message The wrapped message.
-         */
-        setWrappedMessage(message: M): void;
+        getMessageSet(type: MessageSetType): ResponseMessageSet;
     }
 }
-declare module ofx4js.domain.data.banking {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+declare module "client/net/OFXConnection" {
+    import { RequestEnvelope } from "domain/data/RequestEnvelope";
+    import { ResponseEnvelope } from "domain/data/ResponseEnvelope";
     /**
-     * @author Ryan Heaton
-     */
-    class BankStatementRequestTransaction extends TransactionWrappedRequestMessage<BankStatementRequest> {
-        private message;
-        /**
-         * The message.
-         *
-         * @return The message.
-         */
-        getMessage(): BankStatementRequest;
-        /**
-         * The message.
-         *
-         * @param message The message.
-         *
-         */
-        setMessage(message: BankStatementRequest): void;
-        setWrappedMessage(message: BankStatementRequest): void;
-    }
-}
-declare module ofx4js.domain.data.banking {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class BankingRequestMessageSet extends RequestMessageSet {
-        private statementRequest;
-        getType(): MessageSetType;
-        /**
-         * The statement request.
-         *
-         * @return The statement request.
-         */
-        getStatementRequest(): BankStatementRequestTransaction;
-        /**
-         * The statement request.
-         *
-         * @param statementRequest The statement request.
-         */
-        setStatementRequest(statementRequest: BankStatementRequestTransaction): void;
-        getRequestMessages(): Array<RequestMessage>;
-    }
-}
-declare module ofx4js.client.impl {
-    import AccountStatement = ofx4js.client.AccountStatement;
-    import FinancialInstitutionAccount = ofx4js.client.FinancialInstitutionAccount;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    import StatementRange = ofx4js.domain.data.common.StatementRange;
-    import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-    import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-    /**
-     * Base account implementation. Supports banking and credit card accounts.
+     * Connection to an OFX interface.
      *
      * @author Ryan Heaton
      */
-    class BaseAccountImpl<D> implements FinancialInstitutionAccount {
-        private details;
-        private messageType;
-        private username;
-        private password;
-        private institution;
-        constructor(details: D, username: string, password: string, institution: FinancialInstitutionImpl);
+    export interface OFXConnection {
         /**
-         * Get the message set type of the specified details.
+         * Send a request.
          *
-         * @param details The details.
-         * @return The message set type.
-         */
-        protected getMessageSetType(details: D): MessageSetType;
-        readStatement(start: Date, end: Date): Promise<AccountStatement>;
-        /**
-         * Unwrap the statement response from the specified response envelope.
-         *
-         * @param response The response envelope to unwrap.
+         * @param request The request to send.
+         * @param url The URL to which to send the request.
          * @return The response.
          */
-        protected unwrapStatementResponse(response: ResponseEnvelope): StatementResponse;
-        /**
-         * Create a request message set from the specified transaction.
-         *
-         * @param transaction The transaction.
-         * @return The request message set.
-         */
-        protected createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet;
-        /**
-         * Create a transaction.
-         *
-         * @return The transaction.
-         */
-        protected createTransaction(): TransactionWrappedRequestMessage<RequestMessage>;
-        /**
-         * Create a statement request.
-         *
-         * @param details The details.
-         * @param range the range.
-         * @return The statement request.
-         */
-        protected createStatementRequest(details: D, range: StatementRange): StatementRequest;
-        /**
-         * The details of this account.
-         *
-         * @return The details of this account.
-         */
-        getDetails(): D;
-        /**
-         * The message set type.
-         *
-         * @return The message set type.
-         */
-        protected getMessageType(): MessageSetType;
+        sendRequest(request: RequestEnvelope, url: string): Promise<ResponseEnvelope>;
     }
 }
-declare module ofx4js.domain.data.signon {
-    /**
-     * @author Ryan Heaton
-     */
-    class FinancialInstitution {
-        private id;
-        private organization;
-        /**
-         * Financial institution id.
-         *
-         * @return Financial institution id.
-         */
-        getId(): string;
-        /**
-         * Financial institution id.
-         *
-         * @param id Financial institution id.
-         */
-        setId(id: string): void;
-        /**
-         * The organization.
-         *
-         * @return The organization.
-         */
-        getOrganization(): string;
-        /**
-         * The organization.
-         *
-         * @param organization The organization.
-         */
-        setOrganization(organization: string): void;
-    }
-}
-declare module ofx4js.domain.data.signon {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
+declare module "domain/data/signon/SignonRequest" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { FinancialInstitution } from "domain/data/signon/FinancialInstitution";
     /**
      * Sign-on request
      *
      * @author Ryan Heaton
      * @see "Section 2.5.1.2, OFX Spec."
      */
-    class SignonRequest extends RequestMessage {
+    export class SignonRequest extends RequestMessage {
         /**
          * @see "Section 2.5.1"
          */
@@ -4667,15 +4679,907 @@ declare module ofx4js.domain.data.signon {
         setAccessKey(accessKey: string): void;
     }
 }
-declare module ofx4js.domain.data.signon {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
+declare module "domain/data/TransactionWrappedRequestMessage" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * A request message wrapped in a transaction.
+     *
+     * @author Ryan Heaton
+     * @see "Section 2.4.6, OFX Spec"
+     */
+    export abstract class TransactionWrappedRequestMessage<M extends RequestMessage> extends RequestMessage {
+        private UID;
+        private clientCookie;
+        private transactionAuthorizationNumber;
+        constructor(UID?: string);
+        /**
+         * UID of this transaction.
+         *
+         * @return UID of this transaction.
+         */
+        getUID(): string;
+        /**
+         * UID of this transaction.
+         *
+         * @param UID UID of this transaction.
+         */
+        setUID(UID: string): void;
+        /**
+         * Client cookie (echoed back by the response).
+         *
+         * @return Client cookie (echoed back by the response).
+         */
+        getClientCookie(): string;
+        /**
+         * Client cookie (echoed back by the response).
+         *
+         * @param clientCookie Client cookie (echoed back by the response).
+         */
+        setClientCookie(clientCookie: string): void;
+        /**
+         * The transaction authorization number.
+         *
+         * @return The transaction authorization number.
+         */
+        getTransactionAuthorizationNumber(): string;
+        /**
+         * The transaction authorization number.
+         *
+         * @param transactionAuthorizationNumber The transaction authorization number.
+         */
+        setTransactionAuthorizationNumber(transactionAuthorizationNumber: string): void;
+        /**
+         * Set the wrapped message.
+         *
+         * @param message The wrapped message.
+         */
+        abstract setWrappedMessage(message: M): void;
+    }
+}
+declare module "domain/data/profile/ClientRoutingCapability" {
+    /**
+     * @author Ryan Heaton
+     * @see "Section 7.1.5, OFX Spec"
+     */
+    export enum ClientRoutingCapability {
+        NONE = 0,
+        SERVICE = 1,
+        MESSAGE_SET = 2
+    }
+}
+declare module "domain/data/profile/ProfileRequest" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { ClientRoutingCapability } from "domain/data/profile/ClientRoutingCapability";
+    /**
+     * @author Ryan Heaton
+     * @see "Section 7.1.5, OFX Spec"
+     */
+    export class ProfileRequest extends RequestMessage {
+        private routingCapability;
+        private profileLastUpdated;
+        constructor();
+        /**
+         * The client routing capability.
+         *
+         * @return The client routing capability.
+         */
+        getRoutingCapability(): ClientRoutingCapability;
+        /**
+         * The client routing capability.
+         *
+         * @param routingCapability The client routing capability.
+         */
+        setRoutingCapability(routingCapability: ClientRoutingCapability): void;
+        /**
+         * The date the profile was last updated.
+         *
+         * @return The date the profile was last updated.
+         */
+        getProfileLastUpdated(): Date;
+        /**
+         * The date the profile was last updated.
+         *
+         * @param profileLastUpdated The date the profile was last updated.
+         */
+        setProfileLastUpdated(profileLastUpdated: Date): void;
+    }
+}
+declare module "domain/data/profile/ProfileRequestTransaction" {
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { ProfileRequest } from "domain/data/profile/ProfileRequest";
+    /**
+     * @author Ryan Heaton
+     */
+    export class ProfileRequestTransaction extends TransactionWrappedRequestMessage<ProfileRequest> {
+        private message;
+        /**
+         * The wrapped message.
+         *
+         * @return The wrapped message.
+         */
+        getMessage(): ProfileRequest;
+        /**
+         * The wrapped message.
+         *
+         * @param message The wrapped message.
+         */
+        setMessage(message: ProfileRequest): void;
+        setWrappedMessage(message: ProfileRequest): void;
+    }
+}
+declare module "domain/data/profile/ProfileRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { ProfileRequestTransaction } from "domain/data/profile/ProfileRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * @author Ryan Heaton
+     * @see "Section 7 OFX Spec"
+     */
+    export class ProfileRequestMessageSet extends RequestMessageSet {
+        private profileRequest;
+        getType(): MessageSetType;
+        /**
+         * The profile request.
+         *
+         * @return The profile request.
+         */
+        getProfileRequest(): ProfileRequestTransaction;
+        /**
+         * The profile request.
+         *
+         * @param profileRequest The profile request.
+         */
+        setProfileRequest(profileRequest: ProfileRequestTransaction): void;
+        getRequestMessages(): Array<RequestMessage>;
+    }
+}
+declare module "domain/data/signup/AccountInfoRequest" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class AccountInfoRequest extends RequestMessage {
+        private lastUpdated;
+        constructor();
+        /**
+         * When the account info was last updated.
+         *
+         * @return When the account info was last updated.
+         */
+        getLastUpdated(): Date;
+        /**
+         * When the account info was last updated.
+         *
+         * @param lastUpdated When the account info was last updated.
+         */
+        setLastUpdated(lastUpdated: Date): void;
+    }
+}
+declare module "domain/data/signup/AccountInfoRequestTransaction" {
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { AccountInfoRequest } from "domain/data/signup/AccountInfoRequest";
+    /**
+     * @author Ryan Heaton
+     */
+    export class AccountInfoRequestTransaction extends TransactionWrappedRequestMessage<AccountInfoRequest> {
+        private message;
+        /**
+         * The wrapped message.
+         *
+         * @return The wrapped message.
+         */
+        getMessage(): AccountInfoRequest;
+        /**
+         * The wrapped message.
+         *
+         * @param message The wrapped message.
+         */
+        setMessage(message: AccountInfoRequest): void;
+        setWrappedMessage(message: AccountInfoRequest): void;
+    }
+}
+declare module "domain/data/signup/SignupRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { AccountInfoRequestTransaction } from "domain/data/signup/AccountInfoRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class SignupRequestMessageSet extends RequestMessageSet {
+        private accountInfoRequest;
+        getType(): MessageSetType;
+        /**
+         * The account info request.
+         *
+         * @return The account info request.
+         */
+        getAccountInfoRequest(): AccountInfoRequestTransaction;
+        /**
+         * The account info request.
+         *
+         * @param accountInfoRequest The account info request.
+         */
+        setAccountInfoRequest(accountInfoRequest: AccountInfoRequestTransaction): void;
+        /**
+         * The request messages.
+         *
+         * @return The request messages.
+         */
+        getRequestMessages(): Array<RequestMessage>;
+    }
+}
+declare module "domain/data/creditcard/CreditCardStatementResponse" {
+    import { StatementResponse } from "domain/data/common/StatementResponse";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardStatementResponse extends StatementResponse {
+        private account;
+        getResponseMessageName(): string;
+        /**
+         * The account for the statement.
+         *
+         * @return The account for the statement.
+         */
+        getAccount(): CreditCardAccountDetails;
+        /**
+         * The account for the statement.
+         *
+         * @param account The account for the statement.
+         */
+        setAccount(account: CreditCardAccountDetails): void;
+    }
+}
+declare module "domain/data/creditcard/CreditCardStatementResponseTransaction" {
+    import { CreditCardStatementResponse } from "domain/data/creditcard/CreditCardStatementResponse";
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardStatementResponseTransaction extends TransactionWrappedResponseMessage<CreditCardStatementResponse> {
+        private message;
+        /**
+         * The message.
+         *
+         * @return The message.
+         */
+        getMessage(): CreditCardStatementResponse;
+        /**
+         * The message.
+         *
+         * @param message The message.
+         */
+        setMessage(message: CreditCardStatementResponse): void;
+        getWrappedMessage(): CreditCardStatementResponse;
+    }
+}
+declare module "domain/data/creditcard/CreditCardResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { CreditCardStatementResponseTransaction } from "domain/data/creditcard/CreditCardStatementResponseTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardResponseMessageSet extends ResponseMessageSet {
+        private statementResponses;
+        getType(): MessageSetType;
+        /**
+         * The statement response list.
+         *
+         * Most OFX files have a single statement response, except MT2OFX
+         * which outputs OFX with multiple statement responses
+         * in a single banking response message set.
+         *
+         * @return The statement response list.
+         */
+        getStatementResponses(): Array<CreditCardStatementResponseTransaction>;
+        /**
+         * The statement reponse list.
+         *
+         * @param statementResponses The statement response list.
+         */
+        setStatementResponses(statementResponses: Array<CreditCardStatementResponseTransaction>): void;
+        /**
+         * The first statement response.
+         *
+         * @return the first bank statement response.
+         * @deprecated Use getStatementResponses() because sometimes there are multiple responses
+         */
+        getStatementResponse(): CreditCardStatementResponseTransaction;
+        /**
+         * The statement response.
+         *
+         * @param statementResponse The statement response.
+         */
+        setStatementResponse(statementResponse: CreditCardStatementResponseTransaction): void;
+        getResponseMessages(): Array<ResponseMessage>;
+    }
+}
+declare module "domain/data/common/StatementRange" {
+    /**
+     * @author Ryan Heaton
+     */
+    export class StatementRange {
+        private start;
+        private end;
+        private includeTransactions;
+        constructor();
+        /**
+         * The start of the statement range.
+         *
+         * @return The start of the statement range.
+         */
+        getStart(): Date;
+        /**
+         * The start of the statement range.
+         *
+         * @param start The start of the statement range.
+         */
+        setStart(start: Date): void;
+        /**
+         * The end of the statement range.
+         *
+         * @return The end of the statement range.
+         */
+        getEnd(): Date;
+        /**
+         * The end of the statement range.
+         *
+         * @param end The end of the statement range.
+         */
+        setEnd(end: Date): void;
+        /**
+         * Whether to include transactions.
+         *
+         * @return Whether to include transactions.
+         */
+        getIncludeTransactions(): boolean;
+        /**
+         * Whether to include transactions.
+         *
+         * @param includeTransactions Whether to include transactions.
+         */
+        setIncludeTransactions(includeTransactions: boolean): void;
+    }
+}
+declare module "domain/data/common/StatementRequest" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { StatementRange } from "domain/data/common/StatementRange";
+    /**
+     * @author Ryan Heaton
+     */
+    export class StatementRequest extends RequestMessage {
+        private statementRange;
+        /**
+         * The statement range.
+         *
+         * @return The statement range.
+         */
+        getStatementRange(): StatementRange;
+        /**
+         * The statement range.
+         *
+         * @param statementRange The statement range.
+         */
+        setStatementRange(statementRange: StatementRange): void;
+    }
+}
+declare module "domain/data/creditcard/CreditCardStatementRequest" {
+    import { StatementRequest } from "domain/data/common/StatementRequest";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardStatementRequest extends StatementRequest {
+        private account;
+        /**
+         * The account details.
+         *
+         * @return The account details.
+         */
+        getAccount(): CreditCardAccountDetails;
+        /**
+         * The account details.
+         *
+         * @param account The account details.
+         */
+        setAccount(account: CreditCardAccountDetails): void;
+    }
+}
+declare module "domain/data/creditcard/CreditCardStatementRequestTransaction" {
+    import { CreditCardStatementRequest } from "domain/data/creditcard/CreditCardStatementRequest";
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardStatementRequestTransaction extends TransactionWrappedRequestMessage<CreditCardStatementRequest> {
+        private message;
+        /**
+         * The message.
+         *
+         * @return The message.
+         */
+        getMessage(): CreditCardStatementRequest;
+        /**
+         * The message.
+         *
+         * @param message The message.
+         *
+         */
+        setMessage(message: CreditCardStatementRequest): void;
+        setWrappedMessage(message: CreditCardStatementRequest): void;
+    }
+}
+declare module "domain/data/creditcard/CreditCardRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { CreditCardStatementRequestTransaction } from "domain/data/creditcard/CreditCardStatementRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardRequestMessageSet extends RequestMessageSet {
+        private statementRequest;
+        getType(): MessageSetType;
+        /**
+         * The request.
+         *
+         * @return The request.
+         */
+        getStatementRequest(): CreditCardStatementRequestTransaction;
+        /**
+         * The request.
+         *
+         * @param statementRequest The request.
+         */
+        setStatementRequest(statementRequest: CreditCardStatementRequestTransaction): void;
+        getRequestMessages(): Array<RequestMessage>;
+    }
+}
+declare module "client/impl/CreditCardAccountImpl" {
+    import { BaseAccountImpl } from "client/impl/BaseAccountImpl";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    import { CreditCardAccount } from "client/CreditCardAccount";
+    import { FinancialInstitutionImpl } from "client/impl/FinancialInstitutionImpl";
+    import { ResponseEnvelope } from "domain/data/ResponseEnvelope";
+    import { StatementResponse } from "domain/data/common/StatementResponse";
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { StatementRange } from "domain/data/common/StatementRange";
+    import { StatementRequest } from "domain/data/common/StatementRequest";
+    /**
+     * @author Ryan Heaton
+     */
+    export class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDetails> implements CreditCardAccount {
+        constructor(details: CreditCardAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl);
+        protected unwrapStatementResponse(response: ResponseEnvelope): StatementResponse;
+        protected createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet;
+        protected createTransaction(): TransactionWrappedRequestMessage<RequestMessage>;
+        protected createStatementRequest(details: CreditCardAccountDetails, range: StatementRange): StatementRequest;
+    }
+}
+declare module "domain/data/investment/statements/IncludePosition" {
+    /**
+     * Aggreate to indicate whether position information is requested as part of the statement
+     * @see "Section 13.9.1.2, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class IncludePosition {
+        private sentDownDate;
+        private includePositions;
+        constructor();
+        /**
+         * Gets the date that the position should be sent down for. This is an optional field according
+         * to the OFX spec.
+         *
+         * @return the date for the position
+         */
+        getDateSentDown(): Date;
+        /**
+         * Sets the date that the position should be sent down for. This is an optional field according
+         * to the OFX spec.
+         *
+         * @param sentDownDate the date for the position
+         */
+        setDateSentDown(sentDownDate: Date): void;
+        /**
+         * Gets whether to include positions in the statement download.
+         *
+         * @return whether to include positions in the statement download
+         */
+        getIncludePositions(): boolean;
+        /**
+         * Sets whether to include positions in the statement download.
+         *
+         * @param includePositions whether to include positions in the statement download
+         */
+        setIncludePositions(includePositions: boolean): void;
+    }
+}
+declare module "domain/data/investment/statements/InvestmentStatementRequest" {
+    import { StatementRequest } from "domain/data/common/StatementRequest";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
+    import { IncludePosition } from "domain/data/investment/statements/IncludePosition";
+    /**
+     * Aggregate for the investment statement download request.
+     * @see "Section 13.9.1.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentStatementRequest extends StatementRequest {
+        private account;
+        private includeOpenOrders;
+        private includePosition;
+        private includeBalance;
+        constructor();
+        /**
+         * The account details.
+         *
+         * @return The account details.
+         */
+        getAccount(): InvestmentAccountDetails;
+        /**
+         * The account details.
+         *
+         * @param account The account details.
+         */
+        setAccount(account: InvestmentAccountDetails): void;
+        /**
+         * Gets whether to include open orders. This is an optional field according to the OFX spec.
+         * <br>
+         * Note, open orders are not yet implemented.
+         *
+         * @return whether to include open orders
+         */
+        getIncludeOpenOrders(): boolean;
+        /**
+         * Sets whether to include open orders. This is an optional field according to the OFX spec.
+         * <br>
+         * Note, open orders are not yet implemented.
+         *
+         * @param includeOpenOrders whether to include open orders
+         */
+        setIncludeOpenOrders(includeOpenOrders: boolean): void;
+        /**
+         * Gets the include position child aggregate. This is a required field according to the OFX spec.
+         *
+         * @return the include position child aggregate
+         */
+        getIncludePosition(): IncludePosition;
+        /**
+         * Gets the include position child aggregate. This is a required field according to the OFX spec.
+         *
+         * @param includePosition the include position child aggregate
+         */
+        setIncludePosition(includePosition: IncludePosition): void;
+        /**
+         * Gets whether to include balance info in the response. This is a required field according to
+         * the OFX spec.
+         *
+         * @return whether to include balance info in the response
+         */
+        getIncludeBalance(): boolean;
+        /**
+         * Sets whether to include balance info in the response. This is a required field according to
+         * the OFX spec.
+         *
+         * @param includeBalance whether to include balance info in the response
+         */
+        setIncludeBalance(includeBalance: boolean): void;
+    }
+}
+declare module "domain/data/investment/statements/InvestmentStatementRequestTransaction" {
+    import { InvestmentStatementRequest } from "domain/data/investment/statements/InvestmentStatementRequest";
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    /**
+     * Investment statement transaction request.
+     * @see "Section 13.9.1.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentStatementRequestTransaction extends TransactionWrappedRequestMessage<InvestmentStatementRequest> {
+        private message;
+        /**
+         * Gets the the statement request message.
+         *
+         * @return the statement request message.
+         */
+        getMessage(): InvestmentStatementRequest;
+        /**
+         * Sets the the statement request message.
+         *
+         * @param message the statement request message.
+         */
+        setMessage(message: InvestmentStatementRequest): void;
+        setWrappedMessage(message: InvestmentStatementRequest): void;
+    }
+}
+declare module "domain/data/seclist/SecurityListRequest" {
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { SecurityRequest } from "domain/data/seclist/SecurityRequest";
+    /**
+     * Request aggregate for the security list.
+     * @see "Section 13.8.2.2, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class SecurityListRequest extends RequestMessage {
+        private securityRequests;
+        getSecurityRequests(): Array<SecurityRequest>;
+        setSecurityRequests(securityRequests: Array<SecurityRequest>): void;
+    }
+}
+declare module "domain/data/seclist/SecurityListRequestTransaction" {
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { SecurityListRequest } from "domain/data/seclist/SecurityListRequest";
+    /**
+     * Security list transaction request.
+     * @see "Section 13.8.2.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class SecurityListRequestTransaction extends TransactionWrappedRequestMessage<SecurityListRequest> {
+        private message;
+        /**
+         * The message.
+         *
+         * @return The message.
+         */
+        getMessage(): SecurityListRequest;
+        /**
+         * The message.
+         *
+         * @param message The message.
+         *
+         */
+        setMessage(message: SecurityListRequest): void;
+        setWrappedMessage(message: SecurityListRequest): void;
+    }
+}
+declare module "domain/data/investment/statements/InvestmentStatementResponseTransaction" {
+    import { InvestmentStatementResponse } from "domain/data/investment/statements/InvestmentStatementResponse";
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    /**
+     * Investment statement transaction response.
+     * @see "Section 13.9.2.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentStatementResponseTransaction extends TransactionWrappedResponseMessage<InvestmentStatementResponse> {
+        private message;
+        /**
+         * Gets the the statement response message.
+         *
+         * @return the statement response message.
+         */
+        getMessage(): InvestmentStatementResponse;
+        /**
+         * Sets the the statement response message.
+         *
+         * @param message the statement response message.
+         */
+        setMessage(message: InvestmentStatementResponse): void;
+        getWrappedMessage(): InvestmentStatementResponse;
+    }
+}
+declare module "domain/data/investment/statements/InvestmentStatementResponseMessageSet" {
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { InvestmentStatementResponseTransaction } from "domain/data/investment/statements/InvestmentStatementResponseTransaction";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    /**
+     * Investment statement response message set.
+     * @see "Section 13.7.1.2.2, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
+        private statementResponses;
+        getType(): MessageSetType;
+        /**
+         * Gets the statement response list. Most OFX files have a single statement response.
+         *
+         * @return the statement response list
+         */
+        getStatementResponses(): Array<InvestmentStatementResponseTransaction>;
+        /**
+         * Sets the statement reponse list. Most OFX files have a single statement response.
+         *
+         * @param statementResponses the statement response list
+         */
+        setStatementResponses(statementResponses: Array<InvestmentStatementResponseTransaction>): void;
+        /**
+         * Gets the first statement response. Use getStatementResponses() if you are expecting multiple
+         * responses.
+         *
+         * @return the first investment statement response.
+         */
+        getStatementResponse(): InvestmentStatementResponseTransaction;
+        /**
+         * Sets the statement response if there is a single response.
+         *
+         * @param statementResponse The statement response.
+         */
+        setStatementResponse(statementResponse: InvestmentStatementResponseTransaction): void;
+        getResponseMessages(): Array<ResponseMessage>;
+    }
+}
+declare module "domain/data/seclist/SecurityListResponse" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    /**
+     * Security list response. This is an empty aggregate. The actual security information is included
+     * in the "SECLIST" aggregate.
+     * @see "Section 13.8.3, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class SecurityListResponse extends ResponseMessage {
+        getResponseMessageName(): string;
+    }
+}
+declare module "domain/data/seclist/SecurityListResponseTransaction" {
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    import { SecurityListResponse } from "domain/data/seclist/SecurityListResponse";
+    /**
+     * Security list transaction response.
+     * @see "Section 13.8.3.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class SecurityListResponseTransaction extends TransactionWrappedResponseMessage<SecurityListResponse> {
+        private message;
+        /**
+         * The message.
+         *
+         * @return The message.
+         */
+        getMessage(): SecurityListResponse;
+        /**
+         * The message.
+         *
+         * @param message The message.
+         */
+        setMessage(message: SecurityListResponse): void;
+        getWrappedMessage(): SecurityListResponse;
+    }
+}
+declare module "domain/data/seclist/SecurityListResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { SecurityListResponseTransaction } from "domain/data/seclist/SecurityListResponseTransaction";
+    import { SecurityList } from "domain/data/seclist/SecurityList";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    /**
+     * @author Jon Perlow
+     */
+    export class SecurityListResponseMessageSet extends ResponseMessageSet {
+        private securityListResponse;
+        private securityList;
+        getType(): MessageSetType;
+        /**
+         * The security list response list transaction.
+         *
+         * Most OFX files have a single security response.
+         *
+         * @return The security list response list.
+         */
+        getSecurityListResponse(): SecurityListResponseTransaction;
+        /**
+         * The security list response.
+         *
+         * @param securityListResponse The security list response.
+         */
+        setSecurityListResponse(securityListResponse: SecurityListResponseTransaction): void;
+        getSecurityList(): SecurityList;
+        setSecurityList(securityList: SecurityList): void;
+        getResponseMessages(): Array<ResponseMessage>;
+    }
+}
+declare module "domain/data/investment/statements/InvestmentStatementRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { InvestmentStatementRequestTransaction } from "domain/data/investment/statements/InvestmentStatementRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * Investment statement request message set.
+     * @see "Section 13.7.1.2.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class InvestmentStatementRequestMessageSet extends RequestMessageSet {
+        private statementRequest;
+        getType(): MessageSetType;
+        /**
+         * Gets the statement request.
+         *
+         * @return the request
+         */
+        getStatementRequest(): InvestmentStatementRequestTransaction;
+        /**
+         * Sets the statement request.
+         *
+         * @param statementRequest the request
+         */
+        setStatementRequest(statementRequest: InvestmentStatementRequestTransaction): void;
+        getRequestMessages(): Array<RequestMessage>;
+    }
+}
+declare module "domain/data/seclist/SecurityListRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { SecurityListRequestTransaction } from "domain/data/seclist/SecurityListRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * Security list request message set.
+     * @see "Section 13.7.2.2.1, OFX Spec"
+     *
+     * @author Jon Perlow
+     */
+    export class SecurityListRequestMessageSet extends RequestMessageSet {
+        private securityListRequest;
+        getType(): MessageSetType;
+        /**
+         * Gets the security list request.
+         *
+         * @return the request
+         */
+        getSecurityListRequest(): SecurityListRequestTransaction;
+        /**
+         * Sets the security list request.
+         *
+         * @param statementRequest the request
+         */
+        setSecurityListRequest(statementRequest: SecurityListRequestTransaction): void;
+        getRequestMessages(): Array<RequestMessage>;
+    }
+}
+declare module "client/impl/InvestmentAccountImpl" {
+    import { InvestmentAccount } from "client/InvestmentAccount";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
+    import { FinancialInstitutionImpl } from "client/impl/FinancialInstitutionImpl";
+    import { InvestmentStatementResponse } from "domain/data/investment/statements/InvestmentStatementResponse";
+    import { SecurityRequest } from "domain/data/seclist/SecurityRequest";
+    import { SecurityList } from "domain/data/seclist/SecurityList";
+    /**
+     * @author Jon Perlow
+     */
+    export class InvestmentAccountImpl implements InvestmentAccount {
+        private details;
+        private username;
+        private password;
+        private institution;
+        constructor(details: InvestmentAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl);
+        readStatement(start: Date, end: Date): Promise<InvestmentStatementResponse>;
+        readSecurityList(securities: Array<SecurityRequest>): Promise<SecurityList>;
+        /**
+         * The details of this account.
+         *
+         * @return The details of this account.
+         */
+        getDetails(): InvestmentAccountDetails;
+        private unwrapStatementResponse;
+        private createStatementRequestMessageSet;
+        private createStatementRequest;
+        private createSecurityListRequestMessageSet;
+        private createSecurityListRequest;
+        private unwrapSecurityList;
+    }
+}
+declare module "domain/data/signon/PasswordChangeRequest" {
+    import { RequestMessage } from "domain/data/RequestMessage";
     /**
      * Request to change a user password.
      *
      * @author Ryan Heaton
      * @see "Section 2.5.2.1, OFX Spec."
      */
-    class PasswordChangeRequest extends RequestMessage {
+    export class PasswordChangeRequest extends RequestMessage {
         private userId;
         private newPassword;
         /**
@@ -4704,12 +5608,13 @@ declare module ofx4js.domain.data.signon {
         setNewPassword(newPassword: string): void;
     }
 }
-declare module ofx4js.domain.data.signon {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+declare module "domain/data/signon/PasswordChangeRequestTransaction" {
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { PasswordChangeRequest } from "domain/data/signon/PasswordChangeRequest";
     /**
      * @author Ryan Heaton
      */
-    class PasswordChangeRequestTransaction extends TransactionWrappedRequestMessage<PasswordChangeRequest> {
+    export class PasswordChangeRequestTransaction extends TransactionWrappedRequestMessage<PasswordChangeRequest> {
         private message;
         /**
          * The wrapped message.
@@ -4726,17 +5631,19 @@ declare module ofx4js.domain.data.signon {
         setWrappedMessage(message: PasswordChangeRequest): void;
     }
 }
-declare module ofx4js.domain.data.signon {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
+declare module "domain/data/signon/SignonRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { SignonRequest } from "domain/data/signon/SignonRequest";
+    import { PasswordChangeRequestTransaction } from "domain/data/signon/PasswordChangeRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
     /**
      * The sign-on request message set.
      *
      * @author Ryan Heaton
      * @see "Section 2.5, OFX Spec."
      */
-    class SignonRequestMessageSet extends RequestMessageSet {
+    export class SignonRequestMessageSet extends RequestMessageSet {
         private signonRequest;
         private passwordChangeRequest;
         getType(): MessageSetType;
@@ -4767,269 +5674,16 @@ declare module ofx4js.domain.data.signon {
         getRequestMessages(): Array<RequestMessage>;
     }
 }
-declare module ofx4js.domain.data.signup {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class AccountInfoRequest extends RequestMessage {
-        private lastUpdated;
-        constructor();
-        /**
-         * When the account info was last updated.
-         *
-         * @return When the account info was last updated.
-         */
-        getLastUpdated(): Date;
-        /**
-         * When the account info was last updated.
-         *
-         * @param lastUpdated When the account info was last updated.
-         */
-        setLastUpdated(lastUpdated: Date): void;
-    }
-}
-declare module ofx4js.domain.data.signup {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class AccountInfoRequestTransaction extends TransactionWrappedRequestMessage<AccountInfoRequest> {
-        private message;
-        /**
-         * The wrapped message.
-         *
-         * @return The wrapped message.
-         */
-        getMessage(): AccountInfoRequest;
-        /**
-         * The wrapped message.
-         *
-         * @param message The wrapped message.
-         */
-        setMessage(message: AccountInfoRequest): void;
-        setWrappedMessage(message: AccountInfoRequest): void;
-    }
-}
-declare module ofx4js.domain.data.signup {
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class SignupRequestMessageSet extends RequestMessageSet {
-        private accountInfoRequest;
-        getType(): MessageSetType;
-        /**
-         * The account info request.
-         *
-         * @return The account info request.
-         */
-        getAccountInfoRequest(): AccountInfoRequestTransaction;
-        /**
-         * The account info request.
-         *
-         * @param accountInfoRequest The account info request.
-         */
-        setAccountInfoRequest(accountInfoRequest: AccountInfoRequestTransaction): void;
-        /**
-         * The request messages.
-         *
-         * @return The request messages.
-         */
-        getRequestMessages(): Array<RequestMessage>;
-    }
-}
-declare module ofx4js.domain.data.signup {
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class AccountInfoResponse extends ResponseMessage {
-        private lastUpdated;
-        private accounts;
-        constructor();
-        getResponseMessageName(): string;
-        /**
-         * When the account info was last updated.
-         *
-         * @return When the account info was last updated.
-         */
-        getLastUpdated(): Date;
-        /**
-         * When the account info was last updated.
-         *
-         * @param lastUpdated When the account info was last updated.
-         */
-        setLastUpdated(lastUpdated: Date): void;
-        /**
-         * The accounts.
-         *
-         * @return The accounts.
-         */
-        getAccounts(): Array<AccountProfile>;
-        /**
-         * The accounts.
-         *
-         * @param accounts The accounts.
-         */
-        setAccounts(accounts: Array<AccountProfile>): void;
-    }
-}
-declare module ofx4js.domain.data.signup {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class AccountInfoResponseTransaction extends TransactionWrappedResponseMessage<AccountInfoResponse> {
-        private message;
-        /**
-         * The wrapped message.
-         *
-         * @return The wrapped message.
-         */
-        getMessage(): AccountInfoResponse;
-        /**
-         * The wrapped message.
-         *
-         * @param message The wrapped message.
-         */
-        setMessage(message: AccountInfoResponse): void;
-        getWrappedMessage(): AccountInfoResponse;
-    }
-}
-declare module ofx4js.domain.data.signup {
-    /**
-     * @author Ryan Heaton
-     */
-    class SignupResponseMessageSet extends ResponseMessageSet {
-        private accountInfoResponse;
-        getType(): MessageSetType;
-        /**
-         * The account info response.
-         *
-         * @return The account info response.
-         */
-        getAccountInfoResponse(): AccountInfoResponseTransaction;
-        /**
-         * The account info response.
-         *
-         * @param accountInfoResponse The account info response.
-         */
-        setAccountInfoResponse(accountInfoResponse: AccountInfoResponseTransaction): void;
-        /**
-         * The response messages.
-         *
-         * @return The response messages.
-         */
-        getResponseMessages(): Array<ResponseMessage>;
-    }
-}
-declare module ofx4js.domain.data.profile {
-    /**
-     * @author Ryan Heaton
-     * @see "Section 7.1.5, OFX Spec"
-     */
-    enum ClientRoutingCapability {
-        NONE = 0,
-        SERVICE = 1,
-        MESSAGE_SET = 2,
-    }
-}
-declare module ofx4js.domain.data.profile {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * @author Ryan Heaton
-     * @see "Section 7.1.5, OFX Spec"
-     */
-    class ProfileRequest extends RequestMessage {
-        private routingCapability;
-        private profileLastUpdated;
-        constructor();
-        /**
-         * The client routing capability.
-         *
-         * @return The client routing capability.
-         */
-        getRoutingCapability(): ClientRoutingCapability;
-        /**
-         * The client routing capability.
-         *
-         * @param routingCapability The client routing capability.
-         */
-        setRoutingCapability(routingCapability: ClientRoutingCapability): void;
-        /**
-         * The date the profile was last updated.
-         *
-         * @return The date the profile was last updated.
-         */
-        getProfileLastUpdated(): Date;
-        /**
-         * The date the profile was last updated.
-         *
-         * @param profileLastUpdated The date the profile was last updated.
-         */
-        setProfileLastUpdated(profileLastUpdated: Date): void;
-    }
-}
-declare module ofx4js.domain.data.profile {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class ProfileRequestTransaction extends TransactionWrappedRequestMessage<ProfileRequest> {
-        private message;
-        /**
-         * The wrapped message.
-         *
-         * @return The wrapped message.
-         */
-        getMessage(): ProfileRequest;
-        /**
-         * The wrapped message.
-         *
-         * @param message The wrapped message.
-         */
-        setMessage(message: ProfileRequest): void;
-        setWrappedMessage(message: ProfileRequest): void;
-    }
-}
-declare module ofx4js.domain.data.profile {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * @author Ryan Heaton
-     * @see "Section 7 OFX Spec"
-     */
-    class ProfileRequestMessageSet extends RequestMessageSet {
-        private profileRequest;
-        getType(): MessageSetType;
-        /**
-         * The profile request.
-         *
-         * @return The profile request.
-         */
-        getProfileRequest(): ProfileRequestTransaction;
-        /**
-         * The profile request.
-         *
-         * @param profileRequest The profile request.
-         */
-        setProfileRequest(profileRequest: ProfileRequestTransaction): void;
-        getRequestMessages(): Array<RequestMessage>;
-    }
-}
-declare module ofx4js.domain.data.profile {
-    import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
+declare module "domain/data/profile/CoreMessageSetInfo" {
+    import { ApplicationSecurity } from "domain/data/ApplicationSecurity";
+    import { SynchronizationCapability } from "domain/data/profile/SynchronizationCapability";
     /**
      * Core information about a specific version of a specific message set.
      *
      * @author Ryan Heaton
      * @see "Section 7.2.1, OFX Spec"
      */
-    class CoreMessageSetInfo {
+    export class CoreMessageSetInfo {
         private version;
         private serviceProviderName;
         private url;
@@ -5166,17 +5820,19 @@ declare module ofx4js.domain.data.profile {
         setIntuTimeout(timeout: number): void;
     }
 }
-declare module ofx4js.domain.data.profile {
-    import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
-    import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/VersionSpecificMessageSetInfo" {
+    import { MessageSetProfile } from "domain/data/MessageSetProfile";
+    import { CoreMessageSetInfo } from "domain/data/profile/CoreMessageSetInfo";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ApplicationSecurity } from "domain/data/ApplicationSecurity";
+    import { SynchronizationCapability } from "domain/data/profile/SynchronizationCapability";
     /**
      * Information specific to a version of a message set.
      *
      * @author Ryan Heaton
      * @see "Section 7.2.1, OFX Spec"
      */
-    class VersionSpecificMessageSetInfo implements MessageSetProfile {
+    export abstract class VersionSpecificMessageSetInfo implements MessageSetProfile {
         private core;
         /**
          * The information core.
@@ -5195,7 +5851,7 @@ declare module ofx4js.domain.data.profile {
          *
          * @return The message set type.
          */
-        getMessageSetType(): MessageSetType;
+        abstract getMessageSetType(): MessageSetType;
         getVersion(): string;
         getServiceProviderName(): string;
         getUrl(): string;
@@ -5207,14 +5863,15 @@ declare module ofx4js.domain.data.profile {
         hasFileBasedErrorRecoverySupport(): boolean;
     }
 }
-declare module ofx4js.domain.data.profile {
+declare module "domain/data/profile/AbstractMessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
     /**
      * Information about a message set.
      *
      * @author Ryan Heaton
      * @see "Section 7.2.1, OFX Spec"
      */
-    class AbstractMessageSetInfo {
+    export abstract class AbstractMessageSetInfo {
         private versionSpecificInformationList;
         /**
          * List of information about a message set for each version supported.
@@ -5230,12 +5887,13 @@ declare module ofx4js.domain.data.profile {
         setVersionSpecificInformationList(versionSpecificInformationList: Array<VersionSpecificMessageSetInfo>): void;
     }
 }
-declare module ofx4js.domain.data.profile {
+declare module "domain/data/profile/MessageSetInfoList" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
     /**
      * @author Ryan Heaton
      * @see "Section 7.2, OFX Spec"
      */
-    class MessageSetInfoList {
+    export class MessageSetInfoList {
         private informationList;
         /**
          * The list of information for each message set.
@@ -5251,15 +5909,16 @@ declare module ofx4js.domain.data.profile {
         setInformationList(informationList: Array<AbstractMessageSetInfo>): void;
     }
 }
-declare module ofx4js.domain.data.profile {
-    import SignonProfile = ofx4js.domain.data.SignonProfile;
+declare module "domain/data/profile/SignonInfo" {
+    import { SignonProfile } from "domain/data/SignonProfile";
+    import { CharacterType } from "domain/data/profile/CharacterType";
     /**
      * Sign-on information
      *
      * @author Ryan Heaton
      * @see "Section 7.2.2, OFX Spec"
      */
-    class SignonInfo implements SignonProfile {
+    export class SignonInfo implements SignonProfile {
         private realm;
         private minPasswordCharacters;
         private maxPasswordCharacters;
@@ -5486,14 +6145,15 @@ declare module ofx4js.domain.data.profile {
         setMfaChallengeRequiredForFirstSignon(mfaChallengeRequiredForFirstSignon: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile {
+declare module "domain/data/profile/SignonInfoList" {
+    import { SignonInfo } from "domain/data/profile/SignonInfo";
     /**
      * List of signon information.
      *
      * @author Ryan Heaton
      * @see "Section 7.2.2, OFX Spec"
      */
-    class SignonInfoList {
+    export class SignonInfoList {
         private infoList;
         /**
          * List of sign-on information.
@@ -5509,17 +6169,19 @@ declare module ofx4js.domain.data.profile {
         setInfoList(infoList: Array<SignonInfo>): void;
     }
 }
-declare module ofx4js.domain.data.profile {
-    import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import SignonProfile = ofx4js.domain.data.SignonProfile;
-    import FinancialInstitutionProfile = ofx4js.client.FinancialInstitutionProfile;
+declare module "domain/data/profile/ProfileResponse" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    import { FinancialInstitutionProfile } from "client/FinancialInstitutionProfile";
+    import { MessageSetInfoList } from "domain/data/profile/MessageSetInfoList";
+    import { SignonInfoList } from "domain/data/profile/SignonInfoList";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { MessageSetProfile } from "domain/data/MessageSetProfile";
+    import { SignonProfile } from "domain/data/SignonProfile";
     /**
      * @author Ryan Heaton
      * @see "Section 7.2 OFX Spec"
      */
-    class ProfileResponse extends ResponseMessage implements FinancialInstitutionProfile {
+    export class ProfileResponse extends ResponseMessage implements FinancialInstitutionProfile {
         private messageSetList;
         private signonInfoList;
         private timestamp;
@@ -5743,12 +6405,13 @@ declare module ofx4js.domain.data.profile {
         getSignonProfile(messageSet: MessageSetProfile): SignonProfile;
     }
 }
-declare module ofx4js.domain.data.profile {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+declare module "domain/data/profile/ProfileResponseTransaction" {
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    import { ProfileResponse } from "domain/data/profile/ProfileResponse";
     /**
      * @author Ryan Heaton
      */
-    class ProfileResponseTransaction extends TransactionWrappedResponseMessage<ProfileResponse> {
+    export class ProfileResponseTransaction extends TransactionWrappedResponseMessage<ProfileResponse> {
         private message;
         /**
          * The message.
@@ -5765,15 +6428,16 @@ declare module ofx4js.domain.data.profile {
         getWrappedMessage(): ProfileResponse;
     }
 }
-declare module ofx4js.domain.data.profile {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+declare module "domain/data/profile/ProfileResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { ProfileResponseTransaction } from "domain/data/profile/ProfileResponseTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
     /**
      * @author Ryan Heaton
      * @see "Section 7 OFX Spec"
      */
-    class ProfileResponseMessageSet extends ResponseMessageSet {
+    export class ProfileResponseMessageSet extends ResponseMessageSet {
         private profileResponse;
         getType(): MessageSetType;
         /**
@@ -5791,834 +6455,123 @@ declare module ofx4js.domain.data.profile {
         getResponseMessages(): Array<ResponseMessage>;
     }
 }
-declare module ofx4js.meta {
-    function Header_add<Type>(clazz: any, params: HeaderParams<Type>): void;
-}
-declare module ofx4js.domain.data {
-    import SortedSet = ofx4js.collections.SortedSet;
-    /**
-     * Envelope for enclosing an OFX request.
-     *
-     * @author Ryan Heaton
-     * @see "Section 2.4.3, OFX Spec"
-     */
-    class RequestEnvelope {
-        private security;
-        private UID;
-        private lastProcessedUID;
-        private messageSets;
-        constructor(UID?: string);
-        /**
-         * The security of this envelope.
-         *
-         * @return The security of this envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        getSecurity(): ApplicationSecurity;
-        /**
-         * The security of this envelope.
-         *
-         * @param security The security of this envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        setSecurity(security: ApplicationSecurity): void;
-        /**
-         * The UID for the envelope.
-         *
-         * @return The UID for the envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        getUID(): string;
-        /**
-         * The UID for the envelope.
-         *
-         * @param UID The UID for the envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        setUID(UID: string): void;
-        /**
-         * The UID of the last-processed request/response (used for file-based error recovery).
-         *
-         * @return The UID of the last-processed request/response (used for file-based error recovery).
-         * @see "Section 2.2, OFX spec"
-         */
-        getLastProcessedUID(): string;
-        /**
-         * The UID of the last-processed request/response (used for file-based error recovery).
-         *
-         * @param lastProcessedUID The UID of the last-processed request/response (used for file-based error recovery).
-         * @see "Section 2.2, OFX spec"
-         */
-        setLastProcessedUID(lastProcessedUID: string): void;
-        /**
-         * The message sets that make up the content of this request.
-         *
-         * @return The message sets that make up the content of this request.
-         * @see "Section 2.4.5, OFX Spec"
-         */
-        getMessageSets(): SortedSet<RequestMessageSet>;
-        /**
-         * The message sets that make up the content of this request.
-         *
-         * @param messageSets The message sets that make up the content of this request.
-         * @see "Section 2.4.5, OFX Spec"
-         */
-        setMessageSets(messageSets: SortedSet<RequestMessageSet>): void;
-    }
-}
-declare module ofx4js.domain.data.signon {
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    /**
-     * Response to a change a user password request.
-     *
-     * @author Ryan Heaton
-     * @see "Section 2.5.2.2, OFX Spec."
-     */
-    class PasswordChangeResponse extends ResponseMessage {
-        private userId;
-        private changeTimestamp;
-        /**
-         * The id of the user changing password.
-         *
-         * @return The id of the user changing password.
-         */
-        getUserId(): string;
-        getResponseMessageName(): string;
-        /**
-         * The id of the user changing password.
-         *
-         * @param userId The id of the user changing password.
-         */
-        setUserId(userId: string): void;
-        /**
-         * The timestamp of the password change.
-         *
-         * @return The timestamp of the password change.
-         */
-        getChangeTimestamp(): Date;
-        /**
-         * The timestamp of the password change.
-         *
-         * @param changeTimestamp The timestamp of the password change.
-         */
-        setChangeTimestamp(changeTimestamp: Date): void;
-    }
-}
-declare module ofx4js.domain.data.signon {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+declare module "domain/data/signup/AccountInfoResponse" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    import { AccountProfile } from "domain/data/signup/AccountProfile";
     /**
      * @author Ryan Heaton
      */
-    class PasswordChangeResponseTransaction extends TransactionWrappedResponseMessage<PasswordChangeResponse> {
-        private message;
-        /**
-         * The message.
-         *
-         * @return The message.
-         */
-        getMessage(): PasswordChangeResponse;
-        /**
-         * The message.
-         *
-         * @param message The message.
-         */
-        setMessage(message: PasswordChangeResponse): void;
-        getWrappedMessage(): PasswordChangeResponse;
-    }
-}
-declare module ofx4js.domain.data.signon {
-    import Status = ofx4js.domain.data.common.Status;
-    import StatusHolder = ofx4js.domain.data.common.StatusHolder;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    /**
-     * The signon response message.
-     *
-     * @author Ryan Heaton
-     * @see "Section 2.5.1.2, OFX Spec."
-     */
-    class SignonResponse extends ResponseMessage implements StatusHolder {
-        private status;
-        private timestamp;
-        private userKey;
-        private userKeyExpiration;
-        private language;
-        private profileLastUpdated;
-        private accountLastUpdated;
-        private financialInstitution;
-        private sessionId;
-        private accessKey;
+    export class AccountInfoResponse extends ResponseMessage {
+        private lastUpdated;
+        private accounts;
         constructor();
         getResponseMessageName(): string;
-        getStatusHolderName(): string;
         /**
-         * The signon response status.
+         * When the account info was last updated.
          *
-         * @return The signon response status.
+         * @return When the account info was last updated.
          */
-        getStatus(): Status;
+        getLastUpdated(): Date;
         /**
-         * The signon response status.
+         * When the account info was last updated.
          *
-         * @param status The signon response status.
+         * @param lastUpdated When the account info was last updated.
          */
-        setStatus(status: Status): void;
+        setLastUpdated(lastUpdated: Date): void;
         /**
-         * The timestamp of this response.
+         * The accounts.
          *
-         * @return The timestamp of this response.
+         * @return The accounts.
          */
-        getTimestamp(): Date;
+        getAccounts(): Array<AccountProfile>;
         /**
-         * The timestamp of this response.
+         * The accounts.
          *
-         * @param timestamp The timestamp of this response.
+         * @param accounts The accounts.
          */
-        setTimestamp(timestamp: Date): void;
-        /**
-         * The userkey that can be used instead of the username/password.
-         *
-         * @return The userkey that can be used instead of the username/password.
-         */
-        getUserKey(): string;
-        /**
-         * The userkey that can be used instead of the username/password.
-         *
-         * @param userKey The userkey that can be used instead of the username/password.
-         */
-        setUserKey(userKey: string): void;
-        /**
-         * The date/time of the expiration of the user key.
-         *
-         * @return The date/time of the expiration of the user key.
-         */
-        getUserKeyExpiration(): Date;
-        /**
-         * The date/time of the expiration of the user key.
-         *
-         * @param userKeyExpiration The date/time of the expiration of the user key.
-         */
-        setUserKeyExpiration(userKeyExpiration: Date): void;
-        /**
-         * The three-letter langauge code.
-         *
-         * @return The three-letter langauge code.
-         * @see java.util.Locale#getISO3Language()
-         */
-        getLanguage(): string;
-        /**
-         * The three-letter langauge code.
-         *
-         * @param language The three-letter langauge code.
-         */
-        setLanguage(language: string): void;
-        /**
-         * The date/time that the FI profile was last updated.
-         *
-         * @return The date/time that the FI profile was last updated.
-         */
-        getProfileLastUpdated(): Date;
-        /**
-         * The date/time that the FI profile was last updated.
-         *
-         * @param profileLastUpdated The date/time that the FI profile was last updated.
-         */
-        setProfileLastUpdated(profileLastUpdated: Date): void;
-        /**
-         * The date/time that the user's account information was updated.
-         *
-         * @return The date/time that the user's account information was updated.
-         */
-        getAccountLastUpdated(): Date;
-        /**
-         * The date/time that the user's account information was updated.
-         *
-         * @param accountLastUpdated The date/time that the user's account information was updated.
-         */
-        setAccountLastUpdated(accountLastUpdated: Date): void;
-        /**
-         * The financial instutution identity information.
-         *
-         * @return The financial instutution identity information.
-         */
-        getFinancialInstitution(): FinancialInstitution;
-        /**
-         * The financial instutution identity information.
-         *
-         * @param financialInstitution The financial instutution identity information.
-         */
-        setFinancialInstitution(financialInstitution: FinancialInstitution): void;
-        /**
-         * The session id for the client.
-         *
-         * @return The session id for the client.
-         */
-        getSessionId(): string;
-        /**
-         * The session id for the client.
-         *
-         * @param sessionId The session id for the client.
-         */
-        setSessionId(sessionId: string): void;
-        /**
-         * The access key that the client should return in the next sign-on requuest.
-         *
-         * @return The access key that the client should return in the next sign-on requuest.
-         */
-        getAccessKey(): string;
-        /**
-         * The access key that the client should return in the next sign-on requuest.
-         *
-         * @param accessKey The access key that the client should return in the next sign-on requuest.
-         */
-        setAccessKey(accessKey: string): void;
+        setAccounts(accounts: Array<AccountProfile>): void;
     }
 }
-declare module ofx4js.domain.data.signon {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+declare module "domain/data/signup/AccountInfoResponseTransaction" {
+    import { AccountInfoResponse } from "domain/data/signup/AccountInfoResponse";
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
     /**
-     * The sign-on response message set.
-     *
      * @author Ryan Heaton
-     * @see "Section 2.5, OFX Spec."
      */
-    class SignonResponseMessageSet extends ResponseMessageSet {
-        private signonResponse;
-        private passwordChangeResponse;
+    export class AccountInfoResponseTransaction extends TransactionWrappedResponseMessage<AccountInfoResponse> {
+        private message;
+        /**
+         * The wrapped message.
+         *
+         * @return The wrapped message.
+         */
+        getMessage(): AccountInfoResponse;
+        /**
+         * The wrapped message.
+         *
+         * @param message The wrapped message.
+         */
+        setMessage(message: AccountInfoResponse): void;
+        getWrappedMessage(): AccountInfoResponse;
+    }
+}
+declare module "domain/data/signup/SignupResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { AccountInfoResponseTransaction } from "domain/data/signup/AccountInfoResponseTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class SignupResponseMessageSet extends ResponseMessageSet {
+        private accountInfoResponse;
         getType(): MessageSetType;
         /**
-         * The message for this message set.
+         * The account info response.
          *
-         * @return The message for this message set.
+         * @return The account info response.
          */
-        getSignonResponse(): SignonResponse;
+        getAccountInfoResponse(): AccountInfoResponseTransaction;
         /**
-         * The message for this message set.
+         * The account info response.
          *
-         * @param signonResponse The message for this message set.
+         * @param accountInfoResponse The account info response.
          */
-        setSignonResponse(signonResponse: SignonResponse): void;
+        setAccountInfoResponse(accountInfoResponse: AccountInfoResponseTransaction): void;
         /**
-         * The password change response.
+         * The response messages.
          *
-         * @return The password change response.
+         * @return The response messages.
          */
-        getPasswordChangeResponse(): PasswordChangeResponseTransaction;
-        /**
-         * The password change response.
-         *
-         * @param passwordChangeResponse The password change response.
-         */
-        setPasswordChangeResponse(passwordChangeResponse: PasswordChangeResponseTransaction): void;
         getResponseMessages(): Array<ResponseMessage>;
     }
 }
-declare module ofx4js.domain.data {
-    import SortedSet = ofx4js.collections.SortedSet;
-    import SignonResponse = ofx4js.domain.data.signon.SignonResponse;
-    /**
-     * Envelope for enclosing an OFX response.
-     *
-     * @author Ryan Heaton
-     * @see "Section 2.4.3, OFX Spec"
-     */
-    class ResponseEnvelope {
-        private security;
-        private UID;
-        private messageSets;
-        /**
-         * The security of this envelope.
-         *
-         * @return The security of this envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        getSecurity(): ApplicationSecurity;
-        /**
-         * The security of this envelope.
-         *
-         * @param security The security of this envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        setSecurity(security: ApplicationSecurity): void;
-        /**
-         * The UID for the envelope.
-         *
-         * @return The UID for the envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        getUID(): string;
-        /**
-         * The UID for the envelope.
-         *
-         * @param UID The UID for the envelope.
-         * @see "Section 2.2, OFX spec"
-         */
-        setUID(UID: string): void;
-        /**
-         * The message sets that make up the content of this response.
-         *
-         * @return The message sets that make up the content of this response.
-         * @see "Section 2.4.5, OFX Spec"
-         */
-        getMessageSets(): SortedSet<ResponseMessageSet>;
-        /**
-         * The message sets that make up the content of this response.
-         *
-         * @param messageSets The message sets that make up the content of this response.
-         * @see "Section 2.4.5, OFX Spec"
-         */
-        setMessageSets(messageSets: SortedSet<ResponseMessageSet>): void;
-        /**
-         * Helper method for looking up the signon response.
-         *
-         * @return The signon response, or null if none found.
-         */
-        getSignonResponse(): SignonResponse;
-        /**
-         * Get the message set of the specified type.
-         *
-         * @param type The type.
-         * @return The message set, or null.
-         */
-        getMessageSet(type: MessageSetType): ResponseMessageSet;
-    }
-}
-declare module ofx4js.client.net {
-    import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-    import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-    /**
-     * Connection to an OFX interface.
-     *
-     * @author Ryan Heaton
-     */
-    interface OFXConnection {
-        /**
-         * Send a request.
-         *
-         * @param request The request to send.
-         * @param url The URL to which to send the request.
-         * @return The response.
-         */
-        sendRequest(request: RequestEnvelope, url: string): Promise<ResponseEnvelope>;
-    }
-}
-declare module ofx4js.client.net {
-    import OFXException = ofx4js.OFXException;
-    /**
-     * Error with a particular OFX connection.
-     *
-     * @author Ryan Heaton
-     */
-    class OFXConnectionException extends OFXException {
-        constructor(message: string, e?: Error);
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    /**
-     * Aggreate to indicate whether position information is requested as part of the statement
-     * @see "Section 13.9.1.2, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class IncludePosition {
-        private sentDownDate;
-        private includePositions;
-        constructor();
-        /**
-         * Gets the date that the position should be sent down for. This is an optional field according
-         * to the OFX spec.
-         *
-         * @return the date for the position
-         */
-        getDateSentDown(): Date;
-        /**
-         * Sets the date that the position should be sent down for. This is an optional field according
-         * to the OFX spec.
-         *
-         * @param sentDownDate the date for the position
-         */
-        setDateSentDown(sentDownDate: Date): void;
-        /**
-         * Gets whether to include positions in the statement download.
-         *
-         * @return whether to include positions in the statement download
-         */
-        getIncludePositions(): boolean;
-        /**
-         * Sets whether to include positions in the statement download.
-         *
-         * @param includePositions whether to include positions in the statement download
-         */
-        setIncludePositions(includePositions: boolean): void;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-    import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-    /**
-     * Aggregate for the investment statement download request.
-     * @see "Section 13.9.1.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentStatementRequest extends StatementRequest {
-        private account;
-        private includeOpenOrders;
-        private includePosition;
-        private includeBalance;
-        constructor();
-        /**
-         * The account details.
-         *
-         * @return The account details.
-         */
-        getAccount(): InvestmentAccountDetails;
-        /**
-         * The account details.
-         *
-         * @param account The account details.
-         */
-        setAccount(account: InvestmentAccountDetails): void;
-        /**
-         * Gets whether to include open orders. This is an optional field according to the OFX spec.
-         * <br>
-         * Note, open orders are not yet implemented.
-         *
-         * @return whether to include open orders
-         */
-        getIncludeOpenOrders(): boolean;
-        /**
-         * Sets whether to include open orders. This is an optional field according to the OFX spec.
-         * <br>
-         * Note, open orders are not yet implemented.
-         *
-         * @param includeOpenOrders whether to include open orders
-         */
-        setIncludeOpenOrders(includeOpenOrders: boolean): void;
-        /**
-         * Gets the include position child aggregate. This is a required field according to the OFX spec.
-         *
-         * @return the include position child aggregate
-         */
-        getIncludePosition(): IncludePosition;
-        /**
-         * Gets the include position child aggregate. This is a required field according to the OFX spec.
-         *
-         * @param includePosition the include position child aggregate
-         */
-        setIncludePosition(includePosition: IncludePosition): void;
-        /**
-         * Gets whether to include balance info in the response. This is a required field according to
-         * the OFX spec.
-         *
-         * @return whether to include balance info in the response
-         */
-        getIncludeBalance(): boolean;
-        /**
-         * Sets whether to include balance info in the response. This is a required field according to
-         * the OFX spec.
-         *
-         * @param includeBalance whether to include balance info in the response
-         */
-        setIncludeBalance(includeBalance: boolean): void;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    /**
-     * Investment statement transaction request.
-     * @see "Section 13.9.1.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentStatementRequestTransaction extends TransactionWrappedRequestMessage<InvestmentStatementRequest> {
-        private message;
-        /**
-         * Gets the the statement request message.
-         *
-         * @return the statement request message.
-         */
-        getMessage(): InvestmentStatementRequest;
-        /**
-         * Sets the the statement request message.
-         *
-         * @param message the statement request message.
-         */
-        setMessage(message: InvestmentStatementRequest): void;
-        setWrappedMessage(message: InvestmentStatementRequest): void;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    /**
-     * Investment statement request message set.
-     * @see "Section 13.7.1.2.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentStatementRequestMessageSet extends RequestMessageSet {
-        private statementRequest;
-        getType(): MessageSetType;
-        /**
-         * Gets the statement request.
-         *
-         * @return the request
-         */
-        getStatementRequest(): InvestmentStatementRequestTransaction;
-        /**
-         * Sets the statement request.
-         *
-         * @param statementRequest the request
-         */
-        setStatementRequest(statementRequest: InvestmentStatementRequestTransaction): void;
-        getRequestMessages(): Array<RequestMessage>;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-    /**
-     * Investment statement transaction response.
-     * @see "Section 13.9.2.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentStatementResponseTransaction extends TransactionWrappedResponseMessage<InvestmentStatementResponse> {
-        private message;
-        /**
-         * Gets the the statement response message.
-         *
-         * @return the statement response message.
-         */
-        getMessage(): InvestmentStatementResponse;
-        /**
-         * Sets the the statement response message.
-         *
-         * @param message the statement response message.
-         */
-        setMessage(message: InvestmentStatementResponse): void;
-        getWrappedMessage(): InvestmentStatementResponse;
-    }
-}
-declare module ofx4js.domain.data.investment.statements {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-    /**
-     * Investment statement response message set.
-     * @see "Section 13.7.1.2.2, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class InvestmentStatementResponseMessageSet extends ResponseMessageSet {
-        private statementResponses;
-        getType(): MessageSetType;
-        /**
-         * Gets the statement response list. Most OFX files have a single statement response.
-         *
-         * @return the statement response list
-         */
-        getStatementResponses(): Array<InvestmentStatementResponseTransaction>;
-        /**
-         * Sets the statement reponse list. Most OFX files have a single statement response.
-         *
-         * @param statementResponses the statement response list
-         */
-        setStatementResponses(statementResponses: Array<InvestmentStatementResponseTransaction>): void;
-        /**
-         * Gets the first statement response. Use getStatementResponses() if you are expecting multiple
-         * responses.
-         *
-         * @return the first investment statement response.
-         */
-        getStatementResponse(): InvestmentStatementResponseTransaction;
-        /**
-         * Sets the statement response if there is a single response.
-         *
-         * @param statementResponse The statement response.
-         */
-        setStatementResponse(statementResponse: InvestmentStatementResponseTransaction): void;
-        getResponseMessages(): Array<ResponseMessage>;
-    }
-}
-declare module ofx4js.domain.data.seclist {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * Request aggregate for the security list.
-     * @see "Section 13.8.2.2, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class SecurityListRequest extends RequestMessage {
-        private securityRequests;
-        getSecurityRequests(): Array<SecurityRequest>;
-        setSecurityRequests(securityRequests: Array<SecurityRequest>): void;
-    }
-}
-declare module ofx4js.domain.data.seclist {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    /**
-     * Security list transaction request.
-     * @see "Section 13.8.2.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class SecurityListRequestTransaction extends TransactionWrappedRequestMessage<SecurityListRequest> {
-        private message;
-        /**
-         * The message.
-         *
-         * @return The message.
-         */
-        getMessage(): SecurityListRequest;
-        /**
-         * The message.
-         *
-         * @param message The message.
-         *
-         */
-        setMessage(message: SecurityListRequest): void;
-        setWrappedMessage(message: SecurityListRequest): void;
-    }
-}
-declare module ofx4js.domain.data.seclist {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    /**
-     * Security list request message set.
-     * @see "Section 13.7.2.2.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class SecurityListRequestMessageSet extends RequestMessageSet {
-        private securityListRequest;
-        getType(): MessageSetType;
-        /**
-         * Gets the security list request.
-         *
-         * @return the request
-         */
-        getSecurityListRequest(): SecurityListRequestTransaction;
-        /**
-         * Sets the security list request.
-         *
-         * @param statementRequest the request
-         */
-        setSecurityListRequest(statementRequest: SecurityListRequestTransaction): void;
-        getRequestMessages(): Array<RequestMessage>;
-    }
-}
-declare module ofx4js.domain.data.seclist {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-    /**
-     * Security list transaction response.
-     * @see "Section 13.8.3.1, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    class SecurityListResponseTransaction extends TransactionWrappedResponseMessage<SecurityListResponse> {
-        private message;
-        /**
-         * The message.
-         *
-         * @return The message.
-         */
-        getMessage(): SecurityListResponse;
-        /**
-         * The message.
-         *
-         * @param message The message.
-         */
-        setMessage(message: SecurityListResponse): void;
-        getWrappedMessage(): SecurityListResponse;
-    }
-}
-declare module ofx4js.domain.data.seclist {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-    /**
-     * @author Jon Perlow
-     */
-    class SecurityListResponseMessageSet extends ResponseMessageSet {
-        private securityListResponse;
-        private securityList;
-        getType(): MessageSetType;
-        /**
-         * The security list response list transaction.
-         *
-         * Most OFX files have a single security response.
-         *
-         * @return The security list response list.
-         */
-        getSecurityListResponse(): SecurityListResponseTransaction;
-        /**
-         * The security list response.
-         *
-         * @param securityListResponse The security list response.
-         */
-        setSecurityListResponse(securityListResponse: SecurityListResponseTransaction): void;
-        getSecurityList(): SecurityList;
-        setSecurityList(securityList: SecurityList): void;
-        getResponseMessages(): Array<ResponseMessage>;
-    }
-}
-declare module ofx4js.client.impl {
-    import InvestmentAccount = ofx4js.client.InvestmentAccount;
-    import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-    import InvestmentStatementResponse = ofx4js.domain.data.investment.statements.InvestmentStatementResponse;
-    import SecurityRequest = ofx4js.domain.data.seclist.SecurityRequest;
-    import SecurityList = ofx4js.domain.data.seclist.SecurityList;
-    /**
-     * @author Jon Perlow
-     */
-    class InvestmentAccountImpl implements InvestmentAccount {
-        private details;
-        private username;
-        private password;
-        private institution;
-        constructor(details: InvestmentAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl);
-        readStatement(start: Date, end: Date): Promise<InvestmentStatementResponse>;
-        readSecurityList(securities: Array<SecurityRequest>): Promise<SecurityList>;
-        /**
-         * The details of this account.
-         *
-         * @return The details of this account.
-         */
-        getDetails(): InvestmentAccountDetails;
-        private unwrapStatementResponse(response);
-        private createStatementRequestMessageSet(transaction);
-        private createStatementRequest(details, range);
-        private createSecurityListRequestMessageSet(transaction);
-        private createSecurityListRequest(securities);
-        private unwrapSecurityList(response);
-    }
-}
-declare module ofx4js.client.impl {
-    import AccountProfile = ofx4js.domain.data.signup.AccountProfile;
-    import AccountInfoRequest = ofx4js.domain.data.signup.AccountInfoRequest;
-    import AccountInfoRequestTransaction = ofx4js.domain.data.signup.AccountInfoRequestTransaction;
-    import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-    import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-    import ProfileRequest = ofx4js.domain.data.profile.ProfileRequest;
-    import ProfileRequestTransaction = ofx4js.domain.data.profile.ProfileRequestTransaction;
-    import InvestmentAccount = ofx4js.client.InvestmentAccount;
-    import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-    import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-    import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-    import StatusHolder = ofx4js.domain.data.common.StatusHolder;
-    import SignonRequest = ofx4js.domain.data.signon.SignonRequest;
-    import OFXConnection = ofx4js.client.net.OFXConnection;
-    import BankAccount = ofx4js.client.BankAccount;
+declare module "client/impl/FinancialInstitutionImpl" {
+    import { OFXConnection } from "client/net/OFXConnection";
+    import { FinancialInstitutionData } from "client/FinancialInstitutionData";
+    import { FinancialInstitutionProfile } from "client/FinancialInstitutionProfile";
+    import { RequestEnvelope } from "domain/data/RequestEnvelope";
+    import { SignonRequest } from "domain/data/signon/SignonRequest";
+    import { ResponseEnvelope } from "domain/data/ResponseEnvelope";
+    import { AccountProfile } from "domain/data/signup/AccountProfile";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    import { BankAccount } from "client/BankAccount";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    import { CreditCardAccount } from "client/CreditCardAccount";
+    import { InvestmentAccountDetails } from "domain/data/investment/accounts/InvestmentAccountDetails";
+    import { InvestmentAccount } from "client/InvestmentAccount";
+    import { StatusHolder } from "domain/data/common/StatusHolder";
+    import { ProfileRequestTransaction } from "domain/data/profile/ProfileRequestTransaction";
+    import { ProfileRequest } from "domain/data/profile/ProfileRequest";
+    import { AccountInfoRequestTransaction } from "domain/data/signup/AccountInfoRequestTransaction";
+    import { AccountInfoRequest } from "domain/data/signup/AccountInfoRequest";
+    import { FinancialInstitution } from "domain/data/signon/FinancialInstitution";
     /**
      * Base implementation for the financial institution.
      *
      * @author Ryan Heaton
      */
-    class FinancialInstitutionImpl implements FinancialInstitution {
+    export class FinancialInstitutionImpl extends FinancialInstitution {
         private connection;
         private data;
         constructor(data: FinancialInstitutionData, connection: OFXConnection);
@@ -6717,20 +6670,252 @@ declare module ofx4js.client.impl {
         getData(): FinancialInstitutionData;
     }
 }
-declare module ofx4js.client.impl {
-    import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-    import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-    import StatementRange = ofx4js.domain.data.common.StatementRange;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-    import BankAccount = ofx4js.client.BankAccount;
+declare module "client/impl/BaseAccountImpl" {
+    import { FinancialInstitutionAccount } from "client/FinancialInstitutionAccount";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { FinancialInstitutionImpl } from "client/impl/FinancialInstitutionImpl";
+    import { AccountStatement } from "client/AccountStatement";
+    import { StatementRange } from "domain/data/common/StatementRange";
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { ResponseEnvelope } from "domain/data/ResponseEnvelope";
+    import { StatementResponse } from "domain/data/common/StatementResponse";
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { StatementRequest } from "domain/data/common/StatementRequest";
+    /**
+     * Base account implementation. Supports banking and credit card accounts.
+     *
+     * @author Ryan Heaton
+     */
+    export abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount {
+        private details;
+        private messageType;
+        private username;
+        private password;
+        private institution;
+        constructor(details: D, username: string, password: string, institution: FinancialInstitutionImpl);
+        /**
+         * Get the message set type of the specified details.
+         *
+         * @param details The details.
+         * @return The message set type.
+         */
+        protected getMessageSetType(details: D): MessageSetType;
+        readStatement(start: Date, end: Date): Promise<AccountStatement>;
+        /**
+         * Unwrap the statement response from the specified response envelope.
+         *
+         * @param response The response envelope to unwrap.
+         * @return The response.
+         */
+        protected abstract unwrapStatementResponse(response: ResponseEnvelope): StatementResponse;
+        /**
+         * Create a request message set from the specified transaction.
+         *
+         * @param transaction The transaction.
+         * @return The request message set.
+         */
+        protected abstract createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet;
+        /**
+         * Create a transaction.
+         *
+         * @return The transaction.
+         */
+        protected abstract createTransaction(): TransactionWrappedRequestMessage<RequestMessage>;
+        /**
+         * Create a statement request.
+         *
+         * @param details The details.
+         * @param range the range.
+         * @return The statement request.
+         */
+        protected abstract createStatementRequest(details: D, range: StatementRange): StatementRequest;
+        /**
+         * The details of this account.
+         *
+         * @return The details of this account.
+         */
+        getDetails(): D;
+        /**
+         * The message set type.
+         *
+         * @return The message set type.
+         */
+        protected getMessageType(): MessageSetType;
+    }
+}
+declare module "domain/data/banking/BankStatementResponse" {
+    import { StatementResponse } from "domain/data/common/StatementResponse";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
     /**
      * @author Ryan Heaton
      */
-    class BankingAccountImpl extends BaseAccountImpl<BankAccountDetails> implements BankAccount {
+    export class BankStatementResponse extends StatementResponse {
+        private account;
+        getResponseMessageName(): string;
+        /**
+         * The account for the statement.
+         *
+         * @return The account for the statement.
+         */
+        getAccount(): BankAccountDetails;
+        /**
+         * The account for the statement.
+         *
+         * @param account The account for the statement.
+         */
+        setAccount(account: BankAccountDetails): void;
+    }
+}
+declare module "domain/data/banking/BankStatementResponseTransaction" {
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    import { BankStatementResponse } from "domain/data/banking/BankStatementResponse";
+    /**
+     * @author Ryan Heaton
+     */
+    export class BankStatementResponseTransaction extends TransactionWrappedResponseMessage<BankStatementResponse> {
+        private message;
+        /**
+         * The message.
+         *
+         * @return The message.
+         */
+        getMessage(): BankStatementResponse;
+        /**
+         * The message.
+         *
+         * @param message The message.
+         */
+        setMessage(message: BankStatementResponse): void;
+        getWrappedMessage(): BankStatementResponse;
+    }
+}
+declare module "domain/data/banking/BankingResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { BankStatementResponseTransaction } from "domain/data/banking/BankStatementResponseTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class BankingResponseMessageSet extends ResponseMessageSet {
+        private statementResponses;
+        getType(): MessageSetType;
+        /**
+         * The statement response list.
+         *
+         * Most OFX files have a single statement response, except MT2OFX
+         * which outputs OFX with multiple statement responses
+         * in a single banking response message set.
+         *
+         * @return The statement response list.
+         */
+        getStatementResponses(): Array<BankStatementResponseTransaction>;
+        /**
+         * The statement response.
+         *
+         * @param statementResponses The statement responses.
+         */
+        setStatementResponses(statementResponses: Array<BankStatementResponseTransaction>): void;
+        getResponseMessages(): Array<ResponseMessage>;
+        /**
+         * The first statement response.
+         *
+         * @return the first bank statement response.
+         * @deprecated Use getStatementResponses() because sometimes there are multiple responses
+         */
+        getStatementResponse(): BankStatementResponseTransaction;
+        setStatementResponse(statementResponse: BankStatementResponseTransaction): void;
+    }
+}
+declare module "domain/data/banking/BankStatementRequest" {
+    import { StatementRequest } from "domain/data/common/StatementRequest";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    /**
+     * @author Ryan Heaton
+     */
+    export class BankStatementRequest extends StatementRequest {
+        private account;
+        /**
+         * The account details.
+         *
+         * @return The account details.
+         */
+        getAccount(): BankAccountDetails;
+        /**
+         * The account details.
+         *
+         * @param account The account details.
+         */
+        setAccount(account: BankAccountDetails): void;
+    }
+}
+declare module "domain/data/banking/BankStatementRequestTransaction" {
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { BankStatementRequest } from "domain/data/banking/BankStatementRequest";
+    /**
+     * @author Ryan Heaton
+     */
+    export class BankStatementRequestTransaction extends TransactionWrappedRequestMessage<BankStatementRequest> {
+        private message;
+        /**
+         * The message.
+         *
+         * @return The message.
+         */
+        getMessage(): BankStatementRequest;
+        /**
+         * The message.
+         *
+         * @param message The message.
+         *
+         */
+        setMessage(message: BankStatementRequest): void;
+        setWrappedMessage(message: BankStatementRequest): void;
+    }
+}
+declare module "domain/data/banking/BankingRequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { BankStatementRequestTransaction } from "domain/data/banking/BankStatementRequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    /**
+     * @author Ryan Heaton
+     */
+    export class BankingRequestMessageSet extends RequestMessageSet {
+        private statementRequest;
+        getType(): MessageSetType;
+        /**
+         * The statement request.
+         *
+         * @return The statement request.
+         */
+        getStatementRequest(): BankStatementRequestTransaction;
+        /**
+         * The statement request.
+         *
+         * @param statementRequest The statement request.
+         */
+        setStatementRequest(statementRequest: BankStatementRequestTransaction): void;
+        getRequestMessages(): Array<RequestMessage>;
+    }
+}
+declare module "client/impl/BankingAccountImpl" {
+    import { BaseAccountImpl } from "client/impl/BaseAccountImpl";
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    import { BankAccount } from "client/BankAccount";
+    import { FinancialInstitutionImpl } from "client/impl/FinancialInstitutionImpl";
+    import { ResponseEnvelope } from "domain/data/ResponseEnvelope";
+    import { StatementResponse } from "domain/data/common/StatementResponse";
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { RequestMessage } from "domain/data/RequestMessage";
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { StatementRange } from "domain/data/common/StatementRange";
+    import { StatementRequest } from "domain/data/common/StatementRequest";
+    /**
+     * @author Ryan Heaton
+     */
+    export class BankingAccountImpl extends BaseAccountImpl<BankAccountDetails> implements BankAccount {
         constructor(details: BankAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl);
         protected unwrapStatementResponse(response: ResponseEnvelope): StatementResponse;
         protected createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet;
@@ -6738,14 +6923,14 @@ declare module ofx4js.client.impl {
         protected createStatementRequest(details: BankAccountDetails, range: StatementRange): StatementRequest;
     }
 }
-declare module ofx4js.client.impl {
-    import FinancialInstitutionData = ofx4js.client.FinancialInstitutionData;
+declare module "client/impl/BaseFinancialInstitutionData" {
+    import { FinancialInstitutionData } from "client/FinancialInstitutionData";
     /**
      * Base bean for FI data.
      *
      * @author Ryan Heaton
      */
-    class BaseFinancialInstitutionData implements FinancialInstitutionData {
+    export class BaseFinancialInstitutionData implements FinancialInstitutionData {
         private id;
         private fid;
         private name;
@@ -6767,206 +6952,120 @@ declare module ofx4js.client.impl {
         setBrokerId(brokerId: string): void;
     }
 }
-declare module ofx4js.domain.data.creditcard {
-    import StatementRequest = ofx4js.domain.data.common.StatementRequest;
+declare module "client/net/OFXConnectionException" {
+    import { OFXException, Error } from "OFXException";
     /**
+     * Error with a particular OFX connection.
+     *
      * @author Ryan Heaton
      */
-    class CreditCardStatementRequest extends StatementRequest {
-        private account;
-        /**
-         * The account details.
-         *
-         * @return The account details.
-         */
-        getAccount(): CreditCardAccountDetails;
-        /**
-         * The account details.
-         *
-         * @param account The account details.
-         */
-        setAccount(account: CreditCardAccountDetails): void;
+    export class OFXConnectionException extends OFXException {
+        constructor(message: string, e?: Error);
     }
 }
-declare module ofx4js.domain.data.creditcard {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+declare module "client/net/OFXServerException" {
+    import { OFXConnectionException } from "client/net/OFXConnectionException";
     /**
      * @author Ryan Heaton
      */
-    class CreditCardStatementRequestTransaction extends TransactionWrappedRequestMessage<CreditCardStatementRequest> {
-        private message;
-        /**
-         * The message.
-         *
-         * @return The message.
-         */
-        getMessage(): CreditCardStatementRequest;
-        /**
-         * The message.
-         *
-         * @param message The message.
-         *
-         */
-        setMessage(message: CreditCardStatementRequest): void;
-        setWrappedMessage(message: CreditCardStatementRequest): void;
-    }
-}
-declare module ofx4js.domain.data.creditcard {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class CreditCardRequestMessageSet extends RequestMessageSet {
-        private statementRequest;
-        getType(): MessageSetType;
-        /**
-         * The request.
-         *
-         * @return The request.
-         */
-        getStatementRequest(): CreditCardStatementRequestTransaction;
-        /**
-         * The request.
-         *
-         * @param statementRequest The request.
-         */
-        setStatementRequest(statementRequest: CreditCardStatementRequestTransaction): void;
-        getRequestMessages(): Array<RequestMessage>;
-    }
-}
-declare module ofx4js.domain.data.creditcard {
-    import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-    /**
-     * @author Ryan Heaton
-     */
-    class CreditCardStatementResponse extends StatementResponse {
-        private account;
-        getResponseMessageName(): string;
-        /**
-         * The account for the statement.
-         *
-         * @return The account for the statement.
-         */
-        getAccount(): CreditCardAccountDetails;
-        /**
-         * The account for the statement.
-         *
-         * @param account The account for the statement.
-         */
-        setAccount(account: CreditCardAccountDetails): void;
-    }
-}
-declare module ofx4js.domain.data.creditcard {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
-    /**
-     * @author Ryan Heaton
-     */
-    class CreditCardStatementResponseTransaction extends TransactionWrappedResponseMessage<CreditCardStatementResponse> {
-        private message;
-        /**
-         * The message.
-         *
-         * @return The message.
-         */
-        getMessage(): CreditCardStatementResponse;
-        /**
-         * The message.
-         *
-         * @param message The message.
-         */
-        setMessage(message: CreditCardStatementResponse): void;
-        getWrappedMessage(): CreditCardStatementResponse;
-    }
-}
-declare module ofx4js.domain.data.creditcard {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-    /**
-     * @author Ryan Heaton
-     */
-    class CreditCardResponseMessageSet extends ResponseMessageSet {
-        private statementResponses;
-        getType(): MessageSetType;
-        /**
-         * The statement response list.
-         *
-         * Most OFX files have a single statement response, except MT2OFX
-         * which outputs OFX with multiple statement responses
-         * in a single banking response message set.
-         *
-         * @return The statement response list.
-         */
-        getStatementResponses(): Array<CreditCardStatementResponseTransaction>;
-        /**
-         * The statement reponse list.
-         *
-         * @param statementResponses The statement response list.
-         */
-        setStatementResponses(statementResponses: Array<CreditCardStatementResponseTransaction>): void;
-        /**
-         * The first statement response.
-         *
-         * @return the first bank statement response.
-         * @deprecated Use getStatementResponses() because sometimes there are multiple responses
-         */
-        getStatementResponse(): CreditCardStatementResponseTransaction;
-        /**
-         * The statement response.
-         *
-         * @param statementResponse The statement response.
-         */
-        setStatementResponse(statementResponse: CreditCardStatementResponseTransaction): void;
-        getResponseMessages(): Array<ResponseMessage>;
-    }
-}
-declare module ofx4js.client.impl {
-    import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-    import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-    import StatementRange = ofx4js.domain.data.common.StatementRange;
-    import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-    import CreditCardAccount = ofx4js.client.CreditCardAccount;
-    /**
-     * @author Ryan Heaton
-     */
-    class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDetails> implements CreditCardAccount {
-        constructor(details: CreditCardAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl);
-        protected unwrapStatementResponse(response: ResponseEnvelope): StatementResponse;
-        protected createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet;
-        protected createTransaction(): TransactionWrappedRequestMessage<RequestMessage>;
-        protected createStatementRequest(details: CreditCardAccountDetails, range: StatementRange): StatementRequest;
-    }
-}
-declare module ofx4js.client.net {
-    /**
-     * @author Ryan Heaton
-     */
-    class OFXServerException extends OFXConnectionException {
+    export class OFXServerException extends OFXConnectionException {
         private httpCode;
         constructor(message: string, httpCode: number);
         getHttpCode(): number;
     }
 }
-declare module ofx4js.io {
+declare module "io/StringConversion" {
     /**
+     * Interface for converting to/from OFX strings.
+     *
      * @author Ryan Heaton
      */
-    class OFXParseException extends ofx4js.OFXException {
-        constructor(message: string);
+    export interface StringConversion {
+        /**
+         * Convert the specified object to a string.
+         *
+         * @param value The value to convert to a string.
+         * @return The string.
+         */
+        toString(value: Object): string;
+        /**
+         * Convert the specified value to an object of the specified type.
+         *
+         * @param clazz The class.
+         * @param value The value.
+         * @return The converted value.
+         * @throws OFXSyntaxException If there was something wrong with the syntax of the string.
+         */
+        fromString<E>(clazz: any, value: string): E;
     }
 }
-declare module ofx4js.io {
-    import StringMap = ofx4js.collections.StringMap;
+declare module "domain/data/common/UnknownStatusCode" {
+    import { Severity, StatusCode } from "domain/data/common/StatusCode";
+    /**
+     * Holder for an unknown status code.
+     *
+     * @author Ryan Heaton
+     */
+    export class UnknownStatusCode extends StatusCode {
+        private code;
+        private message;
+        private defaultSeverity;
+        constructor(code: number, message: string, defaultSeverity: Severity);
+        getCode(): number;
+        getMessage(): string;
+        getDefaultSeverity(): Severity;
+        toString(): string;
+    }
+}
+declare module "io/DefaultStringConversion" {
+    import { StringConversion } from "io/StringConversion";
+    /**
+     * Utility class for conversion to/from OFX strings.
+     *
+     * @author Ryan Heaton
+     */
+    export class DefaultStringConversion implements StringConversion {
+        toString(value: Object): string;
+        fromString<E>(clazz: any, value: string): E;
+        /**
+         * Parses a date according to OFX.
+         *
+         * @param value The value of the date.
+         * @return The date value.
+         */
+        protected parseDate(value: string): Date;
+        /**
+         * Format the date according to the OFX spec.
+         *
+         * @param date The date.
+         * @return The date format.
+         */
+        protected formatDate(date: Date): string;
+        /**
+         * Pad a number with leading zeroes until it is of <tt>size</tt> length
+         *
+         * @param num number
+         * @param size number of digits in final number
+         * @return padded number
+         */
+        private pad;
+        /**
+         * Pad a number with trailing zeroes until it is of <tt>size</tt> length.
+         * Intended for numbers after a decimal point to get a fixed number of decimals
+         *
+         * @param num number
+         * @param size number of digits in final number
+         * @return padded number
+         */
+        private dpad;
+    }
+}
+declare module "io/OFXWriter" {
+    import { StringMap } from "collections/collections";
     /**
      * @author Ryan Heaton
      */
-    interface OFXWriter {
+    export interface OFXWriter {
         /**
          * Write the specified headers.
          *
@@ -6999,98 +7098,17 @@ declare module ofx4js.io {
         close(): void;
     }
 }
-declare module ofx4js.io {
-    /**
-     * Interface for converting to/from OFX strings.
-     *
-     * @author Ryan Heaton
-     */
-    interface StringConversion {
-        /**
-         * Convert the specified object to a string.
-         *
-         * @param value The value to convert to a string.
-         * @return The string.
-         */
-        toString(value: Object): string;
-        /**
-         * Convert the specified value to an object of the specified type.
-         *
-         * @param clazz The class.
-         * @param value The value.
-         * @return The converted value.
-         * @throws OFXSyntaxException If there was something wrong with the syntax of the string.
-         */
-        fromString<E>(clazz: any, value: string): E;
-    }
-}
-declare module ofx4js.domain.data.common {
-    /**
-     * Holder for an unknown status code.
-     *
-     * @author Ryan Heaton
-     */
-    class UnknownStatusCode extends StatusCode {
-        private code;
-        private message;
-        private defaultSeverity;
-        constructor(code: number, message: string, defaultSeverity: Severity);
-        getCode(): number;
-        getMessage(): string;
-        getDefaultSeverity(): Severity;
-        toString(): string;
-    }
-}
-declare module ofx4js.io {
-    /**
-     * Utility class for conversion to/from OFX strings.
-     *
-     * @author Ryan Heaton
-     */
-    class DefaultStringConversion implements StringConversion {
-        toString(value: Object): string;
-        fromString<E>(clazz: any, value: string): E;
-        /**
-         * Parses a date according to OFX.
-         *
-         * @param value The value of the date.
-         * @return The date value.
-         */
-        protected parseDate(value: string): Date;
-        /**
-         * Format the date according to the OFX spec.
-         *
-         * @param date The date.
-         * @return The date format.
-         */
-        protected formatDate(date: Date): string;
-        /**
-         * Pad a number with leading zeroes until it is of <tt>size</tt> length
-         *
-         * @param num number
-         * @param size number of digits in final number
-         * @return padded number
-         */
-        private pad(num, size);
-        /**
-         * Pad a number with trailing zeroes until it is of <tt>size</tt> length.
-         * Intended for numbers after a decimal point to get a fixed number of decimals
-         *
-         * @param num number
-         * @param size number of digits in final number
-         * @return padded number
-         */
-        private dpad(num, size);
-    }
-}
-declare module ofx4js.io {
-    import SortedSet = ofx4js.collections.SortedSet;
+declare module "io/AggregateMarshaller" {
+    import { StringConversion } from "io/StringConversion";
+    import { OFXWriter } from "io/OFXWriter";
+    import { SortedSet } from "collections/SortedSet";
+    import { AggregateAttribute } from "io/AggregateAttribute";
     /**
      * Marshaller for aggregate objects.
      *
      * @author Ryan Heaton
      */
-    class AggregateMarshaller {
+    export class AggregateMarshaller {
         private conversion;
         constructor();
         /**
@@ -7122,23 +7140,27 @@ declare module ofx4js.io {
         setConversion(conversion: StringConversion): void;
     }
 }
-declare module ofx4js.collections {
-    class Stack<T> {
-        private values;
-        constructor();
-        push(...values: Array<T>): void;
-        pop(): T;
-        peek(): T;
-        isEmpty(): boolean;
+declare module "io/StringReader" {
+    export class StringReader {
+        private _text;
+        private _cursor;
+        private _mark;
+        constructor(text: string);
+        read(cbuf?: Array<string>, offset?: number, length?: number): number | string;
+        readChar(): string;
+        close(): void;
+        mark(): void;
+        reset(): void;
+        remainder(): string;
     }
 }
-declare module ofx4js.io {
+declare module "io/OFXHandler" {
     /**
      * Handler for events during OFX parsing.
      *
      * @author Ryan Heaton
      */
-    interface OFXHandler {
+    export interface OFXHandler {
         /**
          * Handler an OFX header.
          *
@@ -7167,52 +7189,15 @@ declare module ofx4js.io {
         endAggregate(aggregateName: string): void;
     }
 }
-declare module ofx4js.io {
-    /**
-     * @author Ryan Heaton
-     */
-    class OFXSyntaxException extends OFXParseException {
-        constructor(message: string);
-    }
-}
-declare module ofx4js.io {
-    /**
-     * Content handler that manages the aggregate using a stack-based implementation.
-     *
-     * @author Ryan Heaton
-     */
-    class AggregateStackContentHandler<A> implements OFXHandler {
-        private stack;
-        private conversion;
-        private parsingRoot;
-        constructor(root: A, conversion: StringConversion);
-        onHeader(name: string, value: string): void;
-        onElement(name: string, value: string): void;
-        startAggregate(aggregateName: string): void;
-        endAggregate(aggregateName: string): void;
-    }
-}
-declare module ofx4js.io {
-    class StringReader {
-        private _text;
-        private _cursor;
-        private _mark;
-        constructor(text: string);
-        read(cbuf?: Array<string>, offset?: number, length?: number): number | string;
-        readChar(): string;
-        close(): void;
-        mark(): void;
-        reset(): void;
-        remainder(): string;
-    }
-}
-declare module ofx4js.io {
+declare module "io/OFXReader" {
+    import { StringReader } from "io/StringReader";
+    import { OFXHandler } from "io/OFXHandler";
     /**
      * Basic interface for reading an OFX document.
      *
      * @author Ryan Heaton
      */
-    interface OFXReader {
+    export interface OFXReader {
         /**
          * Set the handler for this OFX reader.
          *
@@ -7227,30 +7212,50 @@ declare module ofx4js.io {
         parse(stream: StringReader): void;
     }
 }
-declare module ofx4js.io {
+declare module "io/DefaultHandler" {
+    import { OFXHandler } from "io/OFXHandler";
     /**
      * Default (no-op) implementation of an OFX handler.
      *
      * @author Ryan Heaton
      */
-    class DefaultHandler implements OFXHandler {
+    export class DefaultHandler implements OFXHandler {
         onHeader(name: string, value: string): void;
         onElement(name: string, value: string): void;
         startAggregate(aggregateName: string): void;
         endAggregate(aggregateName: string): void;
     }
 }
-declare module ofx4js.io {
-    enum OFXParseEventType {
+declare module "io/OFXParseException" {
+    import { OFXException } from "OFXException";
+    /**
+     * @author Ryan Heaton
+     */
+    export class OFXParseException extends OFXException {
+        constructor(message: string);
+    }
+}
+declare module "collections/Stack" {
+    export class Stack<T> {
+        private values;
+        constructor();
+        push(...values: Array<T>): void;
+        pop(): T;
+        peek(): T;
+        isEmpty(): boolean;
+    }
+}
+declare module "io/OFXParseEvent" {
+    export enum OFXParseEventType {
         CHARACTERS = 0,
-        ELEMENT = 1,
+        ELEMENT = 1
     }
     /**
      * An event during OFX parsing.
      *
      * @author Ryan Heaton
      */
-    class OFXParseEvent {
+    export class OFXParseEvent {
         private eventType;
         private eventValue;
         constructor(eventType: OFXParseEventType, eventValue: string);
@@ -7258,17 +7263,20 @@ declare module ofx4js.io {
         getEventValue(): string;
     }
 }
-declare module ofx4js.io {
+declare module "io/OFXV2ContentHandler" {
+    import { OFXParseEvent } from "io/OFXParseEvent";
+    import { OFXHandler } from "io/OFXHandler";
+    import { SAXParser, Tag as SAXTag } from 'sax';
     /**
      * @author Ryan Heaton
      */
-    class OFXV2ContentHandler {
+    export class OFXV2ContentHandler {
         private eventStack;
         private ofxHandler;
         private startedEvents;
         constructor(ofxHandler: OFXHandler);
-        install(parser: any /*SAXParser*/): void;
-        onopentag(node: any /*SAXTag*/): void;
+        install(parser: SAXParser): void;
+        onopentag(node: SAXTag): void;
         /**
          * Whether the specified element aggregate has already been started.
          *
@@ -7280,14 +7288,17 @@ declare module ofx4js.io {
         ontext(value: string): void;
     }
 }
-declare module ofx4js.io {
+declare module "io/BaseOFXReader" {
+    import { OFXReader } from "io/OFXReader";
+    import { OFXHandler } from "io/OFXHandler";
+    import { StringReader } from "io/StringReader";
     /**
      * Base class for an OFX reader.  Parses the headers and determines whether we're parsing an
      * OFX v2 or OFX v1 element.  For OFX v2, uses a standard SAX library.
      *
      * @author Ryan Heaton
      */
-    class BaseOFXReader implements OFXReader {
+    export class BaseOFXReader implements OFXReader {
         static OFX_2_PROCESSING_INSTRUCTION_PATTERN: RegExp;
         private contentHandler;
         constructor();
@@ -7322,8 +7333,8 @@ declare module ofx4js.io {
          * @param c The character to search for.
          * @return Whether the specified buffer contains the specified character.
          */
-        private contains(buffer, c);
-        private shiftAndAppend(buffer, c);
+        private contains;
+        private shiftAndAppend;
         /**
          * Parse an OFX version 1 stream from the first OFX element (defined by the {@link #getFirstElementStart() first element characters}).
          *
@@ -7350,13 +7361,44 @@ declare module ofx4js.io {
         protected processOFXv2Headers(chars: string): void;
     }
 }
-declare module ofx4js.io {
+declare module "io/OFXSyntaxException" {
+    import { OFXParseException } from "io/OFXParseException";
+    /**
+     * @author Ryan Heaton
+     */
+    export class OFXSyntaxException extends OFXParseException {
+        constructor(message: string);
+    }
+}
+declare module "io/AggregateStackContentHandler" {
+    import { OFXHandler } from "io/OFXHandler";
+    import { StringConversion } from "io/StringConversion";
+    /**
+     * Content handler that manages the aggregate using a stack-based implementation.
+     *
+     * @author Ryan Heaton
+     */
+    export class AggregateStackContentHandler<A> implements OFXHandler {
+        private stack;
+        private conversion;
+        private parsingRoot;
+        constructor(root: A, conversion: StringConversion);
+        onHeader(name: string, value: string): void;
+        onElement(name: string, value: string): void;
+        startAggregate(aggregateName: string): void;
+        endAggregate(aggregateName: string): void;
+    }
+}
+declare module "io/AggregateUnmarshaller" {
+    import { StringConversion } from "io/StringConversion";
+    import { StringReader } from "io/StringReader";
+    import { OFXReader } from "io/OFXReader";
     /**
      * Unmarshaller for aggregate objects.
      *
      * @author Ryan Heaton
      */
-    class AggregateUnmarshaller<A> {
+    export class AggregateUnmarshaller<A> {
         private clazz;
         private conversion;
         constructor(clazz: any);
@@ -7381,15 +7423,15 @@ declare module ofx4js.io {
         setConversion(conversion: StringConversion): void;
     }
 }
-declare module ofx4js.io {
-    class OutputBuffer {
+declare module "io/StreamWriter" {
+    export class OutputBuffer {
         private data;
         constructor();
         toString(encoding?: string): string;
         append(data: string): void;
         size(): number;
     }
-    class StreamWriter {
+    export class StreamWriter {
         private out;
         private encoding;
         constructor(out: OutputBuffer, encoding: string);
@@ -7398,15 +7440,16 @@ declare module ofx4js.io {
         write(data: string): void;
     }
 }
-declare module ofx4js.io.v1 {
-    import OFXWriter = ofx4js.io.OFXWriter;
-    import StringMap = ofx4js.collections.StringMap;
+declare module "io/v1/OFXV1Writer" {
+    import { OFXWriter } from "io/OFXWriter";
+    import { StreamWriter, OutputBuffer } from "io/StreamWriter";
+    import { StringMap } from "collections/collections";
     /**
      * OFX writer to SGML, suitable for OFX versions < 2.0.
      *
      * @author Ryan Heaton
      */
-    class OFXV1Writer implements OFXWriter {
+    export class OFXV1Writer implements OFXWriter {
         private LINE_SEPARATOR;
         protected headersWritten: boolean;
         protected writer: StreamWriter;
@@ -7425,23 +7468,24 @@ declare module ofx4js.io.v1 {
         print(line: string): void;
     }
 }
-declare module ofx4js.client.net {
-    import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-    import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-    import OFXWriter = ofx4js.io.OFXWriter;
-    import AggregateMarshaller = ofx4js.io.AggregateMarshaller;
-    import AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
-    import OutputBuffer = ofx4js.io.OutputBuffer;
-    type HeadersObject = {
+declare module "client/net/OFXV1Connection" {
+    import { OFXConnection } from "client/net/OFXConnection";
+    import { AggregateMarshaller } from "io/AggregateMarshaller";
+    import { AggregateUnmarshaller } from "io/AggregateUnmarshaller";
+    import { ResponseEnvelope } from "domain/data/ResponseEnvelope";
+    import { RequestEnvelope } from "domain/data/RequestEnvelope";
+    import { OutputBuffer } from "io/StreamWriter";
+    import { OFXWriter } from "io/OFXWriter";
+    export type HeadersObject = {
         [header: string]: string;
     };
-    type AjaxHandler = (url: string, verb: string, headers: HeadersObject, data: string, async: boolean) => Promise<string>;
+    export type AjaxHandler = (url: string, verb: string, headers: HeadersObject, data: string, async: boolean) => Promise<string>;
     /**
      * Base implementation for an OFX connection.
      *
      * @author Ryan Heaton
      */
-    class OFXV1Connection implements OFXConnection {
+    export class OFXV1Connection implements OFXConnection {
         private async;
         private marshaller;
         private unmarshaller;
@@ -7518,9 +7562,7 @@ declare module ofx4js.client.net {
          *
          * @return {bool} Whether in async mode.
          */
-        getAjax(): (url: string, verb: string, headers: {
-            [header: string]: string;
-        }, data: string, async: boolean) => Promise<string>;
+        getAjax(): AjaxHandler;
         /**
          * Async mode
          *
@@ -7529,15 +7571,16 @@ declare module ofx4js.client.net {
         setAjax(ajax: AjaxHandler): void;
     }
 }
-declare module ofx4js.io.v2 {
-    import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
-    import StringMap = ofx4js.collections.StringMap;
+declare module "io/v2/OFXV2Writer" {
+    import { OFXV1Writer } from "io/v1/OFXV1Writer";
+    import { OutputBuffer, StreamWriter } from "io/StreamWriter";
+    import { StringMap } from "collections/collections";
     /**
      * OFX writer to XML, suitable for OFX version 2.0.
      *
      * @author Ryan Heaton
      */
-    class OFXV2Writer extends OFXV1Writer {
+    export class OFXV2Writer extends OFXV1Writer {
         constructor(out: OutputBuffer | StreamWriter);
         protected newWriter(out: OutputBuffer): StreamWriter;
         writeHeaders(headers: StringMap): void;
@@ -7545,64 +7588,138 @@ declare module ofx4js.io.v2 {
         isWriteAttributesOnNewLine(): boolean;
     }
 }
-declare module ofx4js.client.net {
-    import OFXWriter = ofx4js.io.OFXWriter;
-    import OutputBuffer = ofx4js.io.OutputBuffer;
+declare module "client/net/OFXV2Connection" {
+    import { OFXV1Connection } from "client/net/OFXV1Connection";
+    import { OFXWriter } from "io/OFXWriter";
+    import { OutputBuffer } from "io/StreamWriter";
     /**
      * @author Ryan Heaton
      */
-    class OFXV2Connection extends OFXV1Connection {
+    export class OFXV2Connection extends OFXV1Connection {
         protected newOFXWriter(out: OutputBuffer): OFXWriter;
     }
 }
 /**
  * Support for "bill pay" features of the OFX spec.
  */
-declare module ofx4js.domain.data.billpay {
-}
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/ProcessorDayOff" {
     /**
      * Day of week used in "PROCDAYSOFF" lists.
      *
      * @author Scott Priddy
      * @see "OFX Spec, Section 13.6.2"
      */
-    enum ProcessorDayOff {
+    export enum ProcessorDayOff {
         MONDAY = 0,
         TUESDAY = 1,
         WEDNESDAY = 2,
         THURSDAY = 3,
         FRIDAY = 4,
         SATURDAY = 5,
-        SUNDAY = 6,
+        SUNDAY = 6
     }
-    function ProcessorDayOff_fromOfx(ofxVal: string): ProcessorDayOff;
+    export function ProcessorDayOff_fromOfx(ofxVal: string): ProcessorDayOff;
 }
-declare module ofx4js.domain.data.common {
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
+declare module "domain/data/common/T1099Request" {
+    import { RequestMessage } from "domain/data/RequestMessage";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class T1099Request extends RequestMessage {
+    export class T1099Request extends RequestMessage {
     }
 }
-declare module ofx4js.domain.data.common {
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
+declare module "domain/data/common/T1099Response" {
+    import { ResponseMessage } from "domain/data/ResponseMessage";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class T1099Response extends ResponseMessage {
+    export abstract class T1099Response extends ResponseMessage {
     }
 }
-declare module ofx4js.domain.data.common {
-    import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-    import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
+declare module "domain/data/common/TransactionType" {
     /**
      * @author Ryan Heaton
      */
-    class TransferInfo {
+    export enum TransactionType {
+        /**
+         * generic credit.
+         */
+        CREDIT = 0,
+        /**
+         * genertic debit.
+         */
+        DEBIT = 1,
+        /**
+         * interest earned.
+         */
+        INT = 2,
+        /**
+         * dividend.
+         */
+        DIV = 3,
+        /**
+         * bank fee.
+         */
+        FEE = 4,
+        /**
+         * service charge.
+         */
+        SRVCHG = 5,
+        /**
+         * deposit.
+         */
+        DEP = 6,
+        /**
+         * ATM transaction.
+         */
+        ATM = 7,
+        /**
+         * point of sale
+         */
+        POS = 8,
+        /**
+         * transfer
+         */
+        XFER = 9,
+        /**
+         * check
+         */
+        CHECK = 10,
+        /**
+         * electronic payment
+         */
+        PAYMENT = 11,
+        /**
+         * cash.
+         */
+        CASH = 12,
+        /**
+         * direct deposit.
+         */
+        DIRECTDEP = 13,
+        /**
+         * merchant-initiated debit
+         */
+        DIRECTDEBIT = 14,
+        /**
+         * repeating payment.
+         */
+        REPEATPMT = 15,
+        /**
+         * other
+         */
+        OTHER = 16
+    }
+}
+declare module "domain/data/common/TransferInfo" {
+    import { BankAccountDetails } from "domain/data/banking/BankAccountDetails";
+    import { CreditCardAccountDetails } from "domain/data/creditcard/CreditCardAccountDetails";
+    /**
+     * @author Ryan Heaton
+     */
+    export class TransferInfo {
         private bankAccountFrom;
         private creditCardAccountFrom;
         private bankAccountTo;
@@ -7695,23 +7812,24 @@ declare module ofx4js.domain.data.common {
         setDue(due: Date): void;
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/TransferStatusEvent" {
     /**
      * @author Ryan Heaton
      */
-    enum TransferStatusEvent {
+    export enum TransferStatusEvent {
         WILLPROCESSON = 0,
         POSTEDON = 1,
         NOFUNDSON = 2,
         CANCELEDON = 3,
-        FAILEDON = 4,
+        FAILEDON = 4
     }
 }
-declare module ofx4js.domain.data.common {
+declare module "domain/data/common/TransferStatus" {
+    import { TransferStatusEvent } from "domain/data/common/TransferStatusEvent";
     /**
      * @author Ryan Heaton
      */
-    class TransferStatus {
+    export class TransferStatus {
         private event;
         private date;
         /**
@@ -7740,24 +7858,26 @@ declare module ofx4js.domain.data.common {
         setDate(date: Date): void;
     }
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/DebtPosition" {
+    import { BasePosition } from "domain/data/investment/positions/BasePosition";
     /**
      * Represents a debt position.
      * @see "Section 13.9.2.6.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class DebtPosition extends BasePosition {
+    export class DebtPosition extends BasePosition {
     }
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/MutualFundPosition" {
+    import { BasePosition } from "domain/data/investment/positions/BasePosition";
     /**
      * Represents a mutual fund position.
      * @see "Section 13.9.2.6.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class MutualFundPosition extends BasePosition {
+    export class MutualFundPosition extends BasePosition {
         private unitsStreet;
         private unitsUser;
         private reinvestDividends;
@@ -7812,27 +7932,29 @@ declare module ofx4js.domain.data.investment.positions {
         setReinvestCapitalGains(reinvestCapitalGains: boolean): void;
     }
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/ShortOptionSecurity" {
     /**
      * How a short option is secured.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum ShortOptionSecurity {
+    export enum ShortOptionSecurity {
         NAKED = 0,
-        COVERED = 1,
+        COVERED = 1
     }
-    function ShortOptionSecurity_fromOfx(ofxVal: string): ShortOptionSecurity;
+    export function ShortOptionSecurity_fromOfx(ofxVal: string): ShortOptionSecurity;
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/OptionsPosition" {
+    import { BasePosition } from "domain/data/investment/positions/BasePosition";
+    import { ShortOptionSecurity } from "domain/data/investment/positions/ShortOptionSecurity";
     /**
      * Represents an options position.
      * @see "Section 13.9.2.6.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class OptionsPosition extends BasePosition {
+    export class OptionsPosition extends BasePosition {
         private secured;
         /**
          * Gets how the options position is secured (for short positions).
@@ -7854,24 +7976,26 @@ declare module ofx4js.domain.data.investment.positions {
         getSecuredEnum(): ShortOptionSecurity;
     }
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/OtherPosition" {
+    import { BasePosition } from "domain/data/investment/positions/BasePosition";
     /**
      * Represents other types of positions.
      * @see "Section 13.9.2.6.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class OtherPosition extends BasePosition {
+    export class OtherPosition extends BasePosition {
     }
 }
-declare module ofx4js.domain.data.investment.positions {
+declare module "domain/data/investment/positions/StockPosition" {
+    import { BasePosition } from "domain/data/investment/positions/BasePosition";
     /**
      * Represents a stock position.
      * @see "Section 13.9.2.6.1, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class StockPosition extends BasePosition {
+    export class StockPosition extends BasePosition {
         private unitsStreet;
         private unitsUser;
         private reinvestDividends;
@@ -7913,14 +8037,14 @@ declare module ofx4js.domain.data.investment.positions {
         setReinvestDividends(reinvestDividends: boolean): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/TransactionWithSecurity" {
+    import { SecurityId } from "domain/data/seclist/SecurityId";
     /**
      * Interface for transactions that have a security associated with them.
      *
      * @author Jon Perlow
      */
-    interface TransactionWithSecurity {
+    export interface TransactionWithSecurity {
         /**
          * Gets the security for the transaction.
          *
@@ -7929,7 +8053,7 @@ declare module ofx4js.domain.data.investment.transactions {
         getSecurityId(): SecurityId;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/OriginalCurrency" {
     /**
      * Original currency aggregate ("ORIGCURRENCY"). For investment transactions in other currencies,
      * the financial institution can report the transaction as converted into the default currency
@@ -7939,7 +8063,7 @@ declare module ofx4js.domain.data.investment.transactions {
      *
      * @author Jon Perlow
      */
-    class OriginalCurrency {
+    export class OriginalCurrency {
         private currencyRate;
         private currencyCode;
         /**
@@ -7972,16 +8096,18 @@ declare module ofx4js.domain.data.investment.transactions {
         setCurrencyCode(currencyCode: string): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/BuyInvestmentTransaction" {
+    import { InvestmentTransaction } from "domain/data/investment/transactions/InvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
     /**
      * Buy investment transaction aggregate ("INVBUY").
      * @see "Section 13.9.2.4.3, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class BuyInvestmentTransaction {
+    export class BuyInvestmentTransaction {
         private investmentTransaction;
         private securityId;
         private units;
@@ -8226,9 +8352,15 @@ declare module ofx4js.domain.data.investment.transactions {
         getSubAccountFundEnum(): SubAccountType;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/BaseBuyInvestmentTransaction" {
+    import { TransactionType } from "domain/data/investment/transactions/TransactionType";
+    import { BaseInvestmentTransaction } from "domain/data/investment/transactions/BaseInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { BuyInvestmentTransaction } from "domain/data/investment/transactions/BuyInvestmentTransaction";
+    import { InvestmentTransaction } from "domain/data/investment/transactions/InvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
     /**
      * Base class for all investment transactions for buying securities.
      * <br>
@@ -8238,7 +8370,7 @@ declare module ofx4js.domain.data.investment.transactions {
      *
      * @author Jon Perlow
      */
-    class BaseBuyInvestmentTransaction extends BaseInvestmentTransaction implements TransactionWithSecurity {
+    export abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransaction implements TransactionWithSecurity {
         private buyInvestment;
         constructor(transactionType: TransactionType);
         /**
@@ -8375,17 +8507,49 @@ declare module ofx4js.domain.data.investment.transactions {
         getSubAccountFundEnum(): SubAccountType;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/BaseOtherInvestmentTransaction" {
+    import { InvestmentTransaction } from "domain/data/investment/transactions/InvestmentTransaction";
+    import { BaseInvestmentTransaction } from "domain/data/investment/transactions/BaseInvestmentTransaction";
+    import { TransactionType } from "domain/data/investment/transactions/TransactionType";
+    /**
+     * Base class for investment transactions that aren't buys or sales..
+     * <br>
+     * This class exposes a read-only view of the flattened aggregates that are
+     * common to all investment transactions as a convenience to application
+     * developers who may not find the ofx aggregation model intuitive.
+     *
+     * @author Jon Perlow
+     */
+    export class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
+        private investmentTransaction;
+        constructor(transactionType: TransactionType);
+        /**
+         * Gets the {@link InvestmentTransaction} aggregate.
+         *
+         * @return the {@link InvestmentTransaction} aggregate
+         */
+        getInvestmentTransaction(): InvestmentTransaction;
+        /**
+         * Sets the {@link InvestmentTransaction} aggregate.
+         *
+         * @param investmentTransaction the {@link InvestmentTransaction} aggregate
+         */
+        setInvestmentTransaction(investmentTransaction: InvestmentTransaction): void;
+    }
+}
+declare module "domain/data/investment/transactions/SellInvestmentTransaction" {
+    import { InvestmentTransaction } from "domain/data/investment/transactions/InvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Sell investment transaction aggregate ("INVSELL").
      * @see "Section 13.9.2.4.3, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SellInvestmentTransaction {
+    export class SellInvestmentTransaction {
         private investmentTransaction;
         private securityId;
         private units;
@@ -8751,10 +8915,16 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+declare module "domain/data/investment/transactions/BaseSellInvestmentTransaction" {
+    import { TransactionType } from "domain/data/investment/transactions/TransactionType";
+    import { BaseInvestmentTransaction } from "domain/data/investment/transactions/BaseInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { SellInvestmentTransaction } from "domain/data/investment/transactions/SellInvestmentTransaction";
+    import { InvestmentTransaction } from "domain/data/investment/transactions/InvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Base class for all investment transactions for selling securities.
      * <br>
@@ -8764,7 +8934,7 @@ declare module ofx4js.domain.data.investment.transactions {
      *
      * @author Jon Perlow
      */
-    class BaseSellInvestmentTransaction extends BaseInvestmentTransaction implements TransactionWithSecurity {
+    export abstract class BaseSellInvestmentTransaction extends BaseInvestmentTransaction implements TransactionWithSecurity {
         private sellInvestment;
         constructor(transactionType: TransactionType);
         /**
@@ -8960,14 +9130,15 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/BuyDebtTransaction" {
+    import { BaseBuyInvestmentTransaction } from "domain/data/investment/transactions/BaseBuyInvestmentTransaction";
     /**
      * Transaction for buying debt (i.e. bonds, CDs, etc.,).
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
+    export class BuyDebtTransaction extends BaseBuyInvestmentTransaction {
         private accruedInterest;
         constructor();
         /**
@@ -8988,27 +9159,29 @@ declare module ofx4js.domain.data.investment.transactions {
         setAccruedInterest(accruedInterest: number): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/BuyType" {
     /**
      * Type of purchase for stocks and mutual funds.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum BuyType {
+    export enum BuyType {
         BUY = 0,
-        BUY_TO_COVER = 1,
+        BUY_TO_COVER = 1
     }
-    function BuyType_fromOfx(ofxVal: string): BuyType;
+    export function BuyType_fromOfx(ofxVal: string): BuyType;
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/BuyMutualFundTransaction" {
+    import { BaseBuyInvestmentTransaction } from "domain/data/investment/transactions/BaseBuyInvestmentTransaction";
+    import { BuyType } from "domain/data/investment/transactions/BuyType";
     /**
      * Transaction for buying mutual funds.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
+    export class BuyMutualFundTransaction extends BaseBuyInvestmentTransaction {
         private buyType;
         private relatedTransactionId;
         constructor();
@@ -9052,27 +9225,29 @@ declare module ofx4js.domain.data.investment.transactions {
         setRelatedTransactionId(relatedTransactionId: string): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/OptionBuyType" {
     /**
      * Type of purchase for options.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum OptionBuyType {
+    export enum OptionBuyType {
         BUY_TO_OPEN = 0,
-        BUY_TO_CLOSE = 1,
+        BUY_TO_CLOSE = 1
     }
-    function OptionBuyType_fromOfx(ofxVal: string): OptionBuyType;
+    export function OptionBuyType_fromOfx(ofxVal: string): OptionBuyType;
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/BuyOptionTransaction" {
+    import { BaseBuyInvestmentTransaction } from "domain/data/investment/transactions/BaseBuyInvestmentTransaction";
+    import { OptionBuyType } from "domain/data/investment/transactions/OptionBuyType";
     /**
      * Transaction for buying options.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
+    export class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
         private optionBuyType;
         private sharesPerContact;
         constructor();
@@ -9114,25 +9289,28 @@ declare module ofx4js.domain.data.investment.transactions {
         setSharesPerContract(sharesPerContact: number): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/BuyOtherTransaction" {
+    import { BaseBuyInvestmentTransaction } from "domain/data/investment/transactions/BaseBuyInvestmentTransaction";
     /**
      * Transaction for buying other types of securities.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class BuyOtherTransaction extends BaseBuyInvestmentTransaction {
+    export class BuyOtherTransaction extends BaseBuyInvestmentTransaction {
         constructor();
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/BuyStockTransaction" {
+    import { BaseBuyInvestmentTransaction } from "domain/data/investment/transactions/BaseBuyInvestmentTransaction";
+    import { BuyType } from "domain/data/investment/transactions/BuyType";
     /**
      * Transaction for buying stock.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class BuyStockTransaction extends BaseBuyInvestmentTransaction {
+    export class BuyStockTransaction extends BaseBuyInvestmentTransaction {
         private buyType;
         constructor();
         /**
@@ -9159,30 +9337,33 @@ declare module ofx4js.domain.data.investment.transactions {
         getBuyTypeEnum(): BuyType;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/CloseOptionAction" {
     /**
      * Type of action for closing a stock option.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum CloseOptionAction {
+    export enum CloseOptionAction {
         EXERCISE = 0,
         ASSIGN = 1,
-        EXPIRE = 2,
+        EXPIRE = 2
     }
-    function CloseOptionAction_fromOfx(ofxVal: string): CloseOptionAction;
+    export function CloseOptionAction_fromOfx(ofxVal: string): CloseOptionAction;
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/CloseOptionTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { CloseOptionAction } from "domain/data/investment/transactions/CloseOptionAction";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
     /**
      * Transaction for closing an option position due to expiration, exercise, or assignment.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class CloseOptionTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
+    export class CloseOptionTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
         private securityId;
         private optionAction;
         private units;
@@ -9311,33 +9492,37 @@ declare module ofx4js.domain.data.investment.transactions {
         setGain(gain: number): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/IncomeType" {
     /**
      * Type of income.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum IncomeType {
+    export enum IncomeType {
         LONG_TERM_CAP_GAINS = 0,
         SHORT_TERM_CAP_GAINS = 1,
         DIVIDEND = 2,
         INTEREST = 3,
-        MISC = 4,
+        MISC = 4
     }
-    function IncomeType_fromOfx(ofxVal: string): IncomeType;
+    export function IncomeType_fromOfx(ofxVal: string): IncomeType;
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/IncomeTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { IncomeType } from "domain/data/investment/transactions/IncomeType";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Transaction for investment income that is realized as cash into the investment account.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class IncomeTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
+    export class IncomeTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
         private securityId;
         private incomeType;
         private total;
@@ -9525,17 +9710,19 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/InvestmentExpenseTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Transaction for an investment expense
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class InvestmentExpenseTransaction extends BaseOtherInvestmentTransaction {
+    export class InvestmentExpenseTransaction extends BaseOtherInvestmentTransaction {
         private securityId;
         private total;
         private subAccountSecurity;
@@ -9670,8 +9857,9 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+declare module "domain/data/investment/transactions/JournalFundTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
     /**
      * Transaction for journal fund transactions between sub-accounts within the same investment
      * account.
@@ -9679,7 +9867,7 @@ declare module ofx4js.domain.data.investment.transactions {
      *
      * @author Jon Perlow
      */
-    class JournalFundTransaction extends BaseOtherInvestmentTransaction {
+    export class JournalFundTransaction extends BaseOtherInvestmentTransaction {
         private subAccountFrom;
         private subAccountTo;
         private total;
@@ -9740,9 +9928,11 @@ declare module ofx4js.domain.data.investment.transactions {
         setTotal(total: number): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/JournalSecurityTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
     /**
      * Transaction for journal security transactions between sub-accounts within the same investment
      * account.
@@ -9750,7 +9940,7 @@ declare module ofx4js.domain.data.investment.transactions {
      *
      * @author Jon Perlow
      */
-    class JournalSecurityTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
+    export class JournalSecurityTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
         private securityId;
         private subAccountFrom;
         private subAccountTo;
@@ -9828,8 +10018,10 @@ declare module ofx4js.domain.data.investment.transactions {
         setTotal(total: number): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
+declare module "domain/data/investment/transactions/MarginInterestTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
     /**
      * Transaction for journal security transactions between sub-accounts within the same investment
      * account.
@@ -9837,7 +10029,7 @@ declare module ofx4js.domain.data.investment.transactions {
      *
      * @author Jon Perlow
      */
-    class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
+    export class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
         private total;
         private subAccountFund;
         private currencyCode;
@@ -9909,30 +10101,34 @@ declare module ofx4js.domain.data.investment.transactions {
         setOriginalCurrencyInfo(originalCurrency: OriginalCurrency): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/OptionSellType" {
     /**
      * Type of sale for options.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum OptionSellType {
+    export enum OptionSellType {
         SELL_TO_CLOSE = 0,
-        SELL_TO_OPEN = 1,
+        SELL_TO_OPEN = 1
     }
-    function OptionSellType_fromOfx(ofxVal: string): OptionSellType;
+    export function OptionSellType_fromOfx(ofxVal: string): OptionSellType;
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/ReinvestIncomeTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { IncomeType } from "domain/data/investment/transactions/IncomeType";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Transaction for reinvestment transactions.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
+    export class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
         private securityId;
         private incomeType;
         private total;
@@ -10182,32 +10378,35 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/RelatedOptionType" {
     /**
-     * Related option transaction type.
-     * @see "Section 13.9.2.4.4, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    enum RelatedOptionType {
+    * Related option transaction type.
+    * @see "Section 13.9.2.4.4, OFX Spec"
+    *
+    * @author Jon Perlow
+    */
+    export enum RelatedOptionType {
         SPREAD = 0,
         STRADDLE = 1,
         NONE = 2,
-        OTHER = 3,
+        OTHER = 3
     }
-    function RelatedOptionType_fromOfx(ofxVal: string): RelatedOptionType;
+    export function RelatedOptionType_fromOfx(ofxVal: string): RelatedOptionType;
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/ReturnOfCapitalTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { TransactionWithSecurity } from "domain/data/investment/transactions/TransactionWithSecurity";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Transaction for return of capital transactions.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
+    export class ReturnOfCapitalTransaction extends BaseOtherInvestmentTransaction implements TransactionWithSecurity {
         private securityId;
         private total;
         private subAccountSecurity;
@@ -10346,28 +10545,30 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/SellDebtReason" {
     /**
      * Reason debt was sold.
      * @see "Section 13.9.2.4.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum SellDebtReason {
+    export enum SellDebtReason {
         CALL = 0,
         SELL = 1,
-        MATURITY = 2,
+        MATURITY = 2
     }
-    function SellDebtReason_fromOfx(ofxVal: string): SellDebtReason;
+    export function SellDebtReason_fromOfx(ofxVal: string): SellDebtReason;
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/SellDebtTransaction" {
+    import { BaseSellInvestmentTransaction } from "domain/data/investment/transactions/BaseSellInvestmentTransaction";
+    import { SellDebtReason } from "domain/data/investment/transactions/SellDebtReason";
     /**
      * Transaction for selling debt (i.e. bonds, CDs, etc.,).
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SellDebtTransaction extends BaseSellInvestmentTransaction {
+    export class SellDebtTransaction extends BaseSellInvestmentTransaction {
         private sellReason;
         private accruedInterest;
         constructor();
@@ -10411,26 +10612,28 @@ declare module ofx4js.domain.data.investment.transactions {
         setAccruedInterest(accruedInterest: number): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/SellType" {
     /**
      * Type of sale for stocks and mutual funds.
      *
      * @author Jon Perlow
      */
-    enum SellType {
+    export enum SellType {
         SELL = 0,
-        SELL_SHORT = 1,
+        SELL_SHORT = 1
     }
-    function SellType_fromOfx(ofxVal: string): SellType;
+    export function SellType_fromOfx(ofxVal: string): SellType;
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/SellMutualFundTransaction" {
+    import { BaseSellInvestmentTransaction } from "domain/data/investment/transactions/BaseSellInvestmentTransaction";
+    import { SellType } from "domain/data/investment/transactions/SellType";
     /**
      * Transaction for selling mutual fund.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
+    export class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
         private sellType;
         private averageCostBasis;
         private relatedTransactionId;
@@ -10487,15 +10690,18 @@ declare module ofx4js.domain.data.investment.transactions {
         setRelatedTransactionId(relatedTransactionId: string): void;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import ShortOptionSecurity = ofx4js.domain.data.investment.positions.ShortOptionSecurity;
+declare module "domain/data/investment/transactions/SellOptionTransaction" {
+    import { BaseSellInvestmentTransaction } from "domain/data/investment/transactions/BaseSellInvestmentTransaction";
+    import { OptionSellType } from "domain/data/investment/transactions/OptionSellType";
+    import { RelatedOptionType } from "domain/data/investment/transactions/RelatedOptionType";
+    import { ShortOptionSecurity } from "domain/data/investment/positions/ShortOptionSecurity";
     /**
      * Transaction for selling options.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SellOptionTransaction extends BaseSellInvestmentTransaction {
+    export class SellOptionTransaction extends BaseSellInvestmentTransaction {
         private optionSellType;
         private sharesPerContact;
         private relatedTransactionId;
@@ -10600,25 +10806,28 @@ declare module ofx4js.domain.data.investment.transactions {
         getSecuredEnum(): ShortOptionSecurity;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/SellOtherTransaction" {
+    import { BaseSellInvestmentTransaction } from "domain/data/investment/transactions/BaseSellInvestmentTransaction";
     /**
      * Transaction for buying other types of securities.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SellOtherTransaction extends BaseSellInvestmentTransaction {
+    export class SellOtherTransaction extends BaseSellInvestmentTransaction {
         constructor();
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/SellStockTransaction" {
+    import { BaseSellInvestmentTransaction } from "domain/data/investment/transactions/BaseSellInvestmentTransaction";
+    import { SellType } from "domain/data/investment/transactions/SellType";
     /**
      * Transaction for selling stock.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SellStockTransaction extends BaseSellInvestmentTransaction {
+    export class SellStockTransaction extends BaseSellInvestmentTransaction {
         private sellType;
         constructor();
         /**
@@ -10645,17 +10854,19 @@ declare module ofx4js.domain.data.investment.transactions {
         getSellTypeEnum(): SellType;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/SplitTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OriginalCurrency } from "domain/data/investment/transactions/OriginalCurrency";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Transaction for a stock split.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class SplitTransaction extends BaseOtherInvestmentTransaction {
+    export class SplitTransaction extends BaseOtherInvestmentTransaction {
         private securityId;
         private subAccountSecurity;
         private oldUnits;
@@ -10846,31 +11057,33 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.investment.transactions {
+declare module "domain/data/investment/transactions/TransferAction" {
     /**
      * Type of transfer.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum TransferAction {
+    export enum TransferAction {
         IN = 0,
-        OUT = 1,
+        OUT = 1
     }
-    function TransferAction_fromOfx(ofxVal: string): TransferAction;
+    export function TransferAction_fromOfx(ofxVal: string): TransferAction;
 }
-declare module ofx4js.domain.data.investment.transactions {
-    import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-    import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-    import PositionType = ofx4js.domain.data.investment.positions.PositionType;
-    import SecurityId = ofx4js.domain.data.seclist.SecurityId;
+declare module "domain/data/investment/transactions/TransferInvestmentTransaction" {
+    import { BaseOtherInvestmentTransaction } from "domain/data/investment/transactions/BaseOtherInvestmentTransaction";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { SubAccountType } from "domain/data/investment/accounts/SubAccountType";
+    import { TransferAction } from "domain/data/investment/transactions/TransferAction";
+    import { PositionType } from "domain/data/investment/positions/PositionType";
+    import { Inv401KSource } from "domain/data/investment/positions/Inv401KSource";
     /**
      * Transaction for transfers.
      * @see "Section 13.9.2.4.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class TransferInvestmentTransaction extends BaseOtherInvestmentTransaction {
+    export class TransferInvestmentTransaction extends BaseOtherInvestmentTransaction {
         private securityId;
         private subAccountSecurity;
         private units;
@@ -11049,91 +11262,14 @@ declare module ofx4js.domain.data.investment.transactions {
         get401kSourceEnum(): Inv401KSource;
     }
 }
-declare module ofx4js.domain.data.profile.info.banking {
-    /**
-     * Email Profile
-     * @author Scott Priddy
-     * @see "Section 11.13.2.3 OFX Spec"
-     */
-    class EmailProfile {
-        private canEmail;
-        private canNotify;
-        getCanEmail(): boolean;
-        setCanEmail(canEmail: boolean): void;
-        getCanNotify(): boolean;
-        setCanNotify(canNotify: boolean): void;
-    }
-}
-declare module ofx4js.domain.data.profile.info.banking {
-    import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
-    /**
-     * Stop Check Profile
-     * @author Scott Priddy
-     * @see "Section 11.13.2.3 OFX Spec"
-     */
-    class StopCheckProfile {
-        private processorDaysOff;
-        private processEndTime;
-        private canUseRange;
-        private canUseDescription;
-        private stopCheckFee;
-        /**
-         * Days of week that no processing occurs: MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
-         * FRIDAY, SATURDAY, or SUNDAY. 0 or more <PROCDAYSOFF> can be sent.
-         * @return List of days during the week that no processing occurs.
-         */
-        getProcessorDaysOff(): Array<ProcessorDayOff>;
-        setProcessorDaysOff(processorDaysOff: Array<ProcessorDayOff>): void;
-        /**
-         * Gets time of day that day's processing ends.
-         *
-         * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
-         * the milliseconds and time zone are still optional, and default to GMT.
-         * @see "Section 3.2.8.3 OFX Spec"
-         * @return Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
-         */
-        getProcessEndTime(): string;
-        /**
-         * Sets the time of day that day's processing ends.
-         *
-         * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
-         * the milliseconds and time zone are still optional, and default to GMT.
-      
-         * @see "Section 3.2.8.3 OFX Spec"
-         * @param processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
-         */
-        setProcessEndTime(processEndTime: string): void;
-        getCanUseRange(): boolean;
-        setCanUseRange(canUseRange: boolean): void;
-        getCanUseDescription(): boolean;
-        setCanUseDescription(canUseDescription: boolean): void;
-        getStopCheckFee(): number;
-        setStopCheckFee(stopCheckFee: number): void;
-    }
-}
-declare module ofx4js.domain.data.profile.info.common {
-    /**
-     * Image Profile
-     * @author Scott Priddy
-     * @see "Section 3.1.6.2 OFX Spec"
-     */
-    class ImageProfile {
-        private closingImageAvailable;
-        private transactionImageAvailable;
-        getClosingImageAvailable(): boolean;
-        setClosingImageAvailable(closingImageAvailable: boolean): void;
-        getTransactionImageAvailable(): boolean;
-        setTransactionImageAvailable(transactionImageAvailable: boolean): void;
-    }
-}
-declare module ofx4js.domain.data.profile.info.common {
-    import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
+declare module "domain/data/profile/info/common/TransferProfile" {
+    import { ProcessorDayOff } from "domain/data/common/ProcessorDayOff";
     /**
      * Funds Transfer Profile
      * @author Scott Priddy
      * @see "Section 11.13.2.2 OFX Spec"
      */
-    class TransferProfile {
+    export class TransferProfile {
         private processorDaysOff;
         private processEndTime;
         private supportsScheduledTransfers;
@@ -11216,21 +11352,98 @@ declare module ofx4js.domain.data.profile.info.common {
         setDefaultDaysToPay(defaultDaysToPay: number): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AccountType = ofx4js.domain.data.banking.AccountType;
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import EmailProfile = ofx4js.domain.data.profile.info.banking.EmailProfile;
-    import ImageProfile = ofx4js.domain.data.profile.info.common.ImageProfile;
-    import StopCheckProfile = ofx4js.domain.data.profile.info.banking.StopCheckProfile;
-    import TransferProfile = ofx4js.domain.data.profile.info.common.TransferProfile;
+declare module "domain/data/profile/info/banking/StopCheckProfile" {
+    import { ProcessorDayOff } from "domain/data/common/ProcessorDayOff";
+    /**
+     * Stop Check Profile
+     * @author Scott Priddy
+     * @see "Section 11.13.2.3 OFX Spec"
+     */
+    export class StopCheckProfile {
+        private processorDaysOff;
+        private processEndTime;
+        private canUseRange;
+        private canUseDescription;
+        private stopCheckFee;
+        /**
+         * Days of week that no processing occurs: MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
+         * FRIDAY, SATURDAY, or SUNDAY. 0 or more <PROCDAYSOFF> can be sent.
+         * @return List of days during the week that no processing occurs.
+         */
+        getProcessorDaysOff(): Array<ProcessorDayOff>;
+        setProcessorDaysOff(processorDaysOff: Array<ProcessorDayOff>): void;
+        /**
+         * Gets time of day that day's processing ends.
+         *
+         * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
+         * the milliseconds and time zone are still optional, and default to GMT.
+         * @see "Section 3.2.8.3 OFX Spec"
+         * @return Time String formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
+         */
+        getProcessEndTime(): string;
+        /**
+         * Sets the time of day that day's processing ends.
+         *
+         * Time formatted as "HHMMSS.XXX[gmt offset[:tz name]]",
+         * the milliseconds and time zone are still optional, and default to GMT.
+      
+         * @see "Section 3.2.8.3 OFX Spec"
+         * @param processEndTime formatted as "HHMMSS.XXX[gmt offset[:tz name]]"
+         */
+        setProcessEndTime(processEndTime: string): void;
+        getCanUseRange(): boolean;
+        setCanUseRange(canUseRange: boolean): void;
+        getCanUseDescription(): boolean;
+        setCanUseDescription(canUseDescription: boolean): void;
+        getStopCheckFee(): number;
+        setStopCheckFee(stopCheckFee: number): void;
+    }
+}
+declare module "domain/data/profile/info/banking/EmailProfile" {
+    /**
+     * Email Profile
+     * @author Scott Priddy
+     * @see "Section 11.13.2.3 OFX Spec"
+     */
+    export class EmailProfile {
+        private canEmail;
+        private canNotify;
+        getCanEmail(): boolean;
+        setCanEmail(canEmail: boolean): void;
+        getCanNotify(): boolean;
+        setCanNotify(canNotify: boolean): void;
+    }
+}
+declare module "domain/data/profile/info/common/ImageProfile" {
+    /**
+     * Image Profile
+     * @author Scott Priddy
+     * @see "Section 3.1.6.2 OFX Spec"
+     */
+    export class ImageProfile {
+        private closingImageAvailable;
+        private transactionImageAvailable;
+        getClosingImageAvailable(): boolean;
+        setClosingImageAvailable(closingImageAvailable: boolean): void;
+        getTransactionImageAvailable(): boolean;
+        setTransactionImageAvailable(transactionImageAvailable: boolean): void;
+    }
+}
+declare module "domain/data/profile/info/BankingV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { AccountType } from "domain/data/banking/AccountType";
+    import { TransferProfile } from "domain/data/profile/info/common/TransferProfile";
+    import { StopCheckProfile } from "domain/data/profile/info/banking/StopCheckProfile";
+    import { EmailProfile } from "domain/data/profile/info/banking/EmailProfile";
+    import { ImageProfile } from "domain/data/profile/info/common/ImageProfile";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * Banking Message Set Profile
      * @author Scott Priddy
      * @author Ryan Heaton
      * @see "Section 11.13.2.1 OFX Spec"
      */
-    class BankingV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class BankingV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private invalidAccountTypes;
         private closingAvail;
         private transferProfile;
@@ -11272,28 +11485,29 @@ declare module ofx4js.domain.data.profile.info {
         setImageProfile(imageProfile: ImageProfile): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/BankingMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { BankingV1MessageSetInfo } from "domain/data/profile/info/BankingV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class BankingMessageSetInfo extends AbstractMessageSetInfo {
+    export class BankingMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): BankingV1MessageSetInfo;
         setVersion1Info(version1Info: BankingV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/info/BillpayV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { ProcessorDayOff } from "domain/data/common/ProcessorDayOff";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * BillPay Message Set Profile
      * @author Scott Priddy
      * @author Ryan Heaton
      * @see "Section 12.11.2 OFX Spec"
      */
-    class BillpayV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class BillpayV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private daysWith;
         private defaultDaysToPay;
         private transferDaysWith;
@@ -11354,28 +11568,29 @@ declare module ofx4js.domain.data.profile.info {
         setSupportsBillPresentmentContext(supportsBillPresentmentContext: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/BillpayMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { BillpayV1MessageSetInfo } from "domain/data/profile/info/BillpayV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class BillpayMessageSetInfo extends AbstractMessageSetInfo {
+    export class BillpayMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): BillpayV1MessageSetInfo;
         setVersion1Info(version1Info: BillpayV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ImageProfile = ofx4js.domain.data.profile.info.common.ImageProfile;
+declare module "domain/data/profile/info/CreditCardV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { ImageProfile } from "domain/data/profile/info/common/ImageProfile";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * Credit Card Message Set Profile
      * @author Scott Priddy
      * @author Ryan Heaton
      * @see "Section 11.13.3 OFX Spec"
      */
-    class CreditCardV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class CreditCardV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private closingAvail;
         private imageProfile;
         getMessageSetType(): MessageSetType;
@@ -11393,27 +11608,28 @@ declare module ofx4js.domain.data.profile.info {
         setImageProfile(imageProfile: ImageProfile): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/CreditCardMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { CreditCardV1MessageSetInfo } from "domain/data/profile/info/CreditCardV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class CreditCardMessageSetInfo extends AbstractMessageSetInfo {
+    export class CreditCardMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): CreditCardV1MessageSetInfo;
         setVersion1Info(version1Info: CreditCardV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/info/EmailV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * Email Message Set Profile Information
      * @author Scott Priddy
      * @author Ryan Heaton
      * @see "Section 9.4.2 OFX Spec"
      */
-    class EmailV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class EmailV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private supportsMail;
         private supportsMimeType;
         getMessageSetType(): MessageSetType;
@@ -11432,28 +11648,29 @@ declare module ofx4js.domain.data.profile.info {
         setSupportsMimeType(supportsMimeType: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/EmailMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { EmailV1MessageSetInfo } from "domain/data/profile/info/EmailV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class EmailMessageSetInfo extends AbstractMessageSetInfo {
+    export class EmailMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): EmailV1MessageSetInfo;
         setVersion1Info(version1Info: EmailV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import TransferProfile = ofx4js.domain.data.profile.info.common.TransferProfile;
+declare module "domain/data/profile/info/InterbankTransferV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { TransferProfile } from "domain/data/profile/info/common/TransferProfile";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * Interbank Funds Transfer Message Set Profile
      * @author Scott Priddy
      * @author Ryan Heaton
      * @see "Section 11.13.4 OFX Spec"
      */
-    class InterbankTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class InterbankTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private transferProfile;
         private supportsBillPay;
         private cancelWindow;
@@ -11472,27 +11689,28 @@ declare module ofx4js.domain.data.profile.info {
         setInternationalInterbankTransferFee(internationalInterbankTransferFee: number): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/InterbankTransferMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { InterbankTransferV1MessageSetInfo } from "domain/data/profile/info/InterbankTransferV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class InterbankTransferMessageSetInfo extends AbstractMessageSetInfo {
+    export class InterbankTransferMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): InterbankTransferV1MessageSetInfo;
         setVersion1Info(version1Info: InterbankTransferV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/info/InvestmentV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * @see "Section 13.7.1.1, OFX Spec"
      *
      * @author Jon Perlow
      * @author Ryan Heaton
      */
-    class InvestmentV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class InvestmentV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private supportsStatementsDownload;
         private supportsOpenOrdersDownload;
         private supportsPositionsDownload;
@@ -11517,93 +11735,97 @@ declare module ofx4js.domain.data.profile.info {
         setSupportsClosingStatements(supportsClosingStatements: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/InvestmentMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { InvestmentV1MessageSetInfo } from "domain/data/profile/info/InvestmentV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class InvestmentMessageSetInfo extends AbstractMessageSetInfo {
+    export class InvestmentMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): InvestmentV1MessageSetInfo;
         setVersion1Info(version1Info: InvestmentV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/info/ProfileV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * @author Ryan Heaton
      */
-    class ProfileV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class ProfileV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         getMessageSetType(): MessageSetType;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/ProfileMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { ProfileV1MessageSetInfo } from "domain/data/profile/info/ProfileV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class ProfileMessageSetInfo extends AbstractMessageSetInfo {
+    export class ProfileMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): ProfileV1MessageSetInfo;
         setVersion1Info(version1Info: ProfileV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/info/SecurityListV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * @see "Section 13.7.2.1, OFX Spec"
      *
      * @author Jon Perlow
      * @author Ryan Heaton
      */
-    class SecurityListV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class SecurityListV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private supportsSecurityListDownload;
         getMessageSetType(): MessageSetType;
         getSupportsSecurityListDownload(): boolean;
         setSupportsSecurityListDownload(supportsSecurityListDownload: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/SecurityListMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { SecurityListV1MessageSetInfo } from "domain/data/profile/info/SecurityListV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class SecurityListMessageSetInfo extends AbstractMessageSetInfo {
+    export class SecurityListMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): SecurityListV1MessageSetInfo;
         setVersion1Info(version1Info: SecurityListV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
+declare module "domain/data/profile/info/SignOnV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * @author Jon Perlow
      */
-    class SignOnV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class SignOnV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         getMessageSetType(): MessageSetType;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/SignOnMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { SignOnV1MessageSetInfo } from "domain/data/profile/info/SignOnV1MessageSetInfo";
     /**
      * @author Jon Perlow
      */
-    class SignOnMessageSetInfo extends AbstractMessageSetInfo {
+    export class SignOnMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): SignOnV1MessageSetInfo;
         setVersion1Info(version1Info: SignOnV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info.signup {
+declare module "domain/data/profile/info/signup/ClientEnrollment" {
     /**
      * Client Enrollment option, contains indicator as to whether the account number is required as part of enrollment
      * @author Scott Priddy
      * @see "Section 8.8 OFX Spec"
      */
-    class ClientEnrollment {
+    export class ClientEnrollment {
         private accountRequired;
         /**
          * Y if account number is required as part of enrollment
@@ -11613,29 +11835,13 @@ declare module ofx4js.domain.data.profile.info.signup {
         setAccountRequired(accountRequired: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile.info.signup {
-    /**
-     * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
-     * @author Scott Priddy
-     * @see "Section 8.8 OFX Spec"
-     */
-    class OtherEnrollment {
-        private message;
-        /**
-         * Message to consumer about what to do next (for example, a phone number),
-         * @return String
-         */
-        getMessage(): string;
-        setMessage(message: string): void;
-    }
-}
-declare module ofx4js.domain.data.profile.info.signup {
+declare module "domain/data/profile/info/signup/WebEnrollment" {
     /**
      * Web Enrollment option containing URL to direct user for web based enrollment, if supported.
      * @author Scott Priddy
      * @see "Section 8.8 OFX Spec"
      */
-    class WebEnrollment {
+    export class WebEnrollment {
         private url;
         /**
          * URL to start enrollment process
@@ -11645,12 +11851,28 @@ declare module ofx4js.domain.data.profile.info.signup {
         setUrl(url: string): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ClientEnrollment = ofx4js.domain.data.profile.info.signup.ClientEnrollment;
-    import OtherEnrollment = ofx4js.domain.data.profile.info.signup.OtherEnrollment;
-    import WebEnrollment = ofx4js.domain.data.profile.info.signup.WebEnrollment;
+declare module "domain/data/profile/info/signup/OtherEnrollment" {
+    /**
+     * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
+     * @author Scott Priddy
+     * @see "Section 8.8 OFX Spec"
+     */
+    export class OtherEnrollment {
+        private message;
+        /**
+         * Message to consumer about what to do next (for example, a phone number),
+         * @return String
+         */
+        getMessage(): string;
+        setMessage(message: string): void;
+    }
+}
+declare module "domain/data/profile/info/SignupV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { ClientEnrollment } from "domain/data/profile/info/signup/ClientEnrollment";
+    import { WebEnrollment } from "domain/data/profile/info/signup/WebEnrollment";
+    import { OtherEnrollment } from "domain/data/profile/info/signup/OtherEnrollment";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * Servers use the Signup Message Set Profile Information to define how enrollment should proceed.
      *
@@ -11661,7 +11883,7 @@ declare module ofx4js.domain.data.profile.info {
      * @author Ryan Heaton
      * @see "Section 8.8 OFX Spec"
      */
-    class SignupV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class SignupV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private clientEnrollment;
         private webEnrollment;
         private otherEnrollment;
@@ -11698,28 +11920,29 @@ declare module ofx4js.domain.data.profile.info {
         setSupportsClientServiceActivationRequests(supportsClientServiceActivationRequests: boolean): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/SignupMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { SignupV1MessageSetInfo } from "domain/data/profile/info/SignupV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class SignupMessageSetInfo extends AbstractMessageSetInfo {
+    export class SignupMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): SignupV1MessageSetInfo;
         setVersion1Info(version1Info: SignupV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
-    import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
+declare module "domain/data/profile/info/WireTransferV1MessageSetInfo" {
+    import { VersionSpecificMessageSetInfo } from "domain/data/profile/VersionSpecificMessageSetInfo";
+    import { ProcessorDayOff } from "domain/data/common/ProcessorDayOff";
+    import { MessageSetType } from "domain/data/MessageSetType";
     /**
      * Wire Transfer Message Set Profile
      * @author Scott Priddy
      * @author Ryan Heaton
      * @see "Section 11.13.5 OFX Spec"
      */
-    class WireTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
+    export class WireTransferV1MessageSetInfo extends VersionSpecificMessageSetInfo {
         private processorDaysOff;
         private processEndTime;
         private supportsScheduledTransfers;
@@ -11738,25 +11961,26 @@ declare module ofx4js.domain.data.profile.info {
         setInternationalWireTransferFee(internationalWireTransferFee: number): void;
     }
 }
-declare module ofx4js.domain.data.profile.info {
-    import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
+declare module "domain/data/profile/info/WireTransferMessageSetInfo" {
+    import { AbstractMessageSetInfo } from "domain/data/profile/AbstractMessageSetInfo";
+    import { WireTransferV1MessageSetInfo } from "domain/data/profile/info/WireTransferV1MessageSetInfo";
     /**
      * @author Ryan Heaton
      */
-    class WireTransferMessageSetInfo extends AbstractMessageSetInfo {
+    export class WireTransferMessageSetInfo extends AbstractMessageSetInfo {
         private version1Info;
         getVersion1Info(): WireTransferV1MessageSetInfo;
         setVersion1Info(version1Info: WireTransferV1MessageSetInfo): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/AssetClass" {
     /**
-     * Asset class for debt.
-     * @see "Section 13.8.5.7, OFX Spec"
-     *
-     * @author Jon Perlow
-     */
-    enum AssetClass {
+    * Asset class for debt.
+    * @see "Section 13.8.5.7, OFX Spec"
+    *
+    * @author Jon Perlow
+    */
+    export enum AssetClass {
         /**
          * Government or corporate bonds issued in the United States.
          */
@@ -11785,77 +12009,83 @@ declare module ofx4js.domain.data.seclist {
         /**
          * Investments which do not fit into any of the other types.
          */
-        OTHER = 6,
+        OTHER = 6
     }
-    function AssetClass_fromOfx(ofxVal: string): AssetClass;
+    export function AssetClass_fromOfx(ofxVal: string): AssetClass;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/CallType" {
     /**
      * Call type for debt.
      * @see "Section 13.8.5.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum CallType {
+    export enum CallType {
         CALL = 0,
         PUT = 1,
         PREFUND = 2,
-        MATURITY = 3,
+        MATURITY = 3
     }
-    function CallType_fromOfx(ofxVal: string): CallType;
+    export function CallType_fromOfx(ofxVal: string): CallType;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/CouponFrequency" {
     /**
      * Coupon freqency for debt.
      * @see "Section 13.8.5.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum CouponFrequency {
+    export enum CouponFrequency {
         MONTHLY = 0,
         QUARTERLY = 1,
         SEMIANNUAL = 2,
         ANNUAL = 3,
-        OTHER = 4,
+        OTHER = 4
     }
-    function CouponFrequency_fromOfx(ofxVal: string): CouponFrequency;
+    export function CouponFrequency_fromOfx(ofxVal: string): CouponFrequency;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/DebtClass" {
     /**
      * The class of debt.
      * @see "Section 13.8.5.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum DebtClass {
+    export enum DebtClass {
         TREASURY = 0,
         MUNICIPAL = 1,
         CORPORATE = 2,
-        OTHER = 3,
+        OTHER = 3
     }
-    function DebtClass_fromOfx(ofxVal: string): DebtClass;
+    export function DebtClass_fromOfx(ofxVal: string): DebtClass;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/DebtType" {
     /**
      * The type of debt.
      * @see "Section 13.8.5.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum DebtType {
+    export enum DebtType {
         COUPON = 0,
-        ZERO = 1,
+        ZERO = 1
     }
-    function DebtType_fromOfx(ofxVal: string): DebtType;
+    export function DebtType_fromOfx(ofxVal: string): DebtType;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/DebtSecurityInfo" {
+    import { BaseSecurityInfo } from "domain/data/seclist/BaseSecurityInfo";
+    import { DebtType } from "domain/data/seclist/DebtType";
+    import { DebtClass } from "domain/data/seclist/DebtClass";
+    import { CouponFrequency } from "domain/data/seclist/CouponFrequency";
+    import { CallType } from "domain/data/seclist/CallType";
+    import { AssetClass } from "domain/data/seclist/AssetClass";
     /**
      * Info about a debt security.
      * @see "Section 13.8.5.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class DebtSecurityInfo extends BaseSecurityInfo {
+    export class DebtSecurityInfo extends BaseSecurityInfo {
         private parValue;
         private debtType;
         private debtClass;
@@ -12082,28 +12312,30 @@ declare module ofx4js.domain.data.seclist {
         setFiAssetClass(fiAssetClass: string): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/MutualFundType" {
     /**
      * The type of mutual fund.
      * @see "Section 13.8.5.2, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum MutualFundType {
+    export enum MutualFundType {
         OPEN_END = 0,
         CLOSE_END = 1,
-        OTHER = 2,
+        OTHER = 2
     }
-    function MutualFundType_fromOfx(ofxVal: string): MutualFundType;
+    export function MutualFundType_fromOfx(ofxVal: string): MutualFundType;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/MutualFundSecurityInfo" {
+    import { BaseSecurityInfo } from "domain/data/seclist/BaseSecurityInfo";
+    import { MutualFundType } from "domain/data/seclist/MutualFundType";
     /**
      * Info about a mutual fund security.
      * @see "Section 13.8.5.3, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class MutualFundSecurityInfo extends BaseSecurityInfo {
+    export class MutualFundSecurityInfo extends BaseSecurityInfo {
         private mfType;
         private yield;
         private dateYieldAsOf;
@@ -12153,27 +12385,31 @@ declare module ofx4js.domain.data.seclist {
         setDateYieldAsOf(dateYieldAsOf: Date): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/OptionType" {
     /**
      * Type of option.
      * @see "Section 13.8.5.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum OptionType {
+    export enum OptionType {
         PUT = 0,
-        CALL = 1,
+        CALL = 1
     }
-    function OptionType_fromOfx(ofxVal: string): OptionType;
+    export function OptionType_fromOfx(ofxVal: string): OptionType;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/OptionSecurityInfo" {
+    import { BaseSecurityInfo } from "domain/data/seclist/BaseSecurityInfo";
+    import { SecurityId } from "domain/data/seclist/SecurityId";
+    import { OptionType } from "domain/data/seclist/OptionType";
+    import { AssetClass } from "domain/data/seclist/AssetClass";
     /**
      * Info about an option security.
      * @see "Section 13.8.5.4, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class OptionSecurityInfo extends BaseSecurityInfo {
+    export class OptionSecurityInfo extends BaseSecurityInfo {
         private optionType;
         private strikePrice;
         private expirationDate;
@@ -12287,14 +12523,16 @@ declare module ofx4js.domain.data.seclist {
         setFiAssetClass(fiAssetClass: string): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/OtherSecurityInfo" {
+    import { AssetClass } from "domain/data/seclist/AssetClass";
+    import { BaseSecurityInfo } from "domain/data/seclist/BaseSecurityInfo";
     /**
      * Info about any other type of security.
      * @see "Section 13.8.5.5, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class OtherSecurityInfo extends BaseSecurityInfo {
+    export class OtherSecurityInfo extends BaseSecurityInfo {
         private typeDesc;
         private assetClass;
         private fiAssetClass;
@@ -12346,29 +12584,32 @@ declare module ofx4js.domain.data.seclist {
         setFiAssetClass(fiAssetClass: string): void;
     }
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/StockType" {
     /**
      * The type of debt.
      * @see "Section 13.8.5.6, OFX Spec"
      *
      * @author Jon Perlow
      */
-    enum StockType {
+    export enum StockType {
         COMMON = 0,
         PREFERRED = 1,
         CONVERTIBLE = 2,
-        OTHER = 3,
+        OTHER = 3
     }
-    function StockType_fromOfx(ofxVal: string): StockType;
+    export function StockType_fromOfx(ofxVal: string): StockType;
 }
-declare module ofx4js.domain.data.seclist {
+declare module "domain/data/seclist/StockSecurityInfo" {
+    import { BaseSecurityInfo } from "domain/data/seclist/BaseSecurityInfo";
+    import { StockType } from "domain/data/seclist/StockType";
+    import { AssetClass } from "domain/data/seclist/AssetClass";
     /**
      * Info about a stock security.
      * @see "Section 13.8.5.6, OFX Spec"
      *
      * @author Jon Perlow
      */
-    class StockSecurityInfo extends BaseSecurityInfo {
+    export class StockSecurityInfo extends BaseSecurityInfo {
         private stockType;
         private yield;
         private dateYieldAsOf;
@@ -12454,12 +12695,12 @@ declare module ofx4js.domain.data.seclist {
         setFiAssetClass(fiAssetClass: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/ProcDet" {
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class ProcDet {
+    export class ProcDet {
         private dtAqd;
         private dtSale;
         private secName;
@@ -12543,12 +12784,13 @@ declare module ofx4js.domain.data.tax1099 {
         setBasisNotshown(basisNotshown: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/ExtDBInfo" {
+    import { ProcDet } from "domain/data/tax1099/ProcDet";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class ExtDBInfo {
+    export class ExtDBInfo {
         private procDet;
         private teInterest;
         private pabInterest;
@@ -12596,12 +12838,12 @@ declare module ofx4js.domain.data.tax1099 {
         setPabDividend(pabDividend: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/PayerAddress" {
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class PayerAddress {
+    export class PayerAddress {
         private payerName1;
         private payerName2;
         private address1;
@@ -12676,12 +12918,12 @@ declare module ofx4js.domain.data.tax1099 {
         setPhone(phone: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/RecAddress" {
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class RecAddress {
+    export class RecAddress {
         private recName1;
         private recName2;
         private address1;
@@ -12756,12 +12998,15 @@ declare module ofx4js.domain.data.tax1099 {
         setPhone(phone: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/Tax1099B" {
+    import { ExtDBInfo } from "domain/data/tax1099/ExtDBInfo";
+    import { PayerAddress } from "domain/data/tax1099/PayerAddress";
+    import { RecAddress } from "domain/data/tax1099/RecAddress";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099B {
+    export class Tax1099B {
         private srvrtId;
         private taxYear;
         private extDBInfo;
@@ -12824,12 +13069,14 @@ declare module ofx4js.domain.data.tax1099 {
         setRecAcct(recAcct: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/Tax1099DIV" {
+    import { PayerAddress } from "domain/data/tax1099/PayerAddress";
+    import { RecAddress } from "domain/data/tax1099/RecAddress";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099DIV {
+    export class Tax1099DIV {
         private srvrtId;
         private taxYear;
         private ordDiv;
@@ -12991,14 +13238,14 @@ declare module ofx4js.domain.data.tax1099 {
         setRecAcct(recAcct: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import PayerAddress = ofx4js.domain.data.tax1099.PayerAddress;
-    import RecAddress = ofx4js.domain.data.tax1099.RecAddress;
+declare module "domain/data/tax1099/Tax1099INT" {
+    import { PayerAddress } from "domain/data/tax1099/PayerAddress";
+    import { RecAddress } from "domain/data/tax1099/RecAddress";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099INT {
+    export class Tax1099INT {
         private srvrtId;
         private taxYear;
         private intIncome;
@@ -13124,12 +13371,14 @@ declare module ofx4js.domain.data.tax1099 {
         setSpecifiedPabInt(specifiedPabInt: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/Tax1099MISC" {
+    import { PayerAddress } from "domain/data/tax1099/PayerAddress";
+    import { RecAddress } from "domain/data/tax1099/RecAddress";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099MISC {
+    export class Tax1099MISC {
         private srvrtId;
         private taxYear;
         private royalties;
@@ -13219,12 +13468,14 @@ declare module ofx4js.domain.data.tax1099 {
         setRecAcct(recAcct: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/Tax1099OID" {
+    import { PayerAddress } from "domain/data/tax1099/PayerAddress";
+    import { RecAddress } from "domain/data/tax1099/RecAddress";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099OID {
+    export class Tax1099OID {
         private srvrtId;
         private taxYear;
         private originalDisc;
@@ -13341,12 +13592,14 @@ declare module ofx4js.domain.data.tax1099 {
         setRecAcct(recAcct: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
+declare module "domain/data/tax1099/Tax1099R" {
+    import { PayerAddress } from "domain/data/tax1099/PayerAddress";
+    import { RecAddress } from "domain/data/tax1099/RecAddress";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099R {
+    export class Tax1099R {
         private srvrtId;
         private taxYear;
         private grossDist;
@@ -13499,25 +13752,26 @@ declare module ofx4js.domain.data.tax1099 {
         setRecAcct(recAcct: string): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import T1099Request = ofx4js.domain.data.common.T1099Request;
+declare module "domain/data/tax1099/Tax1099Request" {
+    import { T1099Request } from "domain/data/common/T1099Request";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099Request extends T1099Request {
+    export class Tax1099Request extends T1099Request {
         getTaxYear(): string;
         setTaxYear(taxYear: string): void;
         private taxYear;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
+declare module "domain/data/tax1099/Tax1099RequestTransaction" {
+    import { TransactionWrappedRequestMessage } from "domain/data/TransactionWrappedRequestMessage";
+    import { Tax1099Request } from "domain/data/tax1099/Tax1099Request";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099RequestTransaction extends TransactionWrappedRequestMessage<Tax1099Request> {
+    export class Tax1099RequestTransaction extends TransactionWrappedRequestMessage<Tax1099Request> {
         private tax1099Request;
         /**
          * The tax1099Request.
@@ -13535,16 +13789,17 @@ declare module ofx4js.domain.data.tax1099 {
         setWrappedMessage(tax1099Request: Tax1099Request): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-    import RequestMessage = ofx4js.domain.data.RequestMessage;
+declare module "domain/data/tax1099/Tax1099RequestMessageSet" {
+    import { RequestMessageSet } from "domain/data/RequestMessageSet";
+    import { Tax1099RequestTransaction } from "domain/data/tax1099/Tax1099RequestTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { RequestMessage } from "domain/data/RequestMessage";
     /**
      * @author aparna.gawali
      * aparna.gawali@sungard.com
      *
      */
-    class Tax1099RequestMessageSet extends RequestMessageSet {
+    export class Tax1099RequestMessageSet extends RequestMessageSet {
         private taxRequestTransaction;
         getType(): MessageSetType;
         /**
@@ -13562,13 +13817,19 @@ declare module ofx4js.domain.data.tax1099 {
         getRequestMessages(): Array<RequestMessage>;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import T1099Response = ofx4js.domain.data.common.T1099Response;
+declare module "domain/data/tax1099/Tax1099Response" {
+    import { T1099Response } from "domain/data/common/T1099Response";
+    import { Tax1099DIV } from "domain/data/tax1099/Tax1099DIV";
+    import { Tax1099INT } from "domain/data/tax1099/Tax1099INT";
+    import { Tax1099R } from "domain/data/tax1099/Tax1099R";
+    import { Tax1099B } from "domain/data/tax1099/Tax1099B";
+    import { Tax1099MISC } from "domain/data/tax1099/Tax1099MISC";
+    import { Tax1099OID } from "domain/data/tax1099/Tax1099OID";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099Response extends T1099Response {
+    export class Tax1099Response extends T1099Response {
         private lstTax1099DIV;
         private lstTax1099INT;
         private lstTax1099R;
@@ -13627,13 +13888,14 @@ declare module ofx4js.domain.data.tax1099 {
         setLstTax1099OID(lstTax1099OID: Array<Tax1099OID>): void;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import TransactionWrappedResponseMessage = ofx4js.domain.data.TransactionWrappedResponseMessage;
+declare module "domain/data/tax1099/Tax1099ResponseTransaction" {
+    import { TransactionWrappedResponseMessage } from "domain/data/TransactionWrappedResponseMessage";
+    import { Tax1099Response } from "domain/data/tax1099/Tax1099Response";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099ResponseTransaction extends TransactionWrappedResponseMessage<Tax1099Response> {
+    export class Tax1099ResponseTransaction extends TransactionWrappedResponseMessage<Tax1099Response> {
         private tax1099Response;
         /**
          * The tax1099Response.
@@ -13650,15 +13912,16 @@ declare module ofx4js.domain.data.tax1099 {
         getWrappedMessage(): Tax1099Response;
     }
 }
-declare module ofx4js.domain.data.tax1099 {
-    import MessageSetType = ofx4js.domain.data.MessageSetType;
-    import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-    import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
+declare module "domain/data/tax1099/Tax1099ResponseMessageSet" {
+    import { ResponseMessageSet } from "domain/data/ResponseMessageSet";
+    import { Tax1099ResponseTransaction } from "domain/data/tax1099/Tax1099ResponseTransaction";
+    import { MessageSetType } from "domain/data/MessageSetType";
+    import { ResponseMessage } from "domain/data/ResponseMessage";
     /**
      * @author Aparna Gawali
      * aparna.gawali@sungard.com
      */
-    class Tax1099ResponseMessageSet extends ResponseMessageSet {
+    export class Tax1099ResponseMessageSet extends ResponseMessageSet {
         private taxResponseTransaction;
         getType(): MessageSetType;
         /**
@@ -13691,15 +13954,15 @@ declare module ofx4js {
     interface dummy {
     }
 }
-
-declare module ofx4js.io {
+declare var module: NodeModule;
+declare module "io/OFXAggregate" {
     /**
      * An OFX aggregate is just an aggregate of name-value pairs that identify the elements and element values of the aggregate.
      * The element values can strings or another (sub)aggregate.  The implementation of a
      *
      * @author Ryan Heaton
      */
-    interface OFXAggregate {
+    export interface OFXAggregate {
         /**
          * The name of the OFX aggregate.
          *
@@ -13728,17 +13991,31 @@ declare module ofx4js.io {
         getElementValue(elementName: string): Object;
     }
 }
-declare module ofx4js.io {
-    import OFXRuntimeException = ofx4js.OFXRuntimeException;
+declare module "io/RequiredAttributeException" {
+    import { OFXRuntimeException } from "OFXRuntimeException";
     /**
      * Thrown when a required attribute of an aggregate is null or empty.
      *
      * @author Ryan Heaton
      */
-    class RequiredAttributeException extends OFXRuntimeException {
+    export class RequiredAttributeException extends OFXRuntimeException {
         constructor(message: string);
     }
 }
-declare module "ofx4js" {
-	export = ofx4js;
+declare module "meta/Aggregate" {
+    /**
+     * Annotation for a method that returns an OFX aggregate.
+     *
+     * @author Ryan Heaton
+     */
+    export class Aggregate {
+        private _value;
+        constructor(value: string);
+        /**
+         * The name of the aggregate.
+         *
+         * @return The name of the aggregate.
+         */
+        value(): string;
+    }
 }

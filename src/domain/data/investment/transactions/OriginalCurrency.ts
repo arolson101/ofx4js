@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Original currency aggregate ("ORIGCURRENCY"). For investment transactions in other currencies,
@@ -79,5 +75,3 @@ export class OriginalCurrency {
 Aggregate_add( OriginalCurrency, "ORIGCURRENCY" );
 Element_add(OriginalCurrency, { name: "CURRATE", required: true, order: 10, type: Number, read: OriginalCurrency.prototype.getCurrencyRate, write: OriginalCurrency.prototype.setCurrencyRate });
 Element_add(OriginalCurrency, { name: "CURSYM", required: true, order: 20, type: String, read: OriginalCurrency.prototype.getCurrencyCode, write: OriginalCurrency.prototype.setCurrencyCode });
-
-}

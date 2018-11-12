@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.seclist {
-
 /**
  * The type of debt.
  * @see "Section 13.8.5.6, OFX Spec"
@@ -41,6 +39,4 @@ export function StockType_fromOfx(ofxVal: string): StockType {
   } else {
     return null;
   }
-}
-
 }

@@ -13,23 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='StatusCode'/>
-
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-
-/**
- * Severity of the status.
- */
-export enum Severity {
-  INFO,
-  WARN,
-  ERROR
-}
+import { Aggregate_add } from '../../../meta/Aggregate_add'
+import { Element_add } from '../../../meta/Element_add'
+import { Severity, StatusCode } from './StatusCode'
 
 
 /**
@@ -60,7 +46,7 @@ export class KnownCode extends StatusCode {
   public static NO_DATA: KnownCode = new KnownCode(14701, "No Tax Data for Account.", Severity.ERROR);
   public static DB_EXCEPTION: KnownCode = new KnownCode(14702,"Database error has occured.",Severity.ERROR);
   public static NO_TAXSUPPORT: KnownCode = new KnownCode(14703,"This Tax Year is not supported.",Severity.ERROR);
-  
+
   static KnownCodes: KnownCode[] = [
     KnownCode.SUCCESS,
     KnownCode.CLIENT_UP_TO_DATE,
@@ -208,5 +194,3 @@ Aggregate_add( Status, "STATUS" );
 Element_add(Status, { name: "CODE", required: true, order: 0, type: StatusCode, read: Status.prototype.getCode, write: Status.prototype.setCode });
 Element_add(Status, { name: "SEVERITY", required: true, order: 10, type: Severity, read: Status.prototype.getSeverity, write: Status.prototype.setSeverity });
 Element_add(Status, { name: "MESSAGE", order: 20, type: String, read: Status.prototype.getMessage, write: Status.prototype.setMessage });
-
-}

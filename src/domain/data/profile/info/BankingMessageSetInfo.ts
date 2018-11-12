@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../AbstractMessageSetInfo'/>
-///<reference path='BankingV1MessageSetInfo'/>
+import { AbstractMessageSetInfo } from "../AbstractMessageSetInfo";
+import { BankingV1MessageSetInfo } from "./BankingV1MessageSetInfo";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.profile.info {
-
-import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -42,5 +37,3 @@ export class BankingMessageSetInfo extends AbstractMessageSetInfo {
 
 Aggregate_add( BankingMessageSetInfo, "BANKMSGSET" );
 ChildAggregate_add(BankingMessageSetInfo, { order: 0, type: BankingV1MessageSetInfo, read: BankingMessageSetInfo.prototype.getVersion1Info, write: BankingMessageSetInfo.prototype.setVersion1Info });
-
-}

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.io {
-
 /**
  * Handler for events during OFX parsing.
  *
@@ -52,7 +50,5 @@ export interface OFXHandler {
    * @param aggregateName The aggregate name.
    */
   endAggregate(aggregateName: string): void;
-
-}
 
 }

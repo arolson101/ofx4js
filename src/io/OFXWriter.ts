@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-///<reference path='../collections/collections'/>
-
-module ofx4js.io {
-
-import StringMap = ofx4js.collections.StringMap;
-
+import { StringMap } from '../collections/collections'
 
 /**
  * @author Ryan Heaton
@@ -60,6 +55,4 @@ export interface OFXWriter {
    * Close this OFX writer.
    */
   close() /*throws IOException*/: void;
-}
-
 }

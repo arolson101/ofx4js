@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+import { VersionSpecificMessageSetInfo } from "../VersionSpecificMessageSetInfo";
+import { MessageSetType } from "../../MessageSetType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info {
-
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @see "Section 13.7.1.1, OFX Spec"
@@ -109,5 +104,3 @@ Element_add(InvestmentV1MessageSetInfo, { name: "BALDNLD", required:true, order:
 Element_add(InvestmentV1MessageSetInfo, { name: "CANEMAIL", required:true, order: 50, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsEmail, write: InvestmentV1MessageSetInfo.prototype.setSupportsEmail });
 Element_add(InvestmentV1MessageSetInfo, { name: "INV401KDNLD", order: 60, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupports401kInformation, write: InvestmentV1MessageSetInfo.prototype.setSupports401kInformation });
 Element_add(InvestmentV1MessageSetInfo, { name: "CLOSINGAVAIL", order: 70, type: Boolean, read: InvestmentV1MessageSetInfo.prototype.getSupportsClosingStatements, write: InvestmentV1MessageSetInfo.prototype.setSupportsClosingStatements });
-
-}

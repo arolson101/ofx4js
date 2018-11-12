@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='../../seclist/SecurityId'/>
-///<reference path='BaseOtherInvestmentTransaction'/>
-///<reference path='TransactionWithSecurity'/>
+import { TransactionType } from "./TransactionType";
+import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
+import { TransactionWithSecurity } from "./TransactionWithSecurity";
+import { SecurityId } from "../../seclist/SecurityId";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for journal security transactions between sub-accounts within the same investment
@@ -155,5 +148,3 @@ ChildAggregate_add(JournalSecurityTransaction, { required: true, order: 20, type
 Element_add(JournalSecurityTransaction, { name: "SUBACCTFROM", order: 30, type: String, read: JournalSecurityTransaction.prototype.getFromSubAccountFund, write: JournalSecurityTransaction.prototype.setFromSubAccountFund });
 Element_add(JournalSecurityTransaction, { name: "SUBACCTTO", order: 40, type: String, read: JournalSecurityTransaction.prototype.getToSubAccountFund, write: JournalSecurityTransaction.prototype.setToSubAccountFund });
 Element_add(JournalSecurityTransaction, { name: "TOTAL", order: 50, type: Number, read: JournalSecurityTransaction.prototype.getTotal, write: JournalSecurityTransaction.prototype.setTotal });
-
-}

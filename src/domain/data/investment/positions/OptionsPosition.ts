@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BasePosition'/>
-///<reference path='ShortOptionSecurity'/>
+import { BasePosition } from "./BasePosition";
+import { ShortOptionSecurity, ShortOptionSecurity_fromOfx } from "./ShortOptionSecurity";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.positions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Represents an options position.
@@ -62,5 +58,3 @@ export class OptionsPosition extends BasePosition {
 
 Aggregate_add( OptionsPosition, "POSOPT" );
 Element_add(OptionsPosition, { name: "SECURED", order: 20, type: String, read: OptionsPosition.prototype.getSecured, write: OptionsPosition.prototype.setSecured });
-
-}

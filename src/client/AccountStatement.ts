@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../domain/data/common/BalanceInfo'/>
-///<reference path='../domain/data/common/TransactionList'/>
+import { TransactionList } from "../domain/data/common/TransactionList";
+import { BalanceInfo } from "../domain/data/common/BalanceInfo";
 
-module ofx4js.client {
-
-import BalanceInfo = ofx4js.domain.data.common.BalanceInfo;
-import TransactionList = ofx4js.domain.data.common.TransactionList;
 
 /**
  * @author Ryan Heaton
@@ -54,7 +50,5 @@ export interface AccountStatement {
    * @return The available balance.
    */
   getAvailableBalance(): BalanceInfo;
-
-}
 
 }

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='OFXConnectionException'/>
+import { OFXConnectionException } from "./OFXConnectionException";
 
-module ofx4js.client.net {
 
 /**
  * @author Ryan Heaton
@@ -32,6 +31,4 @@ export class OFXServerException extends OFXConnectionException {
   public getHttpCode(): number {
     return this.httpCode;
   }
-}
-
 }

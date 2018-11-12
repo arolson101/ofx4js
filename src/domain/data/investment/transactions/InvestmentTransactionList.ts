@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BaseOtherInvestmentTransaction'/>
-///<reference path='InvestmentBankTransaction'/>
+import { BaseInvestmentTransaction } from "./BaseInvestmentTransaction";
+import { InvestmentBankTransaction } from "./InvestmentBankTransaction";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * The transaction list aggregate.
@@ -117,5 +112,3 @@ Element_add(InvestmentTransactionList, { name: "DTSTART", required: true, order:
 Element_add(InvestmentTransactionList, { name: "DTEND", required: true, order: 10, type: Date, read: InvestmentTransactionList.prototype.getEnd, write: InvestmentTransactionList.prototype.setEnd });
 ChildAggregate_add(InvestmentTransactionList, { order: 20, type: Array, collectionEntryType: BaseInvestmentTransaction, read: InvestmentTransactionList.prototype.getInvestmentTransactions, write: InvestmentTransactionList.prototype.setInvestmentTransactions });
 ChildAggregate_add(InvestmentTransactionList, { order: 30, type: Array, collectionEntryType: InvestmentBankTransaction, read: InvestmentTransactionList.prototype.getBankTransactions, write: InvestmentTransactionList.prototype.setBankTransactions });
-
-}

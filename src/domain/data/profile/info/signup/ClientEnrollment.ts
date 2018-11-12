@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../../meta/Aggregate_add'/>
-///<reference path='../../../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info.signup {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Client Enrollment option, contains indicator as to whether the account number is required as part of enrollment
@@ -46,5 +42,3 @@ export class ClientEnrollment {
 
 Aggregate_add( ClientEnrollment, "CLIENTENROLL" );
 Element_add(ClientEnrollment, { name: "ACCTREQUIRED", required: true, order: 0, type: Boolean, read: ClientEnrollment.prototype.getAccountRequired, write: ClientEnrollment.prototype.setAccountRequired });
-
-}

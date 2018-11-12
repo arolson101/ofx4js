@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='TransactionType'/>
+import { TransactionType } from "./TransactionType";
+import { InvestmentTransaction } from "./InvestmentTransaction";
 
-module ofx4js.domain.data.investment.transactions {
 
 /**
  * Base class for all investment transactions.
@@ -26,7 +26,7 @@ module ofx4js.domain.data.investment.transactions {
  *
  * @author Jon Perlow
  */
-export /*abstract*/ class BaseInvestmentTransaction {
+export abstract class BaseInvestmentTransaction {
 
   private transactionType: TransactionType;
 
@@ -48,7 +48,7 @@ export /*abstract*/ class BaseInvestmentTransaction {
    *
    * @return the {@link InvestmentTransaction} aggregate
    */
-  public /*abstract*/ getInvestmentTransaction(): InvestmentTransaction { throw new OFXException("abstract"); }
+  public abstract getInvestmentTransaction(): InvestmentTransaction;
 
   /**
    * Gets the unique financial institution assigned transaction id. This is a
@@ -115,6 +115,4 @@ export /*abstract*/ class BaseInvestmentTransaction {
   public getMemo(): string {
     return this.getInvestmentTransaction().getMemo();
   }
-}
-
 }

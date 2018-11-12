@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='BaseBuyInvestmentTransaction'/>
-///<reference path='BuyType'/>
+import { TransactionType } from "./TransactionType";
+import { BaseBuyInvestmentTransaction } from "./BaseBuyInvestmentTransaction";
+import { BuyType, BuyType_fromOfx } from "./BuyType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for buying stock.
@@ -71,5 +68,3 @@ export class BuyStockTransaction extends BaseBuyInvestmentTransaction {
 
 Aggregate_add( BuyStockTransaction, "BUYSTOCK" );
 Element_add(BuyStockTransaction, { name: "BUYTYPE", required: true, order: 20, type: String, read: BuyStockTransaction.prototype.getBuyType, write: BuyStockTransaction.prototype.setBuyType });
-
-}

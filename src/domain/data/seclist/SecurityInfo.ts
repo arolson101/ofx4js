@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
+import { SecurityId } from "./SecurityId";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.seclist {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about a security.
@@ -225,5 +221,3 @@ Element_add(SecurityInfo, { name: "UNITPRICE", order: 60, type: Number, read: Se
 Element_add(SecurityInfo, { name: "DTASOF", order: 70, type: Date, read: SecurityInfo.prototype.getUnitPriceAsOfDate, write: SecurityInfo.prototype.setUnitPriceAsOfDate });
 Element_add(SecurityInfo, { name: "CURRENCY", order: 80, type: String, read: SecurityInfo.prototype.getCurrencyCode, write: SecurityInfo.prototype.setCurrencyCode });
 Element_add(SecurityInfo, { name: "MEMO", order: 90, type: String, read: SecurityInfo.prototype.getMemo, write: SecurityInfo.prototype.setMemo });
-
-}

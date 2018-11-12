@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='PayerAddress'/>
-///<reference path='RecAddress'/>
-
-module ofx4js.domain.data.tax1099 {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-
-import Element_add = ofx4js.meta.Element_add;
+import { PayerAddress } from "./PayerAddress";
+import { RecAddress } from "./RecAddress";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
 /**
  * @author Aparna Gawali
@@ -34,7 +27,7 @@ export class Tax1099R  {
 	private srvrtId: string;
 	private taxYear: string;
 	private grossDist: string;
-	
+
 	private taxAmt: string;
 	private taxAmtNd: string;
 	private capGain: string;
@@ -45,29 +38,29 @@ export class Tax1099R  {
 	private iraSepSimp: string;
 	private annCtrctDist: string;
 	private totEmpCount: string;
-		
+
 	private payerAddress: PayerAddress;
 	private payerId: string;
 	private recAddress: RecAddress;
 	private recId: string;
 	private recAcct: string;
-	
-	 
+
+
 	  public getSrvrtId(): string {
 	    return this.srvrtId;
 	  }
 
-	  
+
       public setSrvrtId(srvrtId: string): void {
 	    this.srvrtId = srvrtId;
 	  }
 
-	 
+
       public getTaxYear(): string {
 	    return this.taxYear;
 	  }
 
-	 
+
 	  public setTaxYear(taxYear: string): void {
 	    this.taxYear = taxYear;
 	  }
@@ -153,7 +146,7 @@ export class Tax1099R  {
 	public setFedTaxWh(fedTaxWh: string): void {
 		this.fedTaxWh = fedTaxWh;
 	}
-	
+
 	/**
 	 * @return the empContins
 	 */
@@ -264,7 +257,7 @@ export class Tax1099R  {
 	public setPayerAddress(payerAddress: PayerAddress): void {
 		this.payerAddress = payerAddress;
 	}
-	
+
 	/**
 	 * @return the payerId
 	 */
@@ -279,7 +272,7 @@ export class Tax1099R  {
 	public setPayerId(payerId: string): void {
 		this.payerId = payerId;
 	}
-	
+
 
 	/**
 	 * @return the recAddress
@@ -347,5 +340,3 @@ Element_add(Tax1099R, { name: "PAYERID", required: true, order: 14, type: String
 ChildAggregate_add(Tax1099R, { required:true, order: 15, type: RecAddress, read: Tax1099R.prototype.getRecAddress, write: Tax1099R.prototype.setRecAddress });
 Element_add(Tax1099R, { name: "RECID", required: true, order: 16, type: String, read: Tax1099R.prototype.getRecId, write: Tax1099R.prototype.setRecId });
 Element_add(Tax1099R, { name: "RECACCT", required: true, order: 17, type: String, read: Tax1099R.prototype.getRecAcct, write: Tax1099R.prototype.setRecAcct });
-
-}

@@ -1,10 +1,8 @@
-module ofx4js.io {
-
 export class StringReader {
   private _text: string;
   private _cursor: number;
   private _mark: number;
-  
+
   constructor(text: string) {
     this._text = text;
     this._cursor = 0;
@@ -58,6 +56,4 @@ export class StringReader {
   public remainder(): string {
     return this._text.substring(this._cursor);
   }
-}
-
 }

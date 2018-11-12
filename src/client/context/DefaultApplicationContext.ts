@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='OFXApplicationContext'/>
+import { OFXApplicationContext } from "./OFXApplicationContext";
 
-module ofx4js.client.context {
 
 /**
  * Default application context.
@@ -39,6 +38,4 @@ export class DefaultApplicationContext implements OFXApplicationContext {
   public getAppVersion(): string {
     return this.appVersion;
   }
-}
-
 }

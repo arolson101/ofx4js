@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.transactions {
-
 /**
  * Type of sale for options.
  * @see "Section 13.9.2.4.2, OFX Spec"
@@ -35,6 +33,4 @@ export function OptionSellType_fromOfx(ofxVal: string): OptionSellType {
   } else {
     return null;
   }
-}
-
 }

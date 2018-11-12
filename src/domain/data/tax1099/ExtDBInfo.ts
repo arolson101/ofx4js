@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='ProcDet'/>
-
-module ofx4js.domain.data.tax1099 {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
+import { ProcDet } from "./ProcDet";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
 
 /**
@@ -36,7 +30,7 @@ export class ExtDBInfo {
 	private pabInterest: string;
 	private teIntDividend: string;
 	private pabDividend: string;
-	
+
 	/**
 	 * @return the procDet
 	 */
@@ -105,7 +99,7 @@ export class ExtDBInfo {
 	 */
 	public setPabDividend(pabDividend: string): void {
 		this.pabDividend = pabDividend;
-	}	
+	}
 }
 
 Aggregate_add( ExtDBInfo, "EXTDBINFO_V100");
@@ -114,5 +108,3 @@ Element_add(ExtDBInfo, { name: "TEINTEREST",required: false , order: 1, type: St
 Element_add(ExtDBInfo, { name: "PABINTEREST",required: false , order: 2, type: String, read: ExtDBInfo.prototype.getPabInterest, write: ExtDBInfo.prototype.setPabInterest });
 Element_add(ExtDBInfo, { name: "TEINTDIVIDEND",required: false , order: 3, type: String, read: ExtDBInfo.prototype.getTeIntDividend, write: ExtDBInfo.prototype.setTeIntDividend });
 Element_add(ExtDBInfo, { name: "PABDIVIDEND",required: false , order: 4, type: String, read: ExtDBInfo.prototype.getPabDividend, write: ExtDBInfo.prototype.setPabDividend });
-
-}

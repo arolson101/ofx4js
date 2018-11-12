@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='profile/SynchronizationCapability'/>
-///<reference path='ApplicationSecurity'/>
+import { ApplicationSecurity } from "./ApplicationSecurity";
+import { SynchronizationCapability } from "./profile/SynchronizationCapability";
 
-module ofx4js.domain.data {
-
-import SynchronizationCapability = ofx4js.domain.data.profile.SynchronizationCapability;
 
 //import java.net.URL;
 
@@ -89,6 +86,4 @@ export interface MessageSetProfile {
    * @return Whether there exists support for resposne-file based error recovery.
    */
   hasFileBasedErrorRecoverySupport(): boolean;
-}
-
 }

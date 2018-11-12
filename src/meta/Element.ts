@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='PropertyDescriptor'/>
-
-module ofx4js.meta {
+import { PropertyDescriptorParams, PropertyDescriptor, _default } from "./PropertyDescriptor";
 
 
 export interface ElementParams<T> extends PropertyDescriptorParams<T> {
@@ -36,7 +34,7 @@ export class Element extends PropertyDescriptor {
   private _required: boolean;
   private _order: number;
   private _collectionEntryType: any;
-  
+
   constructor(params: ElementParams<any>) {
     super(params);
     this._name = params.name;
@@ -71,13 +69,11 @@ export class Element extends PropertyDescriptor {
   public order(): number {
     return this._order;
   }
-  
+
   /**
    * If the type is a collection, return the type of the elements of the collection (otherwise null)
    */
   public collectionEntryType(): any {
     return this._collectionEntryType;
   }
-}
-
 }

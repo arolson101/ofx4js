@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../domain/data/common/Status'/>
-///<reference path='../domain/data/common/StatusCode'/>
-///<reference path='../domain/data/common/UnknownStatusCode'/>
-///<reference path='../meta/PropertyDescriptor'/>
-///<reference path='StringConversion'/>
-
-module ofx4js.io {
-
-import Status = ofx4js.domain.data.common.Status;
-import StatusCode = ofx4js.domain.data.common.StatusCode;
-import Severity = ofx4js.domain.data.common.Severity;
-import KnownCode = ofx4js.domain.data.common.KnownCode;
-import UnknownStatusCode = ofx4js.domain.data.common.UnknownStatusCode;
-import isAssignableFrom = ofx4js.meta.isAssignableFrom;
-
+import { KnownCode } from '../domain/data/common/Status';
+import { StatusCode, Severity } from '../domain/data/common/StatusCode';
+import { UnknownStatusCode } from '../domain/data/common/UnknownStatusCode';
+import { isAssignableFrom } from '../meta/PropertyDescriptor';
+import { StringConversion } from 'StringConversion';
 
 /**
  * Utility class for conversion to/from OFX strings.
@@ -64,7 +54,7 @@ export class DefaultStringConversion implements StringConversion {
       if (!statusCode) {
         statusCode = new UnknownStatusCode(code, "Unknown status code.", Severity.ERROR);
       }
-      
+
       return <E><any>statusCode;
     }
     else if (isAssignableFrom(Number, clazz)) {
@@ -101,7 +91,7 @@ export class DefaultStringConversion implements StringConversion {
     var minute: number = parseInt(value.substr(10, 2));
     var second: number = parseInt(value.substr(12, 2)) || 0;
     var milli: number = parseInt(value.substr(15, 3)) || 0;
-  
+
     // add timezone offset
     var bracket: number = value.indexOf("[");
     if(bracket != -1) {
@@ -112,7 +102,7 @@ export class DefaultStringConversion implements StringConversion {
       var gmtOffset: any = value.substring(bracket+1, close);
       hour -= 1.0 * gmtOffset;
     }
-    
+
     // create date as UTC
     return new Date(Date.UTC(year, month, day, hour, minute, second, milli));
   }
@@ -150,7 +140,7 @@ export class DefaultStringConversion implements StringConversion {
     }
     return s;
   }
-  
+
   /**
    * Pad a number with trailing zeroes until it is of <tt>size</tt> length.
    * Intended for numbers after a decimal point to get a fixed number of decimals
@@ -166,6 +156,4 @@ export class DefaultStringConversion implements StringConversion {
     }
     return s;
   }
-}
-
 }

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.positions {
-
 /**
  * Type of position.
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -35,6 +33,4 @@ export function PositionType_fromOfx(ofxVal: string): PositionType {
   } else {
     return null;
   }
-}
-
 }

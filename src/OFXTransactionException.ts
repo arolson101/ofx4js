@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { OFXException } from "./OFXException";
 
-module ofx4js {
 
 /**
  * @author Ryan Heaton
@@ -23,6 +23,4 @@ export class OFXTransactionException extends OFXException {
   public constructor(message: string = null) {
     super(message);
   }
-}
-
 }

@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../../meta/Aggregate_add'/>
-///<reference path='../../../../../meta/Element_add'/>
-///<reference path='../../../common/ProcessorDayOff'/>
+import { ProcessorDayOff } from "../../../common/ProcessorDayOff";
+import { Aggregate_add } from "../../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info.common {
-
-import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Funds Transfer Profile
@@ -198,5 +193,3 @@ Element_add(TransferProfile, { name: "CANMODMDLS", required: true, order: 80, ty
 Element_add(TransferProfile, { name: "MODELWND", required: true, order: 90, type: Number, read: TransferProfile.prototype.getModelWindow, write: TransferProfile.prototype.setModelWindow });
 Element_add(TransferProfile, { name: "DAYSWITH", required: true, order: 100, type: Number, read: TransferProfile.prototype.getWithdrawnDays, write: TransferProfile.prototype.setWithdrawnDays });
 Element_add(TransferProfile, { name: "DFLTDAYSTOPAY", required: true, order: 110, type: Number, read: TransferProfile.prototype.getDefaultDaysToPay, write: TransferProfile.prototype.setDefaultDaysToPay });
-
-}

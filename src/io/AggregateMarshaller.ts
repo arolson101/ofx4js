@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../collections/SortedSet'/>
-///<reference path='../collections/collections'/>
-///<reference path='StringConversion'/>
-///<reference path='DefaultStringConversion'/>
-///<reference path='AggregateIntrospector'/>
-///<reference path='AggregateInfo'/>
-///<reference path='AggregateAttribute'/>
-///<reference path='OFXWriter'/>
+import { Log, LogFactory } from "../log/Log";
+import { StringConversion } from "./StringConversion";
+import { DefaultStringConversion } from "./DefaultStringConversion";
+import { OFXWriter } from "./OFXWriter";
+import { AggregateInfo, HeaderValues } from "./AggregateInfo";
+import { AggregateIntrospector } from "./AggregateIntrospector";
+import { OFXException } from "../OFXException";
+import { StringMap } from "../collections/collections";
+import { SortedSet } from "../collections/SortedSet";
+import { AggregateAttribute, AggregateAttributeType } from "./AggregateAttribute";
 
-module ofx4js.io {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import StringMap = ofx4js.collections.StringMap;
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
 
 var LOG: Log;
 
@@ -39,7 +35,7 @@ var LOG: Log;
 export class AggregateMarshaller {
 
   private conversion: StringConversion;
-  
+
   constructor() {
     this.conversion = new DefaultStringConversion();
   }
@@ -113,7 +109,7 @@ export class AggregateMarshaller {
               if (aggregateAttribute.isArray()) {
                 attributeName = aggregateInfo.getName();
               }
-              
+
               writer.writeStartAggregate(attributeName);
               this.writeAggregateAttributes(objValue, writer, aggregateInfo.getAttributes());
               writer.writeEndAggregate(attributeName);
@@ -155,5 +151,3 @@ export class AggregateMarshaller {
 }
 
 LOG = LogFactory.getLog(AggregateMarshaller);
-
-}

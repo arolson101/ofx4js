@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../collections/Stack'/>
-///<reference path='OFXParseEvent'/>
-///<reference path='OFXHandler'/>
-
-module ofx4js.io {
-
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
-import Stack = ofx4js.collections.Stack;
+import { Stack } from '../collections/Stack'
+import { OFXParseEvent, OFXParseEventType } from './OFXParseEvent'
+import { OFXHandler } from './OFXHandler'
+import { Log, LogFactory } from '../log/Log'
+import { OFXException } from '../OFXException';
+import { SAXParser, Tag as SAXTag } from 'sax';
 
 var LOG: Log;
 
@@ -44,7 +41,7 @@ export class OFXV2ContentHandler {
 
     this.ofxHandler = ofxHandler;
   }
-  
+
   public install(parser: SAXParser) {
     parser.ontext = this.ontext.bind(this);
     parser.onopentag = this.onopentag.bind(this);
@@ -132,7 +129,7 @@ export class OFXV2ContentHandler {
       throw new OFXException("Illegal OFX event: " + eventToFinish.getEventType());
     }
   }
-  
+
   public ontext(value: string): void {
     if (value.trim().length > 0) {
       var event: OFXParseEvent;
@@ -149,5 +146,3 @@ export class OFXV2ContentHandler {
 }
 
 LOG = LogFactory.getLog(OFXV2ContentHandler);
-
-}

@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../common/T1099Request'/>
+import { T1099Request } from "../common/T1099Request";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.tax1099 {
-
-
-import T1099Request = ofx4js.domain.data.common.T1099Request;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Aparna Gawali
@@ -43,5 +37,3 @@ export class Tax1099Request extends T1099Request {
 
 Aggregate_add(Tax1099Request, "TAX1099RQ");
 Element_add(Tax1099Request, { name: "TAXYEAR", required: true, order: 0, type: String, read: Tax1099Request.prototype.getTaxYear, write: Tax1099Request.prototype.setTaxYear });
-
-}

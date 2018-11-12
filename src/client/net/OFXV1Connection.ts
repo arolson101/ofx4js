@@ -13,33 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../domain/data/RequestEnvelope'/>
-///<reference path='../../domain/data/ResponseEnvelope'/>
-///<reference path='../../io/OFXParseException'/>
-///<reference path='../../io/OFXWriter'/>
-///<reference path='../../io/AggregateMarshaller'/>
-///<reference path='../../io/AggregateUnmarshaller'/>
-///<reference path='../../io/v1/OFXV1Writer'/>
-///<reference path='../../io/StreamWriter'/>
-///<reference path='../../io/StringReader'/>
-///<reference path='../../log/Log'/>
-///<reference path='OFXConnection'/>
-///<reference path='OFXConnectionException'/>
+import { Log, LogFactory } from "../../log/Log";
+import { OFXException } from "../../OFXException";
+import { OFXConnection } from "./OFXConnection";
+import { AggregateMarshaller } from "../../io/AggregateMarshaller";
+import { AggregateUnmarshaller } from "../../io/AggregateUnmarshaller";
+import { ResponseEnvelope } from "../../domain/data/ResponseEnvelope";
+import { RequestEnvelope } from "../../domain/data/RequestEnvelope";
+import { OutputBuffer } from "../../io/StreamWriter";
+import { OFXWriter } from "../../io/OFXWriter";
+import { StringReader } from "../../io/StringReader";
+import { OFXConnectionException } from "./OFXConnectionException";
+import { OFXV1Writer } from "../../io/v1/OFXV1Writer";
 
-
-module ofx4js.client.net {
-
-import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import OFXParseException = ofx4js.io.OFXParseException;
-import OFXWriter = ofx4js.io.OFXWriter;
-import AggregateMarshaller = ofx4js.io.AggregateMarshaller;
-import OFXV1Writer = ofx4js.io.v1.OFXV1Writer;
-import AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
-import StringReader = ofx4js.io.StringReader;
-import OutputBuffer = ofx4js.io.OutputBuffer;
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
 
 // import java.io.*;
 // import java.net.HttpURLConnection;
@@ -75,9 +61,9 @@ function DefaultAjaxHandler(url: string, verb: string, headers: HeadersObject, d
     request.onerror = function() {
       reject(new OFXException("Network error"));
     };
-    
+
     request.send(data);
-    
+
     if (!async && !onloadCalled) {
       (<any>request).onload();
     }
@@ -136,7 +122,7 @@ export class OFXV1Connection implements OFXConnection {
       }
     }
   }
-  
+
   protected logResponse(inBuffer: string) {
     if (LOG.isInfoEnabled()) {
       if (LOG.isDebugEnabled()) {
@@ -233,8 +219,8 @@ export class OFXV1Connection implements OFXConnection {
   public getAsync() {
     return this.async;
   }
-  
-  
+
+
   /**
    * Async mode
    *
@@ -243,7 +229,7 @@ export class OFXV1Connection implements OFXConnection {
   public setAsync(async: boolean) {
     this.async = async;
   }
-  
+
   /**
    * Async mode
    *
@@ -252,8 +238,8 @@ export class OFXV1Connection implements OFXConnection {
   public getAjax() {
     return this.ajax;
   }
-  
-  
+
+
   /**
    * Async mode
    *
@@ -266,5 +252,3 @@ export class OFXV1Connection implements OFXConnection {
 }
 
 LOG = LogFactory.getLog(OFXV1Connection);
-
-}

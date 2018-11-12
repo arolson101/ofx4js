@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../RequestMessageSet'/>
-///<reference path='../RequestMessage'/>
-///<reference path='SignonRequest'/>
-///<reference path='PasswordChangeRequestTransaction'/>
+import { RequestMessageSet } from "../RequestMessageSet";
+import { SignonRequest } from "./SignonRequest";
+import { PasswordChangeRequestTransaction } from "./PasswordChangeRequestTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { RequestMessage } from "../RequestMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.signon {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
 
 /**
  * The sign-on request message set.
@@ -102,5 +95,3 @@ export class SignonRequestMessageSet extends RequestMessageSet {
 Aggregate_add(SignonRequestMessageSet, "SIGNONMSGSRQV1");
 ChildAggregate_add(SignonRequestMessageSet, { required: true, order: 0, type: SignonRequest, read: SignonRequestMessageSet.prototype.getSignonRequest, write: SignonRequestMessageSet.prototype.setSignonRequest });
 ChildAggregate_add(SignonRequestMessageSet, { order: 10, type: PasswordChangeRequestTransaction, read: SignonRequestMessageSet.prototype.getPasswordChangeRequest, write: SignonRequestMessageSet.prototype.setPasswordChangeRequest });
-
-}

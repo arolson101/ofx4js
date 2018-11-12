@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../ResponseMessageSet'/>
-///<reference path='../ResponseMessage'/>
-///<reference path='PasswordChangeResponseTransaction'/>
-///<reference path='SignonResponse'/>
-
-module ofx4js.domain.data.signon {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
+import { ResponseMessageSet } from "../ResponseMessageSet";
+import { SignonResponse } from "./SignonResponse";
+import { PasswordChangeResponseTransaction } from "./PasswordChangeResponseTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { ResponseMessage } from "../ResponseMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
 /**
  * The sign-on response message set.
@@ -97,5 +89,3 @@ export class SignonResponseMessageSet extends ResponseMessageSet {
 Aggregate_add(SignonResponseMessageSet, "SIGNONMSGSRSV1");
 ChildAggregate_add(SignonResponseMessageSet, { order: 0, type: SignonResponse, read: SignonResponseMessageSet.prototype.getSignonResponse, write: SignonResponseMessageSet.prototype.setSignonResponse });
 ChildAggregate_add(SignonResponseMessageSet, { order: 10, type: PasswordChangeResponseTransaction, read: SignonResponseMessageSet.prototype.getPasswordChangeResponse, write: SignonResponseMessageSet.prototype.setPasswordChangeResponse });
-
-}

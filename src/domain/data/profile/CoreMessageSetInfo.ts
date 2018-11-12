@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../ApplicationSecurity'/>
-///<reference path='SynchronizationCapability'/>
+import { ApplicationSecurity } from "../ApplicationSecurity";
+import { SynchronizationCapability } from "./SynchronizationCapability";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.profile {
-
-import ApplicationSecurity = ofx4js.domain.data.ApplicationSecurity;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Core information about a specific version of a specific message set.
@@ -42,7 +37,7 @@ export class CoreMessageSetInfo {
   private syncCapability: SynchronizationCapability;
   private fileBasedErrorRecoverySupport: boolean;
   private timeout: number;
-  
+
   constructor() {
     this.version = "1";
     this.language = "ENG"; //Locale.US.getISO3Language();
@@ -243,5 +238,3 @@ Element_add(CoreMessageSetInfo, { name: "LANGUAGE", required: true, order: 60, t
 Element_add(CoreMessageSetInfo, { name: "SYNCMODE", required: true, order: 70, type: SynchronizationCapability, read: CoreMessageSetInfo.prototype.getSyncCapability, write: CoreMessageSetInfo.prototype.setSyncCapability });
 Element_add(CoreMessageSetInfo, { name: "RESPFILEER", required: true, order: 80, type: Boolean, read: CoreMessageSetInfo.prototype.getFileBasedErrorRecoverySupport, write: CoreMessageSetInfo.prototype.setFileBasedErrorRecoverySupport });
 Element_add(CoreMessageSetInfo, { name: "INTU.TIMEOUT", order: 90, type: Number, read: CoreMessageSetInfo.prototype.getIntuTimeout, write: CoreMessageSetInfo.prototype.setIntuTimeout });
-
-}

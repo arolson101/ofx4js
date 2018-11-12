@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data {
-
 /**
  * The message set type, used to define message set order in the envelope.
  *
@@ -47,7 +45,5 @@ export enum MessageSetType {
   profile,
 
   tax1099
-
-}
 
 }

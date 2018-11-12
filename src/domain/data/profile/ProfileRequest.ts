@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../RequestMessage'/>
-///<reference path='ClientRoutingCapability'/>
+import { RequestMessage } from "../RequestMessage";
+import { ClientRoutingCapability } from "./ClientRoutingCapability";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.profile {
-
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -32,7 +27,7 @@ export class ProfileRequest extends RequestMessage {
 
   private routingCapability: ClientRoutingCapability;
   private profileLastUpdated: Date;
-  
+
   constructor() {
     super();
     this.routingCapability = ClientRoutingCapability.MESSAGE_SET;
@@ -78,5 +73,3 @@ export class ProfileRequest extends RequestMessage {
 Aggregate_add( ProfileRequest, "PROFRQ" );
 Element_add(ProfileRequest, { name: "CLIENTROUTING", order: 0, type: ClientRoutingCapability, read: ProfileRequest.prototype.getRoutingCapability, write: ProfileRequest.prototype.setRoutingCapability });
 Element_add(ProfileRequest, { name: "DTPROFUP", order: 10, type: Date, read: ProfileRequest.prototype.getProfileLastUpdated, write: ProfileRequest.prototype.setProfileLastUpdated });
-
-}

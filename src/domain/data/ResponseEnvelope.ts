@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../../collections/SortedSet'/>
-///<reference path='../../meta/Aggregate_add'/>
-///<reference path='../../meta/ChildAggregate_add'/>
-///<reference path='../../meta/Header_add'/>
-///<reference path='signon/SignonResponseMessageSet'/>
-///<reference path='signon/SignonResponse'/>
-///<reference path='ApplicationSecurity'/>
-///<reference path='ApplicationSecurity'/>
-///<reference path='MessageSetType'/>
-///<reference path='ResponseMessageSet'/>
+import { Aggregate_add } from "../../meta/Aggregate_Add";
+import { Header_add } from "../../meta/Header_add";
+import { ChildAggregate_add } from "../../meta/ChildAggregate_add";
+import { ApplicationSecurity } from "./ApplicationSecurity";
+import { SortedSet } from "../../collections/SortedSet";
+import { ResponseMessageSet } from "./ResponseMessageSet";
+import { SignonResponse } from "./signon/SignonResponse";
+import { MessageSetType } from "./MessageSetType";
+import { SignonResponseMessageSet } from "./signon/SignonResponseMessageSet";
 
-module ofx4js.domain.data {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Header_add = ofx4js.meta.Header_add;
-import SignonResponseMessageSet = ofx4js.domain.data.signon.SignonResponseMessageSet;
-import SignonResponse = ofx4js.domain.data.signon.SignonResponse;
 
 //import java.util.SortedSet;
 
@@ -153,5 +143,3 @@ Aggregate_add( ResponseEnvelope, "OFX" );
 Header_add(ResponseEnvelope, { name: "SECURITY", type: ApplicationSecurity, read: ResponseEnvelope.prototype.getSecurity, write: ResponseEnvelope.prototype.setSecurity });
 Header_add(ResponseEnvelope, { name: "NEWFILEUID", type: String, read: ResponseEnvelope.prototype.getUID, write: ResponseEnvelope.prototype.setUID });
 ChildAggregate_add(ResponseEnvelope, { order: 1, type: SortedSet, collectionEntryType: ResponseMessageSet, read: ResponseEnvelope.prototype.getMessageSets, write: ResponseEnvelope.prototype.setMessageSets });
-
-}

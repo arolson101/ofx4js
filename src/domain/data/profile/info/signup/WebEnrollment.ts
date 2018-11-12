@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../../meta/Aggregate_add'/>
-///<reference path='../../../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info.signup {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Web Enrollment option containing URL to direct user for web based enrollment, if supported.
@@ -46,5 +42,3 @@ export class WebEnrollment {
 
 Aggregate_add( WebEnrollment, "WEBENROLL" );
 Element_add(WebEnrollment, { name: "URL", required: true, order: 0, type: String, read: WebEnrollment.prototype.getUrl, write: WebEnrollment.prototype.setUrl });
-
-}

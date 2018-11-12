@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../RequestMessageSet'/>
-///<reference path='Tax1099RequestTransaction'/>
-
-module ofx4js.domain.data.tax1099 {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
+import { RequestMessageSet } from "../RequestMessageSet";
+import { Tax1099RequestTransaction } from "./Tax1099RequestTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { RequestMessage } from "../RequestMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
 /**
  * @author aparna.gawali
  * aparna.gawali@sungard.com
- * 
+ *
  */
 export class Tax1099RequestMessageSet extends RequestMessageSet {
 
@@ -70,5 +63,3 @@ export class Tax1099RequestMessageSet extends RequestMessageSet {
 
 Aggregate_add(Tax1099RequestMessageSet, "TAX1099MSGSRQV1" );
 ChildAggregate_add(Tax1099RequestMessageSet, { order: 0, type: Tax1099RequestTransaction, read: Tax1099RequestMessageSet.prototype.getTaxRequestTransaction, write: Tax1099RequestMessageSet.prototype.setTaxRequestTransaction });
-
-}

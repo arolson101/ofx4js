@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../../meta/Aggregate_add'/>
-///<reference path='../../../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info.signup {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Other Enrollment option containing a text message directing users to some other method (such as a phone call)
@@ -45,5 +41,3 @@ export class OtherEnrollment {
 
 Aggregate_add( OtherEnrollment, "OTHERENROLL" );
 Element_add(OtherEnrollment, { name: "MESSAGE", required: true, order: 0, type: String, read: OtherEnrollment.prototype.getMessage, write: OtherEnrollment.prototype.setMessage });
-
-}

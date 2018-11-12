@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='PropertyDescriptor'/>
+import { PropertyDescriptorParams, PropertyDescriptor, _default } from "./PropertyDescriptor";
 
-module ofx4js.meta {
 
 export interface ChildAggregateParams<T> extends PropertyDescriptorParams<T> {
   order: number;
@@ -35,7 +34,7 @@ export class ChildAggregate extends PropertyDescriptor {
   private _required: boolean;
   private _order: number;
   private _collectionEntryType: any;
-  
+
   constructor(params: ChildAggregateParams<any>) {
     super(params);
     this._order = params.order;
@@ -43,7 +42,7 @@ export class ChildAggregate extends PropertyDescriptor {
     this._required = _default(params.required, false);
     this._collectionEntryType = _default(params.collectionEntryType, null);
   }
-  
+
   /**
    * Used to specify the name of the aggregate in its context as a child aggregate.
    *
@@ -52,7 +51,7 @@ export class ChildAggregate extends PropertyDescriptor {
   public name(): string {
     return this._name;
   }
-  
+
   /**
    * Whether this aggregate is required.
    *
@@ -61,7 +60,7 @@ export class ChildAggregate extends PropertyDescriptor {
   public required(): boolean {
     return this._required;
   }
-  
+
   /**
    * The order this child aggregate comes in its parent aggregate.
    *
@@ -70,13 +69,11 @@ export class ChildAggregate extends PropertyDescriptor {
   public order(): number {
     return this._order;
   }
-  
+
   /**
    * If the type is a collection, return the type of the elements of the collection (otherwise null)
    */
   public collectionEntryType(): any {
     return this._collectionEntryType;
   }
-}
-
 }

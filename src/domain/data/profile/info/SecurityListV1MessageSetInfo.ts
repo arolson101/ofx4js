@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+import { VersionSpecificMessageSetInfo } from "../VersionSpecificMessageSetInfo";
+import { MessageSetType } from "../../MessageSetType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info {
-
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @see "Section 13.7.2.1, OFX Spec"
@@ -49,5 +44,3 @@ export class SecurityListV1MessageSetInfo extends VersionSpecificMessageSetInfo 
 
 Aggregate_add( SecurityListV1MessageSetInfo, "SECLISTMSGSETV1" );
 Element_add(SecurityListV1MessageSetInfo, { name: "SECLISTRQDNLD", required:true, order: 10, type: Boolean, read: SecurityListV1MessageSetInfo.prototype.getSupportsSecurityListDownload, write: SecurityListV1MessageSetInfo.prototype.setSupportsSecurityListDownload });
-
-}

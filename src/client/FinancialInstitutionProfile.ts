@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../domain/data/MessageSetProfile'/>
-///<reference path='../domain/data/MessageSetType'/>
-///<reference path='../domain/data/SignonProfile'/>
+import { MessageSetType } from "../domain/data/MessageSetType";
+import { MessageSetProfile } from "../domain/data/MessageSetProfile";
+import { SignonProfile } from "../domain/data/SignonProfile";
 
-module ofx4js.client {
-
-import MessageSetProfile = ofx4js.domain.data.MessageSetProfile;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import SignonProfile = ofx4js.domain.data.SignonProfile;
 
 /**
  * @author Ryan Heaton
@@ -152,6 +147,4 @@ export interface FinancialInstitutionProfile {
    * @return The signon profile, or null if none was found.
    */
   getSignonProfile(messageSet: MessageSetProfile): SignonProfile;
-}
-
 }

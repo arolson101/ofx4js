@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='domain/data/common/Status'/>
-
-module ofx4js {
-
-import Status = ofx4js.domain.data.common.Status;
+import { Status } from './domain/data/common/Status'
+import { OFXException } from './OFXException';
 
 /**
  * Exception based on a StatusCode response
@@ -35,6 +32,4 @@ export class OFXStatusException extends OFXException {
   public getStatus(): Status {
   	return this.status;
   }
-}
-
 }

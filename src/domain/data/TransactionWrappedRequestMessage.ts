@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../project.d.ts'/>
-///<reference path='../../meta/Element_add'/>
-///<reference path='RequestMessage'/>
-
-module ofx4js.domain.data {
-
-import Element_add = ofx4js.meta.Element_add;
-
-var UUID: UUID = require("uuid");
+import UUID from 'uuid';
+import { RequestMessage } from './RequestMessage';
+import { Element_add } from '../../meta/Element_add';
 
 /**
  * A request message wrapped in a transaction.
@@ -29,7 +23,7 @@ var UUID: UUID = require("uuid");
  * @author Ryan Heaton
  * @see "Section 2.4.6, OFX Spec"
  */
-export /*abstract*/ class TransactionWrappedRequestMessage<M extends RequestMessage> extends RequestMessage {
+export abstract class TransactionWrappedRequestMessage<M extends RequestMessage> extends RequestMessage {
 
   private UID: string;
   private clientCookie: string;
@@ -99,11 +93,10 @@ export /*abstract*/ class TransactionWrappedRequestMessage<M extends RequestMess
    *
    * @param message The wrapped message.
    */
-  public /*abstract*/ setWrappedMessage(message: M): void { throw new OFXException("abstract"); }
+  public abstract setWrappedMessage(message: M): void;
 
 }
 
 Element_add(TransactionWrappedRequestMessage, { name: "TRNUID", required: true, order: 0, type: String, read: TransactionWrappedRequestMessage.prototype.getUID, write: TransactionWrappedRequestMessage.prototype.setUID });
 Element_add(TransactionWrappedRequestMessage, { name: "CLTCOOKIE", order: 10, type: String, read: TransactionWrappedRequestMessage.prototype.getClientCookie, write: TransactionWrappedRequestMessage.prototype.setClientCookie });
 Element_add(TransactionWrappedRequestMessage, { name: "TAN", order: 20, type: String, read: TransactionWrappedRequestMessage.prototype.getTransactionAuthorizationNumber, write: TransactionWrappedRequestMessage.prototype.setTransactionAuthorizationNumber });
-}

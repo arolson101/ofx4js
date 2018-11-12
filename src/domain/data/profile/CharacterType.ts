@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.profile {
-
 /**
  * @author Ryan Heaton
  * @see "Section 7.2.2, OFX Spec"
@@ -29,6 +27,4 @@ export enum CharacterType {
   ALPHAORNUMERIC,
 
   ALPHAANDNUMERIC
-}
-
 }

@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../meta/Aggregate_add'/>
-///<reference path='../../meta/ChildAggregate_add'/>
-///<reference path='../../meta/Element_add'/>
-///<reference path='../../io/AggregateInfo'/>
-///<reference path='common/Status'/>
-///<reference path='common/StatusHolder'/>
+import { ResponseMessage } from "./ResponseMessage";
+import { StatusHolder } from "./common/StatusHolder";
+import { Status } from "./common/Status";
+import { Element_add } from "../../meta/Element_add";
+import { ChildAggregate_add } from "../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data {
-
-import Status = ofx4js.domain.data.common.Status;
-import StatusHolder = ofx4js.domain.data.common.StatusHolder;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import AggregateInfo = ofx4js.io.AggregateInfo;
 
 /**
  * A response message wrapped in a transaction.
@@ -35,7 +26,7 @@ import AggregateInfo = ofx4js.io.AggregateInfo;
  * @author Ryan Heaton
  * @see "Section 2.4.6, OFX Spec"
  */
-export /*abstract*/ class TransactionWrappedResponseMessage<M extends ResponseMessage> extends ResponseMessage implements StatusHolder {
+export abstract class TransactionWrappedResponseMessage<M extends ResponseMessage> extends ResponseMessage implements StatusHolder {
 
   private UID: string;
   private clientCookie: string;
@@ -120,12 +111,10 @@ export /*abstract*/ class TransactionWrappedResponseMessage<M extends ResponseMe
    *
    * @return The wrapped message.
    */
-  public /*abstract*/ getWrappedMessage(): M { throw new OFXException("abstract"); }
+  public abstract getWrappedMessage(): M;
 
 }
 
 Element_add(TransactionWrappedResponseMessage, { name: "TRNUID", required: true, order: 0, type: String, read: TransactionWrappedResponseMessage.prototype.getUID, write: TransactionWrappedResponseMessage.prototype.setUID });
 Element_add(TransactionWrappedResponseMessage, { name: "CLTCOOKIE", order: 20, type: String, read: TransactionWrappedResponseMessage.prototype.getClientCookie, write: TransactionWrappedResponseMessage.prototype.setClientCookie });
 ChildAggregate_add(TransactionWrappedResponseMessage, { required: true, order: 10, type: Status, read: TransactionWrappedResponseMessage.prototype.getStatus, write: TransactionWrappedResponseMessage.prototype.setStatus });
-
-}

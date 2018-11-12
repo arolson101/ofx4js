@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../common/ProcessorDayOff'/>
-///<reference path='../../profile/VersionSpecificMessageSetInfo'/>
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { VersionSpecificMessageSetInfo } from "../VersionSpecificMessageSetInfo";
+import { ProcessorDayOff } from "../../common/ProcessorDayOff";
+import { MessageSetType } from "../../MessageSetType";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info {
-
-import ProcessorDayOff = ofx4js.domain.data.common.ProcessorDayOff;
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Wire Transfer Message Set Profile
@@ -91,5 +85,3 @@ Element_add(WireTransferV1MessageSetInfo, { name: "PROCENDTM", required: true, o
 Element_add(WireTransferV1MessageSetInfo, { name: "CANSCHED", required: true, order: 30, type: Boolean, read: WireTransferV1MessageSetInfo.prototype.getSupportsScheduledTransfers, write: WireTransferV1MessageSetInfo.prototype.setSupportsScheduledTransfers });
 Element_add(WireTransferV1MessageSetInfo, { name: "DOMXFERFEE", required: true, order: 40, type: Number, read: WireTransferV1MessageSetInfo.prototype.getDomesticWireTransferFee, write: WireTransferV1MessageSetInfo.prototype.setDomesticWireTransferFee });
 Element_add(WireTransferV1MessageSetInfo, { name: "INTLXFERFEE", required: true, order: 50, type: Number, read: WireTransferV1MessageSetInfo.prototype.getInternationalWireTransferFee, write: WireTransferV1MessageSetInfo.prototype.setInternationalWireTransferFee });
-
-}

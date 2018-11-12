@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='PayerAddress'/>
-///<reference path='RecAddress'/>
-///<reference path='ExtDBInfo'/>
-
-module ofx4js.domain.data.tax1099 {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-
-import Element_add = ofx4js.meta.Element_add;
+import { ExtDBInfo } from "./ExtDBInfo";
+import { PayerAddress } from "./PayerAddress";
+import { RecAddress } from "./RecAddress";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
 /**
  * @author Aparna Gawali
@@ -40,23 +33,23 @@ export class Tax1099B  {
 	private recAddress: RecAddress;
 	private recId: string;
 	private recAcct: string;
-	
-	 
+
+
 	  public getSrvrtId(): string {
 	    return this.srvrtId;
 	  }
 
-	  
+
       public setSrvrtId(srvrtId: string): void {
 	    this.srvrtId = srvrtId;
 	  }
 
-	 
+
       public getTaxYear(): string {
 	    return this.taxYear;
 	  }
 
-	 
+
 	  public setTaxYear(taxYear: string): void {
 	    this.taxYear = taxYear;
 	  }
@@ -91,7 +84,7 @@ export class Tax1099B  {
 	public setPayerAddress(payerAddress: PayerAddress): void {
 		this.payerAddress = payerAddress;
 	}
-	
+
 	/**
 	 * @return the payerId
 	 */
@@ -106,7 +99,7 @@ export class Tax1099B  {
 	public setPayerId(payerId: string): void {
 		this.payerId = payerId;
 	}
-	
+
 
 	/**
 	 * @return the recAddress
@@ -164,5 +157,3 @@ Element_add(Tax1099B, { name: "PAYERID", required: true, order: 4, type: String,
 ChildAggregate_add(Tax1099B, { required:true, order: 5, type: RecAddress, read: Tax1099B.prototype.getRecAddress, write: Tax1099B.prototype.setRecAddress });
 Element_add(Tax1099B, { name: "RECID", required: true, order: 6, type: String, read: Tax1099B.prototype.getRecId, write: Tax1099B.prototype.setRecId });
 Element_add(Tax1099B, { name: "RECACCT", required: true, order: 7, type: String, read: Tax1099B.prototype.getRecAcct, write: Tax1099B.prototype.setRecAcct });
-
-}

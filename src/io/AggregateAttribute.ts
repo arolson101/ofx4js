@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../meta/ChildAggregate'/>
-///<reference path='../meta/Element'/>
-///<reference path='../meta/PropertyDescriptor'/>
-///<reference path='../collections/SortedSet'/>
-///<reference path='AggregateInfo'/>
-
-module ofx4js.io {
-
-import SortedSet = ofx4js.collections.SortedSet;
-import ReadMethod = ofx4js.meta.ReadMethod;
-import WriteMethod = ofx4js.meta.WriteMethod;
-import ChildAggregate = ofx4js.meta.ChildAggregate;
-import Element = ofx4js.meta.Element;
-import PropertyDescriptor = ofx4js.meta.PropertyDescriptor;
+import { ChildAggregate } from '../meta/ChildAggregate';
+import { Element } from '../meta/Element';
+import { ReadMethod, WriteMethod } from '../meta/PropertyDescriptor';
+import { SortedSet } from '../collections/SortedSet';
+import { AggregateInfo } from 'AggregateInfo';
+import { OFXException } from '../OFXException';
+import { AggregateIntrospector } from './AggregateIntrospector';
 
 //import Log = org.apache.commons.logging.Log;
 //import LogFactory = org.apache.commons.logging.LogFactory;
@@ -58,7 +51,7 @@ export class AggregateAttribute {
   private type: AggregateAttributeType;
   private toString_: string;
   private collection: boolean;
-  
+
   constructor(arg: Element | ChildAggregate) {
     if(arg instanceof Element) {
       this.AggregateAttributeFromElement(arg);
@@ -153,7 +146,7 @@ export class AggregateAttribute {
       collection.push(value);
       value = collection;
     }
-    
+
     this.writeMethod.call(instance, value);
   }
 
@@ -197,7 +190,4 @@ export class AggregateAttribute {
   public toString(): string {
     return this.toString_;
   }
-}
-
-
 }

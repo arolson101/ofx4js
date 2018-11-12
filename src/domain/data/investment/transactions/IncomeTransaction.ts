@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='../../investment/positions/Inv401KSource'/>
-///<reference path='../../seclist/SecurityId'/>
-///<reference path='BaseOtherInvestmentTransaction'/>
-///<reference path='IncomeType'/>
-///<reference path='OriginalCurrency'/>
-///<reference path='TransactionWithSecurity'/>
+import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
+import { TransactionType } from "./TransactionType";
+import { TransactionWithSecurity } from "./TransactionWithSecurity";
+import { SecurityId } from "../../seclist/SecurityId";
+import { OriginalCurrency } from "./OriginalCurrency";
+import { IncomeType, IncomeType_fromOfx } from "./IncomeType";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { Inv401KSource, Inv401KSource_fromOfx } from "../positions/Inv401KSource";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import Inv401KSource = ofx4js.domain.data.investment.positions.Inv401KSource;
-import Inv401KSource_fromOfx = ofx4js.domain.data.investment.positions.Inv401KSource_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Transaction for investment income that is realized as cash into the investment account.
@@ -319,5 +310,3 @@ Element_add(IncomeTransaction, { name: "WITHHOLDING", order: 80, type: Number, r
 Element_add(IncomeTransaction, { name: "CURRENCY", order: 90, type: String, read: IncomeTransaction.prototype.getCurrencyCode, write: IncomeTransaction.prototype.setCurrencyCode });
 ChildAggregate_add(IncomeTransaction, { order: 120, type: OriginalCurrency, read: IncomeTransaction.prototype.getOriginalCurrencyInfo, write: IncomeTransaction.prototype.setOriginalCurrencyInfo });
 Element_add(IncomeTransaction, { name: "INV401KSOURCE", order: 110, type: String, read: IncomeTransaction.prototype.get401kSource, write: IncomeTransaction.prototype.set401kSource });
-
-}

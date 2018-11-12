@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../SignonProfile'/>
-///<reference path='CharacterType'/>
+import { SignonProfile } from "../SignonProfile";
+import { CharacterType } from "./CharacterType";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.profile {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import SignonProfile = ofx4js.domain.data.SignonProfile;
 
 /**
  * Sign-on information
@@ -49,7 +44,7 @@ export class SignonInfo implements SignonProfile {
   private authTokenInfoURL: string;
   private mfaSupported: boolean;
   private mfaChallengeRequiredForFirstSignon: boolean;
-  
+
   constructor() {
     this.passwordCaseSensitive = true;
     this.passwordSpecialCharsAllowed = true;
@@ -383,5 +378,3 @@ Element_add(SignonInfo, { name: "AUTHTOKENLABEL", order: 130, type: String, read
 Element_add(SignonInfo, { name: "AUTHTOKENINFOURL", order: 140, type: String, read: SignonInfo.prototype.getAuthTokenInfoURL, write: SignonInfo.prototype.setAuthTokenInfoURL });
 Element_add(SignonInfo, { name: "MFACHALLENGESUPT", order: 150, type: Boolean, read: SignonInfo.prototype.getMfaSupported, write: SignonInfo.prototype.setMfaSupported });
 Element_add(SignonInfo, { name: "MFACHALLENGEFIRST", order: 160, type: Boolean, read: SignonInfo.prototype.getMfaChallengeRequiredForFirstSignon, write: SignonInfo.prototype.setMfaChallengeRequiredForFirstSignon });
-
-}

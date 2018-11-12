@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='ResponseMessage'/>
-
-module ofx4js.domain.data {
+import { ResponseMessage } from "./ResponseMessage";
+import { MessageSetType } from "./MessageSetType";
 
 
 /**
@@ -23,11 +22,11 @@ module ofx4js.domain.data {
  *
  * @author Ryan Heaton
  */
-export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMessageSet>*/ {
+export abstract class ResponseMessageSet /*implements Comparable<ResponseMessageSet>*/ {
 
   private version: string;
 
-  public /*abstract*/ getType(): MessageSetType { throw new OFXException("abstract"); }
+  public abstract getType(): MessageSetType
 
   constructor() {
     this.version = "1";
@@ -56,17 +55,15 @@ export /*abstract*/ class ResponseMessageSet /*implements Comparable<ResponseMes
    *
    * @return The list of response messages.
    */
-  public /*abstract*/ getResponseMessages(): Array<ResponseMessage> { throw new OFXException("abstract"); }
+  public abstract getResponseMessages(): Array<ResponseMessage>;
 /*
   // Inherited.
   public compareTo(o: ResponseMessageSet): number {
     return getType().compareTo(o.getType());
   }
 */
-  
+
   public static contentCompare(left: ResponseMessageSet, right: ResponseMessageSet): number {
     return left.getType() - right.getType();
   }
-}
-
 }

@@ -13,23 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../meta/Aggregate'/>
-///<reference path='../meta/ChildAggregate'/>
-///<reference path='../meta/Header'/>
-///<reference path='../meta/Element'/>
-///<reference path='../log/Log'/>
-///<reference path='AggregateInfo'/>
-///<reference path='../collections/collections'/>
-
-module ofx4js.io {
-
-import Aggregate = ofx4js.meta.Aggregate;
-import ChildAggregate = ofx4js.meta.ChildAggregate;
-import Header = ofx4js.meta.Header;
-import Element = ofx4js.meta.Element;
-import Log = ofx4js.log.Log;
-import LogFactory = ofx4js.log.LogFactory;
-import AnyMap = ofx4js.collections.AnyMap;
+import { ChildAggregate } from '../meta/ChildAggregate';
+import { Header } from '../meta/Header';
+import { Element } from '../meta/Element';
+import { Log, LogFactory } from '../log/Log';
+import { AggregateInfo } from './AggregateInfo';
+import { AnyMap } from '../collections/collections';
 
 //import Log = org.apache.commons.logging.Log;
 //import LogFactory = org.apache.commons.logging.LogFactory;
@@ -60,7 +49,7 @@ export class AggregateIntrospector {
       return null;
     }
   }
-  
+
   private static getAncestorAggregateInfo(clazz: Function): AggregateInfo {
     // traverse inheritence hierarchy.  This is janky because of typescript's __extends function, and may break in the future
     for(var proto: Function = clazz.prototype; proto; proto = Object.getPrototypeOf(proto)) {
@@ -93,7 +82,7 @@ export class AggregateIntrospector {
       clazz.Aggregate = new AggregateInfo(name, clazz, parentInfo);
     }
   }
-  
+
   public static addChildAggregate(clazz: any, childAggregate: ChildAggregate) {
     var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
     if(!aggregateInfo) {
@@ -105,7 +94,7 @@ export class AggregateIntrospector {
       aggregateInfo.addChildAggregate(childAggregate);
     }
   }
-  
+
   public static addElement(clazz: any, element: Element) {
     var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
     if(!aggregateInfo) {
@@ -117,7 +106,7 @@ export class AggregateIntrospector {
       aggregateInfo.addElement(element);
     }
   }
-  
+
   public static addHeader(clazz: any, header: Header) {
     var aggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
     if(!aggregateInfo) {
@@ -132,5 +121,3 @@ export class AggregateIntrospector {
 }
 
 LOG = LogFactory.getLog(AggregateIntrospector);
-
-}

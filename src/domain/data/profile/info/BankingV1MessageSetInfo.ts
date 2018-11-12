@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../banking/AccountType'/>
-///<reference path='banking/EmailProfile'/>
-///<reference path='banking/StopCheckProfile'/>
-///<reference path='common/ImageProfile'/>
-///<reference path='common/TransferProfile'/>
+import { VersionSpecificMessageSetInfo } from "../VersionSpecificMessageSetInfo";
+import { AccountType } from "../../banking/AccountType";
+import { TransferProfile } from "./common/TransferProfile";
+import { StopCheckProfile } from "./banking/StopCheckProfile";
+import { EmailProfile } from "./banking/EmailProfile";
+import { ImageProfile } from "./common/ImageProfile";
+import { MessageSetType } from "../../MessageSetType";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.profile.info {
-
-import AccountType = ofx4js.domain.data.banking.AccountType;
-import VersionSpecificMessageSetInfo = ofx4js.domain.data.profile.VersionSpecificMessageSetInfo;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import EmailProfile = ofx4js.domain.data.profile.info.banking.EmailProfile;
-import ImageProfile = ofx4js.domain.data.profile.info.common.ImageProfile;
-import StopCheckProfile = ofx4js.domain.data.profile.info.banking.StopCheckProfile;
-import TransferProfile = ofx4js.domain.data.profile.info.common.TransferProfile;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Banking Message Set Profile
@@ -130,5 +121,3 @@ ChildAggregate_add(BankingV1MessageSetInfo, { name: "XFERPROF", order: 30, type:
 ChildAggregate_add(BankingV1MessageSetInfo, { name: "STPCKPROF", order: 40, type: StopCheckProfile, read: BankingV1MessageSetInfo.prototype.getStopCheckProfile, write: BankingV1MessageSetInfo.prototype.setStopCheckProfile });
 ChildAggregate_add(BankingV1MessageSetInfo, { name: "EMAILPROF", required: true, order: 50, type: EmailProfile, read: BankingV1MessageSetInfo.prototype.getEmailProfile, write: BankingV1MessageSetInfo.prototype.setEmailProfile });
 ChildAggregate_add(BankingV1MessageSetInfo, { name: "IMAGEPROF", order: 60, type: ImageProfile, read: BankingV1MessageSetInfo.prototype.getImageProfile, write: BankingV1MessageSetInfo.prototype.setImageProfile });
-
-}

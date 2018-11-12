@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../MessageSetType'/>
-///<reference path='../ResponseMessageSet'/>
-///<reference path='Tax1099ResponseTransaction'/>
+import { ResponseMessageSet } from "../ResponseMessageSet";
+import { Tax1099ResponseTransaction } from "./Tax1099ResponseTransaction";
+import { MessageSetType } from "../MessageSetType";
+import { OFXException } from "../../../OFXException";
+import { ResponseMessage } from "../ResponseMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.tax1099 {
-
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import ResponseMessageSet = ofx4js.domain.data.ResponseMessageSet;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
@@ -58,9 +53,9 @@ export class Tax1099ResponseMessageSet extends ResponseMessageSet {
    * @param taxResponseTransaction The statement responses.
    */
   public setTaxResponseTransaction(taxResponseTransaction: Tax1099ResponseTransaction | Array<Tax1099ResponseTransaction>): void {
-    if(taxResponseTransaction instanceof Array) {
+    if (taxResponseTransaction instanceof Array) {
       this.taxResponseTransaction = <Array<Tax1099ResponseTransaction>>taxResponseTransaction;
-    } else if(taxResponseTransaction instanceof Tax1099ResponseTransaction) {
+    } else if (taxResponseTransaction instanceof Tax1099ResponseTransaction) {
       this.taxResponseTransaction = [<Tax1099ResponseTransaction>taxResponseTransaction];
     } else {
       throw new OFXException("invalid type");
@@ -82,8 +77,6 @@ export class Tax1099ResponseMessageSet extends ResponseMessageSet {
     return this.taxResponseTransaction == null || this.taxResponseTransaction.length == 0 ? null : this.taxResponseTransaction[0];
   }
 }
-  
-Aggregate_add( Tax1099ResponseMessageSet, "TAX1099MSGSRSV1" );
-ChildAggregate_add(Tax1099ResponseMessageSet, { order: 0, type: Array, collectionEntryType: Tax1099ResponseTransaction, read: Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction, write: Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction });
 
-}
+Aggregate_add(Tax1099ResponseMessageSet, "TAX1099MSGSRSV1");
+ChildAggregate_add(Tax1099ResponseMessageSet, { order: 0, type: Array, collectionEntryType: Tax1099ResponseTransaction, read: Tax1099ResponseMessageSet.prototype.getTaxResponseTransaction, write: Tax1099ResponseMessageSet.prototype.setTaxResponseTransaction });

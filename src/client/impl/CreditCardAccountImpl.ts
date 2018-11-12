@@ -13,40 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../domain/data/common/StatementResponse'/>
-///<reference path='../../domain/data/common/StatementRequest'/>
-///<reference path='../../domain/data/common/StatementRange'/>
-///<reference path='../../domain/data/ResponseEnvelope'/>
-///<reference path='../../domain/data/creditcard/CreditCardStatementRequest'/>
-///<reference path='../../domain/data/creditcard/CreditCardRequestMessageSet'/>
-///<reference path='../../domain/data/creditcard/CreditCardResponseMessageSet'/>
-///<reference path='../../domain/data/creditcard/CreditCardStatementResponse'/>
-///<reference path='../../OFXException'/>
-///<reference path='../CreditCardAccount'/>
-///<reference path='BaseAccountImpl'/>
-///<reference path='FinancialInstitutionImpl'/>
+import { BaseAccountImpl } from "./BaseAccountImpl";
+import { CreditCardAccountDetails } from "../../domain/data/creditcard/CreditCardAccountDetails";
+import { CreditCardAccount } from "../CreditCardAccount";
+import { FinancialInstitutionImpl } from "./FinancialInstitutionImpl";
+import { ResponseEnvelope } from "../../domain/data/ResponseEnvelope";
+import { StatementResponse } from "../../domain/data/common/StatementResponse";
+import { CreditCardResponseMessageSet } from "../../domain/data/creditcard/CreditCardResponseMessageSet";
+import { MessageSetType } from "../../domain/data/MessageSetType";
+import { OFXException } from "../../OFXException";
+import { CreditCardStatementResponseTransaction } from "../../domain/data/creditcard/CreditCardStatementResponseTransaction";
+import { CreditCardStatementResponse } from "../../domain/data/creditcard/CreditCardStatementResponse";
+import { TransactionWrappedRequestMessage } from "../../domain/data/TransactionWrappedRequestMessage";
+import { RequestMessage } from "../../domain/data/RequestMessage";
+import { RequestMessageSet } from "../../domain/data/RequestMessageSet";
+import { CreditCardRequestMessageSet } from "../../domain/data/creditcard/CreditCardRequestMessageSet";
+import { CreditCardStatementRequestTransaction } from "../../domain/data/creditcard/CreditCardStatementRequestTransaction";
+import { StatementRange } from "../../domain/data/common/StatementRange";
+import { StatementRequest } from "../../domain/data/common/StatementRequest";
+import { CreditCardStatementRequest } from "../../domain/data/creditcard/CreditCardStatementRequest";
 
-module ofx4js.client.impl {
-
-import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-import StatementRange = ofx4js.domain.data.common.StatementRange;
-//import data.* = ofx4js.domain.data.*;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-//import creditcard.* = ofx4js.domain.data.creditcard.*;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-import CreditCardRequestMessageSet = ofx4js.domain.data.creditcard.CreditCardRequestMessageSet;
-import CreditCardResponseMessageSet = ofx4js.domain.data.creditcard.CreditCardResponseMessageSet;
-import CreditCardStatementRequest = ofx4js.domain.data.creditcard.CreditCardStatementRequest;
-import CreditCardStatementResponse = ofx4js.domain.data.creditcard.CreditCardStatementResponse;
-import CreditCardStatementRequestTransaction = ofx4js.domain.data.creditcard.CreditCardStatementRequestTransaction;
-import CreditCardStatementResponseTransaction = ofx4js.domain.data.creditcard.CreditCardStatementResponseTransaction;
-import OFXException = ofx4js.OFXException;
-import CreditCardAccount = ofx4js.client.CreditCardAccount;
 
 /**
  * @author Ryan Heaton
@@ -92,7 +78,5 @@ export class CreditCardAccountImpl extends BaseAccountImpl<CreditCardAccountDeta
     bankRequest.setStatementRange(range);
     return bankRequest;
   }
-
-}
 
 }

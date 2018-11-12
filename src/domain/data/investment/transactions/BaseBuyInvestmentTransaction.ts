@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../investment/accounts/SubAccountType'/>
-///<reference path='../../seclist/SecurityId'/>
-///<reference path='BaseInvestmentTransaction'/>
-///<reference path='TransactionWithSecurity'/>
-///<reference path='BuyInvestmentTransaction'/>
-///<reference path='TransactionType'/>
-///<reference path='InvestmentTransaction'/>
-///<reference path='OriginalCurrency'/>
+import { TransactionType } from "./TransactionType";
+import { BaseInvestmentTransaction } from "./BaseInvestmentTransaction";
+import { TransactionWithSecurity } from "./TransactionWithSecurity";
+import { BuyInvestmentTransaction } from "./BuyInvestmentTransaction";
+import { InvestmentTransaction } from "./InvestmentTransaction";
+import { SecurityId } from "../../seclist/SecurityId";
+import { OriginalCurrency } from "./OriginalCurrency";
+import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import SubAccountType = ofx4js.domain.data.investment.accounts.SubAccountType;
-import SubAccountType_fromOfx = ofx4js.domain.data.investment.accounts.SubAccountType_fromOfx;
-import SecurityId = ofx4js.domain.data.seclist.SecurityId;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * Base class for all investment transactions for buying securities.
@@ -39,7 +33,7 @@ import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
  *
  * @author Jon Perlow
  */
-export /*abstract*/ class BaseBuyInvestmentTransaction extends BaseInvestmentTransaction
+export abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransaction
     implements TransactionWithSecurity {
 
   private buyInvestment: BuyInvestmentTransaction;
@@ -237,4 +231,3 @@ export /*abstract*/ class BaseBuyInvestmentTransaction extends BaseInvestmentTra
 }
 
 ChildAggregate_add(BaseBuyInvestmentTransaction, { order: 10, type: BuyInvestmentTransaction, read: BaseBuyInvestmentTransaction.prototype.getBuyInvestment, write: BaseBuyInvestmentTransaction.prototype.setBuyInvestment });
-}

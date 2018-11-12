@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-module ofx4js.io {
-
 export enum OFXParseEventType {
-
   CHARACTERS,
-
   ELEMENT
 }
 
@@ -44,6 +40,4 @@ export class OFXParseEvent {
   public getEventValue(): string {
     return this.eventValue;
   }
-}
-
 }

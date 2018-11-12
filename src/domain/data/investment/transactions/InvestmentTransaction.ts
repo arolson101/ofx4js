@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/Element_add'/>
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { Element_add } from "../../../../meta/Element_add";
 
-module ofx4js.domain.data.investment.transactions {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Investment transaction aggregate ("INVTRAN").
@@ -176,5 +172,3 @@ Element_add(InvestmentTransaction, { name: "DTTRADE", required: true, order: 20,
 Element_add(InvestmentTransaction, { name: "DTSETTLE", order: 30, type: Date, read: InvestmentTransaction.prototype.getSettlementDate, write: InvestmentTransaction.prototype.setSettlementDate });
 Element_add(InvestmentTransaction, { name: "REVERSALFITID", order: 40, type: String, read: InvestmentTransaction.prototype.getReversalTransactionId, write: InvestmentTransaction.prototype.setReversalTransactionId });
 Element_add(InvestmentTransaction, { name: "MEMO", order: 50, type: String, read: InvestmentTransaction.prototype.getMemo, write: InvestmentTransaction.prototype.setMemo });
-
-}

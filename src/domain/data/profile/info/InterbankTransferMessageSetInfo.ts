@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../../meta/Aggregate_add'/>
-///<reference path='../../../../meta/ChildAggregate_add'/>
-///<reference path='../../profile/AbstractMessageSetInfo'/>
-///<reference path='InterbankTransferV1MessageSetInfo'/>
+import { AbstractMessageSetInfo } from "../AbstractMessageSetInfo";
+import { InterbankTransferV1MessageSetInfo } from "./InterbankTransferV1MessageSetInfo";
+import { Aggregate_add } from "../../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.profile.info {
-
-import AbstractMessageSetInfo = ofx4js.domain.data.profile.AbstractMessageSetInfo;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Ryan Heaton
@@ -42,5 +37,3 @@ export class InterbankTransferMessageSetInfo extends AbstractMessageSetInfo {
 
 Aggregate_add( InterbankTransferMessageSetInfo, "INTERXFERMSGSET" );
 ChildAggregate_add(InterbankTransferMessageSetInfo, { order: 0, type: InterbankTransferV1MessageSetInfo, read: InterbankTransferMessageSetInfo.prototype.getVersion1Info, write: InterbankTransferMessageSetInfo.prototype.setVersion1Info });
-
-}

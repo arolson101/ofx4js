@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='TransferStatusEvent'/>
+import { TransferStatusEvent } from "./TransferStatusEvent";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * @author Ryan Heaton
@@ -70,5 +66,3 @@ export class TransferStatus {
 Aggregate_add( TransferStatus, "XFERPRCSTS" );
 Element_add(TransferStatus, { name: "XFERPRCCODE", required: true, order: 0, type: TransferStatusEvent, read: TransferStatus.prototype.getEvent, write: TransferStatus.prototype.setEvent });
 Element_add(TransferStatus, { name: "DTXFERPRC", required: true, order: 10, type: Date, read: TransferStatus.prototype.getDate, write: TransferStatus.prototype.setDate });
-
-}

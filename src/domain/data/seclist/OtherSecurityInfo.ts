@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='BaseSecurityInfo'/>
-///<reference path='AssetClass'/>
+import { AssetClass_fromOfx, AssetClass } from "./AssetClass";
+import { BaseSecurityInfo } from "./BaseSecurityInfo";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.seclist {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Info about any other type of security.
@@ -107,5 +103,3 @@ Aggregate_add( OtherSecurityInfo, "OTHERINFO" );
 Element_add(OtherSecurityInfo, { name: "TYPEDESC", order: 20, type: String, read: OtherSecurityInfo.prototype.getTypeDesc, write: OtherSecurityInfo.prototype.setTypeDesc });
 Element_add(OtherSecurityInfo, { name: "ASSETCLASS", order: 30, type: String, read: OtherSecurityInfo.prototype.getAssetClass, write: OtherSecurityInfo.prototype.setAssetClass });
 Element_add(OtherSecurityInfo, { name: "FIASSETCLASS", order: 40, type: String, read: OtherSecurityInfo.prototype.getFiAssetClass, write: OtherSecurityInfo.prototype.setFiAssetClass });
-
-}

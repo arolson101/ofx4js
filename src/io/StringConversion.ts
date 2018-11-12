@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.io {
-
 /**
  * Interface for converting to/from OFX strings.
  *
@@ -40,6 +38,4 @@ export interface StringConversion {
    * @throws OFXSyntaxException If there was something wrong with the syntax of the string.
    */
   fromString<E>(clazz: any, value: string) /*throws OFXSyntaxException*/: E;
-}
-
 }

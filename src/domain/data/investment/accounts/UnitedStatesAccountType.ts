@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.accounts {
-
 //import java.util.HashMap;
 //import java.util.Map;
 
@@ -79,6 +77,4 @@ var ofxMapping: OfxMappingType = {
 
 export function UnitedStatesAccountType_fromOfx(ofxVal: string): UnitedStatesAccountType {
   return ofxVal == null ? null : ofxMapping[ofxVal];
-}
-
 }

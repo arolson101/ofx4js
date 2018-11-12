@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../banking/BankAccountDetails'/>
-///<reference path='../creditcard/CreditCardAccountDetails'/>
+import { BankAccountDetails } from "../banking/BankAccountDetails";
+import { CreditCardAccountDetails } from "../creditcard/CreditCardAccountDetails";
+import { OFXException } from "../../../OFXException";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.common {
-
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
 
 /**
  * @author Ryan Heaton
@@ -188,5 +182,3 @@ ChildAggregate_add(TransferInfo, { name: "BANKACCTTO", order: 20, type: BankAcco
 ChildAggregate_add(TransferInfo, { name: "CCACCTTO", order: 30, type: CreditCardAccountDetails, read: TransferInfo.prototype.getCreditCardAccountTo, write: TransferInfo.prototype.setCreditCardAccountTo });
 Element_add(TransferInfo, { name: "TRNAMT", required: true, order: 40, type: Number, read: TransferInfo.prototype.getAmount, write: TransferInfo.prototype.setAmount });
 Element_add(TransferInfo, { name: "DTDUE", order: 50, type: Date, read: TransferInfo.prototype.getDue, write: TransferInfo.prototype.setDue });
-
-}

@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../OFXException'/>
-///<reference path='../domain/data/investment/accounts/InvestmentAccountDetails'/>
-///<reference path='../domain/data/investment/statements/InvestmentStatementResponse'/>
-///<reference path='../domain/data/seclist/SecurityList'/>
-///<reference path='../domain/data/seclist/SecurityListResponse'/>
-///<reference path='../domain/data/seclist/SecurityRequest'/>
-///<reference path='FinancialInstitutionAccount'/>
+import { FinancialInstitutionAccount } from "./FinancialInstitutionAccount";
+import { InvestmentStatementResponse } from "../domain/data/investment/statements/InvestmentStatementResponse";
+import { SecurityRequest } from "../domain/data/seclist/SecurityRequest";
+import { SecurityList } from "../domain/data/seclist/SecurityList";
+import { InvestmentAccountDetails } from "../domain/data/investment/accounts/InvestmentAccountDetails";
 
-module ofx4js.client {
-
-import OFXException = ofx4js.OFXException;
-import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
-import InvestmentStatementResponse = ofx4js.domain.data.investment.statements.InvestmentStatementResponse;
-import SecurityList = ofx4js.domain.data.seclist.SecurityList;
-import SecurityListResponse = ofx4js.domain.data.seclist.SecurityListResponse;
-import SecurityRequest = ofx4js.domain.data.seclist.SecurityRequest;
 
 /**
  * @author Jon Perlow
@@ -61,6 +51,4 @@ export interface InvestmentAccount extends FinancialInstitutionAccount {
    * @return The details of the account.
    */
   getDetails(): InvestmentAccountDetails;
-}
-
 }

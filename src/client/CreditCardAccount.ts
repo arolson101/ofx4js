@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../domain/data/creditcard/CreditCardAccountDetails'/>
-///<reference path='FinancialInstitutionAccount'/>
+import { FinancialInstitutionAccount } from "./FinancialInstitutionAccount";
+import { CreditCardAccountDetails } from "../domain/data/creditcard/CreditCardAccountDetails";
 
-module ofx4js.client {
-
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
 
 /**
  * @author Ryan Heaton
@@ -31,6 +28,4 @@ export interface CreditCardAccount extends FinancialInstitutionAccount {
    * @return The details of the credit card account.
    */
   getDetails(): CreditCardAccountDetails;
-}
-
 }

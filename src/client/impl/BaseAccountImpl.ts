@@ -13,41 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../OFXException'/>
-///<reference path='../../client/AccountStatement'/>
-///<reference path='../../client/FinancialInstitutionAccount'/>
-///<reference path='../../domain/data/common/StatementRange'/>
-///<reference path='../../domain/data/common/StatementRequest'/>
-///<reference path='../../domain/data/common/StatementResponse'/>
-///<reference path='../../domain/data/creditcard/CreditCardAccountDetails'/>
-///<reference path='../../domain/data/investment/accounts/InvestmentAccountDetails'/>
-///<reference path='../../domain/data/MessageSetType'/>
+import { FinancialInstitutionAccount } from "../FinancialInstitutionAccount";
+import { MessageSetType } from "../../domain/data/MessageSetType";
+import { FinancialInstitutionImpl } from "./FinancialInstitutionImpl";
+import { BankAccountDetails } from "../../domain/data/banking/BankAccountDetails";
+import { CreditCardAccountDetails } from "../../domain/data/creditcard/CreditCardAccountDetails";
+import { InvestmentAccountDetails } from "../../domain/data/investment/accounts/InvestmentAccountDetails";
+import { OFXException } from "../../OFXException";
+import { AccountStatement } from "../AccountStatement";
+import { StatementRange } from "../../domain/data/common/StatementRange";
+import { RequestEnvelope } from "../../domain/data/RequestEnvelope";
+import { TransactionWrappedRequestMessage } from "../../domain/data/TransactionWrappedRequestMessage";
+import { RequestMessage } from "../../domain/data/RequestMessage";
+import { ResponseEnvelope } from "../../domain/data/ResponseEnvelope";
+import { StatementResponse } from "../../domain/data/common/StatementResponse";
+import { RequestMessageSet } from "../../domain/data/RequestMessageSet";
+import { StatementRequest } from "../../domain/data/common/StatementRequest";
 
-module ofx4js.client.impl {
-
-import OFXException = ofx4js.OFXException;
-import AccountStatement = ofx4js.client.AccountStatement;
-import FinancialInstitutionAccount = ofx4js.client.FinancialInstitutionAccount;
-//import data.* = ofx4js.domain.data.*;
-import MessageSetType = ofx4js.domain.data.MessageSetType;
-import RequestEnvelope = ofx4js.domain.data.RequestEnvelope;
-import ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
-import RequestMessageSet = ofx4js.domain.data.RequestMessageSet;
-import RequestMessage = ofx4js.domain.data.RequestMessage;
-import TransactionWrappedRequestMessage = ofx4js.domain.data.TransactionWrappedRequestMessage;
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
-import StatementRange = ofx4js.domain.data.common.StatementRange;
-import StatementRequest = ofx4js.domain.data.common.StatementRequest;
-import StatementResponse = ofx4js.domain.data.common.StatementResponse;
-import CreditCardAccountDetails = ofx4js.domain.data.creditcard.CreditCardAccountDetails;
-import InvestmentAccountDetails = ofx4js.domain.data.investment.accounts.InvestmentAccountDetails;
 
 /**
  * Base account implementation. Supports banking and credit card accounts.
  *
  * @author Ryan Heaton
  */
-export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAccount {
+export abstract class BaseAccountImpl<D> implements FinancialInstitutionAccount {
 
   private details: D;
   private messageType: MessageSetType;
@@ -111,7 +100,7 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
    * @param response The response envelope to unwrap.
    * @return The response.
    */
-  protected /*abstract*/ unwrapStatementResponse(response: ResponseEnvelope): StatementResponse /*throws OFXException*/ { throw new OFXException("abstract"); }
+  protected abstract unwrapStatementResponse(response: ResponseEnvelope): StatementResponse /*throws OFXException*/;
 
   /**
    * Create a request message set from the specified transaction.
@@ -119,14 +108,14 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
    * @param transaction The transaction.
    * @return The request message set.
    */
-  protected /*abstract*/ createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet { throw new OFXException("abstract"); }
+  protected abstract createRequestMessageSet(transaction: TransactionWrappedRequestMessage<RequestMessage>): RequestMessageSet;
 
   /**
    * Create a transaction.
    *
    * @return The transaction.
    */
-  protected /*abstract*/ createTransaction(): TransactionWrappedRequestMessage<RequestMessage> { throw new OFXException("abstract"); }
+  protected abstract createTransaction(): TransactionWrappedRequestMessage<RequestMessage>;
 
   /**
    * Create a statement request.
@@ -135,7 +124,7 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
    * @param range the range.
    * @return The statement request.
    */
-  protected /*abstract*/ createStatementRequest(details: D, range: StatementRange): StatementRequest { throw new OFXException("abstract"); }
+  protected abstract createStatementRequest(details: D, range: StatementRange): StatementRequest;
 
   /**
    * The details of this account.
@@ -154,6 +143,4 @@ export /*abstract*/ class BaseAccountImpl<D> implements FinancialInstitutionAcco
   protected getMessageType(): MessageSetType {
     return this.messageType;
   }
-}
-
 }

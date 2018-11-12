@@ -2,7 +2,12 @@
     "version": "1.5.0-beta",
     "compilerOptions": {
         "target": "es5",
-        "module": "commonjs",
+        "module": "system",
+        "lib": [
+            "es2015",
+            "es2015.promise",
+            "dom"
+        ],
         "noImplicitAny": true,
         "removeComments": false,
         "noLib": false,
@@ -304,7 +309,6 @@
         "./src/meta/Element_add.ts",
         "./src/meta/Header.ts",
         "./src/meta/Header_add.ts",
-        "./src/meta/PropertyDescriptor.ts",
-        "./src/project.d.ts"
+        "./src/meta/PropertyDescriptor.ts"
     ]
 }

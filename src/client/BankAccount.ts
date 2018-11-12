@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../domain/data/banking/BankAccountDetails'/>
-///<reference path='FinancialInstitutionAccount'/>
+import { FinancialInstitutionAccount } from "./FinancialInstitutionAccount";
+import { BankAccountDetails } from "../domain/data/banking/BankAccountDetails";
 
-module ofx4js.client {
-
-import BankAccountDetails = ofx4js.domain.data.banking.BankAccountDetails;
 
 /**
  * @author Ryan Heaton
@@ -31,6 +28,4 @@ export interface BankAccount extends FinancialInstitutionAccount {
    * @return The details of the account.
    */
   getDetails(): BankAccountDetails;
-}
-
 }

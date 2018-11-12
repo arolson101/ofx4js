@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-module ofx4js.domain.data.investment.positions {
-
 /**
  * How a short option is secured.
  * @see "Section 13.9.2.4.4, OFX Spec"
@@ -35,6 +33,4 @@ export function ShortOptionSecurity_fromOfx(ofxVal: string): ShortOptionSecurity
   } else {
     return null;
   }
-}
-
 }

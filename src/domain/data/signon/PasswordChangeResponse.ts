@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../ResponseMessage'/>
+import { ResponseMessage } from "../ResponseMessage";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { Element_add } from "../../../meta/Element_add";
 
-module ofx4js.domain.data.signon {
-
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import Element_add = ofx4js.meta.Element_add;
 
 /**
  * Response to a change a user password request.
@@ -75,9 +70,7 @@ export class PasswordChangeResponse extends ResponseMessage {
     this.changeTimestamp = changeTimestamp;
   }
 }
-  
+
 Aggregate_add( PasswordChangeResponse, "PINCHRQ" );
 Element_add(PasswordChangeResponse, { name: "USERID", required: true, order: 0, type: String, read: PasswordChangeResponse.prototype.getUserId, write: PasswordChangeResponse.prototype.setUserId });
 Element_add(PasswordChangeResponse, { name: "DTCHANGED", order: 10, type: Date, read: PasswordChangeResponse.prototype.getChangeTimestamp, write: PasswordChangeResponse.prototype.setChangeTimestamp });
-
-}

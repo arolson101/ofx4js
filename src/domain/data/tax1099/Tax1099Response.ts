@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/Aggregate_add'/>
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../common/T1099Response'/>
-///<reference path='Tax1099DIV'/>
-///<reference path='Tax1099INT'/>
-///<reference path='Tax1099R'/>
-///<reference path='Tax1099B'/>
-///<reference path='Tax1099MISC'/>
-///<reference path='Tax1099OID'/>
+import { T1099Response } from "../common/T1099Response";
+import { Tax1099DIV } from "./Tax1099DIV";
+import { Tax1099INT } from "./Tax1099INT";
+import { Tax1099R } from "./Tax1099R";
+import { Tax1099B } from "./Tax1099B";
+import { Tax1099MISC } from "./Tax1099MISC";
+import { Tax1099OID } from "./Tax1099OID";
+import { Aggregate_add } from "../../../meta/Aggregate_Add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.tax1099 {
-
-import T1099Response = ofx4js.domain.data.common.T1099Response;
-import Aggregate_add = ofx4js.meta.Aggregate_add;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
 
 /**
  * @author Aparna Gawali
@@ -37,15 +32,15 @@ export class Tax1099Response extends T1099Response {
 
 	// private tax1099div: Tax1099DIV;
 	private lstTax1099DIV: Array<Tax1099DIV>;
-	
+
 	private lstTax1099INT: Array<Tax1099INT>;
-	
+
 	private lstTax1099R: Array<Tax1099R>;
-	
+
 	private lstTax1099B: Array<Tax1099B>;
-	
+
 	private lstTax1099MISC: Array<Tax1099MISC>;
-	
+
 	private lstTax1099OID: Array<Tax1099OID>;
 
 	/**
@@ -63,7 +58,7 @@ export class Tax1099Response extends T1099Response {
 		this.lstTax1099DIV = lstTax1099DIV;
 	}
 
-	
+
 
 	public getResponseMessageName(): string {
 		return "1099 Tax details";
@@ -147,5 +142,3 @@ ChildAggregate_add(Tax1099Response, { required: false, order: 2, type: Array, co
 ChildAggregate_add(Tax1099Response, { required: false, order: 3, type: Array, collectionEntryType: Tax1099B, read: Tax1099Response.prototype.getLstTax1099B, write: Tax1099Response.prototype.setLstTax1099B });
 ChildAggregate_add(Tax1099Response, { required: false, order: 4, type: Array, collectionEntryType: Tax1099MISC, read: Tax1099Response.prototype.getLstTax1099MISC, write: Tax1099Response.prototype.setLstTax1099MISC });
 ChildAggregate_add(Tax1099Response, { required: false, order:5, type: Array, collectionEntryType: Tax1099OID, read: Tax1099Response.prototype.getLstTax1099OID, write: Tax1099Response.prototype.setLstTax1099OID });
-
-}

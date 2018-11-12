@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='OFXApplicationContext'/>
-///<reference path='DefaultApplicationContext'/>
+import { OFXApplicationContext } from "./OFXApplicationContext";
+import { DefaultApplicationContext } from "./DefaultApplicationContext";
 
-module ofx4js.client.context {
 
 /**
  * @author Ryan Heaton
@@ -43,6 +42,4 @@ export class OFXApplicationContextHolder {
   public static setCurrentContext(context: OFXApplicationContext): void {
     this.CURRENT_CONTEXT = context;
   }
-}
-
 }

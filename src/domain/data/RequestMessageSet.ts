@@ -1,3 +1,6 @@
+import { RequestMessage } from "./RequestMessage";
+import { MessageSetType } from "./MessageSetType";
+
 /*
  * Copyright 2008 Web Cohesion
  *
@@ -13,21 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='MessageSetType'/>
-///<reference path='RequestMessage'/>
 
-module ofx4js.domain.data {
-
-/**
+ /**
  * A message set enclosed in an OFX request envelope.
  *
  * @author Ryan Heaton
  */
-export /*abstract*/ class RequestMessageSet /*implements Comparable<RequestMessageSet>*/ {
+export abstract class RequestMessageSet /*implements Comparable<RequestMessageSet>*/ {
 
   private version: string;
 
-  public /*abstract*/ getType(): MessageSetType { throw new OFXException("abstract"); }
+  public abstract getType(): MessageSetType;
 
   constructor() {
     this.version = "1";
@@ -56,17 +55,15 @@ export /*abstract*/ class RequestMessageSet /*implements Comparable<RequestMessa
    *
    * @return The request messages for this request message set.
    */
-  public /*abstract*/ getRequestMessages(): Array<RequestMessage> { throw new OFXException("abstract"); }
+  public abstract getRequestMessages(): Array<RequestMessage>;
 
   // Inherited.
   /*public compareTo(o: RequestMessageSet): number {
     return getType().compareTo(o.getType());
   }*/
-  
+
   public static contentCompare(left: RequestMessageSet, right: RequestMessageSet): number {
     return left.getType() - right.getType();
   }
-  
-}
 
 }

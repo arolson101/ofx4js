@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='../../../meta/ChildAggregate_add'/>
-///<reference path='../../../meta/Element_add'/>
-///<reference path='../ResponseMessage'/>
-///<reference path='../../../client/AccountStatement'/>
-///<reference path='BalanceInfo'/>
-///<reference path='TransactionList'/>
+import { ResponseMessage } from "../ResponseMessage";
+import { AccountStatement } from "../../../client/AccountStatement";
+import { TransactionList } from "./TransactionList";
+import { BalanceInfo } from "./BalanceInfo";
+import { Element_add } from "../../../meta/Element_add";
+import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 
-module ofx4js.domain.data.common {
-
-import ResponseMessage = ofx4js.domain.data.ResponseMessage;
-import ChildAggregate_add = ofx4js.meta.ChildAggregate_add;
-import Element_add = ofx4js.meta.Element_add;
-import AccountStatement = ofx4js.client.AccountStatement;
 
 //import java.util.Locale;
 
 /**
  * @author Ryan Heaton
  */
-export /*abstract*/ class StatementResponse extends ResponseMessage implements AccountStatement {
+export abstract class StatementResponse extends ResponseMessage implements AccountStatement {
 
   private currencyCode: string;
   private transactionList: TransactionList;
@@ -142,4 +136,3 @@ ChildAggregate_add(StatementResponse, { order: 20, type: TransactionList, read: 
 ChildAggregate_add(StatementResponse, { name: "LEDGERBAL", order: 30, type: BalanceInfo, read: StatementResponse.prototype.getLedgerBalance, write: StatementResponse.prototype.setLedgerBalance });
 ChildAggregate_add(StatementResponse, { name: "AVAILBAL", order: 40, type: BalanceInfo, read: StatementResponse.prototype.getAvailableBalance, write: StatementResponse.prototype.setAvailableBalance });
 Element_add(StatementResponse, { name: "MKTGINFO", order: 50, type: String, read: StatementResponse.prototype.getMarketingInfo, write: StatementResponse.prototype.setMarketingInfo });
-}
