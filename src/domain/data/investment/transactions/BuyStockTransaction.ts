@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseBuyInvestmentTransaction } from "./BaseBuyInvestmentTransaction";
 import { BuyType, BuyType_fromOfx } from "./BuyType";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
@@ -31,7 +31,7 @@ export class BuyStockTransaction extends BaseBuyInvestmentTransaction {
   private buyType: string;
 
   constructor() {
-    super(TransactionType.BUY_STOCK);
+    super(InvestmentTransactionType.BUY_STOCK);
   }
 
   /**

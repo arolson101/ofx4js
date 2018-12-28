@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { OriginalCurrency } from "./OriginalCurrency";
 import { SubAccountType } from "../accounts/SubAccountType";
@@ -36,7 +36,7 @@ export class MarginInterestTransaction extends BaseOtherInvestmentTransaction {
   private originalCurrencyInfo: OriginalCurrency;
 
   constructor() {
-    super(TransactionType.MARGIN_INTEREST);
+    super(InvestmentTransactionType.MARGIN_INTEREST);
   }
 
   /**

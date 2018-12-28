@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { TransactionWithSecurity } from "./TransactionWithSecurity";
 import { SecurityId } from "../../seclist/SecurityId";
 import { OriginalCurrency } from "./OriginalCurrency";
@@ -47,7 +47,7 @@ export class IncomeTransaction extends BaseOtherInvestmentTransaction
   private inv401kSource: string;
 
   constructor() {
-    super(TransactionType.INCOME);
+    super(InvestmentTransactionType.INCOME);
   }
 
   /**

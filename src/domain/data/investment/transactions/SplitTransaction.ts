@@ -16,7 +16,7 @@
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { SecurityId } from "../../seclist/SecurityId";
 import { OriginalCurrency } from "./OriginalCurrency";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
 import { Inv401KSource, Inv401KSource_fromOfx } from "../positions/Inv401KSource";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
@@ -44,7 +44,7 @@ export class SplitTransaction extends BaseOtherInvestmentTransaction {
   private inv401kSource: string;
 
   constructor() {
-    super(TransactionType.SPLIT);
+    super(InvestmentTransactionType.SPLIT);
   }
 
   /**

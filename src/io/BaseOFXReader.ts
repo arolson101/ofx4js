@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import sax, { SAXParser } from "sax";
+import { SAXParser } from "sax";
+import * as sax from "sax";
 import { Log, LogFactory } from "../log/Log";
 import { OFXReader } from "./OFXReader";
 import { OFXHandler } from "./OFXHandler";

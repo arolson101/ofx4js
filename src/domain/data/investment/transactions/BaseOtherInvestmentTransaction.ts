@@ -15,7 +15,7 @@
  */
 import { InvestmentTransaction } from "./InvestmentTransaction";
 import { BaseInvestmentTransaction } from "./BaseInvestmentTransaction";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 
 
@@ -32,7 +32,7 @@ export class BaseOtherInvestmentTransaction extends BaseInvestmentTransaction {
 
   private investmentTransaction: InvestmentTransaction;
 
-  constructor(transactionType: TransactionType) {
+  constructor(transactionType: InvestmentTransactionType) {
     super(transactionType);
   }
 

@@ -14,3 +14,7 @@ ofx4j-code/
 *.out
 *.pid
 *.gz
+
+.rpt2_cache
+
+lib

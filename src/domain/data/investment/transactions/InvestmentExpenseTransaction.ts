@@ -18,7 +18,7 @@ import { Element_add } from "../../../../meta/Element_add";
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { SecurityId } from "../../seclist/SecurityId";
 import { OriginalCurrency } from "./OriginalCurrency";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
 import { Inv401KSource, Inv401KSource_fromOfx } from "../positions/Inv401KSource";
 import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
@@ -40,7 +40,7 @@ export class InvestmentExpenseTransaction extends BaseOtherInvestmentTransaction
   private inv401kSource: string;
 
   constructor() {
-    super(TransactionType.INVESTMENT_EXPENSE);
+    super(InvestmentTransactionType.INVESTMENT_EXPENSE);
   }
 
   /**

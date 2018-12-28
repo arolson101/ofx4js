@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { BaseSellInvestmentTransaction } from "./BaseSellInvestmentTransaction";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { SellType, SellType_fromOfx } from "./SellType";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
 import { Element_add } from "../../../../meta/Element_add";
@@ -31,7 +31,7 @@ export class SellStockTransaction extends BaseSellInvestmentTransaction {
   private sellType: string;
 
   constructor() {
-    super(TransactionType.SELL_STOCK);
+    super(InvestmentTransactionType.SELL_STOCK);
   }
 
   /**

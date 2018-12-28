@@ -1,6 +1,6 @@
 /*global ofx4js */
 
-'use strict';
+import ofx4js from '../lib/ofx4js';
 
 var expect = chai.expect;
 
@@ -170,19 +170,19 @@ describe("ofx parsing", function() {
     expect(signonRequest.getLanguage()).to.equal("ENG");
     var date = new Date(Date.UTC(2007, 10-1, 15, 2+8, 15, 29, 0)); // 20071015021529.000[-8:PST]
     expect(signonRequest.getTimestamp()).to.equalDate(date);
-    
+
     var fi = signonRequest.getFinancialInstitution();
     expect(fi).to.be.ok;
     expect(fi.getOrganization()).to.equal("MYBANK");
     expect(fi.getId()).to.equal("01234");
-    
+
     var bankStatementRequest = messageSets[1].getStatementRequest().getMessage();
     var account = bankStatementRequest.getAccount();
     expect(account.getAccountNumber()).to.equal("098-121");
     expect(account.getAccountType()).to.equal(ofx4js.domain.data.banking.AccountType.SAVINGS);
     expect(account.getBankId()).to.equal("987654321");
   });
-  
+
   it("should parse an ofx response", function() {
     var m = new AggregateUnmarshaller(ResponseEnvelope);
     var data = m.unmarshal(ofxResponsev1);
@@ -192,7 +192,7 @@ describe("ofx parsing", function() {
     expect(messageSets).to.have.length(2);
     expect(messageSets[0]).to.be.an.instanceOf(ofx4js.domain.data.signon.SignonResponseMessageSet);
     expect(messageSets[1]).to.be.an.instanceOf(ofx4js.domain.data.banking.BankingResponseMessageSet);
-    
+
     var signonResponse = messageSets[0].getSignonResponse();
     expect(signonResponse.getStatus().getCode()).to.equal(KnownCode.SUCCESS);
 
@@ -200,28 +200,28 @@ describe("ofx parsing", function() {
     expect(fi).to.be.ok;
     expect(fi.getOrganization()).to.equal("MYBANK");
     expect(fi.getId()).to.equal("01234");
-    
+
     expect(messageSets[1].getStatementResponses()).to.have.length(1);
     var bankingResponse = messageSets[1].getStatementResponse();
     expect(bankingResponse).to.be.an.instanceOf(ofx4js.domain.data.banking.BankStatementResponseTransaction);
     expect(bankingResponse.getStatus().getCode()).to.equal(KnownCode.SUCCESS);
-    
+
     var message = bankingResponse.getMessage();
     var account = message.getAccount();
     expect(account.getAccountNumber()).to.equal("098-121");
     expect(account.getAccountType()).to.equal(ofx4js.domain.data.banking.AccountType.SAVINGS);
     expect(account.getBankId()).to.equal("987654321");
     expect(message.getCurrencyCode()).to.equal("USD");
-    expect(message.getAvailableBalance().getAmount()).to.equal("5250.00");
-    expect(message.getLedgerBalance().getAmount()).to.equal("5250.00");
+    expect(message.getAvailableBalance().getAmount()).to.equal(5250.00);
+    expect(message.getLedgerBalance().getAmount()).to.equal(5250.00);
 
     var transactions = message.getTransactionList().transactions;
     expect(transactions).to.have.length(3);
-    expect(transactions[0].getAmount()).to.equal("200.00");
-    expect(transactions[1].getAmount()).to.equal("150.00");
-    expect(transactions[2].getAmount()).to.equal("-100.00");
+    expect(transactions[0].getAmount()).to.equal(200.00);
+    expect(transactions[1].getAmount()).to.equal(150.00);
+    expect(transactions[2].getAmount()).to.equal(-100.00);
   });
-  
+
   xit("should download profile info from a bank", function() {
     var bank = new BaseFinancialInstitutionData();
 
@@ -230,12 +230,12 @@ describe("ofx parsing", function() {
     bank.setOrganization("");
     bank.setOFXURL("");
     bank.setName("");
-    
+
     expect(bank.getFinancialInstitutionId()).to.not.be.empty();
     expect(bank.getOrganization()).to.not.be.empty();
     expect(bank.getOFXURL()).to.not.be.empty();
     expect(bank.getName()).to.not.be.empty();
-    
+
     var connection = new OFXV1Connection();
 
     // NOTE: making an OFX connection will fail security checks in browsers.  On Chrome you

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "../investment/transactions/TransactionType";
+import { InvestmentTransactionType } from "../investment/transactions/TransactionType";
 import { CorrectionAction } from "./CorrectionAction";
 import { Payee } from "./Payee";
 import { BankAccountDetails } from "../banking/BankAccountDetails";
@@ -29,7 +29,7 @@ import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
  */
 export class Transaction {
 
-  private transactionType: TransactionType;
+  private transactionType: InvestmentTransactionType;
   private datePosted: Date;
   private dateInitiated: Date;
   private dateAvailable: Date;
@@ -55,7 +55,7 @@ export class Transaction {
    *
    * @return The transaction type.
    */
-  public getTransactionType(): TransactionType {
+  public getTransactionType(): InvestmentTransactionType {
     return this.transactionType;
   }
 
@@ -64,7 +64,7 @@ export class Transaction {
    *
    * @param transactionType The transaction type.
    */
-  public setTransactionType(transactionType: TransactionType): void {
+  public setTransactionType(transactionType: InvestmentTransactionType): void {
     this.transactionType = transactionType;
   }
 
@@ -430,7 +430,7 @@ export class Transaction {
 }
 
 Aggregate_add( Transaction, "STMTTRN" );
-Element_add(Transaction, { name: "TRNTYPE", required: true, order: 0, type: TransactionType, read: Transaction.prototype.getTransactionType, write: Transaction.prototype.setTransactionType });
+Element_add(Transaction, { name: "TRNTYPE", required: true, order: 0, type: InvestmentTransactionType, read: Transaction.prototype.getTransactionType, write: Transaction.prototype.setTransactionType });
 Element_add(Transaction, { name: "DTPOSTED", required: true, order: 10, type: Date, read: Transaction.prototype.getDatePosted, write: Transaction.prototype.setDatePosted });
 Element_add(Transaction, { name: "DTUSER", order: 20, type: Date, read: Transaction.prototype.getDateInitiated, write: Transaction.prototype.setDateInitiated });
 Element_add(Transaction, { name: "DTAVAIL", order: 30, type: Date, read: Transaction.prototype.getDateAvailable, write: Transaction.prototype.setDateAvailable });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { BaseSellInvestmentTransaction } from "./BaseSellInvestmentTransaction";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { OptionSellType, OptionSellType_fromOfx } from "./OptionSellType";
 import { RelatedOptionType, RelatedOptionType_fromOfx } from "./RelatedOptionType";
 import { ShortOptionSecurity, ShortOptionSecurity_fromOfx } from "../positions/ShortOptionSecurity";
@@ -37,7 +37,7 @@ export class SellOptionTransaction extends BaseSellInvestmentTransaction {
   private secured: string;
 
   constructor() {
-    super(TransactionType.SELL_OPTION);
+    super(InvestmentTransactionType.SELL_OPTION);
   }
 
   /**

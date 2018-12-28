@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { TransactionWithSecurity } from "./TransactionWithSecurity";
 import { SecurityId } from "../../seclist/SecurityId";
@@ -51,7 +51,7 @@ export class ReinvestIncomeTransaction extends BaseOtherInvestmentTransaction
   private inv401kSource: string;
 
   constructor() {
-    super(TransactionType.REINVEST_INCOME);
+    super(InvestmentTransactionType.REINVEST_INCOME);
   }
 
   /**

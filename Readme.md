@@ -11,11 +11,11 @@ Install with
 ```
 Then either
 ```
-  <script src="path/to/ofx4js.min.js"></script>
+  var ofx4js = require("ofx4js");
 ```
 or
 ```
-  var ofx4js = require("ofx4js");
+  import ofx4js from 'ofx4js';
 ```
 ## Usage
 To parse an OFX response:
@@ -27,12 +27,12 @@ To parse an OFX response:
 
   // your ofx data
   var ofxData = "OFXHEADER:100...";
-  
-  // an unmarshaller that will read responses.  Note you will use a 
+
+  // an unmarshaller that will read responses.  Note you will use a
   //  ResponseEnvelope to read responses, and a RequestEnvelope to read
   //  requests.
   var m = new AggregateUnmarshaller(ResponseEnvelope);
-  
+
   // parse the string into the ofx data structures
   var data = m.unmarshal(ofxData);
 
@@ -47,7 +47,7 @@ To download a bank's profile information:
   // aliases
   var BaseFinancialInstitutionData = ofx4js.client.impl.BaseFinancialInstitutionData;
   var OFXV1Connection = ofx4js.client.net.OFXV1Connection;
-  
+
   // input your bank's information.  See http://www.ofxhome.com/
   var bank = new BaseFinancialInstitutionData();
   bank.setFinancialInstitutionId(...);
@@ -84,7 +84,7 @@ not everything ported especially cleanly.  There are probably hidden bugs stemmi
 Because the code is a port, there are a lot of java-isms (e.g. property accessors) that don't make sense
 in javascript and could probably be simplified.  There are no plans to address this.
 
-This is not a full port of ofx4j- specifically, the server portion is gone, as are the 
+This is not a full port of ofx4j- specifically, the server portion is gone, as are the
 FinancialInstitutionDataStore-related classes.  That is, you will have to provide your own financial insitution
 
 ## Contributing

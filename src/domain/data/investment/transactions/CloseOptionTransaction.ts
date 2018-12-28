@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { TransactionWithSecurity } from "./TransactionWithSecurity";
 import { SecurityId } from "../../seclist/SecurityId";
@@ -42,7 +42,7 @@ export class CloseOptionTransaction extends BaseOtherInvestmentTransaction
   private gain: number;
 
   constructor() {
-    super(TransactionType.CLOSE_OPTION);
+    super(InvestmentTransactionType.CLOSE_OPTION);
   }
 
   /**

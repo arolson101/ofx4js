@@ -15,7 +15,7 @@
  */
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { SecurityId } from "../../seclist/SecurityId";
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
 import { TransferAction, TransferAction_fromOfx } from "./TransferAction";
 import { PositionType, PositionType_fromOfx } from "../positions/PositionType";
@@ -46,7 +46,7 @@ export class TransferInvestmentTransaction extends BaseOtherInvestmentTransactio
   // TODO (jonp) -- INVACCTFROM
 
   constructor() {
-    super(TransactionType.TRANSFER);
+    super(InvestmentTransactionType.TRANSFER);
   }
 
   /**

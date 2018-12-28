@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseSellInvestmentTransaction } from "./BaseSellInvestmentTransaction";
 import { SellType, SellType_fromOfx } from "./SellType";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
@@ -33,7 +33,7 @@ export class SellMutualFundTransaction extends BaseSellInvestmentTransaction {
   private relatedTransactionId: string;
 
   constructor() {
-    super(TransactionType.SELL_MUTUAL_FUND);
+    super(InvestmentTransactionType.SELL_MUTUAL_FUND);
   }
 
   /**

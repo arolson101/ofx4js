@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { InvestmentTransaction } from "./InvestmentTransaction";
 
 
@@ -28,9 +28,9 @@ import { InvestmentTransaction } from "./InvestmentTransaction";
  */
 export abstract class BaseInvestmentTransaction {
 
-  private transactionType: TransactionType;
+  private transactionType: InvestmentTransactionType;
 
-  constructor(transactionType: TransactionType) {
+  constructor(transactionType: InvestmentTransactionType) {
     this.transactionType = transactionType;
   }
 
@@ -39,7 +39,7 @@ export abstract class BaseInvestmentTransaction {
    *
    * @return the type of transaction
    */
-  public getTransactionType(): TransactionType {
+  public getTransactionType(): InvestmentTransactionType {
     return this.transactionType;
   }
 

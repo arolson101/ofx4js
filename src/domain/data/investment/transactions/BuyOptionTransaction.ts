@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseBuyInvestmentTransaction } from "./BaseBuyInvestmentTransaction";
 import { OptionBuyType, OptionBuyType_fromOfx } from "./OptionBuyType";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
@@ -32,7 +32,7 @@ export class BuyOptionTransaction extends BaseBuyInvestmentTransaction {
   private sharesPerContact: number;
 
   constructor() {
-    super(TransactionType.BUY_OPTION);
+    super(InvestmentTransactionType.BUY_OPTION);
   }
 
   /**

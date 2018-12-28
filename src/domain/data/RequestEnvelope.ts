@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import UUID from 'uuid';
+import * as UUID from 'uuid';
 import { SortedSet } from '../../collections/SortedSet';
 import { Aggregate_add } from '../../meta/Aggregate_add';
 import { ChildAggregate_add } from '../../meta/ChildAggregate_add';

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import UUID from 'uuid';
+import * as UUID from 'uuid'
 import { RequestMessage } from './RequestMessage';
 import { Element_add } from '../../meta/Element_add';
 

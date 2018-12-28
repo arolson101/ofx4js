@@ -17,7 +17,7 @@ import { Aggregate_add } from "../../../meta/Aggregate_Add";
 import { RequestMessage } from "../RequestMessage";
 import { Element_add } from "../../../meta/Element_add";
 import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
-import { FinancialInstitution } from "./FinancialInstitution";
+import { FinancialInstitutionInfo } from "./FinancialInstitution";
 
 
 /**
@@ -39,7 +39,7 @@ export class SignonRequest extends RequestMessage {
   private userKey: string;
   private generateUserKey: boolean;
   private language: string;
-  private financialInstitution: FinancialInstitution;
+  private financialInstitution: FinancialInstitutionInfo;
   private sessionId: string;
   private applicationId: string;
   private applicationVersion: string;
@@ -170,7 +170,7 @@ export class SignonRequest extends RequestMessage {
    *
    * @return The financial institution.
    */
-  public getFinancialInstitution(): FinancialInstitution {
+  public getFinancialInstitution(): FinancialInstitutionInfo {
     return this.financialInstitution;
   }
 
@@ -179,7 +179,7 @@ export class SignonRequest extends RequestMessage {
    *
    * @param financialInstitution The financial institution.
    */
-  public setFinancialInstitution(financialInstitution: FinancialInstitution): void {
+  public setFinancialInstitution(financialInstitution: FinancialInstitutionInfo): void {
     this.financialInstitution = financialInstitution;
   }
 
@@ -337,7 +337,7 @@ Element_add(SignonRequest, { name: "USERPASS", order: 20, type: String, read: Si
 Element_add(SignonRequest, { name: "USERKEY", order: 30, type: String, read: SignonRequest.prototype.getUserKey, write: SignonRequest.prototype.setUserKey });
 Element_add(SignonRequest, { name: "GENUSERKEY", order: 40, type: Boolean, read: SignonRequest.prototype.getGenerateUserKey, write: SignonRequest.prototype.setGenerateUserKey });
 Element_add(SignonRequest, { name: "LANGUAGE", required: true, order: 50, type: String, read: SignonRequest.prototype.getLanguage, write: SignonRequest.prototype.setLanguage });
-ChildAggregate_add(SignonRequest, { order: 60, type: FinancialInstitution, read: SignonRequest.prototype.getFinancialInstitution, write: SignonRequest.prototype.setFinancialInstitution });
+ChildAggregate_add(SignonRequest, { order: 60, type: FinancialInstitutionInfo, read: SignonRequest.prototype.getFinancialInstitution, write: SignonRequest.prototype.setFinancialInstitution });
 Element_add(SignonRequest, { name: "SESSCOOKIE", order: 70, type: String, read: SignonRequest.prototype.getSessionId, write: SignonRequest.prototype.setSessionId });
 Element_add(SignonRequest, { name: "APPID", required: true, order: 80, type: String, read: SignonRequest.prototype.getApplicationId, write: SignonRequest.prototype.setApplicationId });
 Element_add(SignonRequest, { name: "APPVER", required: true, order: 90, type: String, read: SignonRequest.prototype.getApplicationVersion, write: SignonRequest.prototype.setApplicationVersion });

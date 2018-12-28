@@ -16,7 +16,7 @@
 import { ResponseMessage } from "../ResponseMessage";
 import { StatusHolder } from "../common/StatusHolder";
 import { Status } from "../common/Status";
-import { FinancialInstitution } from "./FinancialInstitution";
+import { FinancialInstitutionInfo } from "./FinancialInstitution";
 import { Aggregate_add } from "../../../meta/Aggregate_Add";
 import { ChildAggregate_add } from "../../../meta/ChildAggregate_add";
 import { Element_add } from "../../../meta/Element_add";
@@ -36,7 +36,7 @@ export class SignonResponse extends ResponseMessage implements StatusHolder {
   private language: string;
   private profileLastUpdated: Date;
   private accountLastUpdated: Date;
-  private financialInstitution: FinancialInstitution;
+  private financialInstitution: FinancialInstitutionInfo;
   private sessionId: string;
   private accessKey: string;
 
@@ -185,7 +185,7 @@ export class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @return The financial instutution identity information.
    */
-  public getFinancialInstitution(): FinancialInstitution {
+  public getFinancialInstitution(): FinancialInstitutionInfo {
     return this.financialInstitution;
   }
 
@@ -194,7 +194,7 @@ export class SignonResponse extends ResponseMessage implements StatusHolder {
    *
    * @param financialInstitution The financial instutution identity information.
    */
-  public setFinancialInstitution(financialInstitution: FinancialInstitution): void {
+  public setFinancialInstitution(financialInstitution: FinancialInstitutionInfo): void {
     this.financialInstitution = financialInstitution;
   }
 
@@ -243,6 +243,6 @@ Element_add(SignonResponse, { name: "TSKEYEXPIRE", order: 30, type: Date, read: 
 Element_add(SignonResponse, { name: "LANGUAGE", required: true, order: 40, type: String, read: SignonResponse.prototype.getLanguage, write: SignonResponse.prototype.setLanguage });
 Element_add(SignonResponse, { name: "DTPROFUP", order: 50, type: Date, read: SignonResponse.prototype.getProfileLastUpdated, write: SignonResponse.prototype.setProfileLastUpdated });
 Element_add(SignonResponse, { name: "DTACCTUP", order: 60, type: Date, read: SignonResponse.prototype.getAccountLastUpdated, write: SignonResponse.prototype.setAccountLastUpdated });
-ChildAggregate_add(SignonResponse, { order: 70, type: FinancialInstitution, read: SignonResponse.prototype.getFinancialInstitution, write: SignonResponse.prototype.setFinancialInstitution });
+ChildAggregate_add(SignonResponse, { order: 70, type: FinancialInstitutionInfo, read: SignonResponse.prototype.getFinancialInstitution, write: SignonResponse.prototype.setFinancialInstitution });
 Element_add(SignonResponse, { name: "SESSCOOKIE", order: 80, type: String, read: SignonResponse.prototype.getSessionId, write: SignonResponse.prototype.setSessionId });
 Element_add(SignonResponse, { name: "ACCESSKEY", order: 90, type: String, read: SignonResponse.prototype.getAccessKey, write: SignonResponse.prototype.setAccessKey });

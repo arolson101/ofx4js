@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseSellInvestmentTransaction } from "./BaseSellInvestmentTransaction";
 import { SellDebtReason, SellDebtReason_fromOfx } from "./SellDebtReason";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
@@ -32,7 +32,7 @@ export class SellDebtTransaction extends BaseSellInvestmentTransaction {
   private accruedInterest: number;
 
   constructor() {
-    super(TransactionType.SELL_DEBT);
+    super(InvestmentTransactionType.SELL_DEBT);
   }
 
   /**

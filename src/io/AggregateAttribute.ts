@@ -17,7 +17,7 @@ import { ChildAggregate } from '../meta/ChildAggregate';
 import { Element } from '../meta/Element';
 import { ReadMethod, WriteMethod } from '../meta/PropertyDescriptor';
 import { SortedSet } from '../collections/SortedSet';
-import { AggregateInfo } from 'AggregateInfo';
+import { AggregateInfo } from './AggregateInfo';
 import { OFXException } from '../OFXException';
 import { AggregateIntrospector } from './AggregateIntrospector';
 

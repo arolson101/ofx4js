@@ -62,7 +62,7 @@ import { AccountInfoRequest } from "../../domain/data/signup/AccountInfoRequest"
 import { SignupResponseMessageSet } from "../../domain/data/signup/SignupResponseMessageSet";
 import { AccountInfoResponseTransaction } from "../../domain/data/signup/AccountInfoResponseTransaction";
 import { AccountInfoResponse } from "../../domain/data/signup/AccountInfoResponse";
-import { FinancialInstitution } from "../../domain/data/signon/FinancialInstitution";
+import { FinancialInstitutionInfo } from "../../domain/data/signon/FinancialInstitution";
 
 
 //import java.net.URL;
@@ -72,7 +72,7 @@ import { FinancialInstitution } from "../../domain/data/signon/FinancialInstitut
  *
  * @author Ryan Heaton
  */
-export class FinancialInstitutionImpl extends FinancialInstitution {
+export class FinancialInstitutionImpl extends FinancialInstitutionInfo {
 
   private connection: OFXConnection;
   private data: FinancialInstitutionData;
@@ -312,7 +312,7 @@ export class FinancialInstitutionImpl extends FinancialInstitution {
   protected createSignonRequest(username: string, password: string): SignonRequest {
     var signonRequest: SignonRequest = new SignonRequest();
     signonRequest.setTimestamp(new Date());
-    var fi: FinancialInstitution = new FinancialInstitution();
+    var fi: FinancialInstitutionInfo = new FinancialInstitutionInfo();
     fi.setId(this.getData().getFinancialInstitutionId());
     fi.setOrganization(this.getData().getOrganization());
     signonRequest.setFinancialInstitution(fi);

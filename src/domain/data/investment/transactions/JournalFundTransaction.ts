@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { SubAccountType, SubAccountType_fromOfx } from "../accounts/SubAccountType";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
@@ -34,7 +34,7 @@ export class JournalFundTransaction extends BaseOtherInvestmentTransaction {
   private total: number;
 
   constructor() {
-    super(TransactionType.JOURNAL_FUND);
+    super(InvestmentTransactionType.JOURNAL_FUND);
   }
 
   /**

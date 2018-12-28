@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseOtherInvestmentTransaction } from "./BaseOtherInvestmentTransaction";
 import { TransactionWithSecurity } from "./TransactionWithSecurity";
 import { SecurityId } from "../../seclist/SecurityId";
@@ -39,7 +39,7 @@ export class JournalSecurityTransaction extends BaseOtherInvestmentTransaction
   private total: number;
 
   constructor() {
-    super(TransactionType.JOURNAL_SECURITY);
+    super(InvestmentTransactionType.JOURNAL_SECURITY);
   }
 
   /**

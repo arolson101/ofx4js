@@ -20,7 +20,7 @@
  *
  * @author Jon Perlow
  */
-export enum TransactionType {
+export enum InvestmentTransactionType {
 
   BUY_DEBT,
   BUY_MUTUAL_FUND,

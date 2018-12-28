@@ -17,7 +17,7 @@ import { KnownCode } from '../domain/data/common/Status';
 import { StatusCode, Severity } from '../domain/data/common/StatusCode';
 import { UnknownStatusCode } from '../domain/data/common/UnknownStatusCode';
 import { isAssignableFrom } from '../meta/PropertyDescriptor';
-import { StringConversion } from 'StringConversion';
+import { StringConversion } from './StringConversion';
 
 /**
  * Utility class for conversion to/from OFX strings.

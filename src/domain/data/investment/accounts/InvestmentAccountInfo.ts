@@ -18,8 +18,8 @@ import { InvestmentAccountDetails } from "./InvestmentAccountDetails";
 import { AccountDetails } from "../../common/AccountDetails";
 import { UnitedStatesAccountType, UnitedStatesAccountType_fromOfx } from "./UnitedStatesAccountType";
 import { ActivationStatus, ActivationStatus_fromOfx } from "./ActivationStatus";
-import { AccountType } from "./AccountType";
-import { AccountType_fromOfx } from "./AccountType";
+import { InvestmentAccountType } from "./AccountType";
+import { InvestmentAccountType_fromOfx } from "./AccountType";
 import { Aggregate_add } from "../../../../meta/Aggregate_Add";
 import { ChildAggregate_add } from "../../../../meta/ChildAggregate_add";
 import { Element_add } from "../../../../meta/Element_add";
@@ -167,8 +167,8 @@ export class InvestmentAccountInfo implements AccountInfo {
    *
    * @return the type of investment account or null if it's not one of the well-known types
    */
-  public getInvestmentAccountTypeEnum(): AccountType {
-    return  AccountType_fromOfx(this.getInvestmentAccountType());
+  public getInvestmentAccountTypeEnum(): InvestmentAccountType {
+    return  InvestmentAccountType_fromOfx(this.getInvestmentAccountType());
   }
 
   /**

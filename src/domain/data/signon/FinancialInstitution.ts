@@ -20,7 +20,7 @@ import { Element_add } from "../../../meta/Element_add";
 /**
  * @author Ryan Heaton
  */
-export class FinancialInstitution {
+export class FinancialInstitutionInfo {
 
   private id: string;
   private organization: string;
@@ -62,6 +62,6 @@ export class FinancialInstitution {
   }
 }
 
-Aggregate_add( FinancialInstitution, "FI" );
-Element_add(FinancialInstitution, { name: "FID", order: 10, type: String, read: FinancialInstitution.prototype.getId, write: FinancialInstitution.prototype.setId });
-Element_add(FinancialInstitution, { name: "ORG", required: true, order: 0, type: String, read: FinancialInstitution.prototype.getOrganization, write: FinancialInstitution.prototype.setOrganization });
+Aggregate_add( FinancialInstitutionInfo, "FI" );
+Element_add(FinancialInstitutionInfo, { name: "FID", order: 10, type: String, read: FinancialInstitutionInfo.prototype.getId, write: FinancialInstitutionInfo.prototype.setId });
+Element_add(FinancialInstitutionInfo, { name: "ORG", required: true, order: 0, type: String, read: FinancialInstitutionInfo.prototype.getOrganization, write: FinancialInstitutionInfo.prototype.setOrganization });

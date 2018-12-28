@@ -20,7 +20,7 @@
  * @author Jon Perlow
  * @see "OFX Spec, Section 13.6.2"
  */
-export enum AccountType {
+export enum InvestmentAccountType {
   INDIVIDUAL,
   JOINT,
   TRUST,
@@ -28,15 +28,15 @@ export enum AccountType {
 }
 
 
-export function AccountType_fromOfx(ofxVal: string): AccountType {
+export function InvestmentAccountType_fromOfx(ofxVal: string): InvestmentAccountType {
   if ("INDIVIDUAL" === ofxVal) {
-    return AccountType.INDIVIDUAL;
+    return InvestmentAccountType.INDIVIDUAL;
   } else if ("JOINT" === ofxVal) {
-    return AccountType.JOINT;
+    return InvestmentAccountType.JOINT;
   } else if ("CORPORATE" === ofxVal) {
-    return AccountType.CORPORATE;
+    return InvestmentAccountType.CORPORATE;
   } else if ("CORPORATE" === ofxVal) {
-    return AccountType.CORPORATE;
+    return InvestmentAccountType.CORPORATE;
   } else {
     return null;
   }

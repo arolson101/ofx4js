@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TransactionType } from "./TransactionType";
+import { InvestmentTransactionType } from "./TransactionType";
 import { BaseInvestmentTransaction } from "./BaseInvestmentTransaction";
 import { TransactionWithSecurity } from "./TransactionWithSecurity";
 import { BuyInvestmentTransaction } from "./BuyInvestmentTransaction";
@@ -38,7 +38,7 @@ export abstract class BaseBuyInvestmentTransaction extends BaseInvestmentTransac
 
   private buyInvestment: BuyInvestmentTransaction;
 
-  constructor(transactionType: TransactionType) {
+  constructor(transactionType: InvestmentTransactionType) {
     super(transactionType);
   }
 
