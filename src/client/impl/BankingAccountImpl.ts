@@ -1,18 +1,3 @@
-/*
- * Copyright 2008 Web Cohesion
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import { BaseAccountImpl } from "./BaseAccountImpl";
 import { BankAccountDetails } from "../../domain/data/banking/BankAccountDetails";
 import { BankAccount } from "../BankAccount";
@@ -34,9 +19,6 @@ import { StatementRequest } from "../../domain/data/common/StatementRequest";
 import { BankStatementRequest } from "../../domain/data/banking/BankStatementRequest";
 
 
-/**
- * @author Ryan Heaton
- */
 export class BankingAccountImpl extends BaseAccountImpl<BankAccountDetails> implements BankAccount {
 
   constructor(details: BankAccountDetails, username: string, password: string, institution: FinancialInstitutionImpl) {

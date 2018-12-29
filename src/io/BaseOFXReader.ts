@@ -1,18 +1,3 @@
-/*
- * Copyright 2008 Web Cohesion
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 import { SAXParser } from "sax";
 import * as sax from "sax";
@@ -41,8 +26,6 @@ function arraysEqual(a1: Array<string>, a2: Array<string>) {
 /**
  * Base class for an OFX reader.  Parses the headers and determines whether we're parsing an
  * OFX v2 or OFX v1 element.  For OFX v2, uses a standard SAX library.
- *
- * @author Ryan Heaton
  */
 export /*abstract*/ class BaseOFXReader implements OFXReader {
   public static OFX_2_PROCESSING_INSTRUCTION_PATTERN: RegExp = /<\\?OFX ([^\\?]+)\\?>/;
