@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Log, LogFactory } from "../log/Log";
+import { LOG } from "../log/Log";
 import { StringConversion } from "./StringConversion";
 import { DefaultStringConversion } from "./DefaultStringConversion";
 import { OFXWriter } from "./OFXWriter";
@@ -24,8 +24,6 @@ import { StringMap } from "../collections/collections";
 import { SortedSet } from "../collections/SortedSet";
 import { AggregateAttribute, AggregateAttributeType } from "./AggregateAttribute";
 
-
-var LOG: Log;
 
 /**
  * Marshaller for aggregate objects.
@@ -82,7 +80,7 @@ export class AggregateMarshaller {
         childValue = aggregateAttribute.get(aggregate);
       }
       catch (e) {
-        LOG.error("Unable to get " + aggregateAttribute.toString(), e);
+        LOG.error("Unable to get " + aggregateAttribute.toString() + "%o", e);
       }
 
       if (childValue != null) {
@@ -149,5 +147,3 @@ export class AggregateMarshaller {
     this.conversion = conversion;
   }
 }
-
-LOG = LogFactory.getLog(AggregateMarshaller);

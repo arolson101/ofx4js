@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { ChildAggregate } from '../meta/ChildAggregate';
 import { Element } from '../meta/Element';
 import { ReadMethod, WriteMethod } from '../meta/PropertyDescriptor';
@@ -21,16 +22,10 @@ import { AggregateInfo } from './AggregateInfo';
 import { OFXException } from '../OFXException';
 import { AggregateIntrospector } from './AggregateIntrospector';
 
-//import Log = org.apache.commons.logging.Log;
-//import LogFactory = org.apache.commons.logging.LogFactory;
-
 
 export enum AggregateAttributeType {
-
   CHILD_AGGREGATE,
-
   ELEMENT
-
 }
 
 
@@ -137,7 +132,7 @@ export class AggregateAttribute {
       var collection: Array<Object> = this.get(instance);
       if (collection == null) {
         if(this.attributeType === SortedSet) {
-          console.assert("contentCompare" in this.collectionEntryType);
+          assert("contentCompare" in this.collectionEntryType);
           collection = <any>new SortedSet((<any>this.collectionEntryType).contentCompare);
         } else {
           collection = new this.attributeType();

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { SortedSet } from '../collections/SortedSet';
 import { ChildAggregate } from '../meta/ChildAggregate';
 import { Element } from '../meta/Element';
@@ -197,7 +198,7 @@ export class AggregateInfo {
   }
 
   public addHeader(header: Header): void {
-    console.assert(<boolean><any>header.name());
+    assert(header.name());
     this.headers[header.name()] = header;
   }
 }

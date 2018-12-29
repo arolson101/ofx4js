@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Log, LogFactory } from "../log/Log";
+import { LOG } from "../log/Log";
 import { AggregateInfo } from "./AggregateInfo";
 import { OFXException } from "../OFXException";
 import { OFXHandler } from "./OFXHandler";
@@ -23,8 +23,6 @@ import { AggregateIntrospector } from "./AggregateIntrospector";
 import { AggregateAttribute, AggregateAttributeType } from "./AggregateAttribute";
 import { OFXSyntaxException } from "./OFXSyntaxException";
 
-
-var LOG: Log;
 
 class AggregateInfoHolder {
   public aggregate: Object;
@@ -109,11 +107,11 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
           attribute.set(this.conversion.fromString(attribute.getAttributeType(), value), this.stack.peek().aggregate);
         }
         catch (e) {
-          LOG.error("Unable to set " + attribute.toString(), e);
+          LOG.error("Unable to set " + attribute.toString() + "%o", e);
         }
         this.stack.peek().currentAttributeIndex = attribute.getOrder();
       }
-      else if (LOG.isInfoEnabled()) {
+      else {
         LOG.info("Element " + name + " is not supported on aggregate " + this.stack.peek().info.getName() + " at index " + this.stack.peek().currentAttributeIndex);
       }
     }
@@ -154,9 +152,7 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
             infoHolder = new AggregateInfoHolder(aggregate, aggregateInfo, aggregateName);
           }
           else {
-            if (LOG.isInfoEnabled()) {
-              LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
-            }
+            LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": name not assigned a type.");
 
             //element not supported.  push a skipping aggregate on the stack.
             infoHolder = new AggregateInfoHolder(aggregateName);
@@ -165,18 +161,14 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
           this.stack.peek().currentAttributeIndex = attribute.getOrder();
         }
         else {
-          if (LOG.isInfoEnabled()) {
-            LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
-          }
+          LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no child aggregate, but there does exist an element by that name.");
 
           //child aggregate not supported.  push a skipping aggregate on the stack.
           infoHolder = new AggregateInfoHolder(aggregateName);
         }
       }
       else {
-        if (LOG.isInfoEnabled()) {
-          LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
-        }
+        LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
 
         //child aggregate not supported.  push a skipping aggregate on the stack.
         infoHolder = new AggregateInfoHolder(aggregateName);
@@ -202,13 +194,11 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
           if (attribute != null) {
             attribute.set(infoHolder.aggregate, this.stack.peek().aggregate);
           } else {
-            if (LOG.isInfoEnabled()) {
-              LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
-            }
+            LOG.info("Child aggregate " + aggregateName + " is not supported on aggregate " + this.stack.peek().info.getName() + ": no attributes found by that name after index " + this.stack.peek().currentAttributeIndex);
           }
         }
         catch (e) {
-          LOG.error("Unable to set " + attribute.toString(), e);
+          LOG.error("Unable to set " + attribute.toString() + "%o", e);
         }
         if (attribute != null) {
           this.stack.peek().currentAttributeIndex = attribute.getOrder();
@@ -220,5 +210,3 @@ export class AggregateStackContentHandler<A> implements OFXHandler {
     }
   }
 }
-
-LOG = LogFactory.getLog(AggregateStackContentHandler);

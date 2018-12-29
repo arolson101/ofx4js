@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Log, LogFactory } from "../../log/Log";
+import { LOG } from "../../log/Log";
 import { OFXException } from "../../OFXException";
 import { OFXConnection } from "./OFXConnection";
 import { AggregateMarshaller } from "../../io/AggregateMarshaller";
@@ -30,11 +30,6 @@ import { OFXV1Writer } from "../../io/v1/OFXV1Writer";
 // import java.io.*;
 // import java.net.HttpURLConnection;
 // import java.net.URL;
-
-// import org.apache.commons.logging.Log;
-// import org.apache.commons.logging.LogFactory;
-
-var LOG: Log;
 
 export type HeadersObject = { [header: string]: string };
 export type AjaxHandler = (url: string, verb: string, headers: HeadersObject, data: string, async: boolean) => Promise<string>;
@@ -115,20 +110,12 @@ export class OFXV1Connection implements OFXConnection {
    * @param outBuffer The buffer to log.
    */
   protected logRequest(outBuffer: OutputBuffer) /*throws UnsupportedEncodingException*/: void {
-    if (LOG.isInfoEnabled()) {
-      LOG.info("Marshalling " + outBuffer.size() + " bytes of the OFX request.");
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(outBuffer.toString("utf-8"));
-      }
-    }
+    LOG.info("Marshalling " + outBuffer.size() + " bytes of the OFX request.");
+    LOG.debug(outBuffer.toString("utf-8"));
   }
 
   protected logResponse(inBuffer: string) {
-    if (LOG.isInfoEnabled()) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Received OFX response:", inBuffer);
-      }
-    }
+    LOG.debug("Received OFX response:", inBuffer);
   }
 
   /**
@@ -250,5 +237,3 @@ export class OFXV1Connection implements OFXConnection {
   }
 
 }
-
-LOG = LogFactory.getLog(OFXV1Connection);

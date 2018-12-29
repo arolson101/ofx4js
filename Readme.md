@@ -9,21 +9,16 @@ Install with
 ```
   npm install ofx4js
 ```
-Then either
+Then
 ```
-  var ofx4js = require("ofx4js");
-```
-or
-```
-  import ofx4js from 'ofx4js';
+  import * as ofx4js from 'ofx4js';
 ```
 ## Usage
 To parse an OFX response:
 
 ```js
   // aliases
-  var AggregateUnmarshaller = ofx4js.io.AggregateUnmarshaller;
-  var ResponseEnvelope = ofx4js.domain.data.ResponseEnvelope;
+  import { AggregateUnmarshaller, ResponseEnvelope } from 'ofx4js';
 
   // your ofx data
   var ofxData = "OFXHEADER:100...";
@@ -38,15 +33,14 @@ To parse an OFX response:
 
   // read the data
   var messageSets = data.getMessageSets();
-  var bankingResponse = messageSets[1].getStatementResponse();
+  var bankingResponse = messageSets[1].cast<BankingResponseMessageSet>().getStatementResponse();
 ```
 
 To download a bank's profile information:
 
 ```js
   // aliases
-  var BaseFinancialInstitutionData = ofx4js.client.impl.BaseFinancialInstitutionData;
-  var OFXV1Connection = ofx4js.client.net.OFXV1Connection;
+  import { BaseFinancialInstitutionData, OFXV1Connection } from 'ofx4js';
 
   // input your bank's information.  See http://www.ofxhome.com/
   var bank = new BaseFinancialInstitutionData();

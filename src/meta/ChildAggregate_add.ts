@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { AggregateIntrospector } from "../io/AggregateIntrospector";
 import { ChildAggregate, ChildAggregateParams } from "./ChildAggregate";
 
 export function ChildAggregate_add<Type>(clazz: any, params: ChildAggregateParams<Type>): void {
-  console.assert(params.type != null);
+  assert(params.type != null);
   AggregateIntrospector.addChildAggregate(clazz, new ChildAggregate(params));
 }

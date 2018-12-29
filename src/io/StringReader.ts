@@ -1,3 +1,5 @@
+import { ok as assert } from "assert";
+
 export class StringReader {
   private _text: string;
   private _cursor: number;
@@ -29,7 +31,7 @@ export class StringReader {
 
 
   public readChar(): string {
-    console.assert(this._cursor < this._text.length);
+    assert(this._cursor < this._text.length);
     var ch = this._text[this._cursor];
     this._cursor++;
     return ch;

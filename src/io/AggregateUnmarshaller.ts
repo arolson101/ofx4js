@@ -31,7 +31,7 @@ export class AggregateUnmarshaller<A> {
   private clazz: any;
   private conversion: StringConversion;
 
-  constructor(clazz: any) {
+  constructor(clazz: { new (): A }) {
     this.clazz = clazz;
     this.conversion = new DefaultStringConversion();
   }

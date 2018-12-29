@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { Stack } from '../collections/Stack'
 import { OFXParseEvent, OFXParseEventType } from './OFXParseEvent'
 import { OFXHandler } from './OFXHandler'
-import { Log, LogFactory } from '../log/Log'
+import { LOG } from '../log/Log'
 import { OFXException } from '../OFXException';
 import { SAXParser, Tag as SAXTag } from 'sax';
 
-var LOG: Log;
 
 /**
  * @author Ryan Heaton
@@ -50,15 +50,11 @@ export class OFXV2ContentHandler {
 
   public onopentag(node: SAXTag): void {
     var qName: string = node.name;
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("START ELEMENT: " + qName);
-    }
+    LOG.debug("START ELEMENT: " + qName);
 
     if ((!this.eventStack.isEmpty()) && (this.eventStack.peek().getEventType() == OFXParseEventType.ELEMENT) && (!this.isAlreadyStarted(this.eventStack.peek()))) {
       var eventValue: string = this.eventStack.peek().getEventValue();
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Element " + qName + " is starting aggregate " + eventValue);
-      }
+      LOG.debug("Element " + qName + " is starting aggregate " + eventValue);
 
       //the last element started was not ended; we are assuming we've started a new aggregate.
       this.ofxHandler.startAggregate(eventValue);
@@ -80,9 +76,7 @@ export class OFXV2ContentHandler {
   }
 
   public onclosetag(qName: string): void {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("END ELEMENT: " + qName);
-    }
+    LOG.debug("END ELEMENT: " + qName);
 
     var eventToFinish: OFXParseEvent = this.eventStack.pop();
     if (eventToFinish.getEventType() == OFXParseEventType.CHARACTERS) {
@@ -98,9 +92,7 @@ export class OFXV2ContentHandler {
         }
         else {
           var value: string = elementEvent.getEventValue();
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("Element " + value + " processed with value " + chars);
-          }
+          LOG.debug("Element " + value + " processed with value " + chars);
           this.ofxHandler.onElement(value, chars);
         }
       }
@@ -110,13 +102,11 @@ export class OFXV2ContentHandler {
       if (qName === eventToFinish.getEventValue()) {
         //the last element on the stack is ours; we're ending an OFX aggregate.
         var value: string = eventToFinish.getEventValue();
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("Ending aggregate " + value);
-        }
+        LOG.debug("Ending aggregate " + value);
         this.ofxHandler.endAggregate(value);
 
         var i = this.startedEvents.indexOf(eventToFinish);
-        console.assert(i !== -1);
+        assert(i !== -1);
         if (i > -1) {
           this.startedEvents.splice(i, 1);
         }
@@ -144,5 +134,3 @@ export class OFXV2ContentHandler {
     }
   }
 }
-
-LOG = LogFactory.getLog(OFXV2ContentHandler);

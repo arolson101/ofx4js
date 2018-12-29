@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { ChildAggregate } from '../meta/ChildAggregate';
 import { Header } from '../meta/Header';
 import { Element } from '../meta/Element';
-import { Log, LogFactory } from '../log/Log';
 import { AggregateInfo } from './AggregateInfo';
 import { AnyMap } from '../collections/collections';
 
-//import Log = org.apache.commons.logging.Log;
-//import LogFactory = org.apache.commons.logging.LogFactory;
-
-var LOG: Log;
 
 /**
  * Introspector for aggregate information.
@@ -75,7 +71,7 @@ export class AggregateIntrospector {
 
     var aggregateInfo: AggregateInfo = AggregateIntrospector.getAggregateInfo(clazz);
     if(aggregateInfo) {
-      console.assert(aggregateInfo.getName() === AggregateIntrospector.placeholderName);
+      assert(aggregateInfo.getName() === AggregateIntrospector.placeholderName);
       aggregateInfo.setName(name);
     } else {
       var parentInfo: AggregateInfo = AggregateIntrospector.getAncestorAggregateInfo(clazz);
@@ -89,7 +85,7 @@ export class AggregateIntrospector {
       var parentInfo: AggregateInfo = AggregateIntrospector.getAncestorAggregateInfo(clazz);
       aggregateInfo = clazz.Aggregate = new AggregateInfo(AggregateIntrospector.placeholderName, clazz, parentInfo);
     }
-    console.assert(aggregateInfo != null);
+    assert(aggregateInfo != null);
     if(aggregateInfo) {
       aggregateInfo.addChildAggregate(childAggregate);
     }
@@ -101,7 +97,7 @@ export class AggregateIntrospector {
       var parentInfo: AggregateInfo = AggregateIntrospector.getAncestorAggregateInfo(clazz);
       aggregateInfo = clazz.Aggregate = new AggregateInfo(AggregateIntrospector.placeholderName, clazz, parentInfo);
     }
-    console.assert(aggregateInfo != null);
+    assert(aggregateInfo != null);
     if(aggregateInfo) {
       aggregateInfo.addElement(element);
     }
@@ -113,11 +109,9 @@ export class AggregateIntrospector {
       var parentInfo: AggregateInfo = AggregateIntrospector.getAncestorAggregateInfo(clazz);
       aggregateInfo = clazz.Aggregate = new AggregateInfo(AggregateIntrospector.placeholderName, clazz, parentInfo);
     }
-    console.assert(aggregateInfo != null);
+    assert(aggregateInfo != null);
     if(aggregateInfo) {
       aggregateInfo.addHeader(header);
     }
   }
 }
-
-LOG = LogFactory.getLog(AggregateIntrospector);

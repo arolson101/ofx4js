@@ -16,7 +16,7 @@
 
 import { SAXParser } from "sax";
 import * as sax from "sax";
-import { Log, LogFactory } from "../log/Log";
+import { LOG } from "../log/Log";
 import { OFXReader } from "./OFXReader";
 import { OFXHandler } from "./OFXHandler";
 import { DefaultHandler } from "./DefaultHandler";
@@ -24,7 +24,6 @@ import { StringReader } from "./StringReader";
 import { OFXParseException } from "./OFXParseException";
 import { OFXV2ContentHandler } from "./OFXV2ContentHandler";
 
-var LOG: Log;
 
 function arraysEqual(a1: Array<string>, a2: Array<string>) {
   if(a1.length !== a2.length) {
@@ -98,9 +97,7 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
     else {
       var matches = BaseOFXReader.OFX_2_PROCESSING_INSTRUCTION_PATTERN.exec(header);
       if (matches) {
-        if (LOG.isInfoEnabled()) {
-          LOG.info("Processing OFX 2 header...");
-        }
+        LOG.info("Processing OFX 2 header...");
 
         this.processOFXv2Headers(matches[1]);
         reader.reset();
@@ -214,5 +211,3 @@ export /*abstract*/ class BaseOFXReader implements OFXReader {
     }
   }
 }
-
-LOG = LogFactory.getLog(BaseOFXReader);

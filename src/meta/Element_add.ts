@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { ElementParams, Element } from "./Element";
 import { AggregateIntrospector } from "../io/AggregateIntrospector";
 
 
 export function Element_add<Type>(clazz: any, params: ElementParams<Type>): void {
-  console.assert(params.type != null);
+  assert(params.type != null);
   AggregateIntrospector.addElement(clazz, new Element(params));
 }

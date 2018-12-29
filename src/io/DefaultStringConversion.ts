@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ok as assert } from "assert";
 import { KnownCode } from '../domain/data/common/Status';
 import { StatusCode, Severity } from '../domain/data/common/StatusCode';
 import { UnknownStatusCode } from '../domain/data/common/UnknownStatusCode';
@@ -69,7 +70,7 @@ export class DefaultStringConversion implements StringConversion {
     // this goes last because a lot of things are objects
     else if (typeof clazz === "object") {
       // enum
-      console.assert(value in clazz);
+      assert(value in clazz);
       if(value in clazz) {
         return clazz[value];
       }

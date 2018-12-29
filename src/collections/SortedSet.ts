@@ -1,3 +1,4 @@
+import { ok as assert } from "assert";
 
 export interface CompareFcn<T> {
 	(a: T, b: T): number;
@@ -16,7 +17,7 @@ export class SortedSet<T> {
 
 	values(): Array<T> {
 		if(!this.isSorted) {
-            console.assert(!!this.compareFcn);
+			assert(!!this.compareFcn);
 			this.valueArray.sort(this.compareFcn);
 			this.isSorted = true;
 		}

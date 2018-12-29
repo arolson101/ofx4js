@@ -32,6 +32,10 @@ export abstract class ResponseMessageSet /*implements Comparable<ResponseMessage
     this.version = "1";
   }
 
+  public cast<T extends this>(): T {
+    return this as T;
+  }
+
   /**
    * The version of this message set.
    *
