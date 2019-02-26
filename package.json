@@ -7,7 +7,7 @@
     "banking",
     "finance"
   ],
-  "main": "lib/index.mjs",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib"
