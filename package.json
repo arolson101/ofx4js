@@ -24,7 +24,7 @@
     "@types/jest": "^23.3.10",
     "@types/sax": "^1.0.1",
     "@types/uuid": "^3.4.4",
-    "jest": "^23.6.0",
+    "jest": "^29.3.1",
     "rollup": "^1.0.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
