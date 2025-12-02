@@ -32,7 +32,7 @@
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-jest": "^29.4.6",
     "ts-node": "^7.0.1",
-    "typedoc": "^0.13.0",
+    "typedoc": "^0.28.15",
     "typescript": "^3.2.2"
   },
   "scripts": {
